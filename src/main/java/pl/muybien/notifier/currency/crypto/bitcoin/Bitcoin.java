@@ -1,28 +1,29 @@
 package pl.muybien.notifier.currency.crypto.bitcoin;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import pl.muybien.notifier.customer.Customer;
 
+import java.math.BigDecimal;
 
 @Entity
+@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "bitcoin")
 public class Bitcoin {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long btcId;
-        private String id;
-        private String rank;
-        private String symbol;
+        private Long id;
         private String name;
-        private Double priceUsd;
+        private BigDecimal priceUsd;
+        private BigDecimal pointPrice;
+        private BigDecimal upperBoundPrice;
+        private BigDecimal lowerBoundPrice;
 
-        @Override
-        public String toString() {
-                return "Bitcoin{id='%s', rank='%s', symbol='%s', name='%s', priceUsd=%s}"
-                        .formatted(id, rank, symbol, name, priceUsd);
-        }
+        @ManyToOne
+        private Customer customer;
 }
