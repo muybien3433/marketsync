@@ -1,8 +1,12 @@
 package pl.muybien.notifier.currency;
 
-import pl.muybien.notifier.currency.crypto.CryptoTarget;
 import pl.muybien.notifier.customer.Customer;
 
+import java.math.BigDecimal;
+
 public interface CurrencyService {
-    void createAndSaveSubscription(Customer customer, CryptoTarget cryptoTarget);
+    void createAndSaveSubscription(Customer customer,
+                                   String cryptoName,
+                                   BigDecimal upperPriceInUsd,
+                                   BigDecimal lowerPriceInUsd);
 }

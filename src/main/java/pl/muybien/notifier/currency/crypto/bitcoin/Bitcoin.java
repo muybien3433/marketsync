@@ -11,7 +11,8 @@ import java.math.BigDecimal;
 @Builder
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "bitcoin")
 public class Bitcoin implements CryptoTarget {
 
@@ -19,7 +20,6 @@ public class Bitcoin implements CryptoTarget {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
         private String name;
-        private BigDecimal pointPrice;
         private BigDecimal upperBoundPrice;
         private BigDecimal lowerBoundPrice;
 
