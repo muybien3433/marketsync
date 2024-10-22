@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 public interface CryptoTarget {
 
     String getName();
-    BigDecimal getPointPrice();
     BigDecimal getUpperBoundPrice();
     BigDecimal getLowerBoundPrice();
     Customer getCustomer();
