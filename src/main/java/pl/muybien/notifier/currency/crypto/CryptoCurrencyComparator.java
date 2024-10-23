@@ -11,30 +11,8 @@ import java.math.BigDecimal;
 public class CryptoCurrencyComparator {
 
     @Transactional
-    public  <T extends CryptoTarget> void compareValueWithSubscriptionAndNotifyIfNecessary(BigDecimal currentPriceUsd, T subscription) {
-        if (subscription != null) {
-            BigDecimal upperTargetPrice = subscription.getUpperBoundPrice();
-            BigDecimal lowerTargetPrice = subscription.getLowerBoundPrice();
-            boolean currentValueEqualsOrGraterThanTarget = currentPriceUsd.compareTo(upperTargetPrice) >= 0;
-            boolean currentValueEqualsOrLowerThanTarget = currentPriceUsd.compareTo(lowerTargetPrice) <= 0;
-
-            if (currentValueEqualsOrGraterThanTarget) {
-                // TODO: Send notification via email instead
-                System.out.println("Current value: " + currentPriceUsd + " is >= than target: " + upperTargetPrice);
-
-//                cryptoSubscriptionManager.removeSubscription(subscription, subscription.getName());
-            } else if (currentValueEqualsOrLowerThanTarget) {
-                // TODO: Send notification via email instead
-                System.out.println("Current value: " + currentPriceUsd + " is <= target: " + lowerTargetPrice);
-//                cryptoService.removeSubscription(subscription);
-            }
-        } else {
-            System.out.println("Subscriber is null"); // TODO: create SubscriberNotFoundException
-        }
-    }
-
     public <T extends CryptoTarget> boolean currentPriceMetSubscriptionCondition(BigDecimal currentPriceUsd, T subscription) {
-        System.out.println("Current value: " + currentPriceUsd);
+        System.out.println("Current value: " + currentPriceUsd); // TODO: Remove
         if (subscription != null) {
             BigDecimal upperTargetPrice = subscription.getUpperBoundPrice();
             BigDecimal lowerTargetPrice = subscription.getLowerBoundPrice();
