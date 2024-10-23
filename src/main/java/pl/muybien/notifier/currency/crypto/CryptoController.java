@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CryptoController {
 
-    private final CryptoSubscriptionProvider cryptoSubscriptionProvider;
+    private final CryptoSubscriptionManager cryptoSubscriptionManager;
 
     @PostMapping("api/v1/subscribe")
     public ResponseEntity<String> createSubscription(
             @AuthenticationPrincipal OidcUser oidcUser,
             @RequestBody CryptoRequest request
     ) {
-        cryptoSubscriptionProvider.addSubscription(oidcUser, request.uri(),
+        cryptoSubscriptionManager.addSubscription(oidcUser, request.uri(),
                 request.upperValueInPercent(), request.lowerValueInPercent());
         return ResponseEntity.ok("OK");
     }
