@@ -18,7 +18,7 @@ public class CryptoCurrencyProvider {
                 .map(CryptoMapper::mapToCrypto)
                 .block();
         if (currentCrypto == null) {
-            throw new RuntimeException("WebClient returned null");
+            throw new RuntimeException("WebClient returned null"); // TODO: Better exception handling
         }
         return currentCrypto;
     }
