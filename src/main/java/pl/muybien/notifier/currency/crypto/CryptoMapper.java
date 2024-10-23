@@ -4,10 +4,10 @@ public class CryptoMapper {
 
     public static Crypto mapToCrypto(CryptoResponse response) {
 
-        if (response.getData() == null) {
+        if (response.data() == null) {
             throw new IllegalArgumentException("Crypto data is null");
         }
-        Crypto crypto = response.getData();
+        Crypto crypto = response.data();
 
         return Crypto.builder()
                 .id(crypto.getId())
