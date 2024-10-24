@@ -3,6 +3,7 @@ package pl.muybien.notifier.currency.crypto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import pl.muybien.notifier.handler.CryptoNotFoundException;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class CryptoCurrencyProvider {
                 .map(CryptoMapper::mapToCrypto)
                 .block();
         if (currentCrypto == null) {
-            throw new RuntimeException("WebClient returned null"); // TODO: Better exception handling
+            throw new CryptoNotFoundException("Crypto data not found for URI: %s".formatted(uri));
         }
         return currentCrypto;
     }
