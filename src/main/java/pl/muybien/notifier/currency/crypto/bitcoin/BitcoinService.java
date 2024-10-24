@@ -21,17 +21,17 @@ public class BitcoinService implements CryptoService {
 
     private final CryptoCurrencyProvider cryptoCurrencyProvider;
     private final CryptoCurrencyComparator cryptoCurrencyComparator;
-    private final BitcoinRepository bitcoinRepository;
+    private final BitcoinRepository repository;
 
     @Override
     @Scheduled(fixedRate = 10000)
     @Transactional
     public void fetchCurrentStock() {
         var cryptoPrice = cryptoCurrencyProvider.fetchCurrencyByUri("bitcoin").getPriceUsd();
-        var subscriptions = bitcoinRepository.findAll();
+        var subscriptions = repository.findAll();
         subscriptions.forEach(subscription -> {
             if (cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription)) {
-                bitcoinRepository.delete(subscription);
+                repository.delete(subscription);
             }
         });
     }
@@ -40,21 +40,21 @@ public class BitcoinService implements CryptoService {
     @Transactional
     public void createAndSaveSubscription(Customer customer, String cryptoName,
                                           BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd) {
-        var bitcoin = Bitcoin.builder()
+        var crypto = Bitcoin.builder()
                 .customer(customer)
                 .name(cryptoName)
                 .upperBoundPrice(upperPriceInUsd)
                 .lowerBoundPrice(lowerPriceInUsd)
                 .build();
-        bitcoinRepository.save(bitcoin);
+        repository.save(crypto);
     }
 
     @Override
     @Transactional
     public void removeSubscription(OidcUser oidcUser, Long id) {
-        bitcoinRepository.findById(id).ifPresentOrElse(bitcoin -> {
-            if (bitcoin.getCustomer().getEmail().equals(oidcUser.getEmail())) {
-                bitcoinRepository.delete(bitcoin);
+        repository.findById(id).ifPresentOrElse(crypto -> {
+            if (crypto.getCustomer().getEmail().equals(oidcUser.getEmail())) {
+                repository.delete(crypto);
             } else {
                 throw new AccessDeniedException("You are not authorized to delete this subscription.");
             }

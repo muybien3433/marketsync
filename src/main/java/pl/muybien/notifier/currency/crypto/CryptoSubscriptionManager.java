@@ -38,7 +38,7 @@ public class CryptoSubscriptionManager {
                 .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
         BigDecimal change = currentCryptoPrice.multiply(percentDecimal);
 
-        return currentCryptoPrice.add(change).setScale(10, RoundingMode.HALF_UP);
+        return currentCryptoPrice.add(change).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Transactional

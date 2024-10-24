@@ -3,7 +3,7 @@ package pl.muybien.notifier.currency.crypto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.notifier.notification.email.EmailService;
+import pl.muybien.notifier.notification.NotificationService;
 
 import java.math.BigDecimal;
 
@@ -11,34 +11,36 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class CryptoCurrencyComparator {
 
-    private final EmailService emailService;
+    private final NotificationService notificationService;
 
     @Transactional
     public <T extends CryptoTarget> boolean currentPriceMetSubscriptionCondition(BigDecimal currentPriceUsd, T subscription) {
         if (subscription != null) {
             BigDecimal upperTargetPrice = subscription.getUpperBoundPrice();
-            BigDecimal lowerTargetPrice = subscription.getLowerBoundPrice().multiply(BigDecimal.valueOf(-1));
-            boolean currentValueEqualsOrGraterThanTarget = currentPriceUsd.compareTo(upperTargetPrice) >= 0;
+            BigDecimal lowerTargetPrice = subscription.getLowerBoundPrice();
+            boolean currentValueEqualsOrGreaterThanTarget = currentPriceUsd.compareTo(upperTargetPrice) >= 0;
             boolean currentValueEqualsOrLowerThanTarget = currentPriceUsd.compareTo(lowerTargetPrice) <= 0;
 
-            if (currentValueEqualsOrGraterThanTarget) {
-                emailService.sendEmail(
-                        subscription.getCustomer().getEmail(),
-                        "Your %s subscription notify!".formatted(subscription.getName()),
-                        ("Current %s value reached upper bound at: %s " +
-                                "your bound was %s").formatted(
-                                subscription.getName(), currentPriceUsd, subscription.getUpperBoundPrice()));
+            if (currentValueEqualsOrGreaterThanTarget) {
+                sendNotification(subscription, currentPriceUsd, upperTargetPrice);
                 return true;
             } else if (currentValueEqualsOrLowerThanTarget) {
-                emailService.sendEmail(
-                        subscription.getCustomer().getEmail(),
-                        "Your %s subscription notify!".formatted(subscription.getName()),
-                        ("Current %s value reached lower bound at: %s " +
-                                "your bound was %s").formatted(
-                                subscription.getName(), currentPriceUsd, subscription.getUpperBoundPrice()));
+                sendNotification(subscription, currentPriceUsd, lowerTargetPrice);
                 return true;
             }
         }
         return false;
+    }
+
+    private <T extends CryptoTarget> void sendNotification(T subscription,
+                                                           BigDecimal currentPriceUsd,
+                                                           BigDecimal targetPrice) {
+        String email = subscription.getCustomer().getEmail();
+        String subject = "Your %s subscription notification!".formatted(subscription.getName());
+        String message = "Current %s value reached bound at: %s, your bound was %s".formatted(
+                subscription.getName(), currentPriceUsd, targetPrice);
+
+        notificationService.sendNotification(email, subject, message);
+
     }
 }

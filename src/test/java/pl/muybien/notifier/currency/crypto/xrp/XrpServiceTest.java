@@ -1,4 +1,4 @@
-package pl.muybien.notifier.currency.crypto.ethereum;
+package pl.muybien.notifier.currency.crypto.xrp;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +11,9 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import pl.muybien.notifier.currency.crypto.Crypto;
 import pl.muybien.notifier.currency.crypto.CryptoCurrencyComparator;
 import pl.muybien.notifier.currency.crypto.CryptoCurrencyProvider;
+import pl.muybien.notifier.currency.crypto.usdcoin.Usdc;
+import pl.muybien.notifier.currency.crypto.usdcoin.UsdcRepository;
+import pl.muybien.notifier.currency.crypto.usdcoin.UsdcService;
 import pl.muybien.notifier.customer.Customer;
 
 import java.math.BigDecimal;
@@ -22,28 +25,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class EthereumServiceTest {
+class XrpServiceTest {
 
     @InjectMocks
-    private EthereumService service;
+    private XrpService service;
 
     @Mock
     private CryptoCurrencyProvider cryptoCurrencyProvider;
 
     @Mock
-    private EthereumRepository repository;
+    private XrpRepository repository;
 
     @Mock
     private CryptoCurrencyComparator cryptoCurrencyComparator;
 
-    private Ethereum crypto;
+    private Xrp crypto;
     private OidcUser oidcUser;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        crypto = Ethereum.builder()
+        crypto = Xrp.builder()
                 .id(1L)
                 .name("crypto-example")
                 .upperBoundPrice(new BigDecimal(74000))
@@ -59,8 +62,8 @@ class EthereumServiceTest {
     void fetchCurrentStock() {
         BigDecimal cryptoPrice = new BigDecimal("5300.00");
         var crypto = mock(Crypto.class);
-        var subscription1 = mock(Ethereum.class);
-        var subscription2 = mock(Ethereum.class);
+        var subscription1 = mock(Xrp.class);
+        var subscription2 = mock(Xrp.class);
 
         when(crypto.getPriceUsd()).thenReturn(cryptoPrice);
         when(cryptoCurrencyProvider.fetchCurrencyByUri(anyString())).thenReturn(crypto);
@@ -84,7 +87,7 @@ class EthereumServiceTest {
 
         verify(repository, times(1)).save(any());
     }
-    
+
     @Test
     void removeSubscriptionSuccess() {
         when(repository.findById(crypto.getId())).thenReturn(Optional.of(crypto));
