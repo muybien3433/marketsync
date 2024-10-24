@@ -76,6 +76,12 @@
 		</dependency>
 		<!--	Tests	 -->
 		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-resolver-dns-native-macos</artifactId>
+			<version>${netty.version}</version>
+			<classifier>osx-aarch_64</classifier>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
