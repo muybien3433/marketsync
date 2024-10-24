@@ -21,8 +21,8 @@ public class CryptoSubscriptionManager {
     @Transactional
     public void addSubscription(OidcUser oidcUser, String uri,
                                 Double upperValueInPercent, Double lowerValueInPercent) {
-        CryptoService cryptoService = cryptoServiceFactory.getService(uri);
-        Crypto currentCrypto = cryptoCurrencyProvider.fetchCurrencyByUri(uri);
+        var cryptoService = cryptoServiceFactory.getService(uri);
+        var currentCrypto = cryptoCurrencyProvider.fetchCurrencyByUri(uri);
         String cryptoName = currentCrypto.getName();
         BigDecimal currentCryptoPrice = currentCrypto.getPriceUsd();
         BigDecimal upperPriceInUsd = calculatePriceByClientPercentInput(currentCryptoPrice, upperValueInPercent);
@@ -34,14 +34,16 @@ public class CryptoSubscriptionManager {
     }
 
     private BigDecimal calculatePriceByClientPercentInput(BigDecimal currentCryptoPrice, Double valueInPercent) {
-        BigDecimal percentDecimal = new BigDecimal(valueInPercent).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+        BigDecimal percentDecimal = new BigDecimal(valueInPercent)
+                .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
         BigDecimal change = currentCryptoPrice.multiply(percentDecimal);
-        return currentCryptoPrice.add(change);
+
+        return currentCryptoPrice.add(change).setScale(10, RoundingMode.HALF_UP);
     }
 
     @Transactional
-    public void removeSubscription(CryptoTarget cryptoTarget, String uri) {
+    public void removeSubscription(OidcUser oidcUser, String uri, Long id) {
         CryptoService cryptoService = cryptoServiceFactory.getService(uri);
-        cryptoService.removeSubscription(cryptoTarget);
+        cryptoService.removeSubscription(oidcUser, id);
     }
 }

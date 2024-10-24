@@ -1,13 +1,15 @@
 package pl.muybien.notifier.currency.crypto.bitcoin;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.notifier.currency.crypto.CryptoCurrencyComparator;
 import pl.muybien.notifier.currency.crypto.CryptoCurrencyProvider;
 import pl.muybien.notifier.currency.crypto.CryptoService;
-import pl.muybien.notifier.currency.crypto.CryptoTarget;
 import pl.muybien.notifier.customer.Customer;
 
 import java.math.BigDecimal;
@@ -29,12 +31,13 @@ public class BitcoinService implements CryptoService {
         var subscriptions = bitcoinRepository.findAll();
         subscriptions.forEach(subscription -> {
             if (cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription)) {
-                removeSubscription(subscription);
+                bitcoinRepository.delete(subscription);
             }
         });
     }
 
     @Override
+    @Transactional
     public void createAndSaveSubscription(Customer customer, String cryptoName,
                                           BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd) {
         var bitcoin = Bitcoin.builder()
@@ -47,7 +50,16 @@ public class BitcoinService implements CryptoService {
     }
 
     @Override
-    public void removeSubscription(CryptoTarget cryptoTarget) {
-        bitcoinRepository.deleteById(cryptoTarget.getId());
+    @Transactional
+    public void removeSubscription(OidcUser oidcUser, Long id) {
+        bitcoinRepository.findById(id).ifPresentOrElse(bitcoin -> {
+            if (bitcoin.getCustomer().getEmail().equals(oidcUser.getEmail())) {
+                bitcoinRepository.delete(bitcoin);
+            } else {
+                throw new AccessDeniedException("You are not authorized to delete this subscription.");
+            }
+        }, () -> {
+            throw new EntityNotFoundException("Subscription with id %d not found.".formatted(id));
+        });
     }
 }

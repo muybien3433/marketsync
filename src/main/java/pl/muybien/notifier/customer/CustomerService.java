@@ -1,5 +1,6 @@
 package pl.muybien.notifier.customer;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,8 @@ public class CustomerService {
 
     @Transactional(readOnly = true)
     public Customer findCustomerByEmail(String email) {
-        return customerRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+        return customerRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Customer with email %s not found.".formatted(email)));
     }
 }

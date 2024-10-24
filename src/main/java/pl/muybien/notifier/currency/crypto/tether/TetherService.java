@@ -1,13 +1,15 @@
 package pl.muybien.notifier.currency.crypto.tether;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.notifier.currency.crypto.CryptoCurrencyComparator;
 import pl.muybien.notifier.currency.crypto.CryptoCurrencyProvider;
 import pl.muybien.notifier.currency.crypto.CryptoService;
-import pl.muybien.notifier.currency.crypto.CryptoTarget;
 import pl.muybien.notifier.customer.Customer;
 
 import java.math.BigDecimal;
@@ -29,7 +31,7 @@ public class TetherService implements CryptoService {
         var subscriptions = tetherRepository.findAll();
         subscriptions.forEach(subscription -> {
             if (cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription)) {
-                removeSubscription(subscription);
+                tetherRepository.delete(subscription);
             }
         });
     }
@@ -47,7 +49,16 @@ public class TetherService implements CryptoService {
     }
 
     @Override
-    public void removeSubscription(CryptoTarget cryptoTarget) {
-        tetherRepository.deleteById(cryptoTarget.getId());
+    @Transactional
+    public void removeSubscription(OidcUser oidcUser, Long id) {
+        tetherRepository.findById(id).ifPresentOrElse(tether -> {
+            if (tether.getCustomer().getEmail().equals(oidcUser.getEmail())) {
+                tetherRepository.delete(tether);
+            } else {
+                throw new AccessDeniedException("You are not authorized to delete this subscription.");
+            }
+        }, () -> {
+            throw new EntityNotFoundException("Subscription with id %d not found.".formatted(id));
+        });
     }
 }
