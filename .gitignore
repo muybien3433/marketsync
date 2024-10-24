@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .mvn/
+src/main/resources/application.properties
 
 ### STS ###
 .apt_generated

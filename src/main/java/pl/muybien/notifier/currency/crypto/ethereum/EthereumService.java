@@ -1,13 +1,15 @@
 package pl.muybien.notifier.currency.crypto.ethereum;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.notifier.currency.crypto.CryptoCurrencyComparator;
 import pl.muybien.notifier.currency.crypto.CryptoCurrencyProvider;
 import pl.muybien.notifier.currency.crypto.CryptoService;
-import pl.muybien.notifier.currency.crypto.CryptoTarget;
 import pl.muybien.notifier.customer.Customer;
 
 import java.math.BigDecimal;
@@ -29,7 +31,7 @@ public class EthereumService implements CryptoService {
         var subscriptions = ethereumRepository.findAll();
         subscriptions.forEach(subscription -> {
             if (cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription)) {
-                removeSubscription(subscription);
+                ethereumRepository.delete(subscription);
             }
         });
     }
@@ -47,7 +49,16 @@ public class EthereumService implements CryptoService {
     }
 
     @Override
-    public void removeSubscription(CryptoTarget cryptoTarget) {
-        ethereumRepository.deleteById(cryptoTarget.getId());
+    @Transactional
+    public void removeSubscription(OidcUser oidcUser, Long id) {
+        ethereumRepository.findById(id).ifPresentOrElse(ethereum -> {
+            if (ethereum.getCustomer().getEmail().equals(oidcUser.getEmail())) {
+                ethereumRepository.delete(ethereum);
+            } else {
+                throw new AccessDeniedException("You are not authorized to delete this subscription.");
+            }
+        }, () -> {
+            throw new EntityNotFoundException("Subscription with id %d not found.".formatted(id));
+        });
     }
 }
