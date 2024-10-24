@@ -1,4 +1,4 @@
-package pl.muybien.notifier.currency.crypto.ethereum;
+package pl.muybien.notifier.currency.crypto.binancecoin;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,28 +22,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class EthereumServiceTest {
+class BinanceServiceTest {
 
     @InjectMocks
-    private EthereumService service;
+    private BinanceService service;
 
     @Mock
     private CryptoCurrencyProvider cryptoCurrencyProvider;
 
     @Mock
-    private EthereumRepository repository;
+    private BinanceRepository repository;
 
     @Mock
     private CryptoCurrencyComparator cryptoCurrencyComparator;
 
-    private Ethereum crypto;
+    private Binance crypto;
     private OidcUser oidcUser;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        crypto = Ethereum.builder()
+        crypto = Binance.builder()
                 .id(1L)
                 .name("crypto-example")
                 .upperBoundPrice(new BigDecimal(74000))
@@ -59,8 +59,8 @@ class EthereumServiceTest {
     void fetchCurrentStock() {
         BigDecimal cryptoPrice = new BigDecimal("5300.00");
         var crypto = mock(Crypto.class);
-        var subscription1 = mock(Ethereum.class);
-        var subscription2 = mock(Ethereum.class);
+        var subscription1 = mock(Binance.class);
+        var subscription2 = mock(Binance.class);
 
         when(crypto.getPriceUsd()).thenReturn(cryptoPrice);
         when(cryptoCurrencyProvider.fetchCurrencyByUri(anyString())).thenReturn(crypto);
@@ -84,7 +84,7 @@ class EthereumServiceTest {
 
         verify(repository, times(1)).save(any());
     }
-    
+
     @Test
     void removeSubscriptionSuccess() {
         when(repository.findById(crypto.getId())).thenReturn(Optional.of(crypto));

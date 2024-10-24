@@ -45,7 +45,7 @@ class BitcoinServiceTest {
 
         crypto = Bitcoin.builder()
                 .id(1L)
-                .name("bitcoin")
+                .name("crypto-example")
                 .upperBoundPrice(new BigDecimal(74000))
                 .lowerBoundPrice(new BigDecimal(50000))
                 .customer(Customer.builder().email("test@example.com").build())

@@ -10,18 +10,9 @@ public class CryptoMapper {
         Crypto crypto = response.data();
 
         return Crypto.builder()
-                .id(crypto.getId())
-                .rank(crypto.getRank())
                 .symbol(crypto.getSymbol())
                 .name(crypto.getName())
-                .supply(crypto.getSupply())
-                .maxSupply(crypto.getMaxSupply())
-                .marketCapUsd(crypto.getMarketCapUsd())
-                .volumeUsd24Hr(crypto.getVolumeUsd24Hr())
                 .priceUsd(crypto.getPriceUsd())
-                .changePercent24Hr(crypto.getChangePercent24Hr())
-                .vwap24Hr(crypto.getVwap24Hr())
-                .explorer(crypto.getExplorer())
                 .build();
     }
 }

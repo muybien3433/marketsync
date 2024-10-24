@@ -1,4 +1,4 @@
-package pl.muybien.notifier.currency.crypto.tether;
+package pl.muybien.notifier.currency.crypto.binancecoin;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,20 +14,20 @@ import pl.muybien.notifier.customer.Customer;
 
 import java.math.BigDecimal;
 
-@Service("tether")
+@Service("binance-coin")
 @Transactional
 @RequiredArgsConstructor
-public class TetherService implements CryptoService {
+public class BinanceService implements CryptoService {
 
     private final CryptoCurrencyProvider cryptoCurrencyProvider;
     private final CryptoCurrencyComparator cryptoCurrencyComparator;
-    private final TetherRepository repository;
+    private final BinanceRepository repository;
 
     @Override
     @Scheduled(fixedRate = 10000)
     @Transactional
     public void fetchCurrentStock() {
-        var cryptoPrice = cryptoCurrencyProvider.fetchCurrencyByUri("tether").getPriceUsd();
+        var cryptoPrice = cryptoCurrencyProvider.fetchCurrencyByUri("binance-coin").getPriceUsd();
         var subscriptions = repository.findAll();
         subscriptions.forEach(subscription -> {
             if (cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription)) {
@@ -37,9 +37,10 @@ public class TetherService implements CryptoService {
     }
 
     @Override
+    @Transactional
     public void createAndSaveSubscription(Customer customer, String cryptoName,
                                           BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd) {
-        var crypto = Tether.builder()
+        var crypto = Binance.builder()
                 .customer(customer)
                 .name(cryptoName)
                 .upperBoundPrice(upperPriceInUsd)

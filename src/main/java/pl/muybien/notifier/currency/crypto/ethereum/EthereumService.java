@@ -21,17 +21,17 @@ public class EthereumService implements CryptoService {
 
     private final CryptoCurrencyProvider cryptoCurrencyProvider;
     private final CryptoCurrencyComparator cryptoCurrencyComparator;
-    private final EthereumRepository ethereumRepository;
+    private final EthereumRepository repository;
 
     @Override
     @Scheduled(fixedRate = 10000)
     @Transactional
     public void fetchCurrentStock() {
         var cryptoPrice = cryptoCurrencyProvider.fetchCurrencyByUri("ethereum").getPriceUsd();
-        var subscriptions = ethereumRepository.findAll();
+        var subscriptions = repository.findAll();
         subscriptions.forEach(subscription -> {
             if (cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription)) {
-                ethereumRepository.delete(subscription);
+                repository.delete(subscription);
             }
         });
     }
@@ -39,21 +39,21 @@ public class EthereumService implements CryptoService {
     @Override
     public void createAndSaveSubscription(Customer customer, String cryptoName,
                                           BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd) {
-        var ethereum = Ethereum.builder()
+        var crypto = Ethereum.builder()
                 .customer(customer)
                 .name(cryptoName)
                 .upperBoundPrice(upperPriceInUsd)
                 .lowerBoundPrice(lowerPriceInUsd)
                 .build();
-        ethereumRepository.save(ethereum);
+        repository.save(crypto);
     }
 
     @Override
     @Transactional
     public void removeSubscription(OidcUser oidcUser, Long id) {
-        ethereumRepository.findById(id).ifPresentOrElse(ethereum -> {
-            if (ethereum.getCustomer().getEmail().equals(oidcUser.getEmail())) {
-                ethereumRepository.delete(ethereum);
+        repository.findById(id).ifPresentOrElse(crypto -> {
+            if (crypto.getCustomer().getEmail().equals(oidcUser.getEmail())) {
+                repository.delete(crypto);
             } else {
                 throw new AccessDeniedException("You are not authorized to delete this subscription.");
             }
