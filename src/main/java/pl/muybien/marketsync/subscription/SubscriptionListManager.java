@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.marketsync.asset.AssetTarget;
 import pl.muybien.marketsync.handler.SubscriptionDeletionException;
-import pl.muybien.marketsync.handler.SubscriptionNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -15,14 +15,18 @@ import java.util.List;
 public class SubscriptionListManager {
 
     private final SubscriptionRepository subscriptionRepository;
+    private final SubscriptionDTOMapper subscriptionDTOMapper;
 
     @Transactional
     public void addSubscriptionToList(AssetTarget assetTarget) {
         var subscription = Subscription.builder()
                 .stockId(assetTarget.getId())
+                .upperBoundPrice(assetTarget.getUpperBoundPrice())
+                .lowerBoundPrice(assetTarget.getLowerBoundPrice())
                 .stockName(assetTarget.getName())
                 .customer(assetTarget.getCustomer())
                 .customerEmail(assetTarget.getCustomer().getEmail())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         subscriptionRepository.save(subscription);
@@ -40,8 +44,11 @@ public class SubscriptionListManager {
     }
 
     @Transactional(readOnly = true)
-    public List<Subscription> findAllCustomerSubscriptions(OidcUser oidcUser) {
-        return subscriptionRepository.findAllByCustomerEmail(oidcUser.getEmail()).
-                orElseThrow(() -> new SubscriptionNotFoundException("No subscriptions found."));
+    public List<SubscriptionDTO> findAllCustomerSubscriptions(OidcUser oidcUser) {
+        return subscriptionRepository.findAllByCustomerEmail(oidcUser.getEmail())
+                .stream()
+                .flatMap(List::stream)
+                .map(subscriptionDTOMapper::mapToDTO)
+                .toList();
     }
 }
