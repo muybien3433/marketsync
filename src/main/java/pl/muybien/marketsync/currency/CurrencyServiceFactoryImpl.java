@@ -2,19 +2,20 @@ package pl.muybien.marketsync.currency.crypto;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import pl.muybien.marketsync.currency.CurrencyService;
 import pl.muybien.marketsync.handler.CryptoNotFoundException;
 
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class CryptoServiceFactoryImpl implements CryptoServiceFactory {
+public class CurrencyServiceFactoryImpl implements CryptoServiceFactory {
 
-    private final Map<String, CryptoService> services;
+    private final Map<String, CurrencyService> services;
 
     @Override
-    public CryptoService getService(String cryptoName) {
-        CryptoService service = services.get(cryptoName.toLowerCase());
+    public CurrencyService getService(String currencyName) {
+        CurrencyService service = services.get(currencyName.toLowerCase());
         if (service == null) {
             throw new CryptoNotFoundException("No service found for type: %s".formatted(cryptoName));
         }

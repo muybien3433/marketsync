@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.marketsync.currency.CurrencyService;
+import pl.muybien.marketsync.currency.CurrencyServiceFactory;
 import pl.muybien.marketsync.customer.Customer;
 import pl.muybien.marketsync.customer.CustomerService;
 import pl.muybien.marketsync.handler.InvalidSubscriptionParametersException;
@@ -15,15 +17,15 @@ import java.math.RoundingMode;
 @RequiredArgsConstructor
 public class CryptoSubscriptionManager {
 
-    private final CryptoServiceFactory cryptoServiceFactory;
+    private final CurrencyServiceFactory currencyServiceFactory;
     private final CryptoCurrencyProvider cryptoCurrencyProvider;
     private final CustomerService customerService;
 
     @Transactional
     public void addSubscription(OidcUser oidcUser, String uri,
                                 Double upperValueInPercent, Double lowerValueInPercent) {
-        var cryptoService = cryptoServiceFactory.getService(uri);
-        var currentCrypto = cryptoCurrencyProvider.fetchCurrencyByUri(uri);
+        var cryptoService = currencyServiceFactory.getService(uri);
+        var currentCrypto = cryptoCurrencyProvider.fetchCurrency(uri);
         String cryptoName = currentCrypto.getName();
         BigDecimal currentCryptoPrice = currentCrypto.getPriceUsd();
 
@@ -56,7 +58,7 @@ public class CryptoSubscriptionManager {
 
     @Transactional
     public void removeSubscription(OidcUser oidcUser, String uri, Long id) {
-        CryptoService cryptoService = cryptoServiceFactory.getService(uri);
-        cryptoService.removeSubscription(oidcUser, id);
+        CurrencyService currencyService = currencyServiceFactory.getService(uri);
+        currencyService.removeSubscription(oidcUser, id);
     }
 }

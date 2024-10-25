@@ -6,6 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import pl.muybien.marketsync.currency.CurrencyService;
+import pl.muybien.marketsync.currency.CurrencyServiceFactory;
 import pl.muybien.marketsync.customer.Customer;
 import pl.muybien.marketsync.customer.CustomerService;
 import pl.muybien.marketsync.handler.InvalidSubscriptionParametersException;
@@ -22,13 +24,13 @@ class CryptoSubscriptionManagerTest {
     private CryptoSubscriptionManager cryptoSubscriptionManager;
 
     @Mock
-    private CryptoServiceFactory cryptoServiceFactory;
+    private CurrencyServiceFactory currencyServiceFactory;
 
     @Mock
     private CustomerService customerService;
 
     @Mock
-    private CryptoService cryptoService;
+    private CurrencyService currencyService;
 
     @Mock
     private CryptoCurrencyProvider cryptoCurrencyProvider;
@@ -53,8 +55,8 @@ class CryptoSubscriptionManagerTest {
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(cryptoServiceFactory.getService(uri)).thenReturn(cryptoService);
-        when(cryptoCurrencyProvider.fetchCurrencyByUri(uri)).thenReturn(currentCrypto);
+        when(currencyServiceFactory.getService(uri)).thenReturn(currencyService);
+        when(cryptoCurrencyProvider.fetchCurrency(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn("test@example.com");
@@ -62,10 +64,10 @@ class CryptoSubscriptionManagerTest {
 
         cryptoSubscriptionManager.addSubscription(oidcUser, uri, upperValueInPercent, lowerValueInPercent);
 
-        verify(cryptoServiceFactory).getService(uri);
-        verify(cryptoCurrencyProvider).fetchCurrencyByUri(uri);
+        verify(currencyServiceFactory).getService(uri);
+        verify(cryptoCurrencyProvider).fetchCurrency(uri);
         verify(customerService).findCustomerByEmail("test@example.com");
-        verify(cryptoService).createAndSaveSubscription(customer, cryptoName, expectedUpperPrice, expectedLowerPrice);
+        verify(currencyService).createAndSaveSubscription(customer, cryptoName, expectedUpperPrice, expectedLowerPrice);
     }
 
     @Test
@@ -78,8 +80,8 @@ class CryptoSubscriptionManagerTest {
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(cryptoServiceFactory.getService(uri)).thenReturn(cryptoService);
-        when(cryptoCurrencyProvider.fetchCurrencyByUri(uri)).thenReturn(currentCrypto);
+        when(currencyServiceFactory.getService(uri)).thenReturn(currencyService);
+        when(cryptoCurrencyProvider.fetchCurrency(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn("test@example.com");
@@ -87,10 +89,10 @@ class CryptoSubscriptionManagerTest {
 
         cryptoSubscriptionManager.addSubscription(oidcUser, uri, null, lowerValueInPercent);
 
-        verify(cryptoServiceFactory).getService(uri);
-        verify(cryptoCurrencyProvider).fetchCurrencyByUri(uri);
+        verify(currencyServiceFactory).getService(uri);
+        verify(cryptoCurrencyProvider).fetchCurrency(uri);
         verify(customerService).findCustomerByEmail("test@example.com");
-        verify(cryptoService).createAndSaveSubscription(customer, cryptoName, null, expectedLowerPrice);
+        verify(currencyService).createAndSaveSubscription(customer, cryptoName, null, expectedLowerPrice);
     }
 
     @Test
@@ -101,8 +103,8 @@ class CryptoSubscriptionManagerTest {
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(cryptoServiceFactory.getService(uri)).thenReturn(cryptoService);
-        when(cryptoCurrencyProvider.fetchCurrencyByUri(uri)).thenReturn(currentCrypto);
+        when(currencyServiceFactory.getService(uri)).thenReturn(currencyService);
+        when(cryptoCurrencyProvider.fetchCurrency(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn("test@example.com");
@@ -113,10 +115,10 @@ class CryptoSubscriptionManagerTest {
 
         assertEquals("At least one parameter must be provided.", e.getMessage());
 
-        verify(cryptoServiceFactory).getService(uri);
-        verify(cryptoCurrencyProvider).fetchCurrencyByUri(uri);
+        verify(currencyServiceFactory).getService(uri);
+        verify(cryptoCurrencyProvider).fetchCurrency(uri);
         verify(customerService).findCustomerByEmail("test@example.com");
-        verify(cryptoService, never()).createAndSaveSubscription(customer, cryptoName, null, null);
+        verify(currencyService, never()).createAndSaveSubscription(customer, cryptoName, null, null);
     }
 
     @Test
@@ -129,8 +131,8 @@ class CryptoSubscriptionManagerTest {
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(cryptoServiceFactory.getService(uri)).thenReturn(cryptoService);
-        when(cryptoCurrencyProvider.fetchCurrencyByUri(uri)).thenReturn(currentCrypto);
+        when(currencyServiceFactory.getService(uri)).thenReturn(currencyService);
+        when(cryptoCurrencyProvider.fetchCurrency(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn("test@example.com");
@@ -138,10 +140,10 @@ class CryptoSubscriptionManagerTest {
 
         cryptoSubscriptionManager.addSubscription(oidcUser, uri, upperValueInPercent, null);
 
-        verify(cryptoServiceFactory).getService(uri);
-        verify(cryptoCurrencyProvider).fetchCurrencyByUri(uri);
+        verify(currencyServiceFactory).getService(uri);
+        verify(cryptoCurrencyProvider).fetchCurrency(uri);
         verify(customerService).findCustomerByEmail("test@example.com");
-        verify(cryptoService).createAndSaveSubscription(customer, cryptoName, expectedUpperPrice, null);
+        verify(currencyService).createAndSaveSubscription(customer, cryptoName, expectedUpperPrice, null);
     }
 
     @Test
@@ -149,11 +151,11 @@ class CryptoSubscriptionManagerTest {
         Long subscriptionId = 1L;
         String uri = "cryptoUri";
 
-        when(cryptoServiceFactory.getService(uri)).thenReturn(cryptoService);
+        when(currencyServiceFactory.getService(uri)).thenReturn(currencyService);
 
         cryptoSubscriptionManager.removeSubscription(oidcUser, uri, subscriptionId);
 
-        verify(cryptoServiceFactory).getService(uri);
-        verify(cryptoService, times(1)).removeSubscription(oidcUser, subscriptionId);
+        verify(currencyServiceFactory).getService(uri);
+        verify(currencyService, times(1)).removeSubscription(oidcUser, subscriptionId);
     }
 }
