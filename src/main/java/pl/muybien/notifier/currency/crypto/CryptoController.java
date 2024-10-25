@@ -31,4 +31,6 @@ public class CryptoController {
         cryptoSubscriptionManager.removeSubscription(oidcUser, uri, id);
         return ResponseEntity.noContent().build();
     }
+
+    
 }
