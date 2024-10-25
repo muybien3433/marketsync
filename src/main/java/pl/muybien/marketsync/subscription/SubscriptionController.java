@@ -37,7 +37,7 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    public List<Subscription> findAllSubscriptions(
+    public List<SubscriptionDTO> findAllSubscriptions(
             @AuthenticationPrincipal OidcUser oidcUser) {
         return subscriptionListManager.findAllCustomerSubscriptions(oidcUser);
     }
