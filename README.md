@@ -23,15 +23,16 @@ Data storage using modern web technologies such as Hibernate and PostgreSQL.
 Ensure you have the following installed before running the project:
 
 - **Java**: 23
-- **PostgreSQL**: 
-- **Maven**: For building and running the project
+- **PostgreSQL**
+- **Maven**
 
 ## API Endpoints
 
 **API will be available at localhost:8080/api/v1**
 
-- *Subscription*: `/subscribe`
-    - `POST /` – Create new subscription @@@@@@
+- *Subscription*: `/subscriptions`
+    - `GET /` – Display all user subscriptions.
+    - `POST /{uri}` – Create new subscription (params: upperValueInPercent, lowerValueInPercent).
     - `DELETE /{uri}/{id}` – Delete subscription.
 
 ## Installation
@@ -40,14 +41,25 @@ Ensure you have the following installed before running the project:
    ```bash
    git clone https://github.com/muybien3433/marketsync.git
    ```
-3. Create application.yml and provide following:
+3. Create application.properties and provide following:
    ```bash
-   datasource:
-    url: "jdbc:mysql://your-db-url/your-schema-name"
-    username: "your-db-username"
-    password: "your-db-password"
+   spring.jpa.hibernate.ddl-auto=update
+   spring.datasource.url=jdbc:postgresql://localhost:5432/your-db-name
+   spring.datasource.username=your-username
+   spring.datasource.password=your-password
 
-   @@@@@@@
+   spring.security.oauth2.client.registration.google.client-id=your-client-id
+   spring.security.oauth2.client.registration.google.client-secret=your-client-secret
+   spring.security.oauth2.client.registration.google.scope=openid, email, profile
+
+   crypto.api.uri=https://api.coincap.io/v2/assets/
+
+   spring.mail.host=smtp.gmail.com
+   spring.mail.port=587
+   spring.mail.username=your-email@mail.com
+   spring.mail.password=your-password (it is not gmail account password)
+   spring.mail.properties.mail.smtp.auth=true
+   spring.mail.properties.mail.smtp.starttls.enable=true 
    ```
 4. Reload maven project
    ```bash
