@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import pl.muybien.marketsync.customer.Customer;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @Getter
@@ -18,7 +21,10 @@ public class Subscription {
     private Long id;
     private Long stockId;
     private String stockName;
+    private BigDecimal upperBoundPrice;
+    private BigDecimal lowerBoundPrice;
     private String customerEmail;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     private Customer customer;
