@@ -1,14 +1,14 @@
-package pl.muybien.marketsync.currency.crypto;
+package pl.muybien.marketsync.currency;
 
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import pl.muybien.marketsync.customer.Customer;
 
 import java.math.BigDecimal;
 
-public interface CryptoService {
+public interface CurrencyService {
 
     void fetchCurrentStock();
-    void createAndSaveSubscription(Customer customer, String cryptoName,
+    void createAndSaveSubscription(Customer customer, String currencyName,
                                                    BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd);
 
     void removeSubscription(OidcUser oidcUser, Long id);

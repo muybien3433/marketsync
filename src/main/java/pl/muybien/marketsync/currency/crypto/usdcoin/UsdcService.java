@@ -7,30 +7,32 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.marketsync.currency.crypto.CryptoCurrencyComparator;
+import pl.muybien.marketsync.currency.CurrencyComparator;
 import pl.muybien.marketsync.currency.crypto.CryptoCurrencyProvider;
-import pl.muybien.marketsync.currency.crypto.CryptoService;
+import pl.muybien.marketsync.currency.CurrencyService;
 import pl.muybien.marketsync.customer.Customer;
+import pl.muybien.marketsync.subscription.SubscriptionListManager;
 
 import java.math.BigDecimal;
 
 @Service("usd-coin")
 @Transactional
 @RequiredArgsConstructor
-public class UsdcService implements CryptoService {
+public class UsdcService implements CurrencyService {
 
     private final CryptoCurrencyProvider cryptoCurrencyProvider;
-    private final CryptoCurrencyComparator cryptoCurrencyComparator;
+    private final CurrencyComparator currencyComparator;
+    private final SubscriptionListManager subscriptionListManager;
     private final UsdcRepository repository;
 
     @Override
     @Scheduled(fixedRate = 10000)
     @Transactional
     public void fetchCurrentStock() {
-        var cryptoPrice = cryptoCurrencyProvider.fetchCurrencyByUri("usd-coin").getPriceUsd();
+        var cryptoPrice = cryptoCurrencyProvider.fetchCurrency("usd-coin").getPriceUsd();
         var subscriptions = repository.findAll();
         subscriptions.forEach(subscription -> {
-            if (cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription)) {
+            if (currencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription)) {
                 repository.delete(subscription);
             }
         });
@@ -47,6 +49,7 @@ public class UsdcService implements CryptoService {
                 .lowerBoundPrice(lowerPriceInUsd)
                 .build();
         repository.save(crypto);
+        subscriptionListManager.addSubscriptionToList(crypto);
     }
 
     @Override
@@ -55,6 +58,7 @@ public class UsdcService implements CryptoService {
         repository.findById(id).ifPresentOrElse(crypto -> {
             if (crypto.getCustomer().getEmail().equals(oidcUser.getEmail())) {
                 repository.delete(crypto);
+                subscriptionListManager.removeSubscriptionFromList(crypto);
             } else {
                 throw new AccessDeniedException("You are not authorized to delete this subscription.");
             }

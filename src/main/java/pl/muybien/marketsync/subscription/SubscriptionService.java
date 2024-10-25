@@ -1,31 +1,37 @@
-package pl.muybien.marketsync.currency.crypto;
+package pl.muybien.marketsync.subscription;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.marketsync.currency.CurrencyProviderFactory;
 import pl.muybien.marketsync.currency.CurrencyService;
 import pl.muybien.marketsync.currency.CurrencyServiceFactory;
+import pl.muybien.marketsync.currency.CurrencyTarget;
 import pl.muybien.marketsync.customer.Customer;
 import pl.muybien.marketsync.customer.CustomerService;
 import pl.muybien.marketsync.handler.InvalidSubscriptionParametersException;
+import pl.muybien.marketsync.handler.SubscriptionDeletionException;
+import pl.muybien.marketsync.handler.SubscriptionNotFoundException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class CryptoSubscriptionManager {
+public class SubscriptionService {
 
     private final CurrencyServiceFactory currencyServiceFactory;
-    private final CryptoCurrencyProvider cryptoCurrencyProvider;
+    private final CurrencyProviderFactory currencyProviderFactory;
     private final CustomerService customerService;
 
     @Transactional
     public void addSubscription(OidcUser oidcUser, String uri,
                                 Double upperValueInPercent, Double lowerValueInPercent) {
         var cryptoService = currencyServiceFactory.getService(uri);
-        var currentCrypto = cryptoCurrencyProvider.fetchCurrency(uri);
+        var currencyProvider = currencyProviderFactory.getProvider(uri);
+        var currentCrypto = currencyProvider.fetchCurrency(uri);
         String cryptoName = currentCrypto.getName();
         BigDecimal currentCryptoPrice = currentCrypto.getPriceUsd();
 

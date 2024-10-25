@@ -2,7 +2,7 @@ package pl.muybien.marketsync.currency.crypto.usdcoin;
 
 import jakarta.persistence.*;
 import lombok.*;
-import pl.muybien.marketsync.currency.crypto.CryptoTarget;
+import pl.muybien.marketsync.currency.CurrencyTarget;
 import pl.muybien.marketsync.customer.Customer;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "usc-coin")
-public class Usdc implements CryptoTarget {
+public class Usdc implements CurrencyTarget {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
