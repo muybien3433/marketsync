@@ -22,8 +22,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
-    @ExceptionHandler(CurrencyNotFoundException.class)
-    public ResponseEntity<String> handleCryptoNotFoundException(CurrencyNotFoundException e) {
+    @ExceptionHandler(AssetNotFoundException.class)
+    public ResponseEntity<String> handleCryptoNotFoundException(AssetNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
