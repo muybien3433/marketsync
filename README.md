@@ -1,20 +1,26 @@
 # MarketSync
 
-MarketSync is about to
-This project implements essential backend services such as fetch market cap or user authentication.
-Data storage using modern web technologies such as Hibernate and PostgreSQL.
+MarketSync is a backend service solution designed to empower users with real-time market insights
+and personalized notifications for stock market subscriptions. MarketSync fetch data and compare
+targeted subscriptions in real time. Application offers a dynamic platform for users to stay
+informed and manage their cryptocurrency interests effortlessly.
 
 ## Features
 
-- **User Authentication**: Sign in with OAuth2
-- **Subscription Management**: Add or remove assets subscriptions.
+- **User Authentication**: OAuth2 Authorizaiton.
+- **Subscription Management**: Add or remove currency subscriptions.
 - **Notifications**: Send e-mail to user when subscription reach upper or lower bound.
+
+## Coming Soon
+- User dynamic wallet
+- User profit manager
+- More stocks
 
 ## Tech Stack
 
 - **Backend**: Java 23, SpringBoot 6
 - **Database**: PostgreSQL (Relational Database)
-- **Authentication**: OAuth2 
+- **Authentication**: OAuth2
 - **Testing**: JUnit 5 for unit tests
 - **Build Tool**: Maven for dependency management
 
