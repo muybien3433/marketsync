@@ -12,13 +12,14 @@ import pl.muybien.marketsync.handler.AssetNotFoundException;
 public class CryptoProvider implements AssetProvider {
 
     private final WebClient webClient;
+    private final CryptoMapper cryptoMapper;
 
     public Asset fetchAsset(String uri) {
         Asset currentCrypto = webClient.get()
                 .uri(uri)
                 .retrieve()
                 .bodyToMono(CryptoResponse.class)
-                .map(CryptoMapper::mapToCrypto)
+                .map(cryptoMapper::mapToCrypto)
                 .block();
         if (currentCrypto == null) {
             throw new AssetNotFoundException("Crypto data not found for URI: %s".formatted(uri));

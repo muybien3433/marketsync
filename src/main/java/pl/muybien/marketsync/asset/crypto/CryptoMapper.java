@@ -1,8 +1,10 @@
 package pl.muybien.marketsync.asset.crypto;
 
-public class CryptoMapper {
+import org.springframework.stereotype.Component;
 
-    public static Crypto mapToCrypto(CryptoResponse response) {
+@Component
+public class CryptoMapper {
+    Crypto mapToCrypto(CryptoResponse response) {
 
         if (response.data() == null) {
             throw new IllegalArgumentException("Crypto data is null");
