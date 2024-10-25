@@ -3,6 +3,7 @@ package pl.muybien.marketsync.currency.crypto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.marketsync.currency.CurrencyTarget;
 import pl.muybien.marketsync.notification.NotificationService;
 
 import java.math.BigDecimal;
@@ -14,7 +15,7 @@ public class CryptoCurrencyComparator {
     private final NotificationService notificationService;
 
     @Transactional
-    public <T extends CryptoTarget> boolean currentPriceMetSubscriptionCondition(BigDecimal currentPriceUsd, T subscription) {
+    public <T extends CurrencyTarget> boolean currentPriceMetSubscriptionCondition(BigDecimal currentPriceUsd, T subscription) {
         if (subscription != null) {
             BigDecimal upperTargetPrice = subscription.getUpperBoundPrice();
             BigDecimal lowerTargetPrice = subscription.getLowerBoundPrice();
@@ -32,9 +33,9 @@ public class CryptoCurrencyComparator {
         return false;
     }
 
-    private <T extends CryptoTarget> void sendNotification(T subscription,
-                                                           BigDecimal currentPriceUsd,
-                                                           BigDecimal targetPrice) {
+    private <T extends CurrencyTarget> void sendNotification(T subscription,
+                                                             BigDecimal currentPriceUsd,
+                                                             BigDecimal targetPrice) {
         String email = subscription.getCustomer().getEmail();
         String subject = "Your %s subscription notification!".formatted(subscription.getName());
         String message = "Current %s value reached bound at: %s, your bound was %s".formatted(

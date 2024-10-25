@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import pl.muybien.marketsync.currency.CurrencyTarget;
 import pl.muybien.marketsync.customer.Customer;
 import pl.muybien.marketsync.notification.NotificationService;
 
@@ -20,7 +21,7 @@ class CryptoCurrencyComparatorTest {
     private NotificationService notificationService;
 
     @Mock
-    private CryptoTarget subscription;
+    private CurrencyTarget subscription;
 
     @InjectMocks
     private CryptoCurrencyComparator cryptoCurrencyComparator;
