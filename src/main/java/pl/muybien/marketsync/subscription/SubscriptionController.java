@@ -6,19 +6,23 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("api/v1/subscribe")
+@RequestMapping("api/v1/subscriptions")
 @RequiredArgsConstructor
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
+    private final SubscriptionListManager subscriptionListManager;
 
-    @PostMapping
+    @PostMapping("/{uri}")
     public ResponseEntity<String> createSubscription(
             @AuthenticationPrincipal OidcUser oidcUser,
+            @PathVariable String uri,
             @RequestBody SubscriptionRequest request
     ) {
-        subscriptionService.addSubscription(oidcUser, request.uri(),
+        subscriptionService.addSubscription(oidcUser, uri,
                 request.upperValueInPercent(), request.lowerValueInPercent());
         return ResponseEntity.ok("Subscription created.");
     }
@@ -32,4 +36,9 @@ public class SubscriptionController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping
+    public List<Subscription> findAllSubscriptions(
+            @AuthenticationPrincipal OidcUser oidcUser) {
+        return subscriptionListManager.findAllCustomerSubscriptions(oidcUser);
+    }
 }

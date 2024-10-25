@@ -38,7 +38,7 @@ class GlobalExceptionHandlerTest {
     @Test
     void handleCryptoNotFoundException() {
         String message = "No service found for type: Bitcoin";
-        CurrencyNotFoundException exception = new CurrencyNotFoundException(message);
+        AssetNotFoundException exception = new AssetNotFoundException(message);
 
         ResponseEntity<String> response = globalExceptionHandler.handleCryptoNotFoundException(exception);
 

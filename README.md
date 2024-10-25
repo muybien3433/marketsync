@@ -7,7 +7,7 @@ Data storage using modern web technologies such as Hibernate and PostgreSQL.
 ## Features
 
 - **User Authentication**: Sign in with OAuth2
-- **Subscription Management**: Add or remove currency subscriptions.
+- **Subscription Management**: Add or remove assets subscriptions.
 - **Notifications**: Send e-mail to user when subscription reach upper or lower bound.
 
 ## Tech Stack

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.marketsync.currency.CurrencyTarget;
+import pl.muybien.marketsync.asset.AssetTarget;
 import pl.muybien.marketsync.handler.SubscriptionDeletionException;
 import pl.muybien.marketsync.handler.SubscriptionNotFoundException;
 
@@ -17,19 +17,19 @@ public class SubscriptionListManager {
     private final SubscriptionRepository subscriptionRepository;
 
     @Transactional
-    public void addSubscriptionToList(CurrencyTarget currencyTarget) {
+    public void addSubscriptionToList(AssetTarget assetTarget) {
         var subscription = Subscription.builder()
-                .stockId(currencyTarget.getId())
-                .stockName(currencyTarget.getName())
-                .customer(currencyTarget.getCustomer())
-                .customerEmail(currencyTarget.getCustomer().getEmail())
+                .stockId(assetTarget.getId())
+                .stockName(assetTarget.getName())
+                .customer(assetTarget.getCustomer())
+                .customerEmail(assetTarget.getCustomer().getEmail())
                 .build();
 
         subscriptionRepository.save(subscription);
     }
 
     @Transactional
-    public void removeSubscriptionFromList(CurrencyTarget crypto) {
+    public void removeSubscriptionFromList(AssetTarget crypto) {
         try {
             subscriptionRepository.deleteByStockId(crypto.getId());
         } catch (Exception e) {
