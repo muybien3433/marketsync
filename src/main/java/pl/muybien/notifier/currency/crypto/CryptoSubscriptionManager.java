@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.notifier.customer.Customer;
 import pl.muybien.notifier.customer.CustomerService;
+import pl.muybien.notifier.handler.InvalidSubscriptionParametersException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -25,12 +26,24 @@ public class CryptoSubscriptionManager {
         var currentCrypto = cryptoCurrencyProvider.fetchCurrencyByUri(uri);
         String cryptoName = currentCrypto.getName();
         BigDecimal currentCryptoPrice = currentCrypto.getPriceUsd();
-        BigDecimal upperPriceInUsd = calculatePriceByClientPercentInput(currentCryptoPrice, upperValueInPercent);
-        BigDecimal lowerPriceInUsd = calculatePriceByClientPercentInput(currentCryptoPrice, lowerValueInPercent);
+
+        BigDecimal upperPriceInUsd = null;
+        if (upperValueInPercent != null) {
+            upperPriceInUsd = calculatePriceByClientPercentInput(currentCryptoPrice, upperValueInPercent);
+        }
+
+        BigDecimal lowerPriceInUsd = null;
+        if (lowerValueInPercent != null) {
+            lowerPriceInUsd = calculatePriceByClientPercentInput(currentCryptoPrice, lowerValueInPercent);
+        }
 
         Customer customer = customerService.findCustomerByEmail(oidcUser.getEmail());
 
-        cryptoService.createAndSaveSubscription(customer, cryptoName, upperPriceInUsd, lowerPriceInUsd);
+        if (upperValueInPercent != null || lowerValueInPercent != null) {
+            cryptoService.createAndSaveSubscription(customer, cryptoName, upperPriceInUsd, lowerPriceInUsd);
+        } else {
+            throw new InvalidSubscriptionParametersException("At least one parameter must be provided.");
+        }
     }
 
     private BigDecimal calculatePriceByClientPercentInput(BigDecimal currentCryptoPrice, Double valueInPercent) {
