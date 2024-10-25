@@ -22,8 +22,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
-    @ExceptionHandler(CryptoNotFoundException.class)
-    public ResponseEntity<String> handleCryptoNotFoundException(CryptoNotFoundException e) {
+    @ExceptionHandler(CurrencyNotFoundException.class)
+    public ResponseEntity<String> handleCryptoNotFoundException(CurrencyNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
@@ -35,5 +35,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidSubscriptionParametersException.class)
     public ResponseEntity<String> handleInvalidSubscriptionParametersException(InvalidSubscriptionParametersException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(SubscriptionNotFoundException.class)
+    public ResponseEntity<String> handleSubscriptionNotFoundException(SubscriptionNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import pl.muybien.marketsync.currency.CurrencyComparator;
 import pl.muybien.marketsync.currency.CurrencyTarget;
 import pl.muybien.marketsync.customer.Customer;
 import pl.muybien.marketsync.notification.NotificationService;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-class CryptoCurrencyComparatorTest {
+class CurrencyComparatorTest {
 
     @Mock
     private NotificationService notificationService;
@@ -24,7 +25,7 @@ class CryptoCurrencyComparatorTest {
     private CurrencyTarget subscription;
 
     @InjectMocks
-    private CryptoCurrencyComparator cryptoCurrencyComparator;
+    private CurrencyComparator currencyComparator;
 
     @BeforeEach
     void setUp() {
@@ -40,7 +41,7 @@ class CryptoCurrencyComparatorTest {
         when(subscription.getLowerBoundPrice()).thenReturn(new BigDecimal("6000"));
         when(subscription.getCustomer()).thenReturn(customer);
 
-        boolean result = cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(currentPrice, subscription);
+        boolean result = currencyComparator.currentPriceMetSubscriptionCondition(currentPrice, subscription);
 
         assertTrue(result);
         verify(notificationService, times(1)).sendNotification(any(), any(), any());
@@ -55,7 +56,7 @@ class CryptoCurrencyComparatorTest {
         when(subscription.getLowerBoundPrice()).thenReturn(new BigDecimal("6000"));
         when(subscription.getCustomer()).thenReturn(customer);
 
-        boolean result = cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(currentPrice, subscription);
+        boolean result = currencyComparator.currentPriceMetSubscriptionCondition(currentPrice, subscription);
 
         assertTrue(result);
         verify(notificationService, times(1)).sendNotification(any(), any(), any());
@@ -70,7 +71,7 @@ class CryptoCurrencyComparatorTest {
         when(subscription.getLowerBoundPrice()).thenReturn(new BigDecimal("6000"));
         when(subscription.getCustomer()).thenReturn(customer);
 
-        boolean result = cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(currentPrice, subscription);
+        boolean result = currencyComparator.currentPriceMetSubscriptionCondition(currentPrice, subscription);
 
         assertFalse(result);
         verify(notificationService, never()).sendNotification(any(), any(), any());

@@ -2,7 +2,7 @@ package pl.muybien.marketsync.currency.crypto.solana;
 
 import jakarta.persistence.*;
 import lombok.*;
-import pl.muybien.marketsync.currency.crypto.CryptoTarget;
+import pl.muybien.marketsync.currency.CurrencyTarget;
 import pl.muybien.marketsync.customer.Customer;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "solana")
-public class Solana implements CryptoTarget {
+public class Solana implements CurrencyTarget {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

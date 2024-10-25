@@ -1,7 +1,5 @@
-package pl.muybien.marketsync.currency.crypto;
+package pl.muybien.marketsync.currency;
 
-import pl.muybien.marketsync.currency.CurrencyService;
-
-public interface CryptoServiceFactory {
-    CurrencyService getService(String cryptoName);
+public interface CurrencyServiceFactory {
+    CurrencyService getService(String currencyName);
 }

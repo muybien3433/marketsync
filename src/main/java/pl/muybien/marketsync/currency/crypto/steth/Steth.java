@@ -2,7 +2,7 @@ package pl.muybien.marketsync.currency.crypto.steth;
 
 import jakarta.persistence.*;
 import lombok.*;
-import pl.muybien.marketsync.currency.crypto.CryptoTarget;
+import pl.muybien.marketsync.currency.CurrencyTarget;
 import pl.muybien.marketsync.customer.Customer;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "steth")
-public class Steth implements CryptoTarget {
+public class Steth implements CurrencyTarget {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

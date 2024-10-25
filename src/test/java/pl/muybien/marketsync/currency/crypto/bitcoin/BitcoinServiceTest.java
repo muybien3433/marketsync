@@ -9,9 +9,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import pl.muybien.marketsync.currency.crypto.Crypto;
-import pl.muybien.marketsync.currency.crypto.CryptoCurrencyComparator;
+import pl.muybien.marketsync.currency.CurrencyComparator;
 import pl.muybien.marketsync.currency.crypto.CryptoCurrencyProvider;
 import pl.muybien.marketsync.customer.Customer;
+import pl.muybien.marketsync.subscription.SubscriptionListManager;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,7 +35,10 @@ class BitcoinServiceTest {
     private BitcoinRepository repository;
 
     @Mock
-    private CryptoCurrencyComparator cryptoCurrencyComparator;
+    private CurrencyComparator currencyComparator;
+
+    @Mock
+    private SubscriptionListManager subscriptionListManager;
 
     private Bitcoin crypto;
     private OidcUser oidcUser;
@@ -63,10 +67,10 @@ class BitcoinServiceTest {
         var subscription2 = mock(Bitcoin.class);
 
         when(crypto.getPriceUsd()).thenReturn(cryptoPrice);
-        when(cryptoCurrencyProvider.fetchCurrencyByUri(anyString())).thenReturn(crypto);
+        when(cryptoCurrencyProvider.fetchCurrency(anyString())).thenReturn(crypto);
         when(repository.findAll()).thenReturn(List.of(subscription1, subscription2));
-        when(cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription1)).thenReturn(true);
-        when(cryptoCurrencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription2)).thenReturn(false);
+        when(currencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription1)).thenReturn(true);
+        when(currencyComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription2)).thenReturn(false);
 
         service.fetchCurrentStock();
 

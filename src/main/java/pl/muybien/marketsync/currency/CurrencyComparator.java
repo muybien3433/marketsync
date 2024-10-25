@@ -1,16 +1,15 @@
-package pl.muybien.marketsync.currency.crypto;
+package pl.muybien.marketsync.currency;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.marketsync.currency.CurrencyTarget;
 import pl.muybien.marketsync.notification.NotificationService;
 
 import java.math.BigDecimal;
 
 @Component
 @RequiredArgsConstructor
-public class CryptoCurrencyComparator {
+public class CurrencyComparator {
 
     private final NotificationService notificationService;
 

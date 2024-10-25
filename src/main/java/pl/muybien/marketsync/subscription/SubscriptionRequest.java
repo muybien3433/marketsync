@@ -1,6 +1,6 @@
-package pl.muybien.marketsync.currency.crypto;
+package pl.muybien.marketsync.subscription;
 
-public record CryptoRequest (
+public record SubscriptionRequest(
         String uri,
         Double upperValueInPercent,
         Double lowerValueInPercent
