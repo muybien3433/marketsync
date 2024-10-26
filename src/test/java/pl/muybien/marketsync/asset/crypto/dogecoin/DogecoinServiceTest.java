@@ -60,7 +60,7 @@ class DogecoinServiceTest {
     }
 
     @Test
-    void fetchCurrentStock() {
+    void fetchCurrentAsset() {
         BigDecimal cryptoPrice = new BigDecimal("5300.00");
         var crypto = mock(Crypto.class);
         var subscription1 = mock(Dogecoin.class);
@@ -72,7 +72,7 @@ class DogecoinServiceTest {
         when(assetComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription1)).thenReturn(true);
         when(assetComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription2)).thenReturn(false);
 
-        service.fetchCurrentStock();
+        service.fetchCurrentAsset();
 
         verify(repository, times(1)).findAll();
         verify(repository).delete(subscription1);

@@ -28,7 +28,7 @@ public class DogecoinService implements AssetService {
     @Override
     @Scheduled(fixedRate = 10000)
     @Transactional
-    public void fetchCurrentStock() {
+    public void fetchCurrentAsset() {
         var cryptoPrice = cryptoProvider.fetchAsset("dogecoin").getPriceUsd();
         var subscriptions = repository.findAll();
         subscriptions.forEach(subscription -> {
