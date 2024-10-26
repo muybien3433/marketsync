@@ -3,6 +3,7 @@ package pl.muybien.marketsync.customer;
 import jakarta.persistence.*;
 import lombok.*;
 import pl.muybien.marketsync.subscription.Subscription;
+import wallet.Wallet;
 
 import java.util.List;
 
@@ -23,4 +24,7 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Subscription> subscriptions;
+
+    @OneToOne(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Wallet wallet;
 }
