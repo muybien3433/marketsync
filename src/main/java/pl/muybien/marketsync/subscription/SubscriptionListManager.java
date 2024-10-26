@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.marketsync.asset.AssetTarget;
+import pl.muybien.marketsync.finance.FinanceTarget;
 import pl.muybien.marketsync.handler.SubscriptionDeletionException;
 
 import java.time.LocalDateTime;
@@ -18,14 +18,14 @@ public class SubscriptionListManager {
     private final SubscriptionDTOMapper subscriptionDTOMapper;
 
     @Transactional
-    public void addSubscriptionToList(AssetTarget assetTarget) {
+    public void addSubscriptionToList(FinanceTarget financeTarget) {
         var subscription = Subscription.builder()
-                .assetId(assetTarget.getId())
-                .upperBoundPrice(assetTarget.getUpperBoundPrice())
-                .lowerBoundPrice(assetTarget.getLowerBoundPrice())
-                .assetName(assetTarget.getName())
-                .customer(assetTarget.getCustomer())
-                .customerEmail(assetTarget.getCustomer().getEmail())
+                .financeId(financeTarget.getId())
+                .upperBoundPrice(financeTarget.getUpperBoundPrice())
+                .lowerBoundPrice(financeTarget.getLowerBoundPrice())
+                .financeName(financeTarget.getName())
+                .customer(financeTarget.getCustomer())
+                .customerEmail(financeTarget.getCustomer().getEmail())
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -33,9 +33,9 @@ public class SubscriptionListManager {
     }
 
     @Transactional
-    public void removeSubscriptionFromList(AssetTarget crypto) {
+    public void removeSubscriptionFromList(FinanceTarget crypto) {
         try {
-            subscriptionRepository.deleteByAssetId(crypto.getId());
+            subscriptionRepository.deleteByFinanceId(crypto.getId());
         } catch (Exception e) {
             throw new SubscriptionDeletionException(
                     "Subscription: %s id: %d could not be deleted.".

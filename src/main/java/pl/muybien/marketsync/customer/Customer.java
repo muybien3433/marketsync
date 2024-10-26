@@ -3,7 +3,7 @@ package pl.muybien.marketsync.customer;
 import jakarta.persistence.*;
 import lombok.*;
 import pl.muybien.marketsync.subscription.Subscription;
-import wallet.Wallet;
+import pl.muybien.marketsync.wallet.Wallet;
 
 import java.util.List;
 

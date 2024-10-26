@@ -7,8 +7,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import pl.muybien.marketsync.asset.*;
-import pl.muybien.marketsync.asset.crypto.Crypto;
+import pl.muybien.marketsync.finance.*;
+import pl.muybien.marketsync.finance.crypto.Crypto;
 import pl.muybien.marketsync.customer.Customer;
 import pl.muybien.marketsync.customer.CustomerService;
 import pl.muybien.marketsync.handler.InvalidSubscriptionParametersException;
@@ -25,19 +25,19 @@ class SubscriptionServiceTest {
     private SubscriptionService subscriptionService;
 
     @Mock
-    private AssetServiceFactory assetServiceFactory;
+    private FinanceServiceFactory financeServiceFactory;
 
     @Mock
-    private AssetProviderFactory assetProviderFactory;
+    private FinanceProviderFactory financeProviderFactory;
 
     @Mock
     private CustomerService customerService;
 
     @Mock
-    private AssetService assetService;
+    private FinanceService financeService;
 
     @Mock
-    private AssetProvider assetProvider;
+    private FinanceProvider financeProvider;
 
     @Mock
     private OidcUser oidcUser;
@@ -61,9 +61,9 @@ class SubscriptionServiceTest {
         var customer = mock(Customer.class);
         var currentCrypto = Mockito.mock(Crypto.class);
 
-        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
-        when(assetServiceFactory.getService(uri)).thenReturn(assetService);
-        when(assetProvider.fetchAsset(uri)).thenReturn(currentCrypto);
+        when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
+        when(financeServiceFactory.getService(uri)).thenReturn(financeService);
+        when(financeProvider.fetchFinance(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn("test@example.com");
@@ -71,10 +71,10 @@ class SubscriptionServiceTest {
 
         subscriptionService.addSubscription(oidcUser, uri, upperValueInPercent, lowerValueInPercent);
 
-        verify(assetServiceFactory).getService(uri);
-        verify(assetProvider).fetchAsset(uri);
+        verify(financeServiceFactory).getService(uri);
+        verify(financeProvider).fetchFinance(uri);
         verify(customerService).findCustomerByEmail("test@example.com");
-        verify(assetService).createAndSaveSubscription(customer, cryptoName, expectedUpperPrice, expectedLowerPrice);
+        verify(financeService).createAndSaveSubscription(customer, cryptoName, expectedUpperPrice, expectedLowerPrice);
     }
 
     @Test
@@ -86,9 +86,9 @@ class SubscriptionServiceTest {
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
-        when(assetServiceFactory.getService(uri)).thenReturn(assetService);
-        when(assetProvider.fetchAsset(uri)).thenReturn(currentCrypto);
+        when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
+        when(financeServiceFactory.getService(uri)).thenReturn(financeService);
+        when(financeProvider.fetchFinance(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn("test@example.com");
@@ -96,10 +96,10 @@ class SubscriptionServiceTest {
 
         subscriptionService.addSubscription(oidcUser, uri, null, lowerValueInPercent);
 
-        verify(assetServiceFactory).getService(uri);
-        verify(assetProvider).fetchAsset(uri);
+        verify(financeServiceFactory).getService(uri);
+        verify(financeProvider).fetchFinance(uri);
         verify(customerService).findCustomerByEmail("test@example.com");
-        verify(assetService).createAndSaveSubscription(customer, cryptoName, null, expectedLowerPrice);
+        verify(financeService).createAndSaveSubscription(customer, cryptoName, null, expectedLowerPrice);
     }
 
     @Test
@@ -109,9 +109,9 @@ class SubscriptionServiceTest {
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
-        when(assetServiceFactory.getService(uri)).thenReturn(assetService);
-        when(assetProvider.fetchAsset(uri)).thenReturn(currentCrypto);
+        when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
+        when(financeServiceFactory.getService(uri)).thenReturn(financeService);
+        when(financeProvider.fetchFinance(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn("test@example.com");
@@ -122,10 +122,10 @@ class SubscriptionServiceTest {
 
         assertEquals("At least one parameter must be provided.", e.getMessage());
 
-        verify(assetServiceFactory).getService(uri);
-        verify(assetProvider).fetchAsset(uri);
+        verify(financeServiceFactory).getService(uri);
+        verify(financeProvider).fetchFinance(uri);
         verify(customerService).findCustomerByEmail("test@example.com");
-        verify(assetService, never()).createAndSaveSubscription(customer, cryptoName, null, null);
+        verify(financeService, never()).createAndSaveSubscription(customer, cryptoName, null, null);
     }
 
     @Test
@@ -137,9 +137,9 @@ class SubscriptionServiceTest {
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
-        when(assetServiceFactory.getService(uri)).thenReturn(assetService);
-        when(assetProvider.fetchAsset(uri)).thenReturn(currentCrypto);
+        when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
+        when(financeServiceFactory.getService(uri)).thenReturn(financeService);
+        when(financeProvider.fetchFinance(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn("test@example.com");
@@ -147,22 +147,22 @@ class SubscriptionServiceTest {
 
         subscriptionService.addSubscription(oidcUser, uri, upperValueInPercent, null);
 
-        verify(assetServiceFactory).getService(uri);
-        verify(assetProvider).fetchAsset(uri);
+        verify(financeServiceFactory).getService(uri);
+        verify(financeProvider).fetchFinance(uri);
         verify(customerService).findCustomerByEmail("test@example.com");
-        verify(assetService).createAndSaveSubscription(customer, cryptoName, expectedUpperPrice, null);
+        verify(financeService).createAndSaveSubscription(customer, cryptoName, expectedUpperPrice, null);
     }
 
     @Test
     void removeSubscription() {
         Long subscriptionId = 1L;
 
-        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
-        when(assetServiceFactory.getService(uri)).thenReturn(assetService);
+        when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
+        when(financeServiceFactory.getService(uri)).thenReturn(financeService);
 
         subscriptionService.removeSubscription(oidcUser, uri, subscriptionId);
 
-        verify(assetServiceFactory).getService(uri);
-        verify(assetService, times(1)).removeSubscription(oidcUser, subscriptionId);
+        verify(financeServiceFactory).getService(uri);
+        verify(financeService, times(1)).removeSubscription(oidcUser, subscriptionId);
     }
 }
