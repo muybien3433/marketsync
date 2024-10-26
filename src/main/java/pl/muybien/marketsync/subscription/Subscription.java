@@ -19,8 +19,8 @@ public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long stockId;
-    private String stockName;
+    private Long assetId;
+    private String assetName;
     private BigDecimal upperBoundPrice;
     private BigDecimal lowerBoundPrice;
     private String customerEmail;

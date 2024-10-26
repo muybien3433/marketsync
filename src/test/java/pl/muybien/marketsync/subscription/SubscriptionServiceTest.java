@@ -1,16 +1,17 @@
-package pl.muybien.marketsync.asset.crypto;
+package pl.muybien.marketsync.subscription;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import pl.muybien.marketsync.asset.*;
+import pl.muybien.marketsync.asset.crypto.Crypto;
 import pl.muybien.marketsync.customer.Customer;
 import pl.muybien.marketsync.customer.CustomerService;
 import pl.muybien.marketsync.handler.InvalidSubscriptionParametersException;
-import pl.muybien.marketsync.subscription.SubscriptionService;
 
 import java.math.BigDecimal;
 
@@ -41,6 +42,9 @@ class SubscriptionServiceTest {
     @Mock
     private OidcUser oidcUser;
 
+    private final String uri = "cryptoUri";
+    private final String provider = "crypto";
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -48,7 +52,6 @@ class SubscriptionServiceTest {
 
     @Test
     void addSubscription() {
-        String uri = "cryptoUri";
         String cryptoName = "cryptoName";
         Double upperValueInPercent = 10.0;
         Double lowerValueInPercent = -10.0;
@@ -56,9 +59,9 @@ class SubscriptionServiceTest {
         BigDecimal expectedUpperPrice = BigDecimal.valueOf(1100).setScale(2);
         BigDecimal expectedLowerPrice = BigDecimal.valueOf(900).setScale(2);
         var customer = mock(Customer.class);
-        var currentCrypto = mock(Crypto.class);
+        var currentCrypto = Mockito.mock(Crypto.class);
 
-        when(assetProviderFactory.getProvider(uri)).thenReturn(assetProvider);
+        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
         when(assetServiceFactory.getService(uri)).thenReturn(assetService);
         when(assetProvider.fetchAsset(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
@@ -76,7 +79,6 @@ class SubscriptionServiceTest {
 
     @Test
     void addSubscriptionUpperValueNull() {
-        String uri = "cryptoUri";
         String cryptoName = "cryptoName";
         Double lowerValueInPercent = -10.0;
         BigDecimal currentPrice = BigDecimal.valueOf(1000);
@@ -84,7 +86,7 @@ class SubscriptionServiceTest {
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(assetProviderFactory.getProvider(uri)).thenReturn(assetProvider);
+        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
         when(assetServiceFactory.getService(uri)).thenReturn(assetService);
         when(assetProvider.fetchAsset(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
@@ -102,13 +104,12 @@ class SubscriptionServiceTest {
 
     @Test
     void addSubscriptionBothValuesNull() {
-        String uri = "cryptoUri";
         String cryptoName = "cryptoName";
         BigDecimal currentPrice = BigDecimal.valueOf(1000);
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(assetProviderFactory.getProvider(uri)).thenReturn(assetProvider);
+        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
         when(assetServiceFactory.getService(uri)).thenReturn(assetService);
         when(assetProvider.fetchAsset(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
@@ -129,7 +130,6 @@ class SubscriptionServiceTest {
 
     @Test
     void addSubscriptionLowerValueNull() {
-        String uri = "cryptoUri";
         String cryptoName = "cryptoName";
         Double upperValueInPercent = 10.0;
         BigDecimal currentPrice = BigDecimal.valueOf(1000);
@@ -137,7 +137,7 @@ class SubscriptionServiceTest {
         var customer = mock(Customer.class);
         var currentCrypto = mock(Crypto.class);
 
-        when(assetProviderFactory.getProvider(uri)).thenReturn(assetProvider);
+        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
         when(assetServiceFactory.getService(uri)).thenReturn(assetService);
         when(assetProvider.fetchAsset(uri)).thenReturn(currentCrypto);
         when(currentCrypto.getName()).thenReturn(cryptoName);
@@ -156,9 +156,8 @@ class SubscriptionServiceTest {
     @Test
     void removeSubscription() {
         Long subscriptionId = 1L;
-        String uri = "cryptoUri";
 
-        when(assetProviderFactory.getProvider(uri)).thenReturn(assetProvider);
+        when(assetProviderFactory.getProvider(provider)).thenReturn(assetProvider);
         when(assetServiceFactory.getService(uri)).thenReturn(assetService);
 
         subscriptionService.removeSubscription(oidcUser, uri, subscriptionId);

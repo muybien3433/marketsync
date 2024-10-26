@@ -1,13 +1,13 @@
 package pl.muybien.marketsync.asset.crypto;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import pl.muybien.marketsync.asset.Asset;
 import pl.muybien.marketsync.asset.AssetProvider;
 import pl.muybien.marketsync.handler.AssetNotFoundException;
 
-@Component
+@Service("crypto")
 @RequiredArgsConstructor
 public class CryptoProvider implements AssetProvider {
 
