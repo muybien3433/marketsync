@@ -1,11 +1,11 @@
-package pl.muybien.marketsync.subscription;
+package pl.muybien.marketsync.finance.crypto.xrp;
 
 import jakarta.persistence.*;
 import lombok.*;
+import pl.muybien.marketsync.finance.FinanceTarget;
 import pl.muybien.marketsync.customer.Customer;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -13,18 +13,15 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "subscription")
-public class Subscription {
+@Table(name = "xrp")
+public class Xrp implements FinanceTarget {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long financeId;
-    private String financeName;
+    private String name;
     private BigDecimal upperBoundPrice;
     private BigDecimal lowerBoundPrice;
-    private String customerEmail;
-    private LocalDateTime createdAt;
 
     @ManyToOne
     private Customer customer;
