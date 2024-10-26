@@ -28,7 +28,7 @@ public class StethService implements AssetService {
     @Override
     @Scheduled(fixedRate = 10000)
     @Transactional
-    public void fetchCurrentStock() {
+    public void fetchCurrentAsset() {
         var cryptoPrice = cryptoProvider.fetchAsset("steth").getPriceUsd();
         var subscriptions = repository.findAll();
         subscriptions.forEach(subscription -> {

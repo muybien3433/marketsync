@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public interface AssetService {
 
-    void fetchCurrentStock();
+    void fetchCurrentAsset();
     void createAndSaveSubscription(Customer customer, String assetName,
                                                    BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd);
 

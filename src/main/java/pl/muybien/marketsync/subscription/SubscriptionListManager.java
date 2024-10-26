@@ -35,7 +35,7 @@ public class SubscriptionListManager {
     @Transactional
     public void removeSubscriptionFromList(AssetTarget crypto) {
         try {
-            subscriptionRepository.deleteByStockId(crypto.getId());
+            subscriptionRepository.deleteByAssetId(crypto.getId());
         } catch (Exception e) {
             throw new SubscriptionDeletionException(
                     "Subscription: %s id: %d could not be deleted.".
