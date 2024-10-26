@@ -1,10 +1,8 @@
-package pl.muybien.marketsync.asset.crypto;
+package pl.muybien.marketsync.asset;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
-import pl.muybien.marketsync.asset.AssetService;
-import pl.muybien.marketsync.asset.AssetServiceFactoryImpl;
 import pl.muybien.marketsync.handler.AssetNotFoundException;
 
 import java.util.HashMap;
@@ -21,7 +19,7 @@ class AssetServiceFactoryImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        services = new HashMap<>(); // needs to be before cryptoServiceFactoryImpl initialization
+        services = new HashMap<>();
         assetServiceFactoryImpl = new AssetServiceFactoryImpl(services);
     }
 
