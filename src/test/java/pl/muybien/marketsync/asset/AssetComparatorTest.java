@@ -1,12 +1,10 @@
-package pl.muybien.marketsync.asset.crypto;
+package pl.muybien.marketsync.asset;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import pl.muybien.marketsync.asset.AssetComparator;
-import pl.muybien.marketsync.asset.AssetTarget;
 import pl.muybien.marketsync.customer.Customer;
 import pl.muybien.marketsync.notification.NotificationService;
 

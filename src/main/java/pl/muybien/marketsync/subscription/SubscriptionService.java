@@ -2,7 +2,7 @@ package pl.muybien.marketsync.subscription;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.marketsync.asset.AssetProviderFactory;
 import pl.muybien.marketsync.asset.AssetService;
@@ -14,7 +14,7 @@ import pl.muybien.marketsync.handler.InvalidSubscriptionParametersException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class SubscriptionService {
 
@@ -25,37 +25,38 @@ public class SubscriptionService {
     @Transactional
     public void addSubscription(OidcUser oidcUser, String uri,
                                 Double upperValueInPercent, Double lowerValueInPercent) {
-        var cryptoService = assetServiceFactory.getService(uri);
-        var assetProvider = assetProviderFactory.getProvider(uri);
-        var currentCrypto = assetProvider.fetchAsset(uri);
-        String cryptoName = currentCrypto.getName();
-        BigDecimal currentCryptoPrice = currentCrypto.getPriceUsd();
+        var service = assetServiceFactory.getService(uri);
+        // TODO: After marketplace creation provide necessarily logic switching between providers
+        var assetProvider = assetProviderFactory.getProvider("crypto");
+        var currentAsset = assetProvider.fetchAsset(uri);
+        String assetName = currentAsset.getName();
+        BigDecimal currentAssetPrice = currentAsset.getPriceUsd();
 
         BigDecimal upperPriceInUsd = null;
         if (upperValueInPercent != null) {
-            upperPriceInUsd = calculatePriceByClientPercentInput(currentCryptoPrice, upperValueInPercent);
+            upperPriceInUsd = calculatePriceByClientPercentInput(currentAssetPrice, upperValueInPercent);
         }
 
         BigDecimal lowerPriceInUsd = null;
         if (lowerValueInPercent != null) {
-            lowerPriceInUsd = calculatePriceByClientPercentInput(currentCryptoPrice, lowerValueInPercent);
+            lowerPriceInUsd = calculatePriceByClientPercentInput(currentAssetPrice, lowerValueInPercent);
         }
 
         Customer customer = customerService.findCustomerByEmail(oidcUser.getEmail());
 
         if (upperValueInPercent != null || lowerValueInPercent != null) {
-            cryptoService.createAndSaveSubscription(customer, cryptoName, upperPriceInUsd, lowerPriceInUsd);
+            service.createAndSaveSubscription(customer, assetName, upperPriceInUsd, lowerPriceInUsd);
         } else {
             throw new InvalidSubscriptionParametersException("At least one parameter must be provided.");
         }
     }
 
-    private BigDecimal calculatePriceByClientPercentInput(BigDecimal currentCryptoPrice, Double valueInPercent) {
+    private BigDecimal calculatePriceByClientPercentInput(BigDecimal assetPrice, Double valueInPercent) {
         BigDecimal percentDecimal = new BigDecimal(valueInPercent)
                 .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
-        BigDecimal change = currentCryptoPrice.multiply(percentDecimal);
+        BigDecimal change = assetPrice.multiply(percentDecimal);
 
-        return currentCryptoPrice.add(change).setScale(2, RoundingMode.HALF_UP);
+        return assetPrice.add(change).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Transactional

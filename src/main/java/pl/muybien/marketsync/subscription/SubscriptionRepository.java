@@ -13,7 +13,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM Subscription s WHERE s.stockId = :stockId")
+    @Query("DELETE FROM Subscription s WHERE s.assetId = :stockId")
     void deleteByStockId(@Param("stockId") Long stockId);
 
     @Query("SELECT s FROM Subscription s WHERE s.customerEmail = :email")
