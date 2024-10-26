@@ -1,8 +1,8 @@
 package pl.muybien.marketsync.asset.crypto;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class CryptoMapper {
     Crypto mapToCrypto(CryptoResponse response) {
 

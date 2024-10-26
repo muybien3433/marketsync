@@ -1,12 +1,12 @@
 package pl.muybien.marketsync.asset;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import pl.muybien.marketsync.handler.AssetNotFoundException;
 
 import java.util.Map;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class AssetServiceFactoryImpl implements AssetServiceFactory {
 

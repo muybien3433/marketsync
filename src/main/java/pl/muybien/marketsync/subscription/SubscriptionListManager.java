@@ -20,10 +20,10 @@ public class SubscriptionListManager {
     @Transactional
     public void addSubscriptionToList(AssetTarget assetTarget) {
         var subscription = Subscription.builder()
-                .stockId(assetTarget.getId())
+                .assetId(assetTarget.getId())
                 .upperBoundPrice(assetTarget.getUpperBoundPrice())
                 .lowerBoundPrice(assetTarget.getLowerBoundPrice())
-                .stockName(assetTarget.getName())
+                .assetName(assetTarget.getName())
                 .customer(assetTarget.getCustomer())
                 .customerEmail(assetTarget.getCustomer().getEmail())
                 .createdAt(LocalDateTime.now())
