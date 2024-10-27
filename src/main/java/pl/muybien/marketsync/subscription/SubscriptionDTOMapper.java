@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class SubscriptionDTOMapper {
     SubscriptionDTO mapToDTO(Subscription subscription) {
         return SubscriptionDTO.builder()
-                .stockName(subscription.getFinanceName())
+                .financeName(subscription.getName())
                 .upperBoundPrice(subscription.getUpperBoundPrice())
                 .lowerBoundPrice(subscription.getLowerBoundPrice())
                 .createdAt(subscription.getCreatedAt())

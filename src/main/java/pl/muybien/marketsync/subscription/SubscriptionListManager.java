@@ -23,7 +23,7 @@ public class SubscriptionListManager {
                 .financeId(financeTarget.getId())
                 .upperBoundPrice(financeTarget.getUpperBoundPrice())
                 .lowerBoundPrice(financeTarget.getLowerBoundPrice())
-                .financeName(financeTarget.getName())
+                .name(financeTarget.getName())
                 .customer(financeTarget.getCustomer())
                 .customerEmail(financeTarget.getCustomer().getEmail())
                 .createdAt(LocalDateTime.now())

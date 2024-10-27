@@ -20,7 +20,7 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long financeId;
-    private String financeName;
+    private String name;
     private BigDecimal upperBoundPrice;
     private BigDecimal lowerBoundPrice;
     private String customerEmail;
