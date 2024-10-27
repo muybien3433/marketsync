@@ -1,6 +1,7 @@
 package pl.muybien.marketsync.subscription;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -24,7 +25,7 @@ public class SubscriptionController {
     ) {
         subscriptionService.addSubscription(oidcUser, uri,
                 request.upperValueInPercent(), request.lowerValueInPercent());
-        return ResponseEntity.ok("Subscription created.");
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{uri}/{id}")
@@ -37,8 +38,9 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    public List<SubscriptionDTO> findAllSubscriptions(
+    public ResponseEntity<List<SubscriptionDTO>> findAllSubscriptions(
             @AuthenticationPrincipal OidcUser oidcUser) {
-        return subscriptionListManager.findAllCustomerSubscriptions(oidcUser);
+        List<SubscriptionDTO> subscriptions = subscriptionListManager.findAllCustomerSubscriptions(oidcUser);
+        return ResponseEntity.ok(subscriptions);
     }
 }
