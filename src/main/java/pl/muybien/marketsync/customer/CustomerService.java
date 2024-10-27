@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.marketsync.wallet.Wallet;
 
 @Service
 @RequiredArgsConstructor
@@ -12,15 +13,19 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 
     @Transactional
-    public void findOrCreateCustomer(String email, String name) {
-        customerRepository.findByEmail(email)
-                .orElseGet(() -> {
+    public void createCustomerIfNotPresent(String email, String name) {
+        customerRepository.findByEmail(email).ifPresentOrElse(
+                _ -> {
+                },
+                () -> {
                     var customer = Customer.builder()
                             .email(email)
                             .name(name)
+                            .wallet(new Wallet())
                             .build();
-                    return customerRepository.save(customer);
-                });
+                    customerRepository.save(customer);
+                }
+        );
     }
 
     @Transactional(readOnly = true)

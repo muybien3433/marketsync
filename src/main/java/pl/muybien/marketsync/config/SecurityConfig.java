@@ -46,7 +46,7 @@ public class SecurityConfig {
             String email = oidcUser.getAttribute("email");
             String name = oidcUser.getAttribute("name");
 
-            customerService.findOrCreateCustomer(email, name);
+            customerService.createCustomerIfNotPresent(email, name);
 
             return oidcUser;
         };

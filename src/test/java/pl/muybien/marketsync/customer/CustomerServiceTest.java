@@ -25,7 +25,7 @@ class CustomerServiceTest {
     }
 
     @Test
-    void findOrCreateCustomerExists() {
+    void createCustomerIfNotPresentExists() {
         String email = "existing@email.com";
         String name = "existingName";
         var existingCustomer = Customer.builder()
@@ -35,20 +35,20 @@ class CustomerServiceTest {
 
         when(customerRepository.findByEmail(email)).thenReturn(Optional.of(existingCustomer));
 
-        customerService.findOrCreateCustomer(email, name);
+        customerService.createCustomerIfNotPresent(email, name);
 
         verify(customerRepository, times(1)).findByEmail(email);
         verifyNoMoreInteractions(customerRepository);
     }
 
     @Test
-    void findOrCreateCustomerNotExists() {
+    void createCustomerIfNotPresentNotExists() {
         String email = "notExisting@email.com";
         String name = "notExistingName";
 
         when(customerRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-        customerService.findOrCreateCustomer(email, name);
+        customerService.createCustomerIfNotPresent(email, name);
 
         verify(customerRepository, times(1)).findByEmail(email);
         verify(customerRepository, times(1)).save(argThat(customer ->
