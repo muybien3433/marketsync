@@ -9,10 +9,11 @@ informed and manage their cryptocurrency interests effortlessly.
 
 - **User Authentication**: OAuth2 Authorizaiton.
 - **Subscription Management**: Add or remove currency subscriptions.
+- **Wallet**: Personal customer wallet manage assets.
+- **Assets**: Add or remove assets to wallet.
 - **Notifications**: Send e-mail to user when subscription reach upper or lower bound.
 
 ## Coming Soon
-- User dynamic wallet
 - User profit manager
 - More stocks
 
@@ -36,8 +37,14 @@ Ensure you have the following installed before running the project:
 
 **API will be available at localhost:8080/api/v1**
 
+- *Wallet*: `/wallet`
+    - `GET /` – Display all customer assets in wallet.
+
+- *Asset*: `/asset`
+    - `POST /` – Create new asset and add it to wallet.
+
 - *Subscription*: `/subscriptions`
-    - `GET /` – Display all user subscriptions.
+    - `GET /` – Display all customer subscriptions.
     - `POST /{uri}` – Create new subscription (params: upperValueInPercent, lowerValueInPercent).
     - `DELETE /{uri}/{id}` – Delete subscription.
 
