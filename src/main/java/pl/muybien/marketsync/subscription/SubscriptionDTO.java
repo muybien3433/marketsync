@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record SubscriptionDTO(
-        String stockName,
+        String financeName,
         LocalDateTime createdAt,
         BigDecimal upperBoundPrice,
         BigDecimal lowerBoundPrice
