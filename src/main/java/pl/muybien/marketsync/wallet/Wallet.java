@@ -25,4 +25,5 @@ public class Wallet {
 
     @OneToMany(mappedBy = "wallet", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Asset> assets;
+
 }

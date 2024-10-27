@@ -20,7 +20,7 @@ public class AssetController {
             @PathVariable String uri,
             @RequestBody AssetRequest request
     ) {
-        assetService.createNewAsset(oidcUser, uri, request);
+        assetService.createOrUpdateAsset(oidcUser, uri, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

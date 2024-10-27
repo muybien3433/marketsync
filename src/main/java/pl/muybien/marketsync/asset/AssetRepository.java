@@ -11,5 +11,11 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     @Query("SELECT a FROM Asset a WHERE a.wallet.id = :walletId")
     @Transactional(readOnly = true)
-    Optional<List<Asset>> findAllAssetsByWalletId(Long walletId);
+    List<Asset> findAllAssetsByWalletId(Long walletId);
+
+    @Query("""
+            SELECT a FROM Asset a WHERE a.wallet.id = :walletId
+            AND a.name = :assetName
+            """)
+    Optional<Asset> findAssetByWalletIdAndAssetName(Long walletId, String assetName);
 }
