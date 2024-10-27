@@ -1,11 +1,17 @@
 package pl.muybien.marketsync.asset;
 
 import jakarta.persistence.*;
+import lombok.*;
 import pl.muybien.marketsync.wallet.Wallet;
 
 import java.math.BigDecimal;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "asset")
 public class Asset {
 
