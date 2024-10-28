@@ -1,11 +1,14 @@
 package pl.muybien.marketsync.asset;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.marketsync.customer.CustomerService;
 import pl.muybien.marketsync.finance.FinanceProviderFactory;
+import pl.muybien.marketsync.handler.AssetNotFoundException;
+import pl.muybien.marketsync.handler.AssetOwnershipException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -97,8 +100,16 @@ public class AssetService {
     }
 
     @Transactional
-    public void deleteAsset() {
+    public void deleteAsset(OidcUser oidcUser, Long assetId) {
+        var wallet = customerService.findCustomerByEmail(oidcUser.getEmail()).getWallet();
+        var asset = assetRepository.findById(assetId).orElseThrow(() ->
+                new AssetNotFoundException("Asset with id %d not found".formatted(assetId)));
 
+        if (wallet.getAssets().contains(asset)) {
+                assetRepository.deleteById(assetId);
+        } else {
+            throw new AssetOwnershipException("Asset with id %d not belong to your wallet".formatted(assetId));
+        }
     }
 
     @Transactional(readOnly = true)
