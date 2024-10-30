@@ -1,0 +1,30 @@
+<div class="wallet-container">
+  <h2>Your Wallet Assets</h2>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+      <th>Count</th>
+      <th>Average Purchase Price</th>
+      <th>Current Price</th>
+      <th>Investment Period (Days)</th>
+      <th>Profit (%)</th>
+      <th>Profit</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let asset of assets">
+      <td>{{ asset.name }}</td>
+      <td>{{ asset.value | currency }}</td>
+      <td>{{ asset.count }}</td>
+      <td>{{ asset.averagePurchasePrice | currency }}</td>
+      <td>{{ asset.currentPrice | currency }}</td>
+      <td>{{ asset.investmentPeriodInDays }}</td>
+      <td>{{ asset.profitInPercentage | number: '1.0-2' }}%</td>
+      <td>{{ asset.profit | currency }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
