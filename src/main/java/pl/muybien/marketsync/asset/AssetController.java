@@ -23,4 +23,13 @@ public class AssetController {
         assetService.createOrUpdateAsset(oidcUser, uri, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @DeleteMapping("{assetId}")
+    public ResponseEntity<String> deleteAsset(
+            @AuthenticationPrincipal OidcUser oidcUser,
+            @PathVariable Long assetId
+    ) {
+        assetService.deleteAsset(oidcUser, assetId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
