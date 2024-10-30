@@ -1,0 +1,3 @@
+[submodule "marketsync-backend"]
+	path = marketsync-backend
+	url = /Users/milosz/Documents/projects/marketsync/marketsync-backend
