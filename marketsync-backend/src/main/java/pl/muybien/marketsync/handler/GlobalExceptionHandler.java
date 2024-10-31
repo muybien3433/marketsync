@@ -30,6 +30,11 @@ public class GlobalExceptionHandler {
     }
 
     //                          Subscription
+    @ExceptionHandler
+    public ResponseEntity<String> handleSubscriptionOwnershipException(SubscriptionOwnershipException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+
     @ExceptionHandler(InvalidSubscriptionParametersException.class)
     public ResponseEntity<String> handleInvalidSubscriptionParametersException(InvalidSubscriptionParametersException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -38,6 +43,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SubscriptionNotFoundException.class)
     public ResponseEntity<String> handleSubscriptionNotFoundException(SubscriptionNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(SubscriptionDeletionException.class)
+    public ResponseEntity<String> handleSubscriptionDeletionException(SubscriptionDeletionException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 
     //                          Other

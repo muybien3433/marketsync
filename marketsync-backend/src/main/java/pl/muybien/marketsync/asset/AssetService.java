@@ -107,7 +107,7 @@ public class AssetService {
         if (wallet.getAssets().contains(asset)) {
                 assetRepository.deleteById(assetId);
         } else {
-            throw new AssetOwnershipException("Asset with id %d not belong to your wallet".formatted(assetId));
+            throw new AssetOwnershipException("Asset with id %d not belong to your wallet.".formatted(assetId));
         }
     }
 

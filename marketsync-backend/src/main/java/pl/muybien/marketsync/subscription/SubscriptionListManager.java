@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.marketsync.finance.FinanceTarget;
 import pl.muybien.marketsync.handler.SubscriptionDeletionException;
+import pl.muybien.marketsync.handler.SubscriptionOwnershipException;
 
 import java.time.LocalDateTime;
 import java.util.List;
