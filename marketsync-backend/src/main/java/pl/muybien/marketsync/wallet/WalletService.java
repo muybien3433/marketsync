@@ -12,10 +12,9 @@ import pl.muybien.marketsync.finance.FinanceProvider;
 public class WalletService {
 
     private final WalletRepository walletRepository;
-    private final FinanceProvider financeProvider;
 
     @Transactional
-    public void addAssetToWallet(OidcUser oidcUser, Wallet wallet, Asset asset) {
-
+    public void saveNewWallet(Wallet wallet) {
+        walletRepository.save(wallet);
     }
 }

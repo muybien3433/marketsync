@@ -5,12 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.marketsync.wallet.Wallet;
+import pl.muybien.marketsync.wallet.WalletRepository;
+import pl.muybien.marketsync.wallet.WalletService;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final WalletService walletService;
 
     @Transactional
     public void createCustomerIfNotPresent(String email, String name) {
@@ -21,9 +24,9 @@ public class CustomerService {
                     var customer = Customer.builder()
                             .email(email)
                             .name(name)
-                            .wallet(new Wallet())
                             .build();
                     customerRepository.save(customer);
+                    walletService.saveNewWallet(Wallet.builder().customer(customer).build());
                 }
         );
     }
