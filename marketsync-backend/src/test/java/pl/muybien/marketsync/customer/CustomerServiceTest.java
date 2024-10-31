@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import pl.muybien.marketsync.wallet.Wallet;
+import pl.muybien.marketsync.wallet.WalletService;
 
 import java.util.Optional;
 
@@ -18,6 +20,9 @@ class CustomerServiceTest {
 
     @Mock
     CustomerRepository customerRepository;
+
+    @Mock
+    WalletService walletService;
 
     @BeforeEach
     void setUp() {
