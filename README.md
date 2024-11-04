@@ -42,6 +42,7 @@ Ensure you have the following installed before running the project:
 
 - *Asset*: `/asset`
     - `POST /` – Create new asset and add it to wallet.
+    - `DELETE /{id}` – Delete asset from wallet.
 
 - *Subscription*: `/subscriptions`
     - `GET /` – Display all customer subscriptions.
