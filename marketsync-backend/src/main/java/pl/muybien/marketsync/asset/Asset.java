@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Builder
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -23,7 +24,6 @@ public class Asset {
     private BigDecimal value;
     private BigDecimal count;
     private BigDecimal averagePurchasePrice;
-    private Integer purchaseCount;
     private BigDecimal currentPrice;
     private Integer investmentPeriodInDays;
     private BigDecimal profitInPercentage;

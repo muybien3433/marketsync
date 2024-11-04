@@ -39,10 +39,9 @@ public class AssetService {
                 .value(value)
                 .count(request.count())
                 .averagePurchasePrice(currentAssetPrice)
-                .purchaseCount(1) // increments on updates
                 .currentPrice(currentAssetPrice)
                 .investmentPeriodInDays(1) // increments daily
-                .profitInPercentage(BigDecimal.valueOf(0))
+                .profitInPercentage(BigDecimal.valueOf(0.00))
                 .profit(BigDecimal.valueOf(0))
                 .createdAt(LocalDateTime.now())
                 .wallet(wallet)
@@ -63,22 +62,21 @@ public class AssetService {
     private void updateExistingAsset(Asset existingAsset, Asset incomingAsset) {
         existingAsset.setValue(existingAsset.getValue().add(incomingAsset.getValue()));
         existingAsset.setCount(existingAsset.getCount().add(incomingAsset.getCount()));
+
         existingAsset.setAveragePurchasePrice(calculateAveragePurchasePrice(existingAsset, incomingAsset));
-        existingAsset.setPurchaseCount(existingAsset.getPurchaseCount() + 1);
+
         existingAsset.setCurrentPrice(incomingAsset.getCurrentPrice());
         existingAsset.setProfitInPercentage(calculateProfitInPercentage(existingAsset, incomingAsset));
         existingAsset.setProfit(calculateProfit(existingAsset, incomingAsset));
+
         assetRepository.save(existingAsset);
     }
 
     private BigDecimal calculateAveragePurchasePrice(Asset existingAsset, Asset incomingAsset) {
-        BigDecimal totalExistingValue = existingAsset.getAveragePurchasePrice()
-                .multiply(BigDecimal.valueOf(existingAsset.getPurchaseCount()));
-        BigDecimal totalNewValue = incomingAsset.getValue();
-        BigDecimal combinedTotalValue = totalExistingValue.add(totalNewValue);
-        BigDecimal combinedPurchaseCount = BigDecimal.valueOf(existingAsset.getPurchaseCount() + 1);
+        BigDecimal combinedTotalValue = existingAsset.getValue().add(incomingAsset.getValue());
+        BigDecimal combinedCount = existingAsset.getCount().add(incomingAsset.getCount());
 
-        return combinedTotalValue.divide(combinedPurchaseCount, RoundingMode.HALF_UP);
+        return combinedTotalValue.divide(combinedCount, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculateProfitInPercentage(Asset existingAsset, Asset incomingAsset) {
@@ -104,8 +102,8 @@ public class AssetService {
         var asset = assetRepository.findById(assetId).orElseThrow(() ->
                 new AssetNotFoundException("Asset with id %d not found".formatted(assetId)));
 
-        if (wallet.getAssets().contains(asset)) {
-                assetRepository.deleteById(assetId);
+        if (wallet.getAssets().stream().anyMatch(a -> a.equals(asset))) {
+                assetRepository.delete(asset);
         } else {
             throw new AssetOwnershipException("Asset with id %d not belong to your wallet.".formatted(assetId));
         }
