@@ -22,8 +22,20 @@
       <td>{{ asset.averagePurchasePrice | currency }}</td>
       <td>{{ asset.currentPrice | currency }}</td>
       <td>{{ asset.investmentPeriodInDays }}</td>
-      <td>{{ calculateProfitPercentage(asset) | number: '1.0-2' }}%</td>
-      <td>{{ calculateProfit(asset) | currency }}</td>
+      <td
+        [ngClass]="{
+        'profit-positive': calculateProfitPercentage(asset) > 0,
+        'profit-negative': calculateProfitPercentage(asset) < 0
+      }">
+        {{ calculateProfitPercentage(asset) | number: '1.0-2' }}%
+      </td>
+      <td
+        [ngClass]="{
+        'profit-positive': calculateProfit(asset) > 0,
+        'profit-negative': calculateProfit(asset) < 0
+      }">
+        {{ calculateProfit(asset) | currency }}
+      </td>
     </tr>
     </tbody>
   </table>
