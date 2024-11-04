@@ -23,7 +23,7 @@ public class Wallet {
     @OneToOne
     private Customer customer;
 
-    @OneToMany(mappedBy = "wallet", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Asset> assets;
 
 }

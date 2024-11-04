@@ -12,7 +12,6 @@ import pl.muybien.marketsync.handler.AssetOwnershipException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +77,8 @@ public class AssetService {
                 new AssetNotFoundException("Asset with id %d not found".formatted(assetId)));
 
         if (wallet.getAssets().stream().anyMatch(a -> a.equals(asset))) {
-                assetRepository.delete(asset);
+            wallet.getAssets().remove(asset);
+            assetRepository.delete(asset);
         } else {
             throw new AssetOwnershipException("Asset with id %d not belong to your wallet.".formatted(assetId));
         }
