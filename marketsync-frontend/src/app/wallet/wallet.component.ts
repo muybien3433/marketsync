@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CurrencyPipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import {CurrencyPipe, DecimalPipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { forkJoin, catchError, map, of } from 'rxjs';
@@ -27,7 +27,8 @@ interface Asset {
     FormsModule,
     CurrencyPipe,
     DecimalPipe,
-    NgForOf
+    NgForOf,
+    NgClass
   ],
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css']
@@ -52,13 +53,9 @@ export class WalletComponent implements OnInit {
         }))),
         catchError((error: HttpErrorResponse) => {
           console.error('Error fetching user wallet:', error);
-          if (error.status === 200) {
-            window.location.href = 'https://accounts.google.com/o/oauth2/auth?...'; // Redirect to Google OAuth2 login
-          } else {
-            this.snackBar.open('Failed to fetch assets. Please try again later.', 'Close', {
-              duration: 3000,
-            });
-          }
+          this.snackBar.open('Failed to fetch assets. Please try again later.', '', {
+            duration: 3000,
+          });
           return of([]);
         })
       )
@@ -72,7 +69,6 @@ export class WalletComponent implements OnInit {
     const priceRequests = this.assets.map(asset =>
       this.http.get<number>(`http://localhost:8080/api/v1/finance/${asset.name}`, { withCredentials: true })
     );
-
     forkJoin(priceRequests).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Error fetching current prices:', error);
@@ -103,6 +99,9 @@ export class WalletComponent implements OnInit {
     if (averagePurchasePrice === 0) {
       return 0;
     }
-    return ((asset.currentPrice ?? 0 - averagePurchasePrice) / averagePurchasePrice) * 100;
+    const profitPercentage = ((asset.currentPrice ?? 0 - averagePurchasePrice) / averagePurchasePrice) * 100;
+
+    return parseFloat((profitPercentage - 100).toFixed(2));
   }
+
 }
