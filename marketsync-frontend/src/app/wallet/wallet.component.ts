@@ -46,7 +46,6 @@ export class WalletComponent implements OnInit {
       .subscribe(
         (data) => {
           this.assets = data;
-          // this.calculateProfits();
         },
         (error: HttpErrorResponse) => {
           console.error('Error fetching user assets:', error);
@@ -55,16 +54,4 @@ export class WalletComponent implements OnInit {
         }
       );
   }
-
-  // calculateProfits() {
-  //   this.assets.forEach(asset => {
-  //     const totalInvestment = asset.averagePurchasePrice * asset.count;
-  //     asset.profit = (asset.currentPrice - asset.averagePurchasePrice) * asset.count;
-  //
-  //     asset.profitInPercentage = totalInvestment > 0
-  //       ? (asset.profit / totalInvestment) * 100
-  //       : 0; // Set to 0 if no investment
-  //   });
-  // }
-
 }

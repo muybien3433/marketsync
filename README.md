@@ -14,7 +14,7 @@ informed and manage their cryptocurrency interests effortlessly.
 - **Notifications**: Send e-mail to user when subscription reach upper or lower bound.
 
 ## Coming Soon
-- User profit manager
+- Frontend
 - More stocks
 
 ## Tech Stack
