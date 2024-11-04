@@ -3,6 +3,7 @@ package pl.muybien.marketsync.asset;
 import lombok.Builder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Builder
 public record AssetDTO(
@@ -11,7 +12,7 @@ public record AssetDTO(
         BigDecimal count,
         BigDecimal averagePurchasePrice,
         BigDecimal currentPrice,
-        Integer investmentPeriodInDays,
+        LocalDate investmentStartDate,
         BigDecimal profitInPercentage,
         BigDecimal profit
 ) {

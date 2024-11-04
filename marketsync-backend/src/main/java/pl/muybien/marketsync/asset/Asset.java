@@ -5,7 +5,7 @@ import lombok.*;
 import pl.muybien.marketsync.wallet.Wallet;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Builder
@@ -24,8 +24,7 @@ public class Asset {
     private BigDecimal value;
     private BigDecimal count;
     private BigDecimal averagePurchasePrice;
-    private Integer investmentPeriodInDays;
-    private LocalDateTime createdAt;
+    private LocalDate investmentStartDate;
 
     @ManyToOne
     private Wallet wallet;
