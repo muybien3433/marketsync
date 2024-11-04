@@ -10,7 +10,7 @@ public class AssetDTOMapper {
                 .value(asset.getValue())
                 .count(asset.getCount())
                 .averagePurchasePrice(asset.getAveragePurchasePrice())
-                .investmentPeriodInDays(asset.getInvestmentPeriodInDays())
+                .investmentStartDate(asset.getInvestmentStartDate())
                 .build();
     }
 }

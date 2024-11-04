@@ -11,6 +11,7 @@ import pl.muybien.marketsync.handler.AssetOwnershipException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,8 +40,7 @@ public class AssetService {
                 .value(value)
                 .count(request.count())
                 .averagePurchasePrice(currentAssetPrice)
-                .investmentPeriodInDays(1) // increments daily
-                .createdAt(LocalDateTime.now())
+                .investmentStartDate(LocalDate.now())
                 .wallet(wallet)
                 .build();
 

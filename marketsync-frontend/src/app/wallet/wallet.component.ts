@@ -11,7 +11,7 @@ interface Asset {
   value: number;
   count: number;
   averagePurchasePrice: number;
-  investmentPeriodInDays: number;
+  investmentStartDate: string;
   currentPrice?: number;
   profit?: number;
   profitInPercentage?: number;
