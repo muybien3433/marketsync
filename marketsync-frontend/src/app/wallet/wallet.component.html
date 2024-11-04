@@ -22,8 +22,8 @@
       <td>{{ asset.averagePurchasePrice | currency }}</td>
       <td>{{ asset.currentPrice | currency }}</td>
       <td>{{ asset.investmentPeriodInDays }}</td>
-      <td>{{ asset.profitInPercentage | number: '1.0-2' }}%</td>
-      <td>{{ asset.profit | currency }}</td>
+      <td>{{ calculateProfitPercentage(asset) | number: '1.0-2' }}%</td>
+      <td>{{ calculateProfit(asset) | currency }}</td>
     </tr>
     </tbody>
   </table>

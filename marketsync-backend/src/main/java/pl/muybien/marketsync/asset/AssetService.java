@@ -39,10 +39,7 @@ public class AssetService {
                 .value(value)
                 .count(request.count())
                 .averagePurchasePrice(currentAssetPrice)
-                .currentPrice(currentAssetPrice)
                 .investmentPeriodInDays(1) // increments daily
-                .profitInPercentage(BigDecimal.valueOf(0.00))
-                .profit(BigDecimal.valueOf(0))
                 .createdAt(LocalDateTime.now())
                 .wallet(wallet)
                 .build();
@@ -62,12 +59,7 @@ public class AssetService {
     private void updateExistingAsset(Asset existingAsset, Asset incomingAsset) {
         existingAsset.setValue(existingAsset.getValue().add(incomingAsset.getValue()));
         existingAsset.setCount(existingAsset.getCount().add(incomingAsset.getCount()));
-
         existingAsset.setAveragePurchasePrice(calculateAveragePurchasePrice(existingAsset, incomingAsset));
-
-        existingAsset.setCurrentPrice(incomingAsset.getCurrentPrice());
-        existingAsset.setProfitInPercentage(calculateProfitInPercentage(existingAsset, incomingAsset));
-        existingAsset.setProfit(calculateProfit(existingAsset, incomingAsset));
 
         assetRepository.save(existingAsset);
     }
@@ -77,23 +69,6 @@ public class AssetService {
         BigDecimal combinedCount = existingAsset.getCount().add(incomingAsset.getCount());
 
         return combinedTotalValue.divide(combinedCount, RoundingMode.HALF_UP);
-    }
-
-    private BigDecimal calculateProfitInPercentage(Asset existingAsset, Asset incomingAsset) {
-        BigDecimal profit = calculateProfit(existingAsset, incomingAsset);
-        BigDecimal totalInvestmentValue = existingAsset.getAveragePurchasePrice().multiply(existingAsset.getCount());
-
-        if (totalInvestmentValue.compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.ZERO;
-        }
-        return profit.divide(totalInvestmentValue, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
-    }
-
-    private BigDecimal calculateProfit(Asset existingAsset, Asset incomingAsset) {
-        BigDecimal currentTotalValue = incomingAsset.getCurrentPrice().multiply(existingAsset.getCount());
-        BigDecimal existingTotalValue = existingAsset.getAveragePurchasePrice().multiply(existingAsset.getCount());
-
-        return currentTotalValue.subtract(existingTotalValue);
     }
 
     @Transactional

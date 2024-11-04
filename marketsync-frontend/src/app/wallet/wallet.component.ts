@@ -1,20 +1,21 @@
-import {Component, OnInit} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
-import {CurrencyPipe, DecimalPipe, NgForOf, NgIf} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {HttpClient, HttpClientModule, HttpErrorResponse} from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { CurrencyPipe, DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
+import { forkJoin, catchError, map, of } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface Asset {
   name: string;
   value: number;
   count: number;
   averagePurchasePrice: number;
-  currentPrice: number;
   investmentPeriodInDays: number;
-  profitInPercentage: number;
-  profit: number;
+  currentPrice?: number;
+  profit?: number;
+  profitInPercentage?: number;
 }
-
 
 @Component({
   selector: 'app-wallet',
@@ -29,29 +30,79 @@ interface Asset {
     NgForOf
   ],
   templateUrl: './wallet.component.html',
-  styleUrl: './wallet.component.css'
+  styleUrls: ['./wallet.component.css']
 })
-
 export class WalletComponent implements OnInit {
   assets: Asset[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.fetchUserAssets();
   }
 
-  fetchUserAssets() {
+  fetchUserAssets(): void {
     this.http.get<Asset[]>('http://localhost:8080/api/v1/wallet', { withCredentials: true })
-      .subscribe(
-        (data) => {
-          this.assets = data;
-        },
-        (error: HttpErrorResponse) => {
-          console.error('Error fetching user assets:', error);
-          console.log('Response body:', error.error); // Log the actual error response
-          alert('Failed to load assets. Please try again later.');
-        }
-      );
+      .pipe(
+        map(data => data.map(asset => ({
+          ...asset,
+          currentPrice: asset.currentPrice ?? 0,
+          profit: asset.profit ?? 0,
+          profitInPercentage: asset.profitInPercentage ?? 0
+        }))),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error fetching user wallet:', error);
+          if (error.status === 200) {
+            window.location.href = 'https://accounts.google.com/o/oauth2/auth?...'; // Redirect to Google OAuth2 login
+          } else {
+            this.snackBar.open('Failed to fetch assets. Please try again later.', 'Close', {
+              duration: 3000,
+            });
+          }
+          return of([]);
+        })
+      )
+      .subscribe((assets) => {
+        this.assets = assets;
+        this.fetchCurrentPrices();
+      });
+  }
+
+  fetchCurrentPrices(): void {
+    const priceRequests = this.assets.map(asset =>
+      this.http.get<number>(`http://localhost:8080/api/v1/finance/${asset.name}`, { withCredentials: true })
+    );
+
+    forkJoin(priceRequests).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error fetching current prices:', error);
+        this.snackBar.open('Failed to load current prices. Please try again later.', 'Close', {
+          duration: 3000,
+        });
+        return of([]);
+      })
+    )
+      .subscribe(prices => {
+        prices.forEach((price, index) => {
+          if (price !== undefined) {
+            this.assets[index].currentPrice = price;
+            this.assets[index].profit = this.calculateProfit(this.assets[index]);
+            this.assets[index].profitInPercentage = this.calculateProfitPercentage(this.assets[index]);
+          }
+        });
+      });
+  }
+
+  calculateProfit(asset: Asset): number {
+    const averagePurchasePrice = asset.averagePurchasePrice;
+    return ((asset.currentPrice ?? 0) - averagePurchasePrice) * asset.count;
+  }
+
+  calculateProfitPercentage(asset: Asset): number {
+    const averagePurchasePrice = asset.averagePurchasePrice;
+    if (averagePurchasePrice === 0) {
+      return 0;
+    }
+    return ((asset.currentPrice ?? 0 - averagePurchasePrice) / averagePurchasePrice) * 100;
   }
 }

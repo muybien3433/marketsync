@@ -24,10 +24,7 @@ public class Asset {
     private BigDecimal value;
     private BigDecimal count;
     private BigDecimal averagePurchasePrice;
-    private BigDecimal currentPrice;
     private Integer investmentPeriodInDays;
-    private BigDecimal profitInPercentage;
-    private BigDecimal profit;
     private LocalDateTime createdAt;
 
     @ManyToOne

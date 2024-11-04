@@ -14,10 +14,7 @@ public class WalletDTOMapper {
                                 .value(asset.getValue())
                                 .count(asset.getCount())
                                 .averagePurchasePrice(asset.getAveragePurchasePrice())
-                                .currentPrice(asset.getCurrentPrice())
                                 .investmentPeriodInDays(asset.getInvestmentPeriodInDays())
-                                .profitInPercentage(asset.getProfitInPercentage())
-                                .profit(asset.getProfit())
                                 .build())
                         .collect(Collectors.toList()))
                 .build();
