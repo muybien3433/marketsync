@@ -18,7 +18,6 @@ import java.util.List;
 public class WalletController {
 
     private final AssetService assetService;
-    private final WalletService walletService;
 
     @GetMapping
     ResponseEntity<List<AssetDTO>> findAllWalletAssets(
