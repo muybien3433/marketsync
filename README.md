@@ -20,7 +20,6 @@ informed and manage their cryptocurrency interests effortlessly.
 ## Tech Stack
 
 - **Backend**: Java 23, SpringBoot 6
-- **Frontend**: Angular 18
 - **Database**: PostgreSQL (Relational Database)
 - **Authentication**: OAuth2
 - **Testing**: JUnit 5 for unit tests
