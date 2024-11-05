@@ -13,10 +13,6 @@ informed and manage their cryptocurrency interests effortlessly.
 - **Assets**: Add or remove assets to wallet.
 - **Notifications**: Send e-mail to user when subscription reach upper or lower bound.
 
-## Coming Soon
-- Frontend
-- More stocks
-
 ## Tech Stack
 
 - **Backend**: Java 23, SpringBoot 6
