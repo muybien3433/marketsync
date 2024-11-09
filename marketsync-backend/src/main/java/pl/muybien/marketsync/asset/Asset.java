@@ -9,11 +9,11 @@ import java.time.LocalDate;
 
 @Entity
 @Builder
+@Getter
+@Setter
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 @Table(name = "asset")
 public class Asset {
 
