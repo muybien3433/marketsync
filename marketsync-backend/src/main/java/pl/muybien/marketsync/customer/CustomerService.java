@@ -16,18 +16,16 @@ public class CustomerService {
 
     @Transactional
     public void createCustomerIfNotPresent(String email, String name) {
-        customerRepository.findByEmail(email).ifPresentOrElse(
-                _ -> {
-                },
-                () -> {
-                    var customer = Customer.builder()
-                            .email(email)
-                            .name(name)
-                            .build();
-                    customerRepository.save(customer);
-                    walletService.saveNewWallet(Wallet.builder().customer(customer).build());
-                }
-        );
+        boolean customerIsNotPresent = customerRepository.findByEmail(email).isEmpty();
+
+        if (customerIsNotPresent) {
+            var customer = Customer.builder()
+                    .email(email)
+                    .name(name)
+                    .build();
+            customerRepository.save(customer);
+            walletService.saveNewWallet(Wallet.builder().customer(customer).build());
+        }
     }
 
     @Transactional(readOnly = true)
