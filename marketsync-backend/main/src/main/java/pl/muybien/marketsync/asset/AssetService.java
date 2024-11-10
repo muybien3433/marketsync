@@ -5,7 +5,6 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.marketsync.customer.CustomerService;
-import pl.muybien.marketsync.finance.FinanceProviderFactory;
 import pl.muybien.marketsync.handler.AssetNotFoundException;
 import pl.muybien.marketsync.handler.AssetOwnershipException;
 
@@ -20,25 +19,19 @@ import java.util.stream.Collectors;
 public class AssetService {
 
     private final CustomerService customerService;
-    private final FinanceProviderFactory financeProviderFactory;
     private final AssetRepository assetRepository;
     private final AssetDTOMapper assetDTOMapper;
 
     @Transactional
     public void createOrUpdateAsset(OidcUser oidcUser, String uri, AssetRequest request) {
-        // TODO: After marketplace creation provide necessarily logic switching between providers
-        var financeProvider = financeProviderFactory.getProvider("crypto");
-        BigDecimal currentAssetPrice = financeProvider.fetchFinance(uri).getPriceUsd();
-
         var customer = customerService.findCustomerByEmail(oidcUser.getEmail());
         var wallet = customer.getWallet();
-        BigDecimal value = calculateAssetValue(currentAssetPrice, request.count());
-
+        BigDecimal value = calculateAssetValue(request.price(), request.count());
         var incomingAsset = Asset.builder()
                 .name(uri.toLowerCase())
                 .value(value)
                 .count(request.count())
-                .averagePurchasePrice(currentAssetPrice)
+                .averagePurchasePrice(request.price())
                 .investmentStartDate(LocalDate.now())
                 .wallet(wallet)
                 .build();
