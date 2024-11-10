@@ -7,11 +7,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.marketsync.customer.Customer;
-import pl.muybien.marketsync.finance.FinanceComparator;
-import pl.muybien.marketsync.finance.FinanceService;
-import pl.muybien.marketsync.finance.crypto.CryptoProvider;
-import pl.muybien.marketsync.subscription.SubscriptionListManager;
+import pl.muybien.subscriptionservice.finance.FinanceComparator;
+import pl.muybien.subscriptionservice.finance.FinanceService;
+import pl.muybien.subscriptionservice.finance.crypto.CryptoProvider;
+import pl.muybien.subscriptionservice.subscription.SubscriptionListManager;
 
 import java.math.BigDecimal;
 
@@ -40,10 +39,10 @@ public class BinanceService implements FinanceService {
 
     @Override
     @Transactional
-    public void createAndSaveSubscription(Customer customer, String financeName,
+    public void createAndSaveSubscription(String customerEmail, String financeName,
                                           BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd) {
         var crypto = Binance.builder()
-                .customer(customer)
+                .customerEmail(customerEmail)
                 .name(financeName)
                 .upperBoundPrice(upperPriceInUsd)
                 .lowerBoundPrice(lowerPriceInUsd)
@@ -56,7 +55,7 @@ public class BinanceService implements FinanceService {
     @Transactional
     public void removeSubscription(OidcUser oidcUser, Long id) {
         repository.findById(id).ifPresentOrElse(crypto -> {
-            if (crypto.getCustomer().getEmail().equals(oidcUser.getEmail())) {
+            if (crypto.getCustomerEmail().equals(oidcUser.getEmail())) {
                 repository.delete(crypto);
                 subscriptionListManager.removeSubscriptionFromList(crypto);
             } else {

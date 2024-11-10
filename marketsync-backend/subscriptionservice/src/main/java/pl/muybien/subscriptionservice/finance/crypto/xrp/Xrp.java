@@ -1,8 +1,8 @@
 package pl.muybien.subscriptionservice.finance.crypto.xrp;
 
 import jakarta.persistence.*;
-import pl.muybien.marketsync.customer.Customer;
-import pl.muybien.marketsync.finance.FinanceTarget;
+import lombok.*;
+import pl.muybien.subscriptionservice.finance.FinanceTarget;
 
 import java.math.BigDecimal;
 
@@ -21,7 +21,5 @@ public class Xrp implements FinanceTarget {
     private String name;
     private BigDecimal upperBoundPrice;
     private BigDecimal lowerBoundPrice;
-
-    @ManyToOne
-    private Customer customer;
+    private String customerEmail;
 }

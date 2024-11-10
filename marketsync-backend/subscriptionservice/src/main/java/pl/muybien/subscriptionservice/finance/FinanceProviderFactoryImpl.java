@@ -2,7 +2,7 @@ package pl.muybien.subscriptionservice.finance;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.muybien.marketsync.handler.FinanceNotFoundException;
+import pl.muybien.subscriptionservice.handler.FinanceNotFoundException;
 
 import java.util.Map;
 

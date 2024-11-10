@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.marketsync.finance.FinanceTarget;
-import pl.muybien.marketsync.handler.SubscriptionDeletionException;
+import pl.muybien.subscriptionservice.finance.FinanceTarget;
+import pl.muybien.subscriptionservice.handler.SubscriptionDeletionException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,8 +24,7 @@ public class SubscriptionListManager {
                 .upperBoundPrice(financeTarget.getUpperBoundPrice())
                 .lowerBoundPrice(financeTarget.getLowerBoundPrice())
                 .name(financeTarget.getName())
-                .customer(financeTarget.getCustomer())
-                .customerEmail(financeTarget.getCustomer().getEmail())
+                .customerEmail(financeTarget.getCustomerEmail())
                 .createdAt(LocalDateTime.now())
                 .build();
 

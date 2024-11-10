@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.marketsync.customer.Customer;
-import pl.muybien.marketsync.customer.CustomerService;
-import pl.muybien.marketsync.finance.FinanceProviderFactory;
-import pl.muybien.marketsync.finance.FinanceService;
-import pl.muybien.marketsync.finance.FinanceServiceFactory;
-import pl.muybien.marketsync.handler.InvalidSubscriptionParametersException;
+import pl.muybien.subscriptionservice.finance.FinanceProviderFactory;
+import pl.muybien.subscriptionservice.finance.FinanceService;
+import pl.muybien.subscriptionservice.finance.FinanceServiceFactory;
+import pl.muybien.subscriptionservice.handler.InvalidSubscriptionParametersException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -20,7 +18,6 @@ public class SubscriptionService {
 
     private final FinanceServiceFactory financeServiceFactory;
     private final FinanceProviderFactory financeProviderFactory;
-    private final CustomerService customerService;
 
     @Transactional
     public void addSubscription(OidcUser oidcUser, String uri,
@@ -42,10 +39,8 @@ public class SubscriptionService {
             lowerPriceInUsd = calculatePriceByClientPercentInput(currentFinancePrice, lowerValueInPercent);
         }
 
-        Customer customer = customerService.findCustomerByEmail(oidcUser.getEmail());
-
         if (upperValueInPercent != null || lowerValueInPercent != null) {
-            service.createAndSaveSubscription(customer, financeName, upperPriceInUsd, lowerPriceInUsd);
+            service.createAndSaveSubscription(oidcUser.getEmail(), financeName, upperPriceInUsd, lowerPriceInUsd);
         } else {
             throw new InvalidSubscriptionParametersException("At least one parameter must be provided.");
         }

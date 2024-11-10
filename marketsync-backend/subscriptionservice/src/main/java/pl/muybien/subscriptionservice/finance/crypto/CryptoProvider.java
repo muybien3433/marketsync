@@ -3,8 +3,8 @@ package pl.muybien.subscriptionservice.finance.crypto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import pl.muybien.marketsync.finance.FinanceProvider;
-import pl.muybien.marketsync.handler.FinanceNotFoundException;
+import pl.muybien.subscriptionservice.finance.FinanceProvider;
+import pl.muybien.subscriptionservice.handler.FinanceNotFoundException;
 
 @Service("crypto")
 @RequiredArgsConstructor

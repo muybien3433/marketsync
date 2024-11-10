@@ -1,14 +1,12 @@
 package pl.muybien.subscriptionservice.finance;
 
-import pl.muybien.marketsync.customer.Customer;
-
 import java.math.BigDecimal;
 
 public interface FinanceTarget {
 
     String getName();
     Long getId();
+    String getCustomerEmail();
     BigDecimal getUpperBoundPrice();
     BigDecimal getLowerBoundPrice();
-    Customer getCustomer();
 }
