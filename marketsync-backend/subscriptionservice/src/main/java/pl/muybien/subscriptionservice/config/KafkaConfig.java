@@ -83,8 +83,8 @@ public class KafkaConfig {
     NewTopic createSendEmailTopic() {
         return TopicBuilder
                 .name(sendEmailTopic)
-                .partitions(3)
-                .replicas(3)
+                .partitions(2)
+                .replicas(2)
                 .build();
     }
 }
