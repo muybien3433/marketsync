@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class FinanceComparator {
 
-//    private final NotificationService notificationService;
-
     @Transactional
     public <T extends FinanceTarget> boolean currentPriceMetSubscriptionCondition(BigDecimal currentPriceUsd, T subscription) {
         if (subscription != null) {
@@ -31,6 +29,7 @@ public class FinanceComparator {
         return false;
     }
 
+    // TODO: Move this functionality to new microservice after kafka set
     private <T extends FinanceTarget> void sendNotification(T subscription,
                                                             BigDecimal currentPriceUsd,
                                                             BigDecimal targetPrice) {
