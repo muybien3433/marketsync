@@ -51,26 +51,8 @@ Ensure you have the following installed before running the project:
    ```bash
    git clone https://github.com/muybien3433/marketsync.git
    ```
-3. Create application.properties and provide following:
-   ```bash
-   spring.jpa.hibernate.ddl-auto=update
-   spring.datasource.url=jdbc:postgresql://localhost:5432/your-db-name
-   spring.datasource.username=your-username
-   spring.datasource.password=your-password
+3. Provide necessary properties in each application.properties:
 
-   spring.security.oauth2.client.registration.google.client-id=your-client-id
-   spring.security.oauth2.client.registration.google.client-secret=your-client-secret
-   spring.security.oauth2.client.registration.google.scope=openid, email, profile
-
-   crypto.api.uri=https://api.coincap.io/v2/assets/
-
-   spring.mail.host=smtp.gmail.com
-   spring.mail.port=587
-   spring.mail.username=your-email@mail.com
-   spring.mail.password=your-password (it is not gmail account password)
-   spring.mail.properties.mail.smtp.auth=true
-   spring.mail.properties.mail.smtp.starttls.enable=true 
-   ```
 4. Reload maven project
    ```bash
    mvn clean install
