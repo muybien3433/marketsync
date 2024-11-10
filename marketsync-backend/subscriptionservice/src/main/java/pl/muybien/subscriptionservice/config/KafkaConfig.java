@@ -1,8 +1,17 @@
 package pl.muybien.subscriptionservice.config;
 
+import jakarta.persistence.EntityManagerFactory;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.TopicBuilder;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.transaction.KafkaTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,5 +57,34 @@ public class KafkaConfig {
         props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionalIdPrefix);
 
         return props;
+    }
+
+    @Bean
+    ProducerFactory<String, Object> producerFactory() {
+        return new DefaultKafkaProducerFactory<>(producerConfig());
+    }
+
+    @Bean
+    KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producer) {
+        return new KafkaTemplate<>(producer);
+    }
+
+    @Bean("kafkaTransactionManager")
+    KafkaTransactionManager<String, Object> transactionManager(ProducerFactory<String, Object> producer) {
+        return new KafkaTransactionManager<>(producer);
+    }
+
+    @Bean("transactionManager")
+    JpaTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
+
+    @Bean
+    NewTopic createSendEmailTopic() {
+        return TopicBuilder
+                .name(sendEmailTopic)
+                .partitions(3)
+                .replicas(3)
+                .build();
     }
 }
