@@ -10,7 +10,6 @@ import pl.muybien.subscriptionservice.finance.FinanceServiceFactory;
 import pl.muybien.subscriptionservice.handler.InvalidSubscriptionParametersException;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @Service
 @RequiredArgsConstructor
@@ -20,38 +19,31 @@ public class SubscriptionService {
     private final FinanceProviderFactory financeProviderFactory;
 
     @Transactional
-    public void addSubscription(OidcUser oidcUser, String uri,
-                                Double upperValueInPercent, Double lowerValueInPercent) {
+    public void addIncreaseSubscription(OidcUser oidcUser, String uri, BigDecimal value) {
         var service = financeServiceFactory.getService(uri);
         // TODO: After marketplace creation provide necessarily logic switching between providers
         var financeProvider = financeProviderFactory.getProvider("crypto");
-        var currentFinance = financeProvider.fetchFinance(uri);
-        String financeName = currentFinance.getName();
-        BigDecimal currentFinancePrice = currentFinance.getPriceUsd();
+        String financeName = financeProvider.fetchFinance(uri).getName();
 
-        BigDecimal upperPriceInUsd = null;
-        if (upperValueInPercent != null) {
-            upperPriceInUsd = calculatePriceByClientPercentInput(currentFinancePrice, upperValueInPercent);
-        }
-
-        BigDecimal lowerPriceInUsd = null;
-        if (lowerValueInPercent != null) {
-            lowerPriceInUsd = calculatePriceByClientPercentInput(currentFinancePrice, lowerValueInPercent);
-        }
-
-        if (upperValueInPercent != null || lowerValueInPercent != null) {
-            service.createAndSaveSubscription(oidcUser.getEmail(), financeName, upperPriceInUsd, lowerPriceInUsd);
+        if (value != null) {
+            service.createAndSaveSubscription(oidcUser.getEmail(), financeName, value, null);
         } else {
-            throw new InvalidSubscriptionParametersException("At least one parameter must be provided.");
+            throw new InvalidSubscriptionParametersException("Value is required and must be grater than zero.");
         }
     }
 
-    private BigDecimal calculatePriceByClientPercentInput(BigDecimal financePrice, Double valueInPercent) {
-        BigDecimal percentDecimal = new BigDecimal(valueInPercent)
-                .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
-        BigDecimal change = financePrice.multiply(percentDecimal);
+    @Transactional
+    public void addDecreaseSubscription(OidcUser oidcUser, String uri, BigDecimal value) {
+        var service = financeServiceFactory.getService(uri);
+        // TODO: After marketplace creation provide necessarily logic switching between providers
+        var financeProvider = financeProviderFactory.getProvider("crypto");
+        String financeName = financeProvider.fetchFinance(uri).getName();
 
-        return financePrice.add(change).setScale(2, RoundingMode.HALF_UP);
+        if (value != null) {
+            service.createAndSaveSubscription(oidcUser.getEmail(), financeName, null, value);
+        } else {
+            throw new InvalidSubscriptionParametersException("Value is required.");
+        }
     }
 
     @Transactional

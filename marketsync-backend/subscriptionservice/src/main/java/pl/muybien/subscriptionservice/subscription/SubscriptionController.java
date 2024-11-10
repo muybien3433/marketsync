@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -17,14 +18,23 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
     private final SubscriptionListManager subscriptionListManager;
 
-    @PostMapping("/{uri}")
-    public ResponseEntity<String> createSubscription(
+    @PostMapping("/increase/{uri}")
+    public ResponseEntity<String> createIncreaseSubscription(
             @AuthenticationPrincipal OidcUser oidcUser,
             @PathVariable String uri,
-            @RequestBody SubscriptionRequest request
+            @RequestBody BigDecimal value
     ) {
-        subscriptionService.addSubscription(oidcUser, uri,
-                request.upperValueInPercent(), request.lowerValueInPercent());
+        subscriptionService.addIncreaseSubscription(oidcUser, uri, value);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/decrease/{uri}")
+    public ResponseEntity<String> createDecreaseSubscription(
+            @AuthenticationPrincipal OidcUser oidcUser,
+            @PathVariable String uri,
+            @RequestBody BigDecimal value
+    ) {
+        subscriptionService.addDecreaseSubscription(oidcUser, uri, value);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

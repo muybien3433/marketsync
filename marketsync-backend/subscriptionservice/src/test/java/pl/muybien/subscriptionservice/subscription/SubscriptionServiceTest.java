@@ -50,94 +50,102 @@ class SubscriptionServiceTest {
     }
 
     @Test
-    void addSubscription() {
-        String cryptoName = "cryptoName";
-        Double upperValueInPercent = 10.0;
-        Double lowerValueInPercent = -10.0;
-        BigDecimal currentPrice = BigDecimal.valueOf(1000);
-        BigDecimal expectedUpperPrice = BigDecimal.valueOf(1100).setScale(2);
-        BigDecimal expectedLowerPrice = BigDecimal.valueOf(900).setScale(2);
+    void addIncreaseSubscription() {
+        String assetName = "test-asset";
+        BigDecimal value = BigDecimal.valueOf(10.0);
         var currentCrypto = Mockito.mock(Crypto.class);
 
         when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
         when(financeServiceFactory.getService(uri)).thenReturn(financeService);
         when(financeProvider.fetchFinance(uri)).thenReturn(currentCrypto);
-        when(currentCrypto.getName()).thenReturn(cryptoName);
-        when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
+        when(currentCrypto.getName()).thenReturn(assetName);
         when(oidcUser.getEmail()).thenReturn(email);
 
-        subscriptionService.addSubscription(oidcUser, uri, upperValueInPercent, lowerValueInPercent);
+        subscriptionService.addIncreaseSubscription(oidcUser, uri, value);
 
         verify(financeServiceFactory).getService(uri);
         verify(financeProvider).fetchFinance(uri);
-        verify(financeService).createAndSaveSubscription(email, cryptoName, expectedUpperPrice, expectedLowerPrice);
+        verify(financeService).createAndSaveSubscription(email, assetName, value, null);
     }
 
     @Test
-    void addSubscriptionUpperValueNull() {
-        String cryptoName = "cryptoName";
-        Double lowerValueInPercent = -10.0;
-        BigDecimal currentPrice = BigDecimal.valueOf(1000);
-        BigDecimal expectedLowerPrice = BigDecimal.valueOf(900).setScale(2);
-        var currentCrypto = mock(Crypto.class);
+    void addDecreaseSubscription() {
+        String assetName = "test-asset";
+        BigDecimal value = BigDecimal.valueOf(10.0);
+        var currentCrypto = Mockito.mock(Crypto.class);
 
         when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
         when(financeServiceFactory.getService(uri)).thenReturn(financeService);
         when(financeProvider.fetchFinance(uri)).thenReturn(currentCrypto);
-        when(currentCrypto.getName()).thenReturn(cryptoName);
-        when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
+        when(currentCrypto.getName()).thenReturn(assetName);
         when(oidcUser.getEmail()).thenReturn(email);
 
-        subscriptionService.addSubscription(oidcUser, uri, null, lowerValueInPercent);
+        subscriptionService.addDecreaseSubscription(oidcUser, uri, value);
 
         verify(financeServiceFactory).getService(uri);
         verify(financeProvider).fetchFinance(uri);
-        verify(financeService).createAndSaveSubscription(email, cryptoName, null, expectedLowerPrice);
+        verify(financeService).createAndSaveSubscription(email, assetName, null, value);
     }
 
     @Test
-    void addSubscriptionBothValuesNull() {
-        String cryptoName = "cryptoName";
+    void addSubscriptionValueNull() {
+        String assetName = "test-asset";
         BigDecimal currentPrice = BigDecimal.valueOf(1000);
         var currentCrypto = mock(Crypto.class);
 
         when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
         when(financeServiceFactory.getService(uri)).thenReturn(financeService);
         when(financeProvider.fetchFinance(uri)).thenReturn(currentCrypto);
-        when(currentCrypto.getName()).thenReturn(cryptoName);
+        when(currentCrypto.getName()).thenReturn(assetName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn(email);
 
         InvalidSubscriptionParametersException e = assertThrows(InvalidSubscriptionParametersException.class, () ->
-                subscriptionService.addSubscription(oidcUser, uri, null, null));
+                subscriptionService.addIncreaseSubscription(oidcUser, uri, null));
 
-        assertEquals("At least one parameter must be provided.", e.getMessage());
-
-        verify(financeServiceFactory).getService(uri);
-        verify(financeProvider).fetchFinance(uri);
-        verify(financeService, never()).createAndSaveSubscription(email, cryptoName, null, null);
+        assertEquals("Value is required and must be grater than zero.", e.getMessage());
     }
 
     @Test
-    void addSubscriptionLowerValueNull() {
-        String cryptoName = "cryptoName";
-        Double upperValueInPercent = 10.0;
+    void addSubscriptionValueZero() {
+        String assetName = "test-asset";
         BigDecimal currentPrice = BigDecimal.valueOf(1000);
-        BigDecimal expectedUpperPrice = BigDecimal.valueOf(1100).setScale(2);
         var currentCrypto = mock(Crypto.class);
 
         when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
         when(financeServiceFactory.getService(uri)).thenReturn(financeService);
         when(financeProvider.fetchFinance(uri)).thenReturn(currentCrypto);
-        when(currentCrypto.getName()).thenReturn(cryptoName);
+        when(currentCrypto.getName()).thenReturn(assetName);
         when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
         when(oidcUser.getEmail()).thenReturn(email);
 
-        subscriptionService.addSubscription(oidcUser, uri, upperValueInPercent, null);
+        subscriptionService.addDecreaseSubscription(oidcUser, uri, BigDecimal.ZERO);
 
-        verify(financeServiceFactory).getService(uri);
-        verify(financeProvider).fetchFinance(uri);
-        verify(financeService).createAndSaveSubscription(email, cryptoName, expectedUpperPrice, null);
+        InvalidSubscriptionParametersException e = assertThrows(InvalidSubscriptionParametersException.class, () ->
+                subscriptionService.addIncreaseSubscription(oidcUser, uri, null));
+
+        assertEquals("Value is required and must be grater than zero.", e.getMessage());
+    }
+
+    @Test
+    void addSubscriptionValueNegative() {
+        String assetName = "test-asset";
+        BigDecimal currentPrice = BigDecimal.valueOf(1000);
+        var currentCrypto = mock(Crypto.class);
+
+        when(financeProviderFactory.getProvider(provider)).thenReturn(financeProvider);
+        when(financeServiceFactory.getService(uri)).thenReturn(financeService);
+        when(financeProvider.fetchFinance(uri)).thenReturn(currentCrypto);
+        when(currentCrypto.getName()).thenReturn(assetName);
+        when(currentCrypto.getPriceUsd()).thenReturn(currentPrice);
+        when(oidcUser.getEmail()).thenReturn(email);
+
+        subscriptionService.addDecreaseSubscription(oidcUser, uri, BigDecimal.valueOf(-100));
+
+        InvalidSubscriptionParametersException e = assertThrows(InvalidSubscriptionParametersException.class, () ->
+                subscriptionService.addIncreaseSubscription(oidcUser, uri, null));
+
+        assertEquals("Value is required and must be grater than zero.", e.getMessage());
     }
 
     @Test
