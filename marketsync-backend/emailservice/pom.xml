@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pl.muybien</groupId>
-	<artifactId>notificationservice</artifactId>
+	<artifactId>emailservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>emailservice</name>
 	<description>emailservice</description>
