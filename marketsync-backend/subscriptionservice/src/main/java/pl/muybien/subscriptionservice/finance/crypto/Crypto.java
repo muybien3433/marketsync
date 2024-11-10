@@ -1,7 +1,8 @@
 package pl.muybien.subscriptionservice.finance.crypto;
 
 import jakarta.persistence.Table;
-import pl.muybien.marketsync.finance.Finance;
+import lombok.*;
+import pl.muybien.subscriptionservice.finance.Finance;
 
 import java.math.BigDecimal;
 
