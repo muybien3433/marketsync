@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 public interface FinanceService {
 
-    void fetchCurrentFinance();
+    void fetchCurrentFinanceAndCompare();
     void createAndSaveSubscription(String customerEmail, String financeName,
                                                    BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd);
 

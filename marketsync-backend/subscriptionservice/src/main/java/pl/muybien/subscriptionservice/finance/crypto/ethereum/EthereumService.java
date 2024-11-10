@@ -2,14 +2,17 @@ package pl.muybien.subscriptionservice.finance.crypto.ethereum;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 import pl.muybien.subscriptionservice.finance.FinanceComparator;
 import pl.muybien.subscriptionservice.finance.FinanceService;
-import pl.muybien.subscriptionservice.finance.crypto.CryptoProvider;
+import pl.muybien.subscriptionservice.finance.crypto.binancecoin.BinanceResponse;
+import pl.muybien.subscriptionservice.handler.FinanceNotFoundException;
 import pl.muybien.subscriptionservice.subscription.SubscriptionListManager;
 
 import java.math.BigDecimal;
@@ -19,22 +22,31 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class EthereumService implements FinanceService {
 
-    private final CryptoProvider cryptoProvider;
     private final FinanceComparator financeComparator;
     private final SubscriptionListManager subscriptionListManager;
     private final EthereumRepository repository;
+    private final WebClient.Builder webClientBuilder;
+
+    @Value("${ethereum.api.url}")
+    private String url;
 
     @Override
     @Scheduled(fixedRate = 10000)
     @Transactional
-    public void fetchCurrentFinance() {
-        var cryptoPrice = cryptoProvider.fetchFinance("ethereum").getPriceUsd();
-        var subscriptions = repository.findAll();
-        subscriptions.forEach(subscription -> {
-            if (financeComparator.currentPriceMetSubscriptionCondition(cryptoPrice, subscription)) {
-                repository.delete(subscription);
-            }
-        });
+    public void fetchCurrentFinanceAndCompare() {
+        WebClient webClient = webClientBuilder.baseUrl(url).build();
+        EthereumResponse response = webClient.get().retrieve().bodyToMono(EthereumResponse.class).block();
+
+        if (response != null) {
+            var subscriptions = repository.findAll();
+            subscriptions.forEach(subscription -> {
+                if (financeComparator.currentPriceMetSubscriptionCondition(response.priceUsd(), subscription)) {
+                    repository.delete(subscription);
+                }
+            });
+        } else {
+            throw new FinanceNotFoundException("Data not found for URL: %s".formatted(url));
+        }
     }
 
     @Override
