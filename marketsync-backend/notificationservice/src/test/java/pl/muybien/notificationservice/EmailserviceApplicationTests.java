@@ -1,4 +1,4 @@
-package pl.muybien.emailservice;
+package pl.muybien.notificationservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,11 +1,11 @@
-package pl.muybien.marketsync.notification.email;
+package pl.muybien.notificationservice.notification.email;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import pl.muybien.marketsync.notification.NotificationService;
+import pl.muybien.notificationservice.NotificationService;
 
 @Service
 @RequiredArgsConstructor
