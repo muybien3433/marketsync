@@ -18,6 +18,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
+    //                          Kafka
+    @ExceptionHandler(TransferServiceException.class)
+    public ResponseEntity<String> handleTransferServiceException(TransferServiceException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+
     //                          Subscription
     @ExceptionHandler
     public ResponseEntity<String> handleSubscriptionOwnershipException(SubscriptionOwnershipException e) {

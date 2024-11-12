@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaConfig {
+public class KafkaProducerConfig {
 
     @Value("${send-email-topic}")
     private String sendEmailTopic;
@@ -45,7 +45,7 @@ public class KafkaConfig {
     private final static Integer TOPIC_PARTITIONS = 3;
     private final static Integer TOPIC_REPLICATION_FACTOR = 3;
 
-    public Map<String, Object> producerConfig() {
+    Map<String, Object> producerConfig() {
         Map<String, Object> props = new HashMap<>();
 
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
