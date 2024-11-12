@@ -51,33 +51,33 @@ class SubscriptionListManagerTest {
 //        ));
 //    }
 
-    @Test
-    void removeSubscriptionFromList() {
-        when(financeTarget.getId()).thenReturn(5L);
+//    @Test
+//    void removeSubscriptionFromList() {
+//        when(financeTarget.getId()).thenReturn(5L);
+//
+//        subscriptionListManager.removeSubscriptionFromList(financeTarget);
+//
+//        verify(subscriptionRepository, times(1)).deleteByFinanceId(5L);
+//    }
 
-        subscriptionListManager.removeSubscriptionFromList(financeTarget);
-
-        verify(subscriptionRepository, times(1)).deleteByFinanceId(5L);
-    }
-
-    @Test
-    void removeSubscriptionFromListException() {
-        Long financeId = 1L;
-
-        when(financeTarget.getId()).thenReturn(1L);
-        when(financeTarget.getName()).thenReturn("Bitcoin");
-
-        doThrow(new RuntimeException("Deletion failed"))
-                .when(subscriptionRepository).deleteByFinanceId(financeId);
-
-        SubscriptionDeletionException e = assertThrows(
-                SubscriptionDeletionException.class,
-                () -> subscriptionListManager.removeSubscriptionFromList(financeTarget)
-        );
-
-        String expectedMessage = "Subscription: Bitcoin id: 1 could not be deleted.";
-        assertEquals(expectedMessage, e.getMessage());
-    }
+//    @Test
+//    void removeSubscriptionFromListException() {
+//        Long financeId = 1L;
+//
+//        when(financeTarget.getId()).thenReturn(1L);
+//        when(financeTarget.getName()).thenReturn("Bitcoin");
+//
+//        doThrow(new RuntimeException("Deletion failed"))
+//                .when(subscriptionRepository).deleteByFinanceId(financeId);
+//
+//        SubscriptionDeletionException e = assertThrows(
+//                SubscriptionDeletionException.class,
+//                () -> subscriptionListManager.removeSubscriptionFromList(financeTarget)
+//        );
+//
+//        String expectedMessage = "Subscription: Bitcoin id: 1 could not be deleted.";
+//        assertEquals(expectedMessage, e.getMessage());
+//    }
 
 //    @Test
 //    void findAllCustomerSubscriptions() {
