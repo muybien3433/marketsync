@@ -2,7 +2,7 @@ package pl.muybien.customerservice.customer;
 
 import jakarta.persistence.*;
 import lombok.*;
-import pl.muybien.marketsync.wallet.Wallet;
+
 
 @Entity
 @Builder
@@ -18,7 +18,4 @@ public class Customer {
     private Long id;
     private String name;
     private String email;
-
-    @OneToOne(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Wallet wallet;
 }

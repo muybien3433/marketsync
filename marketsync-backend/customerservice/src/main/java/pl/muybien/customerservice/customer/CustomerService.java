@@ -4,17 +4,15 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.marketsync.wallet.Wallet;
-import pl.muybien.marketsync.wallet.WalletService;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final WalletService walletService;
 
     @Transactional
+    // TODO: transactional must be with jpa and kafka transactions to ensure customer and wallet were created
     public void createCustomerIfNotPresent(String email, String name) {
         boolean customerIsNotPresent = customerRepository.findByEmail(email).isEmpty();
 
@@ -24,7 +22,7 @@ public class CustomerService {
                     .name(name)
                     .build();
             customerRepository.save(customer);
-            walletService.saveNewWallet(Wallet.builder().customer(customer).build());
+            // TODO: message to WalletService to createNewWallet(email);
         }
     }
 
