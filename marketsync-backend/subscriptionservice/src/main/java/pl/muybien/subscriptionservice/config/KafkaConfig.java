@@ -42,6 +42,9 @@ public class KafkaConfig {
     @Value("${spring.kafka.producer.transaction-id-prefix}")
     private String transactionalIdPrefix;
 
+    private final static Integer TOPIC_PARTITIONS = 3;
+    private final static Integer TOPIC_REPLICATION_FACTOR = 3;
+
     public Map<String, Object> producerConfig() {
         Map<String, Object> props = new HashMap<>();
 
@@ -83,8 +86,8 @@ public class KafkaConfig {
     NewTopic createSendEmailTopic() {
         return TopicBuilder
                 .name(sendEmailTopic)
-                .partitions(2)
-                .replicas(2)
+                .partitions(TOPIC_PARTITIONS)
+                .replicas(TOPIC_REPLICATION_FACTOR)
                 .build();
     }
 }
