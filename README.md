@@ -15,9 +15,10 @@ informed and manage their cryptocurrency interests effortlessly.
 
 ## Tech Stack
 
-- **Backend**: Java 23, SpringBoot 6
+- **Backend**: Java 23, SpringBoot 6, Kafka
 - **Database**: PostgreSQL (Relational Database)
-- **Authentication**: OAuth2
+- **Authentication**: OAuth2, Keyclock
+- **Cloud**: Docker
 - **Testing**: JUnit 5 for unit tests
 - **Build Tool**: Maven for dependency management
 
