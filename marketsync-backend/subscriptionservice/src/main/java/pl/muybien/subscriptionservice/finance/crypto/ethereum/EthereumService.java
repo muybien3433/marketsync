@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import pl.muybien.subscriptionservice.finance.FinanceComparator;
 import pl.muybien.subscriptionservice.finance.FinanceService;
-import pl.muybien.subscriptionservice.finance.crypto.binancecoin.BinanceResponse;
 import pl.muybien.subscriptionservice.handler.FinanceNotFoundException;
 import pl.muybien.subscriptionservice.subscription.SubscriptionListManager;
 
@@ -40,7 +39,7 @@ public class EthereumService implements FinanceService {
         if (response != null) {
             var subscriptions = repository.findAll();
             subscriptions.forEach(subscription -> {
-                if (financeComparator.currentPriceMetSubscriptionCondition(response.priceUsd(), subscription)) {
+                if (financeComparator.priceMetSubscriptionCondition(response.priceUsd(), subscription)) {
                     repository.delete(subscription);
                 }
             });
@@ -50,11 +49,11 @@ public class EthereumService implements FinanceService {
     }
 
     @Override
-    public void createAndSaveSubscription(String customerEmail, String financeName,
+    public void createAndSaveSubscription(String customerEmail,
                                           BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd) {
         var crypto = Ethereum.builder()
                 .customerEmail(customerEmail)
-                .name(financeName)
+                .name("ethereum")
                 .upperBoundPrice(upperPriceInUsd)
                 .lowerBoundPrice(lowerPriceInUsd)
                 .build();

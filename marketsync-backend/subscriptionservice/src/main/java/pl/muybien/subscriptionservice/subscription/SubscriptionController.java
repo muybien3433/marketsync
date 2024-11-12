@@ -24,7 +24,7 @@ public class SubscriptionController {
             @PathVariable String uri,
             @RequestBody BigDecimal value
     ) {
-        subscriptionService.addIncreaseSubscription(oidcUser, uri, value);
+        subscriptionService.createIncreaseSubscription(oidcUser, uri, value);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -34,7 +34,7 @@ public class SubscriptionController {
             @PathVariable String uri,
             @RequestBody BigDecimal value
     ) {
-        subscriptionService.addDecreaseSubscription(oidcUser, uri, value);
+        subscriptionService.createDecreaseSubscription(oidcUser, uri, value);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -50,7 +50,7 @@ public class SubscriptionController {
     @GetMapping
     public ResponseEntity<List<SubscriptionDTO>> findAllSubscriptions(
             @AuthenticationPrincipal OidcUser oidcUser) {
-        List<SubscriptionDTO> subscriptions = subscriptionListManager.findAllCustomerSubscriptions(oidcUser);
+        List<SubscriptionDTO> subscriptions = subscriptionListManager.findAllCustomerSubscriptions(oidcUser.getEmail());
         return ResponseEntity.ok(subscriptions);
     }
 }

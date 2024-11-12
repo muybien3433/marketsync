@@ -40,7 +40,7 @@ public class BitcoinService implements FinanceService {
         if (response != null) {
             var subscriptions = repository.findAll();
             subscriptions.forEach(subscription -> {
-                if (financeComparator.currentPriceMetSubscriptionCondition(response.priceUsd(), subscription)) {
+                if (financeComparator.priceMetSubscriptionCondition(response.priceUsd(), subscription)) {
                     repository.delete(subscription);
                 }
             });
@@ -51,11 +51,11 @@ public class BitcoinService implements FinanceService {
 
     @Override
     @Transactional
-    public void createAndSaveSubscription(String customerEmail, String financeName,
+    public void createAndSaveSubscription(String customerEmail,
                                           BigDecimal upperPriceInUsd, BigDecimal lowerPriceInUsd) {
         var crypto = Bitcoin.builder()
                 .customerEmail(customerEmail)
-                .name(financeName)
+                .name("bitcoin")
                 .upperBoundPrice(upperPriceInUsd)
                 .lowerBoundPrice(lowerPriceInUsd)
                 .build();

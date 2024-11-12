@@ -55,8 +55,7 @@ class BitcoinServiceTest {
 
     @Test
     void createAndSaveSubscription() {
-        service.createAndSaveSubscription(email, crypto.getName(),
-                crypto.getUpperBoundPrice(), crypto.getLowerBoundPrice());
+        service.createAndSaveSubscription(email, crypto.getUpperBoundPrice(), crypto.getLowerBoundPrice());
 
         verify(repository, times(1)).save(any());
     }

@@ -1,7 +1,6 @@
 package pl.muybien.subscriptionservice.subscription;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.subscriptionservice.finance.FinanceTarget;
@@ -9,6 +8,7 @@ import pl.muybien.subscriptionservice.handler.SubscriptionDeletionException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -19,13 +19,17 @@ public class SubscriptionListManager {
 
     @Transactional
     public void addSubscriptionToList(FinanceTarget financeTarget) {
-        var subscription = Subscription.builder()
+        var subscriptionDetail = SubscriptionDetail.builder()
                 .financeId(financeTarget.getId())
                 .upperBoundPrice(financeTarget.getUpperBoundPrice())
                 .lowerBoundPrice(financeTarget.getLowerBoundPrice())
                 .name(financeTarget.getName())
                 .customerEmail(financeTarget.getCustomerEmail())
                 .createdAt(LocalDateTime.now())
+                .build();
+
+        Subscription subscription = Subscription.builder()
+                .subscriptions(List.of(subscriptionDetail))
                 .build();
 
         subscriptionRepository.save(subscription);
@@ -43,11 +47,13 @@ public class SubscriptionListManager {
     }
 
     @Transactional(readOnly = true)
-    public List<SubscriptionDTO> findAllCustomerSubscriptions(OidcUser oidcUser) {
-        return subscriptionRepository.findAllByCustomerEmail(oidcUser.getEmail())
+    public List<SubscriptionDTO> findAllCustomerSubscriptions(String email) {
+        return subscriptionRepository.findAllByCustomerEmail(email)
                 .stream()
-                .flatMap(List::stream)
-                .map(subscriptionDTOMapper::mapToDTO)
-                .toList();
+                .flatMap(s -> s.getSubscriptions()
+                        .stream()
+                        .map(subscriptionDTOMapper::mapToDTO))
+                .sorted((s1, s2) -> s2.createdAt().compareTo(s1.createdAt()))
+                .collect(Collectors.toList());
     }
 }

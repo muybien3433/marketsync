@@ -3,8 +3,7 @@ package pl.muybien.subscriptionservice.subscription;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Builder
@@ -16,12 +15,9 @@ import java.time.LocalDateTime;
 public class Subscription {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long financeId;
-    private String name;
-    private BigDecimal upperBoundPrice;
-    private BigDecimal lowerBoundPrice;
-    private String customerEmail;
-    private LocalDateTime createdAt;
+
+    @ElementCollection
+    private List<SubscriptionDetail> subscriptions;
 }

@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
@@ -16,6 +15,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Query("DELETE FROM Subscription s WHERE s.financeId = :financeId")
     void deleteByFinanceId(@Param("financeId") Long financeId);
 
-    @Query("SELECT s FROM Subscription s WHERE s.customerEmail = :email")
-    Optional<List<Subscription>> findAllByCustomerEmail(@Param("email") String email);
+    @Query("SELECT s FROM Subscription s WHERE s.customerEmail = :customerEmail")
+    Optional<Subscription> findAllByCustomerEmail(@Param("email") String email);
 }

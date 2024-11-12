@@ -11,14 +11,4 @@ public class WebClientConfig {
     WebClient.Builder webClientBuilder() {
         return WebClient.builder();
     }
-
-//    @Value("${crypto.api.uri}")
-//    private String cryptoApiUri;
-//
-//    @Bean
-//    WebClient webClient(WebClient.Builder builder) {
-//        return builder
-//                .baseUrl(cryptoApiUri)
-//                .build();
-//    }
 }

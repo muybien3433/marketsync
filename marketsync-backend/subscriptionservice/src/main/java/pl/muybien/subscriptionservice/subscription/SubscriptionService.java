@@ -17,24 +17,22 @@ public class SubscriptionService {
     private final FinanceServiceFactory financeServiceFactory;
 
     @Transactional
-    public void addIncreaseSubscription(OidcUser oidcUser, String uri, BigDecimal value) {
+    public void createIncreaseSubscription(OidcUser oidcUser, String uri, BigDecimal value) {
         var service = financeServiceFactory.getService(uri);
 
         if (value != null) {
-            String financeName = service.getClass().getName();
-            service.createAndSaveSubscription(oidcUser.getEmail(), financeName, value, null);
+            service.createAndSaveSubscription(oidcUser.getEmail(), value, null);
         } else {
             throw new InvalidSubscriptionParametersException("Value is required and must be grater than zero.");
         }
     }
 
     @Transactional
-    public void addDecreaseSubscription(OidcUser oidcUser, String uri, BigDecimal value) {
+    public void createDecreaseSubscription(OidcUser oidcUser, String uri, BigDecimal value) {
         var service = financeServiceFactory.getService(uri);
 
         if (value != null) {
-            String financeName = service.getClass().getName();
-            service.createAndSaveSubscription(oidcUser.getEmail(), financeName, null, value);
+            service.createAndSaveSubscription(oidcUser.getEmail(), null, value);
         } else {
             throw new InvalidSubscriptionParametersException("Value is required and must be grater than zero.");
         }

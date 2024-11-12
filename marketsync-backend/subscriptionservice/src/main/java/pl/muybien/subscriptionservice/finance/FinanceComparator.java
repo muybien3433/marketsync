@@ -1,8 +1,13 @@
 package pl.muybien.subscriptionservice.finance;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.core.event.EmailSentEvent;
 
 import java.math.BigDecimal;
 
@@ -10,8 +15,15 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class FinanceComparator {
 
-    @Transactional
-    public <T extends FinanceTarget> boolean currentPriceMetSubscriptionCondition(BigDecimal currentPriceUsd, T subscription) {
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    @Value("${send-email-topic}")
+    private static String sendEmailTopic;
+
+    @Transactional("transactionManager")
+    public <T extends FinanceTarget> boolean priceMetSubscriptionCondition(BigDecimal currentPriceUsd,
+                                                                           T subscription) {
         if (subscription != null) {
             BigDecimal upperTargetPrice = subscription.getUpperBoundPrice();
             BigDecimal lowerTargetPrice = subscription.getLowerBoundPrice();
@@ -29,16 +41,17 @@ public class FinanceComparator {
         return false;
     }
 
-    // TODO: Move this functionality to new microservice after kafka set
-    private <T extends FinanceTarget> void sendNotification(T subscription,
-                                                            BigDecimal currentPriceUsd,
-                                                            BigDecimal targetPrice) {
+    @Transactional("transactionManager")
+    public <T extends FinanceTarget> void sendNotification(T subscription, BigDecimal currentPriceUsd,
+                                                           BigDecimal targetPrice) {
         String email = subscription.getCustomerEmail();
         String subject = "Your %s subscription notification!".formatted(subscription.getName());
-        String message = "Current %s value reached bound at: %s, your bound was %s".formatted(
+        String body = "Current %s value reached bound at: %s, your bound was %s".formatted(
                 subscription.getName(), currentPriceUsd, targetPrice);
 
-//        notificationService.sendNotification(email, subject, message);
+        EmailSentEvent emailSentEvent = new EmailSentEvent(email, subject, body);
 
+        kafkaTemplate.send(sendEmailTopic, emailSentEvent);
+        LOGGER.info("Send event {} to topic {}", emailSentEvent, sendEmailTopic);
     }
 }
