@@ -18,6 +18,8 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String customerEmail;
+
     @ElementCollection
     private List<SubscriptionDetail> subscriptions;
 }

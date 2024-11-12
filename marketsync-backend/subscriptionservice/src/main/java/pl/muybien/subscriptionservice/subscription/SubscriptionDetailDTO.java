@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Builder
-public record SubscriptionDTO(
+public record SubscriptionDetailDTO(
         String financeName,
         LocalDateTime createdAt,
         BigDecimal upperBoundPrice,

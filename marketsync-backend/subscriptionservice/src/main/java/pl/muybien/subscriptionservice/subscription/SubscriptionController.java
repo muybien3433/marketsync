@@ -48,9 +48,9 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SubscriptionDTO>> findAllSubscriptions(
+    public ResponseEntity<List<SubscriptionDetailDTO>> findAllSubscriptions(
             @AuthenticationPrincipal OidcUser oidcUser) {
-        List<SubscriptionDTO> subscriptions = subscriptionListManager.findAllCustomerSubscriptions(oidcUser.getEmail());
+        List<SubscriptionDetailDTO> subscriptions = subscriptionListManager.findAllCustomerSubscriptions(oidcUser.getEmail());
         return ResponseEntity.ok(subscriptions);
     }
 }

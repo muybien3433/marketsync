@@ -8,10 +8,6 @@ import org.mockito.MockitoAnnotations;
 import pl.muybien.subscriptionservice.finance.FinanceTarget;
 import pl.muybien.subscriptionservice.handler.SubscriptionDeletionException;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -25,7 +21,7 @@ class SubscriptionListManagerTest {
     SubscriptionRepository subscriptionRepository;
 
     @Mock
-    SubscriptionDTOMapper subscriptionDTOMapper;
+    SubscriptionDetailDTOMapper subscriptionDetailDTOMapper;
 
     @Mock
     FinanceTarget financeTarget;

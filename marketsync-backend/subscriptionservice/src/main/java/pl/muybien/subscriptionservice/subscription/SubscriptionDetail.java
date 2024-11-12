@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 public class SubscriptionDetail {
 
-    private Long financeId;
+    private Long id;
     private String name;
     private BigDecimal upperBoundPrice;
     private BigDecimal lowerBoundPrice;
