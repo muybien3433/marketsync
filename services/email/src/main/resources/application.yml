@@ -1,0 +1,5 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:7777
+  application:
+    name: email-service

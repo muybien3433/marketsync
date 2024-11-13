@@ -1,0 +1,8 @@
+server:
+  port: 8095
+
+spring:
+  datasource:
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/customer

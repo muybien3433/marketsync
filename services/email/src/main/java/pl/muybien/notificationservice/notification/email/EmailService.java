@@ -7,19 +7,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import pl.muybien.notificationservice.NotificationService;
 
 @Service
 @RequiredArgsConstructor
-public class EmailService implements NotificationService {
+public class EmailService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
     private final JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
     private String companyEmail;
 
-    @Override
     public void sendNotification(String customerEmail, String subject, String message) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(companyEmail);

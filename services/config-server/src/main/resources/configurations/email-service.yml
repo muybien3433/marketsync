@@ -1,0 +1,27 @@
+server:
+  port: 9000
+
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092,localhost:9094
+      group-id: send-email-event
+      properties:
+        spring.json.trusted.packages: pl.muybien.*
+      isolation-level: read_committed
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+kafka:
+  fix:
+    backoff:
+      interval: 5000
+    max:
+      attempts: 3
