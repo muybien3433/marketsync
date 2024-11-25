@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/customer")
+@RequestMapping("/api/v1/customers")
 @RequiredArgsConstructor
 public class CustomerController {
 
@@ -27,25 +27,25 @@ public class CustomerController {
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping("/exist/{id}")
+    @GetMapping("/exist/{customer-id}")
     public ResponseEntity<Boolean> existsById(
-            @PathVariable("id") Long id
+            @PathVariable("customer-id") Long customerId
     ) {
-        return ResponseEntity.ok(service.existsById(id));
+        return ResponseEntity.ok(service.existsById(customerId));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{customer-id}")
     public ResponseEntity<CustomerResponse> findById(
-            @PathVariable("id") Long id
+            @PathVariable("customer-id") Long customerId
     ) {
-        return ResponseEntity.ok(service.findById(id));
+        return ResponseEntity.ok(service.findById(customerId));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{customer-id}")
     public ResponseEntity<Void> deleteById(
-            @PathVariable("id") Long id
+            @PathVariable("customer-id") Long customerId
     ) {
-        service.deleteCustomer(id);
+        service.deleteCustomer(customerId);
         return ResponseEntity.accepted().build();
     }
 }

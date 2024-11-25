@@ -1,21 +1,18 @@
 server:
-  port: 8085
+  port: 8900
 
 spring:
   config:
     import: classpath:crypto-uri.properties
-
   datasource:
-    url: jdbc:postgresql://localhost:5432/notifier
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-
+    url: jdbc:postgresql://localhost:5432/subscription
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: create
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
     producer:

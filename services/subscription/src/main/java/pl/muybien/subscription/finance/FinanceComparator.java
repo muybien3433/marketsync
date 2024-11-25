@@ -1,0 +1,60 @@
+package pl.muybien.subscription.finance;
+
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+
+@Service
+@RequiredArgsConstructor
+public class FinanceComparator {
+
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private static final Logger LOGGER = LoggerFactory.getLogger(FinanceComparator.class);
+
+    @Value("${send-email-topic}")
+    private String sendEmailTopic;
+
+    @Transactional("transactionManager")
+    public <T extends FinanceTarget> boolean priceMetSubscriptionCondition(BigDecimal currentPriceUsd,
+                                                                           T subscription) {
+        if (subscription != null) {
+            BigDecimal upperTargetPrice = subscription.getUpperBoundPrice();
+            BigDecimal lowerTargetPrice = subscription.getLowerBoundPrice();
+            boolean currentValueEqualsOrGreaterThanTarget = currentPriceUsd.compareTo(upperTargetPrice) >= 0;
+            boolean currentValueEqualsOrLowerThanTarget = currentPriceUsd.compareTo(lowerTargetPrice) <= 0;
+
+            if (currentValueEqualsOrGreaterThanTarget) {
+//                sendEmailNotification(subscription, currentPriceUsd, upperTargetPrice);
+                return true;
+            } else if (currentValueEqualsOrLowerThanTarget) {
+//                sendEmailNotification(subscription, currentPriceUsd, lowerTargetPrice);
+                return true;
+            }
+        }
+        return false;
+    }
+
+//    @Transactional("transactionManager")
+//    public <T extends FinanceTarget> void sendEmailNotification(T subscription, BigDecimal currentPriceUsd,
+//                                                                BigDecimal targetPrice) {
+//        String email = subscription.getCustomerEmail();
+//        String subject = "Your %s subscription notification!".formatted(subscription.getName());
+//        String body = "Current %s value reached bound at: %s, your bound was %s".formatted(
+//                subscription.getName(), currentPriceUsd, targetPrice);
+//
+//        try {
+//            EmailSentEvent emailSentEvent = new EmailSentEvent(email, subject, body);
+//            kafkaTemplate.send(sendEmailTopic, emailSentEvent);
+//            LOGGER.info("Send event {} to topic {}", emailSentEvent, sendEmailTopic);
+//        } catch (Exception e) {
+//            LOGGER.error("Failed to send Kafka message to topic {}: {}", sendEmailTopic, e.getMessage(), e);
+//            throw new TransferServiceException("Error sending email notification via Kafka", e);
+//        }
+//    }
+}
