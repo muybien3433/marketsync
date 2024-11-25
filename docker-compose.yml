@@ -8,62 +8,34 @@ services:
       - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
     command: start-dev
 
-  kafka-1:
-    image: 'bitnami/kafka:3.3.2'
-    container_name: kafka-1
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     environment:
-      # KRaft settings
-      - KAFKA_CFG_NODE_ID=1
-      - KAFKA_CFG_PROCESS_ROLES=broker,controller
-      - KAFKA_KRAFT_CLUSTER_ID=r4zt_wrqTRuT7W2NJsB_GA
-      # Listeners
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9192,CONTROLLER://:9094,EXTERNAL://:9091
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9192,EXTERNAL://localhost:9091
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9094,2@kafka-2:9094,3@kafka-3:9094
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - 9091:9091
-    volumes:
-      - ../kafka-volumes/server-1:/bitnami/kafka
+      - "22181:2181"
+    networks:
+      - microservices-net
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: ms_kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+    networks:
+      - microservices-net
 
-  kafka-2:
-    image: 'bitnami/kafka:3.3.2'
-    container_name: kafka-2
-    environment:
-      # KRaft settings
-      - KAFKA_CFG_NODE_ID=2
-      - KAFKA_CFG_PROCESS_ROLES=broker,controller
-      - KAFKA_KRAFT_CLUSTER_ID=r4zt_wrqTRuT7W2NJsB_GA
-      # Listeners
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9192,CONTROLLER://:9094,EXTERNAL://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-2:9192,EXTERNAL://localhost:9092
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9094,2@kafka-2:9094,3@kafka-3:9094
-    ports:
-      - 9092:9092
-    volumes:
-      - ../kafka-volumes/server-2:/bitnami/kafka
-
-  kafka-3:
-    image: 'bitnami/kafka:3.3.2'
-    container_name: kafka-3
-    environment:
-      # KRaft settings
-      - KAFKA_CFG_NODE_ID=3
-      - KAFKA_CFG_PROCESS_ROLES=broker,controller
-      - KAFKA_KRAFT_CLUSTER_ID=r4zt_wrqTRuT7W2NJsB_GA
-      # Listeners
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9192,CONTROLLER://:9094,EXTERNAL://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-3:9192,EXTERNAL://localhost:9093
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9094,2@kafka-2:9094,3@kafka-3:9094
-    ports:
-      - 9093:9093
-    volumes:
-      - ../kafka-volumes/server-3:/bitnami/kafka
+networks:
+  microservices-net:
+    driver: bridge
