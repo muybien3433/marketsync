@@ -20,7 +20,7 @@ public class SubscriptionController {
             @RequestBody @Valid SubscriptionRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.createDecreaseSubscription(request));
+                .body(service.createIncreaseSubscription(request));
     }
 
     @PostMapping("/decrease")

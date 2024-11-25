@@ -31,7 +31,8 @@ public class SubscriptionService {
 
         var service = financeServiceFactory.getService(request.uri());
         var subscription = findOrCreateSubscription(request);
-        var subscriptionDetail = service.createIncreaseSubscription(request.value(), customer.id());
+        var subscriptionDetail = service.createIncreaseSubscription(
+                request.value(), customer.email(), customer.id());
 
         subscription.getSubscriptionDetails().add(subscriptionDetail);
         repository.save(subscription);
@@ -52,7 +53,8 @@ public class SubscriptionService {
 
         var service = financeServiceFactory.getService(request.uri());
         var subscription = findOrCreateSubscription(request);
-        var subscriptionDetail = service.createDecreaseSubscription(request.value(), customer.id());
+        var subscriptionDetail = service.createDecreaseSubscription(
+                request.value(), customer.email(), customer.id());
 
         subscription.getSubscriptionDetails().add(subscriptionDetail);
         repository.save(subscription);

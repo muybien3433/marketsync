@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public interface FinanceService {
 
     void fetchCurrentFinanceAndCompare();
-    SubscriptionDetail createIncreaseSubscription(BigDecimal value, Long customerId);
-    SubscriptionDetail createDecreaseSubscription(BigDecimal value, Long customerId);
+    SubscriptionDetail createIncreaseSubscription(BigDecimal value, String customerEmail, Long customerId);
+    SubscriptionDetail createDecreaseSubscription(BigDecimal value, String customerEmail, Long customerId);
     void deleteSubscription(Long subscriptionId, Long customerId);
 }

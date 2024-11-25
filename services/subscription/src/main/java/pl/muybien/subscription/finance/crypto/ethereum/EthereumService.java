@@ -45,11 +45,12 @@ public class EthereumService implements FinanceService {
 
     @Override
     @Transactional
-    public SubscriptionDetail createIncreaseSubscription(BigDecimal value, Long customerId) {
+    public SubscriptionDetail createIncreaseSubscription(BigDecimal value, String customerEmail, Long customerId) {
         var subscription = Ethereum.builder()
                 .financeName(name)
                 .upperBoundPrice(value)
                 .lowerBoundPrice(null)
+                .customerEmail(customerEmail)
                 .customerId(customerId)
                 .createdDate(LocalDateTime.now())
                 .build();
@@ -67,11 +68,12 @@ public class EthereumService implements FinanceService {
 
     @Override
     @Transactional
-    public SubscriptionDetail createDecreaseSubscription(BigDecimal value, Long customerId) {
+    public SubscriptionDetail createDecreaseSubscription(BigDecimal value, String customerEmail, Long customerId) {
         var subscription = Ethereum.builder()
                 .financeName(name)
                 .upperBoundPrice(null)
                 .lowerBoundPrice(value)
+                .customerEmail(customerEmail)
                 .customerId(customerId)
                 .createdDate(LocalDateTime.now())
                 .build();

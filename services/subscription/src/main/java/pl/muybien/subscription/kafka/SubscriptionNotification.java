@@ -1,11 +1,11 @@
 package pl.muybien.subscription.kafka;
 
-import pl.muybien.subscription.customer.CustomerResponse;
+import lombok.Builder;
 
-public record SubscriptionConfirmation(
+@Builder
+public record SubscriptionNotification(
         String email,
         String subject,
-        String body,
-        CustomerResponse customerResponse
+        String body
 ) {
 }

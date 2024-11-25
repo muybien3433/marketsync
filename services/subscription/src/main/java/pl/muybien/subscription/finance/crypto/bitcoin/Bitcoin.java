@@ -28,6 +28,7 @@ public class Bitcoin implements FinanceTarget {
         private String financeName;
         private BigDecimal upperBoundPrice;
         private BigDecimal lowerBoundPrice;
+        private String customerEmail;
         private Long customerId;
 
         @CreatedDate
