@@ -1,26 +1,29 @@
 # MarketSync
 
-MarketSync is a backend service solution designed to empower users with real-time market insights
-and personalized notifications for stock market subscriptions. MarketSync fetch data and compare
-targeted subscriptions in real time. Application offers a dynamic platform for users to stay
-informed and manage their cryptocurrency interests effortlessly.
+MarketSync is a backend microservice solution that empowers users with real-time market insights 
+and personalized notifications for stock market and cryptocurrency subscriptions.
+
+It fetches data and compares targeted subscriptions in real time, offering a dynamic platform 
+for users to stay informed and effortlessly manage their cryptocurrency interests. 
+Users can create personal wallets to track assets, view detailed information, 
+and calculate real-time profits for each asset.
 
 ## Features
 
-- **User Authentication**: OAuth2 Authorizaiton.
-- **Subscription Management**: Add or remove currency subscriptions.
-- **Wallet**: Personal customer wallet manage assets.
-- **Assets**: Add or remove assets to wallet.
-- **Notifications**: Send e-mail to user when subscription reach upper or lower bound.
+- **User Authentication**: Secure authentication using Keycloak.
+- **Subscriptions**: Add or remove currency subscriptions with custom thresholds.
+- **Wallet**: Manage personal customer wallets to track assets.
+- **Assets**: Add or remove assets from the wallet.
+- **Notifications**: Send email notifications when subscription values reach specified thresholds.
 
 ## Tech Stack
 
 - **Backend**: Java 23, SpringBoot 6, Kafka
 - **Database**: PostgreSQL (Relational Database)
 - **Authentication**: OAuth2, Keyclock
-- **Cloud**: Docker
-- **Testing**: JUnit 5 for unit tests
-- **Build Tool**: Maven for dependency management
+- **Cloud**: Docker, Eureka
+- **Testing**: JUnit 5 for unit testing
+- **Build Tool**: Maven, Docker
 
 ## Prerequisites
 
@@ -29,22 +32,30 @@ Ensure you have the following installed before running the project:
 - **Java**: 23
 - **PostgreSQL**
 - **Maven**
+- **Docker**
 
 ## API Endpoints
 
 **API will be available at localhost:8080/api/v1**
 
-- *Wallet*: `/wallet`
-    - `GET /` – Display all customer assets in wallet.
-
-- *Asset*: `/asset`
-    - `POST /` – Create new asset and add it to wallet.
-    - `DELETE /{id}` – Delete asset from wallet.
+- *Finance*: `/finances`
+    - `GET /{uri}` – Fetch the current price of a financial asset.
 
 - *Subscription*: `/subscriptions`
-    - `GET /` – Display all customer subscriptions.
-    - `POST /{uri}` – Create new subscription (params: upperValueInPercent, lowerValueInPercent).
+    - `GET /` – List all active subscriptions for the customer.
+    - `POST /increase` – Add a new subscription with a condition: actualValue > value.
+    - `POST /decrease` – Add new subscription with condition actualValue < value.
     - `DELETE /{uri}/{id}` – Delete subscription.
+
+- *Wallet*: `/wallets`
+    - `GET /` – View all assets in the customer’s wallet as list.
+    - `DELETE /` – Delete the customer’s wallet.
+    - `POST /assets` – Add a new asset to the wallet.
+    - `DELETE /assets` – Remove an asset from the wallet.
+
+- *Asset*: `/assets`
+    - `POST /` – Add a new asset to the wallet.
+    - `DELETE /{id}` – Remove an asset from the wallet.
 
 ## Installation
 
@@ -52,24 +63,31 @@ Ensure you have the following installed before running the project:
    ```bash
    git clone https://github.com/muybien3433/marketsync.git
    ```
-3. Provide necessary properties in each application.properties:
+   
+2. Start docker containers
+   ```bash
+   docker-compose up
+   ```
+   
+3. Provide environment variables:
 
-4. Reload maven project
+4. Build the project
    ```bash
    mvn clean install
    ```
+   
 5. Run tests
    ```bash
    mvn test
    ```
+   
 6. Run the application
    ```bash
    mvn spring-boot:run
    ```
 
 ## Contributing
-Submit issues and pull requests are more than welcome.
+Contributions are welcome! Feel free to submit issues and pull requests.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
-
+This project is licensed under the MIT License.
