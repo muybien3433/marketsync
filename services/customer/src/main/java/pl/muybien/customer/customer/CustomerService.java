@@ -37,10 +37,6 @@ public class CustomerService {
         }
     }
 
-    public Boolean existsById(Long id) {
-        return repository.existsById(id);
-    }
-
     public CustomerResponse findById(Long id) {
         return repository.findById(id)
                 .map(mapper::toCustomerResponse)

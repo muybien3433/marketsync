@@ -56,6 +56,13 @@ Ensure you have the following installed before running the project:
 - *Asset*: `/assets`
     - `POST /` – Add a new asset to the wallet.
     - `DELETE /{id}` – Remove an asset from the wallet.
+    - 
+- *Customer*: `/customers`
+    - `POST /` – Create new Customer.
+    - `PUT /` – Edit existing Customer.
+    - `GET /{customer-id}` – Find customer by id.
+    - `DELETE /{customer-id}` – Delete customer by id.
+
 
 ## Installation
 
