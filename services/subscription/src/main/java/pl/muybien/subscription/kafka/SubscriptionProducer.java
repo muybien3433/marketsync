@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SubscriptionProducer {
 
-    private final KafkaTemplate<String, SubscriptionNotification> kafkaTemplate;
+    private final KafkaTemplate<String, SubscriptionConfirmation> kafkaTemplate;
 
-    public void sendSubscriptionNotification(SubscriptionNotification subscriptionNotification) {
-        Message<SubscriptionNotification> message = MessageBuilder
-                .withPayload(subscriptionNotification)
+    public void sendSubscriptionNotification(SubscriptionConfirmation subscriptionConfirmation) {
+        Message<SubscriptionConfirmation> message = MessageBuilder
+                .withPayload(subscriptionConfirmation)
                 .setHeader(KafkaHeaders.TOPIC, "subscription-topic")
                 .build();
 

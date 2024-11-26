@@ -3,7 +3,7 @@ package pl.muybien.subscription.finance;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.subscription.kafka.SubscriptionNotification;
+import pl.muybien.subscription.kafka.SubscriptionConfirmation;
 import pl.muybien.subscription.kafka.SubscriptionProducer;
 
 import java.math.BigDecimal;
@@ -24,7 +24,7 @@ public class FinanceComparator {
 
             if (currentValueEqualsOrGreaterThanTarget) {
                 subscriptionProducer.sendSubscriptionNotification(
-                        SubscriptionNotification.builder()
+                        SubscriptionConfirmation.builder()
                                 .email(subscription.getCustomerEmail())
                                 .subject("Your %s subscription notification!".formatted(subscription.getFinanceName()))
                                 .body("Current %s value reached bound at: %s, your bound was %s"
@@ -34,7 +34,7 @@ public class FinanceComparator {
                 return true;
             } else if (currentValueEqualsOrLowerThanTarget) {
                 subscriptionProducer.sendSubscriptionNotification(
-                        SubscriptionNotification.builder()
+                        SubscriptionConfirmation.builder()
                                 .email(subscription.getCustomerEmail())
                                 .subject("Your %s subscription notification!".formatted(subscription.getFinanceName()))
                                 .body("Current %s value reached bound at: %s, your bound was %s"

@@ -26,6 +26,7 @@ spring:
         request.timeout.ms: 30000
         max.in.flight.requests.per.connection: 5
         enable.idempotence: true
+        spring.json.type.mapping: subscriptionConfirmation:pl.muybien.subscription.kafka.SubscriptionConfirmation
       transaction-id-prefix: transfer-service-${random.value}
 
 send-email-topic: send-email-topic
