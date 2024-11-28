@@ -94,6 +94,7 @@ public class WalletService {
                             .count(totalCount)
                             .averagePurchasePrice(totalAveragePurchasePrice.divide(
                                     BigDecimal.valueOf(group.size()), RoundingMode.HALF_UP))
+                            .currentPrice(currentPrice)
                             .investmentStartDate(investmentStartDate)
                             .value(value)
                             .profit(profit)

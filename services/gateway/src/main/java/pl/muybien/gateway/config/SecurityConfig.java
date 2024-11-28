@@ -24,7 +24,9 @@ public class SecurityConfig {
                 .authorizeExchange((authorize) -> authorize
                         .pathMatchers(
                                 "/eureka/**",
-                                "/api/v1/finances/**"
+                                "/api/v1/finances/**",
+                                "/api/v1/customers",
+                                "/api/v1/customers/{customer-id}"
                         )
                         .permitAll()
                         .anyExchange()
@@ -40,5 +42,4 @@ public class SecurityConfig {
     public ReactiveJwtDecoder jwtDecoder() {
         return ReactiveJwtDecoders.fromIssuerLocation(issuerUrl);
     }
-
 }
