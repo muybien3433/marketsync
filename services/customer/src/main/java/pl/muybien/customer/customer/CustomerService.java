@@ -21,6 +21,7 @@ public class CustomerService {
                 .email(request.email())
                 .createdDate(LocalDateTime.now())
                 .build();
+        repository.save(customer);
         return customer.getId();
     }
 
