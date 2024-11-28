@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,9 @@ public class WalletService {
 
     @Transactional(readOnly = true)
     protected List<AssetDTO> findAndAggregateAllWalletAssets(Wallet wallet) {
+        if (wallet.getAssets() == null) {
+            return Collections.emptyList();
+        }
         return wallet.getAssets().stream()
                 .collect(Collectors.groupingBy(Asset::getName))
                 .entrySet().stream()
