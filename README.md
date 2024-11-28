@@ -76,9 +76,15 @@ Ensure you have the following installed before running the project:
    docker-compose up
    ```
    
-3. Provide environment variables:
+3. Provide environment variables in config-server microservice:
+   For Database:
+      - {DATABASE_USERNAME}
+      - {DATABASE_PASSWORD}
+   For Gmail smtp:
+      - {EMAIL_USERNAME}
+      - {EMAIL_PASSWORD}
 
-4. Build the project
+4. Build the project (order: config-server -> gateway -> allOthers)
    ```bash
    mvn clean install
    ```
