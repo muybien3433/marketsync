@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.subscription.exception.BusinessException;
 import pl.muybien.subscription.exception.OwnershipException;
+import pl.muybien.subscription.finance.FinanceClient;
 import pl.muybien.subscription.finance.FinanceComparator;
 import pl.muybien.subscription.finance.FinanceService;
-import pl.muybien.subscription.finance.FinanceClient;
 import pl.muybien.subscription.subscription.SubscriptionDetail;
 
 import java.math.BigDecimal;
@@ -28,7 +28,6 @@ public class BitcoinService implements FinanceService {
 
     @Override
     @Scheduled(fixedRate = 10000)
-    @Transactional
     public void fetchCurrentFinanceAndCompare() {
         var financeResponse = financeClient.findFinanceByUri(name.toLowerCase()).orElseThrow(() ->
                 new BusinessException("Finance not found for %s".formatted(name)));
@@ -44,7 +43,6 @@ public class BitcoinService implements FinanceService {
     }
 
     @Override
-    @Transactional
     public SubscriptionDetail createIncreaseSubscription(BigDecimal value, String customerEmail, Long customerId) {
         var subscription = Bitcoin.builder()
                 .financeName(name)
@@ -67,7 +65,6 @@ public class BitcoinService implements FinanceService {
     }
 
     @Override
-    @Transactional
     public SubscriptionDetail createDecreaseSubscription(BigDecimal value, String customerEmail, Long customerId) {
         var subscription = Bitcoin.builder()
                 .financeName(name)
@@ -90,7 +87,6 @@ public class BitcoinService implements FinanceService {
     }
 
     @Override
-    @Transactional
     public void deleteSubscription(Long subscriptionId, Long customerId) {
         var subscription = repository.findById(subscriptionId).orElseThrow(() ->
                 new EntityNotFoundException("Subscription with id %s not found".formatted(subscriptionId)));

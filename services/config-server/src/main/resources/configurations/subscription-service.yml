@@ -2,31 +2,27 @@ server:
   port: 8900
 
 spring:
-  config:
-    import: classpath:crypto-uri.properties
   datasource:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     url: jdbc:postgresql://localhost:5432/subscription
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
     producer:
-      bootstrap-servers: localhost:9092, localhost:9094
+      bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: all
       properties:
-        delivery.timeout.ms: 120000
-        linger.ms: 0
-        request.timeout.ms: 30000
-        max.in.flight.requests.per.connection: 5
-        enable.idempotence: true
-        spring.json.type.mapping: subscriptionConfirmation:pl.muybien.subscription.kafka.SubscriptionConfirmation
-      transaction-id-prefix: transfer-service-${random.value}
+        spring.json.type.mapping: subscriptionConfirmation:pl.muybien.notification.kafka.SubscriptionConfirmation
+
+application:
+  config:
+    customer-url: http://localhost:8090/api/v1/customers
+    finance-url: http://localhost:8090/api/v1/finances
 
 send-email-topic: send-email-topic

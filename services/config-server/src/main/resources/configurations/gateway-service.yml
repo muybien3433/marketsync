@@ -1,5 +1,5 @@
 server:
-  port: 8222
+  port: 9999
 
 spring:
   cloud:
@@ -25,3 +25,6 @@ spring:
           predicates:
             - Path=/api/v1/wallets/**
 
+  jwt:
+    decoder:
+      issuer-url:

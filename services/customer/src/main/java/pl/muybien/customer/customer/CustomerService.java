@@ -5,6 +5,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import pl.muybien.customer.exception.CustomerNotFoundException;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
@@ -13,7 +15,12 @@ public class CustomerService {
     private final CustomerRepository repository;
 
     public Long createCustomer(CustomerRequest request) {
-        var customer = repository.save(mapper.toCustomer(request));
+        var customer = Customer.builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .email(request.email())
+                .createdDate(LocalDateTime.now())
+                .build();
         return customer.getId();
     }
 

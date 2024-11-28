@@ -1,6 +1,5 @@
 package pl.muybien.wallet.exception;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,11 +24,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OwnershipException.class)
     public ResponseEntity<String> handleAssetOwnershipException(OwnershipException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-    }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> handleCryptoNotFoundException(EntityNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)

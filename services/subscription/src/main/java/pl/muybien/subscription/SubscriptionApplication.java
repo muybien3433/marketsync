@@ -12,8 +12,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 public class SubscriptionApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SubscriptionApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SubscriptionApplication.class, args);
+    }
 
 }

@@ -1,5 +1,5 @@
 server:
-  port: 8300
+  port: 8200
 
 spring:
   datasource:
@@ -8,10 +8,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/wallet
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 application:
   config:
-    customer-url: http://localhost:8222/api/v1/customers
+    customer-url: http://localhost:8090/api/v1/customers
+    finance-url: http://localhost:8090/api/v1/finances
