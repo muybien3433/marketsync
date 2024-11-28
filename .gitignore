@@ -9,9 +9,6 @@ target/
 ### MacOS ###
 .DS_Store
 
-### Kafka ###
-kafka-volumes/
-
 
 ### STS ###
 .apt_generated
