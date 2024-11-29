@@ -1,4 +1,4 @@
-package pl.muybien.finance.finance.crypto.bitcoin;
+package pl.muybien.finance.finance.crypto.xrp;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,13 +9,13 @@ import pl.muybien.finance.finance.Finance;
 import pl.muybien.finance.finance.FinanceService;
 import reactor.core.publisher.Mono;
 
-@Service("bitcoin")
+@Service("xrp")
 @RequiredArgsConstructor
-public class BitcoinService implements FinanceService {
+public class XrpService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.bitcoin.url}")
+    @Value("${api.xrp.url}")
     private String url;
     @Value("${spring.application.name}")
     private String serviceName;
@@ -24,7 +24,7 @@ public class BitcoinService implements FinanceService {
     public Mono<Finance> fetchCurrentFinance() {
         return webClientBuilder.baseUrl(url).build().get()
                 .retrieve()
-                .bodyToMono(BitcoinResponse.class)
+                .bodyToMono(XrpResponse.class)
                 .switchIfEmpty(Mono.error(new FinanceNotFoundException(
                         "Could not fetch currency for: %s".formatted(serviceName))))
                 .map(response -> {

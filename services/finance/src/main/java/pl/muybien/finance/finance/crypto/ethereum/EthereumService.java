@@ -15,7 +15,7 @@ public class EthereumService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.url.ethereum}")
+    @Value("${api.ethereum.url}")
     private String url;
     @Value("${spring.application.name}")
     private String serviceName;

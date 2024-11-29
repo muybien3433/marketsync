@@ -4,16 +4,3 @@ spring:
     - optional:configserver:http://localhost:7777
   application:
     name: finance-service
-
-api:
-  url:
-    binance: https://api.coincap.io/v2/assets/binance-coin
-    bitcoin: https://api.coincap.io/v2/assets/bitcoin
-    dogecoin: https://api.coincap.io/v2/assets/dogecoin
-    ethereum: https://api.coincap.io/v2/assets/ethereum
-    solana: https://api.coincap.io/v2/assets/solana
-    steth: https://api.coincap.io/v2/assets/steth
-    tether: https://api.coincap.io/v2/assets/tether
-    tron: https://api.coincap.io/v2/assets/tron
-    usd-coin: https://api.coincap.io/v2/assets/usd-coin
-    xrp: https://api.coincap.io/v2/assets/xrp
