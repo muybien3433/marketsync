@@ -17,7 +17,7 @@ public class SolanaService implements FinanceService {
 
     @Value("${api.solana.url}")
     private String url;
-    @Value("${spring.application.name}")
+    @Value("${api.solana.uri}")
     private String serviceName;
 
     @Override

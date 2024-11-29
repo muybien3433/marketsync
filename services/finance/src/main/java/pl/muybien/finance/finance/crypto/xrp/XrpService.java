@@ -17,7 +17,7 @@ public class XrpService implements FinanceService {
 
     @Value("${api.xrp.url}")
     private String url;
-    @Value("${spring.application.name}")
+    @Value("${api.xrp.uri}")
     private String serviceName;
 
     @Override

@@ -7,7 +7,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import pl.muybien.finance.exception.FinanceNotFoundException;
 import pl.muybien.finance.finance.Finance;
 import pl.muybien.finance.finance.FinanceService;
-import pl.muybien.finance.finance.crypto.bitcoin.BitcoinResponse;
 import reactor.core.publisher.Mono;
 
 @Service("dogecoin")
@@ -18,7 +17,7 @@ public class DogecoinService implements FinanceService {
 
     @Value("${api.dogecoin.url}")
     private String url;
-    @Value("${spring.application.name}")
+    @Value("${api.dogecoin.uri}")
     private String serviceName;
 
     @Override

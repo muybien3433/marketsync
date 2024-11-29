@@ -17,7 +17,7 @@ public class TronService implements FinanceService {
 
     @Value("${api.tron.url}")
     private String url;
-    @Value("${spring.application.name}")
+    @Value("${api.tron.uri}")
     private String serviceName;
 
     @Override

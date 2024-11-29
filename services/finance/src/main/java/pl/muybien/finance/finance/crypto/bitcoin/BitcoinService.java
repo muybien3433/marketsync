@@ -17,7 +17,7 @@ public class BitcoinService implements FinanceService {
 
     @Value("${api.bitcoin.url}")
     private String url;
-    @Value("${spring.application.name}")
+    @Value("${api.bitcoin.uri}")
     private String serviceName;
 
     @Override

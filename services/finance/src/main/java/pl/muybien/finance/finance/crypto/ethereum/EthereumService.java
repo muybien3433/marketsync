@@ -17,7 +17,7 @@ public class EthereumService implements FinanceService {
 
     @Value("${api.ethereum.url}")
     private String url;
-    @Value("${spring.application.name}")
+    @Value("${api.ethereum.uri}")
     private String serviceName;
 
     @Override

@@ -17,7 +17,7 @@ public class StethService implements FinanceService {
 
     @Value("${api.steth.url}")
     private String url;
-    @Value("${spring.application.name}")
+    @Value("${api.steth.uri}")
     private String serviceName;
 
     @Override

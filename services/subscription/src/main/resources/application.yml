@@ -1,5 +1,7 @@
 spring:
   config:
-    import: optional:configserver:http://localhost:7777
+    import:
+      - optional:configserver:http://localhost:7777
+      - optional:configserver:http://localhost:7777/api-config
   application:
     name: subscription-service

@@ -2,6 +2,7 @@ package pl.muybien.subscription.finance.crypto.ethereum;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +25,11 @@ public class EthereumService implements FinanceService {
     private final EthereumRepository repository;
     private final FinanceClient financeClient;
 
-    private static final String name = "Ethereum";
+    @Value("${api.ethereum.uri}")
+    private String name;
 
     @Override
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRateString = "${api.ethereum.fetch-time-ms}")
     public void fetchCurrentFinanceAndCompare() {
         var financeResponse = financeClient.findFinanceByUri(name.toLowerCase()).orElseThrow(() ->
                 new BusinessException("Finance not found for %s".formatted(name)));

@@ -17,7 +17,7 @@ public class UsdcoinService implements FinanceService {
 
     @Value("${api.usdcoin.url}")
     private String url;
-    @Value("${spring.application.name}")
+    @Value("${api.usdcoin.uri}")
     private String serviceName;
 
     @Override

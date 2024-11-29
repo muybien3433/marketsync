@@ -17,7 +17,7 @@ public class TetherService implements FinanceService {
 
     @Value("${api.tether.url}")
     private String url;
-    @Value("${spring.application.name}")
+    @Value("${api.tether.uri}")
     private String serviceName;
 
     @Override
