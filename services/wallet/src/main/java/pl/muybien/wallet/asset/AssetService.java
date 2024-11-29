@@ -21,8 +21,8 @@ public class AssetService {
     private final AssetRepository assetRepository;
 
     @Transactional
-    protected void createAsset(AssetRequest request, String authorizationHeader) {
-        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+    protected void createAsset(String authHeader, AssetRequest request) {
+        var customer = customerClient.findCustomerById(authHeader, request.customerId())
                 .orElseThrow(() -> new BusinessException(
                         "Asset not created:: No Customer exists with ID: %d".formatted(request.customerId())));
 
@@ -41,8 +41,8 @@ public class AssetService {
     }
 
     @Transactional
-    protected void deleteAsset(AssetDeletionRequest request, String authorizationHeader) {
-        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+    protected void deleteAsset(String authHeader, AssetDeletionRequest request) {
+        var customer = customerClient.findCustomerById(authHeader, request.customerId())
                 .orElseThrow(() -> new BusinessException(
                         "Asset not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
 

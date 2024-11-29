@@ -18,18 +18,18 @@ public class WalletController {
 
     @DeleteMapping
     public ResponseEntity<String> deleteWallet(
-            @RequestBody @Valid WalletRequest request,
-            @RequestHeader("Authorization") String authorizationHeader
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid WalletRequest request
     ) {
-        service.deleteWallet(request, authorizationHeader);
+        service.deleteWallet(authHeader, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping
     public ResponseEntity<List<AssetDTO>> displayOrCreateWallet(
-            @RequestHeader("Authorization") @RequestBody @Valid WalletRequest request,
-            @RequestHeader("Authorization") String authorizationHeader
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid WalletRequest request
     ) {
-        return ResponseEntity.ok(service.displayOrCreateWallet(request, authorizationHeader));
+        return ResponseEntity.ok(service.displayOrCreateWallet(authHeader, request));
     }
 }

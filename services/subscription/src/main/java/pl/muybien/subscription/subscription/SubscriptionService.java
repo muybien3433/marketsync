@@ -23,8 +23,8 @@ public class SubscriptionService {
     private final SubscriptionDetailDTOMapper detailDTOMapper;
 
     @Transactional
-    protected SubscriptionDetailDTO createIncreaseSubscription(SubscriptionRequest request, String authorizationHeader) {
-        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+    protected SubscriptionDetailDTO createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
+        var customer = customerClient.findCustomerById(authHeader, request.customerId())
                 .orElseThrow(() -> new BusinessException(
                         "Subscription not created:: No Customer exists with ID: %d"
                                 .formatted(request.customerId())));
@@ -51,8 +51,8 @@ public class SubscriptionService {
     }
 
     @Transactional
-    protected SubscriptionDetailDTO createDecreaseSubscription(SubscriptionRequest request, String authorizationHeader) {
-        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+    protected SubscriptionDetailDTO createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
+        var customer = customerClient.findCustomerById(authHeader, request.customerId())
                 .orElseThrow(() -> new BusinessException(
                         "Subscription not created:: No Customer exists with ID: %d"
                                 .formatted(request.customerId())));
@@ -79,8 +79,8 @@ public class SubscriptionService {
     }
 
     @Transactional
-    protected void deleteSubscription(SubscriptionDeletionRequest request, String authorizationHeader) {
-        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+    protected void deleteSubscription(String authHeader, SubscriptionDeletionRequest request) {
+        var customer = customerClient.findCustomerById(authHeader, request.customerId())
                 .orElseThrow(() -> new BusinessException(
                         "Subscription not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
 
@@ -105,8 +105,12 @@ public class SubscriptionService {
     }
 
     @Transactional(readOnly = true)
-    public List<SubscriptionDetailDTO> findAllSubscriptions(Long customerId) {
-        return subscriptionRepository.findByCustomerId(customerId)
+    public List<SubscriptionDetailDTO> findAllSubscriptions(String authHeader, Long customerId) {
+        var customer = customerClient.findCustomerById(authHeader, customerId)
+                .orElseThrow(() -> new BusinessException(
+                        "Subscription not deleted:: No Customer exists with ID: %d".formatted(customerId)));
+
+        return subscriptionRepository.findByCustomerId(customer.id())
                 .stream()
                 .flatMap(s -> s.getSubscriptionDetails()
                         .stream()

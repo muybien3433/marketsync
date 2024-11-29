@@ -1,4 +1,4 @@
-package pl.muybien.subscription.exception;
+package pl.muybien.customer.exception;
 
 public class OwnershipException extends RuntimeException {
     public OwnershipException(String message) {

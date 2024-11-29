@@ -17,37 +17,36 @@ public class SubscriptionController {
 
     @PostMapping("/increase")
     public ResponseEntity<SubscriptionDetailDTO> createIncreaseSubscription(
-            @RequestBody @Valid SubscriptionRequest request,
-            @RequestHeader("Authorization") String authorizationHeader
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid SubscriptionRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.createIncreaseSubscription(request, authorizationHeader));
+                .body(service.createIncreaseSubscription(authHeader, request));
     }
 
     @PostMapping("/decrease")
     public ResponseEntity<SubscriptionDetailDTO> createDecreaseSubscription(
-            @RequestBody @Valid SubscriptionRequest request,
-            @RequestHeader("Authorization") String authorizationHeader
-
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid SubscriptionRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.createDecreaseSubscription(request, authorizationHeader));
+                .body(service.createDecreaseSubscription(authHeader, request));
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteSubscription(
-            @RequestBody @Valid SubscriptionDeletionRequest request,
-            @RequestHeader("Authorization") String authorizationHeader
-
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid SubscriptionDeletionRequest request
     ) {
-        service.deleteSubscription(request, authorizationHeader);
+        service.deleteSubscription(authHeader, request);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{customer-id}")
+    @GetMapping
     public ResponseEntity<List<SubscriptionDetailDTO>> findAllSubscriptions(
-            @PathVariable("customer-id") Long customerId
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("customer-id") Long customerId
     ) {
-        return ResponseEntity.ok(service.findAllSubscriptions(customerId));
+        return ResponseEntity.ok(service.findAllSubscriptions(authHeader, customerId));
     }
 }

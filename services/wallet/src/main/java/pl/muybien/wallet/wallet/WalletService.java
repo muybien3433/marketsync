@@ -30,8 +30,8 @@ public class WalletService {
     private final WalletRepository walletRepository;
 
     @Transactional
-    protected List<AssetDTO> displayOrCreateWallet(WalletRequest request, String authorizationHeader) {
-        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+    protected List<AssetDTO> displayOrCreateWallet(String authHeader, WalletRequest request) {
+        var customer = customerClient.findCustomerById(authHeader, request.customerId())
                 .orElseThrow(() -> new BusinessException(
                         "Wallet not shown:: No Customer exists with ID: %d".formatted(request.customerId())));
         var wallet = findOrCreateWallet(customer.id());
@@ -127,10 +127,10 @@ public class WalletService {
     }
 
     @Transactional
-    protected void deleteWallet(WalletRequest request, String authorizationHeader) {
+    protected void deleteWallet(String authHeader, WalletRequest request) {
         var wallet = findWalletByCustomerId(request.customerId());
 
-        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+        var customer = customerClient.findCustomerById(authHeader, request.customerId())
                 .orElseThrow(() -> new BusinessException(
                         "Wallet not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
 
