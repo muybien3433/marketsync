@@ -20,5 +20,6 @@ public record SubscriptionRequest(
 
         @NotNull(message = "Customer should be present")
         Long customerId
+
 ) {
 }

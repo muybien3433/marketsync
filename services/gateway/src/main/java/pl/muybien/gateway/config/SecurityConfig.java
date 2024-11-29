@@ -24,9 +24,7 @@ public class SecurityConfig {
                 .authorizeExchange((authorize) -> authorize
                         .pathMatchers(
                                 "/eureka/**",
-                                "/api/v1/finances/**",
-                                "/api/v1/customers",
-                                "/api/v1/customers/{customer-id}"
+                                "/api/v1/finances/**"
                         )
                         .permitAll()
                         .anyExchange()

@@ -60,6 +60,7 @@ public class EthereumService implements FinanceService {
                 .financeName(subscription.getFinanceName())
                 .upperBoundPrice(subscription.getUpperBoundPrice())
                 .lowerBoundPrice(subscription.getLowerBoundPrice())
+                .customerId(customerId)
                 .createdDate(subscription.getCreatedDate())
                 .build();
     }

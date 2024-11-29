@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-@Configuration
-public class FeignWebFluxConfig {
-
-    @Bean
-    public Decoder feignDecoder() {
-        return new SpringDecoder(() -> new org.springframework.boot.autoconfigure.http.HttpMessageConverters(
-                new MappingJackson2HttpMessageConverter()));
-    }
-}
+//@Configuration
+//public class FeignWebFluxConfig{
+//
+//    @Bean
+//    public Decoder feignDecoder() {
+//        return new SpringDecoder(() -> new org.springframework.boot.autoconfigure.http.HttpMessageConverters(
+//                new MappingJackson2HttpMessageConverter()));
+//    }
+//}

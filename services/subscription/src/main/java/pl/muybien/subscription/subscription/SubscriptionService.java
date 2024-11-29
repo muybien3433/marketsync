@@ -9,8 +9,6 @@ import pl.muybien.subscription.exception.BusinessException;
 import pl.muybien.subscription.exception.OwnershipException;
 import pl.muybien.subscription.finance.FinanceServiceFactory;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,87 +18,95 @@ public class SubscriptionService {
 
     private final FinanceServiceFactory financeServiceFactory;
     private final CustomerClient customerClient;
-    private final SubscriptionRepository repository;
+    private final SubscriptionRepository subscriptionRepository;
+    private final SubscriptionDetailRepository subscriptionDetailRepository;
     private final SubscriptionDetailDTOMapper detailDTOMapper;
 
     @Transactional
-    protected SubscriptionDetailDTO createIncreaseSubscription(SubscriptionRequest request) {
-        var customer = customerClient.findCustomerById(request.customerId()).orElseThrow(() ->
-                new BusinessException("Subscription not created:: No Customer exists with ID: %d"
-                        .formatted(request.customerId())));
+    protected SubscriptionDetailDTO createIncreaseSubscription(SubscriptionRequest request, String authorizationHeader) {
+        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+                .orElseThrow(() -> new BusinessException(
+                        "Subscription not created:: No Customer exists with ID: %d"
+                                .formatted(request.customerId())));
 
-        var service = financeServiceFactory.getService(request.uri());
-        var subscription = findOrCreateSubscription(request);
-        var subscriptionDetail = service.createIncreaseSubscription(
+        var subscription = subscriptionRepository.findByCustomerId(customer.id())
+                .orElseThrow(() -> new BusinessException(
+                        "Subscription not created:: No Customer exists with ID: %d"
+                                .formatted(request.customerId())));
+
+        var financeService = financeServiceFactory.getService(request.uri());
+        var createdSubscription = financeService.createIncreaseSubscription(
                 request.value(), customer.email(), customer.id());
 
-        subscription.getSubscriptionDetails().add(subscriptionDetail);
-        repository.save(subscription);
+        createdSubscription.setSubscription(subscription);
+
+        subscriptionDetailRepository.save(createdSubscription);
 
         return SubscriptionDetailDTO.builder()
-                .financeName(subscriptionDetail.getFinanceName())
-                .upperBoundPrice(subscriptionDetail.getUpperBoundPrice())
-                .lowerBoundPrice(subscriptionDetail.getLowerBoundPrice())
-                .createdDate(subscriptionDetail.getCreatedDate())
+                .financeName(createdSubscription.getFinanceName())
+                .upperBoundPrice(createdSubscription.getUpperBoundPrice())
+                .lowerBoundPrice(createdSubscription.getLowerBoundPrice())
+                .createdDate(createdSubscription.getCreatedDate())
                 .build();
     }
 
     @Transactional
-    protected SubscriptionDetailDTO createDecreaseSubscription(SubscriptionRequest request) {
-        var customer = customerClient.findCustomerById(request.customerId()).orElseThrow(() ->
-                new BusinessException("Subscription not created:: No Customer exists with ID: %d"
-                        .formatted(request.customerId())));
+    protected SubscriptionDetailDTO createDecreaseSubscription(SubscriptionRequest request, String authorizationHeader) {
+        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+                .orElseThrow(() -> new BusinessException(
+                        "Subscription not created:: No Customer exists with ID: %d"
+                                .formatted(request.customerId())));
 
-        var service = financeServiceFactory.getService(request.uri());
-        var subscription = findOrCreateSubscription(request);
-        var subscriptionDetail = service.createDecreaseSubscription(
+        var subscription = subscriptionRepository.findByCustomerId(customer.id())
+                .orElseThrow(() -> new BusinessException(
+                        "Subscription not created:: No Customer exists with ID: %d"
+                                .formatted(request.customerId())));
+
+        var financeService = financeServiceFactory.getService(request.uri());
+        var createdSubscription = financeService.createDecreaseSubscription(
                 request.value(), customer.email(), customer.id());
 
-        subscription.getSubscriptionDetails().add(subscriptionDetail);
-        repository.save(subscription);
+        createdSubscription.setSubscription(subscription);
+
+        subscriptionDetailRepository.save(createdSubscription);
 
         return SubscriptionDetailDTO.builder()
-                .financeName(subscriptionDetail.getFinanceName())
-                .upperBoundPrice(subscriptionDetail.getUpperBoundPrice())
-                .lowerBoundPrice(subscriptionDetail.getLowerBoundPrice())
-                .createdDate(subscriptionDetail.getCreatedDate())
+                .financeName(createdSubscription.getFinanceName())
+                .upperBoundPrice(createdSubscription.getUpperBoundPrice())
+                .lowerBoundPrice(createdSubscription.getLowerBoundPrice())
+                .createdDate(createdSubscription.getCreatedDate())
                 .build();
     }
 
     @Transactional
-    protected Subscription findOrCreateSubscription(SubscriptionRequest request) {
-        return repository.findByCustomerId(request.customerId()).orElse(
-                Subscription.builder()
-                        .subscriptionDetails(new ArrayList<>())
-                        .createdDate(LocalDateTime.now())
-                        .build());
-    }
+    protected void deleteSubscription(SubscriptionDeletionRequest request, String authorizationHeader) {
+        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+                .orElseThrow(() -> new BusinessException(
+                        "Subscription not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
 
-    @Transactional
-    protected void deleteSubscription(SubscriptionDeletionRequest request) {
-        var service = financeServiceFactory.getService(request.uri());
-        service.deleteSubscription(request.subscriptionId(), request.customerId());
+        var subscription = subscriptionRepository.findByCustomerId(customer.id())
+                .orElseThrow(() -> new BusinessException(
+                        "Subscription not deleted:: No Subscription exists with ID: %d"
+                                .formatted(request.customerId())));
 
-        var subscription = repository.findByCustomerId(request.customerId()).orElseThrow(() ->
-                new EntityNotFoundException("Subscription not found"));
+        var subscriptionDetail = subscriptionDetailRepository.findById(request.subscriptionDetailId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Subscription not deleted:: No Subscription exists with ID: %d".
+                                formatted(request.subscriptionDetailId())));
 
-        if (!subscription.getCustomerId().equals(request.customerId())) {
+        if (!subscriptionDetail.getCustomerId().equals(customer.id())) {
             throw new OwnershipException("Subscription deletion failed:: Customer id mismatch");
         }
 
-        boolean removed = subscription.getSubscriptionDetails().removeIf(detail ->
-                detail.getId().equals(request.subscriptionId()));
+        var financeService = financeServiceFactory.getService(subscriptionDetail.getFinanceName());
+        financeService.deleteSubscription(subscription.getId(), customer.id());
 
-        if (!removed) {
-            throw new EntityNotFoundException("Subscription not found");
-        }
-
-        repository.save(subscription);
+        subscriptionDetailRepository.delete(subscriptionDetail);
     }
 
     @Transactional(readOnly = true)
     public List<SubscriptionDetailDTO> findAllSubscriptions(Long customerId) {
-        return repository.findByCustomerId(customerId)
+        return subscriptionRepository.findByCustomerId(customerId)
                 .stream()
                 .flatMap(s -> s.getSubscriptionDetails()
                         .stream()

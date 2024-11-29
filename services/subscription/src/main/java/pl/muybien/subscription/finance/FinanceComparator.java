@@ -19,8 +19,16 @@ public class FinanceComparator {
         if (subscription != null) {
             BigDecimal upperTargetPrice = subscription.getUpperBoundPrice();
             BigDecimal lowerTargetPrice = subscription.getLowerBoundPrice();
-            boolean currentValueEqualsOrGreaterThanTarget = priceUsd.compareTo(upperTargetPrice) >= 0;
-            boolean currentValueEqualsOrLowerThanTarget = priceUsd.compareTo(lowerTargetPrice) <= 0;
+
+            boolean currentValueEqualsOrGreaterThanTarget = false;
+            if (upperTargetPrice != null) {
+                currentValueEqualsOrGreaterThanTarget = priceUsd.compareTo(upperTargetPrice) >= 0;
+            }
+
+            boolean currentValueEqualsOrLowerThanTarget = false;
+            if (lowerTargetPrice != null) {
+                currentValueEqualsOrLowerThanTarget = priceUsd.compareTo(lowerTargetPrice) <= 0;
+            }
 
             if (currentValueEqualsOrGreaterThanTarget) {
                 subscriptionProducer.sendSubscriptionNotification(

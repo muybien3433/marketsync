@@ -17,25 +17,30 @@ public class SubscriptionController {
 
     @PostMapping("/increase")
     public ResponseEntity<SubscriptionDetailDTO> createIncreaseSubscription(
-            @RequestBody @Valid SubscriptionRequest request
+            @RequestBody @Valid SubscriptionRequest request,
+            @RequestHeader("Authorization") String authorizationHeader
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.createIncreaseSubscription(request));
+                .body(service.createIncreaseSubscription(request, authorizationHeader));
     }
 
     @PostMapping("/decrease")
     public ResponseEntity<SubscriptionDetailDTO> createDecreaseSubscription(
-            @RequestBody @Valid SubscriptionRequest request
+            @RequestBody @Valid SubscriptionRequest request,
+            @RequestHeader("Authorization") String authorizationHeader
+
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.createDecreaseSubscription(request));
+                .body(service.createDecreaseSubscription(request, authorizationHeader));
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteSubscription(
-            @RequestBody @Valid SubscriptionDeletionRequest request
+            @RequestBody @Valid SubscriptionDeletionRequest request,
+            @RequestHeader("Authorization") String authorizationHeader
+
     ) {
-        service.deleteSubscription(request);
+        service.deleteSubscription(request, authorizationHeader);
         return ResponseEntity.noContent().build();
     }
 

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.wallet.asset.Asset;
 import pl.muybien.wallet.asset.AssetDTO;
+import pl.muybien.wallet.customer.CustomerClient;
 import pl.muybien.wallet.exception.BusinessException;
 import pl.muybien.wallet.exception.OwnershipException;
 import pl.muybien.wallet.exception.WalletCreationException;
@@ -25,13 +26,17 @@ import java.util.stream.Collectors;
 public class WalletService {
 
     private final FinanceClient financeClient;
+    private final CustomerClient customerClient;
     private final WalletRepository walletRepository;
 
     @Transactional
-    protected List<AssetDTO> displayOrCreateWallet(WalletRequest request) {
-        var wallet = findOrCreateWallet(request.customerId());
+    protected List<AssetDTO> displayOrCreateWallet(WalletRequest request, String authorizationHeader) {
+        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+                .orElseThrow(() -> new BusinessException(
+                        "Wallet not shown:: No Customer exists with ID: %d".formatted(request.customerId())));
+        var wallet = findOrCreateWallet(customer.id());
 
-        return findAndAggregateAllWalletAssets(wallet);
+        return findAndAggregateAllWalletAssets(wallet, request);
     }
 
     @Transactional
@@ -55,10 +60,15 @@ public class WalletService {
     }
 
     @Transactional(readOnly = true)
-    protected List<AssetDTO> findAndAggregateAllWalletAssets(Wallet wallet) {
+    protected List<AssetDTO> findAndAggregateAllWalletAssets(Wallet wallet, WalletRequest request) {
         if (wallet.getAssets() == null) {
             return Collections.emptyList();
         }
+
+        if (!wallet.getCustomerId().equals(request.customerId())) {
+            throw new OwnershipException("Wallet displaying failed:: Customer id mismatch");
+        }
+
         return wallet.getAssets().stream()
                 .collect(Collectors.groupingBy(Asset::getName))
                 .entrySet().stream()
@@ -70,9 +80,12 @@ public class WalletService {
                             .map(Asset::getCount)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                    BigDecimal totalAveragePurchasePrice = group.stream()
+                    BigDecimal totalPurchasePrice = group.stream()
                             .map(Asset::getPurchasePrice)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                    BigDecimal totalAveragePurchasePrice = totalPurchasePrice.divide(
+                            BigDecimal.valueOf(group.size()), RoundingMode.HALF_UP);
 
                     LocalDate investmentStartDate = group.stream()
                             .map(Asset::getInvestmentStartDate)
@@ -81,7 +94,6 @@ public class WalletService {
 
                     var finance = fetchFinance(name);
                     BigDecimal currentPrice = finance.priceUsd();
-
                     BigDecimal value = totalCount.multiply(currentPrice);
                     BigDecimal totalInvested = totalAveragePurchasePrice.multiply(totalCount);
                     BigDecimal profit = value.subtract(totalInvested);
@@ -92,8 +104,7 @@ public class WalletService {
                     return AssetDTO.builder()
                             .name(name)
                             .count(totalCount)
-                            .averagePurchasePrice(totalAveragePurchasePrice.divide(
-                                    BigDecimal.valueOf(group.size()), RoundingMode.HALF_UP))
+                            .averagePurchasePrice(totalAveragePurchasePrice)
                             .currentPrice(currentPrice)
                             .investmentStartDate(investmentStartDate)
                             .value(value)
@@ -116,10 +127,15 @@ public class WalletService {
     }
 
     @Transactional
-    protected void deleteWallet(WalletRequest request) {
+    protected void deleteWallet(WalletRequest request, String authorizationHeader) {
         var wallet = findWalletByCustomerId(request.customerId());
 
-        if (!wallet.getCustomerId().equals(request.customerId())) {
+        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+                .orElseThrow(() -> new BusinessException(
+                        "Wallet not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
+
+
+        if (!wallet.getCustomerId().equals(customer.id())) {
             throw new OwnershipException("Wallet deletion failed:: Customer id mismatch");
         }
         walletRepository.delete(wallet);

@@ -15,17 +15,19 @@ public class AssetController {
 
     @PostMapping
     public ResponseEntity<String> createAsset(
-            @RequestBody @Valid AssetRequest request
+            @RequestBody @Valid AssetRequest request,
+            @RequestHeader("Authorization") String authorizationHeader
     ) {
-        service.createAsset(request);
+        service.createAsset(request, authorizationHeader);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteAsset(
-            @RequestBody @Valid AssetDeletionRequest request
+            @RequestBody @Valid AssetDeletionRequest request,
+            @RequestHeader("Authorization") String authorizationHeader
     ) {
-        service.deleteAsset(request);
+        service.deleteAsset(request, authorizationHeader);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

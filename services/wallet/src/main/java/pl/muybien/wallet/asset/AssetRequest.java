@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record AssetRequest(
-
         @NotNull(message = "Uri is required")
         @NotEmpty(message = "Uri is required")
         @NotBlank(message = "Uri is required")

@@ -21,10 +21,10 @@ public class AssetService {
     private final AssetRepository assetRepository;
 
     @Transactional
-    protected void createAsset(AssetRequest request) {
-        var customer = customerClient.findCustomerById(request.customerId()).orElseThrow(() ->
-                new BusinessException("Asset not created:: No Customer exists with ID: %d"
-                        .formatted(request.customerId())));
+    protected void createAsset(AssetRequest request, String authorizationHeader) {
+        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+                .orElseThrow(() -> new BusinessException(
+                        "Asset not created:: No Customer exists with ID: %d".formatted(request.customerId())));
 
         var wallet = walletService.findWalletByCustomerId(customer.id());
         var asset = Asset.builder()
@@ -41,11 +41,15 @@ public class AssetService {
     }
 
     @Transactional
-    protected void deleteAsset(AssetDeletionRequest request) {
+    protected void deleteAsset(AssetDeletionRequest request, String authorizationHeader) {
+        var customer = customerClient.findCustomerById(authorizationHeader, request.customerId())
+                .orElseThrow(() -> new BusinessException(
+                        "Asset not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
+
         var asset = assetRepository.findById(request.assetId()).orElseThrow(() ->
                 new EntityNotFoundException("Asset with ID: %s not found".formatted(request.assetId())));
 
-        if (asset.getCustomerId().equals(request.customerId())) {
+        if (asset.getCustomerId().equals(customer.id())) {
             throw new OwnershipException("Asset deletion failed:: Customer id mismatch");
         }
         assetRepository.delete(asset);

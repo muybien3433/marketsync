@@ -48,8 +48,8 @@ public class BitcoinService implements FinanceService {
                 .financeName(name)
                 .upperBoundPrice(value)
                 .lowerBoundPrice(null)
-                .customerEmail(customerEmail)
                 .customerId(customerId)
+                .customerEmail(customerEmail)
                 .createdDate(LocalDateTime.now())
                 .build();
 
@@ -60,6 +60,7 @@ public class BitcoinService implements FinanceService {
                 .financeName(subscription.getFinanceName())
                 .upperBoundPrice(subscription.getUpperBoundPrice())
                 .lowerBoundPrice(subscription.getLowerBoundPrice())
+                .customerId(customerId)
                 .createdDate(subscription.getCreatedDate())
                 .build();
     }
@@ -78,7 +79,6 @@ public class BitcoinService implements FinanceService {
         repository.save(subscription);
 
         return SubscriptionDetail.builder()
-                .id(subscription.getId())
                 .financeName(subscription.getFinanceName())
                 .upperBoundPrice(subscription.getUpperBoundPrice())
                 .lowerBoundPrice(subscription.getLowerBoundPrice())
