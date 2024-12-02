@@ -116,7 +116,6 @@ public class SubscriptionService {
                 .flatMap(s -> s.getSubscriptionDetails()
                         .stream()
                         .map(detailDTOMapper::mapToDTO))
-                .sorted((s1, s2) -> s2.createdDate().compareTo(s1.createdDate()))
                 .collect(Collectors.toList());
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -34,5 +35,5 @@ public class Subscription {
     private LocalDateTime lastModifiedDate;
 
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubscriptionDetail> subscriptionDetails = new ArrayList<>();
+    private List<SubscriptionDetail> subscriptionDetails = new LinkedList<>();
 }

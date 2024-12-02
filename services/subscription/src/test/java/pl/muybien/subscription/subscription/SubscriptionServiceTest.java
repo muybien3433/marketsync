@@ -16,10 +16,12 @@ import pl.muybien.subscription.finance.FinanceServiceFactory;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class SubscriptionServiceTest {
@@ -38,6 +40,9 @@ class SubscriptionServiceTest {
 
     @Mock
     private FinanceServiceFactory financeServiceFactory;
+
+    @Mock
+    private SubscriptionDetailDTOMapper detailDTOMapper;
 
     @BeforeEach
     void setUp() {
@@ -241,5 +246,46 @@ class SubscriptionServiceTest {
         assertThatThrownBy(() -> service.deleteSubscription(authHeader, request))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Subscription deletion failed:: Customer id mismatch");
+    }
+
+    @Test
+    void findAllSubscriptions_shouldDisplaySubscriptionDetailList() {
+        var customer = new CustomerResponse(customerId, "John", "Doe", email);
+        var subscriptionDetail1 = mock(SubscriptionDetail.class);
+        var subscriptionDetail2 = mock(SubscriptionDetail.class);
+        var subscriptionDetail3 = mock(SubscriptionDetail.class);
+
+        List<SubscriptionDetail> subscriptionDetaiList = new ArrayList<>();
+        subscriptionDetaiList.add(subscriptionDetail1);
+        subscriptionDetaiList.add(subscriptionDetail2);
+        subscriptionDetaiList.add(subscriptionDetail3);
+
+        var subscription = Subscription.builder()
+                .id(1L)
+                .subscriptionDetails(subscriptionDetaiList)
+                .customerId(customerId)
+                .build();
+
+        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(subscriptionRepository.findByCustomerId(customerId)).thenReturn(Optional.of(subscription));
+
+        List<SubscriptionDetailDTO> result = service.findAllSubscriptions(authHeader, customerId);
+
+        assertNotNull(result);
+        assertEquals(3, result.size());
+        assertEquals(detailDTOMapper.mapToDTO(subscriptionDetail3), result.get(0));
+        assertEquals(detailDTOMapper.mapToDTO(subscriptionDetail2), result.get(1));
+        assertEquals(detailDTOMapper.mapToDTO(subscriptionDetail1), result.get(2));
+
+        verify(detailDTOMapper, times(6)).mapToDTO(any(SubscriptionDetail.class));
+        verify(customerClient).findCustomerById(authHeader, customerId);
+        verify(subscriptionRepository).findByCustomerId(customerId);
+    }
+
+    @Test
+    void testFindAllSubscriptionsCustomerNotFound() {
+        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.empty());
+
+        assertThrows(CustomerNotFoundException.class, () -> service.findAllSubscriptions(authHeader, customerId));
     }
 }

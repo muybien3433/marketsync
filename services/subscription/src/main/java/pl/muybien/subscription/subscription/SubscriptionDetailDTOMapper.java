@@ -4,12 +4,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SubscriptionDetailDTOMapper {
-    SubscriptionDetailDTO mapToDTO(SubscriptionDetail subscription) {
+    SubscriptionDetailDTO mapToDTO(SubscriptionDetail subscriptionDetail) {
         return SubscriptionDetailDTO.builder()
-                .financeName(subscription.getFinanceName())
-                .upperBoundPrice(subscription.getUpperBoundPrice())
-                .lowerBoundPrice(subscription.getLowerBoundPrice())
-                .createdDate(subscription.getCreatedDate())
+                .financeName(subscriptionDetail.getFinanceName())
+                .upperBoundPrice(subscriptionDetail.getUpperBoundPrice())
+                .lowerBoundPrice(subscriptionDetail.getLowerBoundPrice())
+                .createdDate(subscriptionDetail.getCreatedDate())
                 .build();
     }
 }
