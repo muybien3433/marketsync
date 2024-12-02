@@ -11,6 +11,19 @@ import java.rmi.AccessException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    //                          Finance
+    @ExceptionHandler(FinanceNotFoundException.class)
+    public ResponseEntity<String> handleFinanceNotFoundException(FinanceNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    //                          Customer
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<String> handleCustomerNotFoundException(CustomerNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    //                          Wallet
     @ExceptionHandler(WalletCreationException.class)
     public ResponseEntity<String> handleWalletCreationException(WalletCreationException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -21,11 +34,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
+    //                          Asset
     @ExceptionHandler(OwnershipException.class)
     public ResponseEntity<String> handleAssetOwnershipException(OwnershipException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
+    //                          Other
     @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)
     public ResponseEntity<String> handleEntityNotFoundException(jakarta.persistence.EntityNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

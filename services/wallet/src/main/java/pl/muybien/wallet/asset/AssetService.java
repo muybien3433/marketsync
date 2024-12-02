@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.wallet.customer.CustomerClient;
 import pl.muybien.wallet.exception.OwnershipException;
-import pl.muybien.wallet.exception.BusinessException;
 import pl.muybien.wallet.wallet.WalletService;
 
 import java.time.LocalDate;

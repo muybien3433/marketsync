@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.wallet.asset.Asset;
 import pl.muybien.wallet.asset.AssetDTO;
 import pl.muybien.wallet.customer.CustomerClient;
-import pl.muybien.wallet.exception.BusinessException;
 import pl.muybien.wallet.exception.OwnershipException;
 import pl.muybien.wallet.exception.WalletCreationException;
 import pl.muybien.wallet.finance.FinanceClient;

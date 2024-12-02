@@ -3,6 +3,7 @@ package pl.muybien.subscription.exception;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -11,6 +12,18 @@ import java.rmi.AccessException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    //                          Finance
+    @ExceptionHandler(FinanceNotFoundException.class)
+    public ResponseEntity<String> handleFinanceNotFoundException(FinanceNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    //                          Customer
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<String> handleCustomerNotFoundException(CustomerNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
 
     //                          Kafka
     @ExceptionHandler(TransferServiceException.class)
@@ -31,6 +44,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ServiceNotFoundException.class)
     public ResponseEntity<String> handleServiceNotFoundException(ServiceNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(SubscriptionNotFoundException.class)
+    public ResponseEntity<String> handleSubscriptionNotFoundException(SubscriptionNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 

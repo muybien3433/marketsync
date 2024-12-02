@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.subscription.customer.CustomerClient;
-import pl.muybien.subscription.exception.BusinessException;
+import pl.muybien.subscription.exception.CustomerNotFoundException;
 import pl.muybien.subscription.exception.OwnershipException;
+import pl.muybien.subscription.exception.SubscriptionNotFoundException;
 import pl.muybien.subscription.finance.FinanceServiceFactory;
 
 import java.util.List;
@@ -25,12 +26,12 @@ public class SubscriptionService {
     @Transactional
     protected SubscriptionDetailDTO createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new CustomerNotFoundException(
                         "Subscription not created:: No Customer exists with ID: %d"
                                 .formatted(request.customerId())));
 
         var subscription = subscriptionRepository.findByCustomerId(customer.id())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new SubscriptionNotFoundException(
                         "Subscription not created:: No Customer exists with ID: %d"
                                 .formatted(request.customerId())));
 
@@ -53,12 +54,12 @@ public class SubscriptionService {
     @Transactional
     protected SubscriptionDetailDTO createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new CustomerNotFoundException(
                         "Subscription not created:: No Customer exists with ID: %d"
                                 .formatted(request.customerId())));
 
         var subscription = subscriptionRepository.findByCustomerId(customer.id())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new SubscriptionNotFoundException(
                         "Subscription not created:: No Customer exists with ID: %d"
                                 .formatted(request.customerId())));
 
@@ -81,11 +82,11 @@ public class SubscriptionService {
     @Transactional
     protected void deleteSubscription(String authHeader, SubscriptionDeletionRequest request) {
         var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new CustomerNotFoundException(
                         "Subscription not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
 
         var subscription = subscriptionRepository.findByCustomerId(customer.id())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new SubscriptionNotFoundException(
                         "Subscription not deleted:: No Subscription exists with ID: %d"
                                 .formatted(request.customerId())));
 
@@ -107,8 +108,8 @@ public class SubscriptionService {
     @Transactional(readOnly = true)
     public List<SubscriptionDetailDTO> findAllSubscriptions(String authHeader, Long customerId) {
         var customer = customerClient.findCustomerById(authHeader, customerId)
-                .orElseThrow(() -> new BusinessException(
-                        "Subscription not deleted:: No Customer exists with ID: %d".formatted(customerId)));
+                .orElseThrow(() -> new CustomerNotFoundException(
+                        "Subscription not found:: No Customer exists with ID: %d".formatted(customerId)));
 
         return subscriptionRepository.findByCustomerId(customer.id())
                 .stream()

@@ -1,13 +1,12 @@
 package pl.muybien.subscription.finance.crypto.bitcoin;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.subscription.exception.BusinessException;
+import pl.muybien.subscription.exception.FinanceNotFoundException;
 import pl.muybien.subscription.exception.OwnershipException;
 import pl.muybien.subscription.finance.FinanceClient;
 import pl.muybien.subscription.finance.FinanceComparator;
@@ -33,7 +32,7 @@ public class BitcoinService implements FinanceService {
     @Scheduled(fixedRateString = "${api.bitcoin.fetch-time-ms}")
     public void fetchCurrentFinanceAndCompare() {
         var financeResponse = financeClient.findFinanceByUri(name.toLowerCase()).orElseThrow(() ->
-                new BusinessException("Finance not found for %s".formatted(name)));
+                new FinanceNotFoundException("Finance not found for %s".formatted(name)));
 
         if (financeResponse != null) {
             var subscriptions = repository.findAll();
