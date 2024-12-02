@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.wallet.asset.Asset;
 import pl.muybien.wallet.asset.AssetDTO;
 import pl.muybien.wallet.customer.CustomerClient;
+import pl.muybien.wallet.exception.CustomerNotFoundException;
+import pl.muybien.wallet.exception.FinanceNotFoundException;
 import pl.muybien.wallet.exception.OwnershipException;
 import pl.muybien.wallet.exception.WalletCreationException;
 import pl.muybien.wallet.finance.FinanceClient;
@@ -31,7 +33,7 @@ public class WalletService {
     @Transactional
     protected List<AssetDTO> displayOrCreateWallet(String authHeader, WalletRequest request) {
         var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new CustomerNotFoundException(
                         "Wallet not shown:: No Customer exists with ID: %d".formatted(request.customerId())));
         var wallet = findOrCreateWallet(customer.id());
 
@@ -117,7 +119,7 @@ public class WalletService {
     @Transactional
     protected FinanceResponse fetchFinance(String uri) {
         FinanceResponse finance = financeClient.findFinanceByUri(uri).orElseThrow(() ->
-                new BusinessException("Finance not found for URI: %s".formatted(uri)));
+                new FinanceNotFoundException("Finance not found for URI: %s".formatted(uri)));
 
         return FinanceResponse.builder()
                 .name(finance.name())
@@ -130,7 +132,7 @@ public class WalletService {
         var wallet = findWalletByCustomerId(request.customerId());
 
         var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new CustomerNotFoundException(
                         "Wallet not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
 
 

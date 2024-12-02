@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.wallet.customer.CustomerClient;
+import pl.muybien.wallet.exception.CustomerNotFoundException;
 import pl.muybien.wallet.exception.OwnershipException;
 import pl.muybien.wallet.wallet.WalletService;
 
@@ -22,7 +23,7 @@ public class AssetService {
     @Transactional
     protected void createAsset(String authHeader, AssetRequest request) {
         var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new CustomerNotFoundException(
                         "Asset not created:: No Customer exists with ID: %d".formatted(request.customerId())));
 
         var wallet = walletService.findWalletByCustomerId(customer.id());
@@ -42,13 +43,13 @@ public class AssetService {
     @Transactional
     protected void deleteAsset(String authHeader, AssetDeletionRequest request) {
         var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new BusinessException(
+                .orElseThrow(() -> new CustomerNotFoundException(
                         "Asset not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
 
         var asset = assetRepository.findById(request.assetId()).orElseThrow(() ->
                 new EntityNotFoundException("Asset with ID: %s not found".formatted(request.assetId())));
 
-        if (asset.getCustomerId().equals(customer.id())) {
+        if (!asset.getCustomerId().equals(customer.id())) {
             throw new OwnershipException("Asset deletion failed:: Customer id mismatch");
         }
         assetRepository.delete(asset);
