@@ -7,10 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.wallet.asset.Asset;
 import pl.muybien.wallet.asset.AssetDTO;
 import pl.muybien.wallet.customer.CustomerClient;
-import pl.muybien.wallet.exception.CustomerNotFoundException;
-import pl.muybien.wallet.exception.FinanceNotFoundException;
-import pl.muybien.wallet.exception.OwnershipException;
-import pl.muybien.wallet.exception.WalletCreationException;
+import pl.muybien.wallet.exception.*;
 import pl.muybien.wallet.finance.FinanceClient;
 import pl.muybien.wallet.finance.FinanceResponse;
 
@@ -57,7 +54,7 @@ public class WalletService {
     @Transactional(readOnly = true)
     public Wallet findWalletByCustomerId(Long customerId) {
         return walletRepository.findByCustomerId(customerId).orElseThrow(() ->
-                new EntityNotFoundException("Wallet with customerId: %d not found".formatted(customerId)));
+                new WalletNotFoundException("Wallet for customerId: %d not found".formatted(customerId)));
     }
 
     @Transactional(readOnly = true)
@@ -89,7 +86,7 @@ public class WalletService {
                             BigDecimal.valueOf(group.size()), RoundingMode.HALF_UP);
 
                     LocalDate investmentStartDate = group.stream()
-                            .map(Asset::getInvestmentStartDate)
+                            .map(asset -> asset.getCreatedDate().toLocalDate())
                             .min(LocalDate::compareTo)
                             .orElse(null);
 
@@ -97,7 +94,7 @@ public class WalletService {
                     BigDecimal currentPrice = finance.priceUsd();
                     BigDecimal value = totalCount.multiply(currentPrice);
                     BigDecimal totalInvested = totalAveragePurchasePrice.multiply(totalCount);
-                    BigDecimal profit = value.subtract(totalInvested);
+                    BigDecimal profit = value.subtract(totalInvested).setScale(2, RoundingMode.HALF_UP);
                     BigDecimal profitInPercentage = totalInvested.compareTo(BigDecimal.ZERO) > 0
                             ? profit.multiply(BigDecimal.valueOf(100)).divide(totalInvested, RoundingMode.HALF_UP)
                             : BigDecimal.ZERO;
@@ -141,4 +138,6 @@ public class WalletService {
         }
         walletRepository.delete(wallet);
     }
+
+
 }

@@ -29,6 +29,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 
+    @ExceptionHandler(WalletNotFoundException.class)
+    public ResponseEntity<String> handleWalletNotFoundException(WalletNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
     @ExceptionHandler(WalletOwnershipException.class)
     public ResponseEntity<String> handleWalletOwnershipException(WalletOwnershipException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());

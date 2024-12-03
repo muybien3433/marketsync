@@ -9,7 +9,6 @@ import pl.muybien.wallet.exception.CustomerNotFoundException;
 import pl.muybien.wallet.exception.OwnershipException;
 import pl.muybien.wallet.wallet.WalletService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -31,7 +30,6 @@ public class AssetService {
                 .name(request.uri().toLowerCase())
                 .count(request.count())
                 .purchasePrice(request.purchasePrice())
-                .investmentStartDate(LocalDate.now())
                 .wallet(wallet)
                 .customerId(customer.id())
                 .createdDate(LocalDateTime.now())

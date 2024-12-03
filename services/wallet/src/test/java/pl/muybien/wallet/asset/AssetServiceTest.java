@@ -38,6 +38,7 @@ class AssetServiceTest {
     private static final String email = "john.doe@example.com";
     private static final String uri = "Uri";
     private static final Long customerId = 1L;
+    private static final Long assetId = 1L;
 
     @BeforeEach
     void setUp() {
@@ -82,7 +83,6 @@ class AssetServiceTest {
 
     @Test
     void deleteAsset_shouldDeleteAssetSuccessfully() {
-        Long assetId = 1L;
         var assetDeletionRequest = new AssetDeletionRequest(assetId, customerId);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var asset = Asset.builder()
@@ -99,7 +99,6 @@ class AssetServiceTest {
 
     @Test
     void deleteAsset_shouldThrowOwnershipException_whenCustomerIdMismatch() {
-        Long assetId = 1L;
         Long otherCustomerId = 2L;
         var assetDeletionRequest = new AssetDeletionRequest(assetId, customerId);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
@@ -119,7 +118,6 @@ class AssetServiceTest {
 
     @Test
     void deleteAsset_shouldThrowCustomerNotFoundException_whenCustomerNotFound() {
-        long assetId = 1L;
         var assetDeletionRequest = new AssetDeletionRequest(assetId, customerId);
 
         when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.empty());
@@ -132,7 +130,6 @@ class AssetServiceTest {
 
     @Test
     void deleteAsset_shouldThrowEntityNotFoundException_whenAssetNotFound() {
-        Long assetId = 1L;
         var assetDeletionRequest = new AssetDeletionRequest(assetId, customerId);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
 

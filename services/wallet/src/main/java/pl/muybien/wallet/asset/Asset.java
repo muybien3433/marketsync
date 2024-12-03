@@ -28,8 +28,6 @@ public class Asset {
     private String name;
     private BigDecimal count;
     private BigDecimal purchasePrice;
-    private LocalDate investmentStartDate;
-
     private Long customerId;
 
     @CreatedDate
