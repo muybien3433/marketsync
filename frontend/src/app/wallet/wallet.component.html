@@ -1,0 +1,26 @@
+<table class="table table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+      <th>Avg. purchase price</th>
+      <th>Current price</th>
+      <th>Investing days</th>
+      <th>Profit in %</th>
+      <th>Profit</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  <tr *ngFor="let asset of assets">
+    <td>{{ asset.name }}</td>
+    <td>{{ asset.value }}</td>
+    <td>{{ asset.averagePurchasePrice }}</td>
+    <td>{{ asset.currentPrice }}</td>
+    <td>{{ asset.investmentStartDate }}</td>
+    <td [ngStyle]="{ color: asset.profitInPercentage >= 0 ? 'green' : 'red' }">{{ asset.profitInPercentage }}</td>
+    <td [ngStyle]="{ color: asset.profit >= 0 ? 'green' : 'red' }">{{ asset.profit }}</td>
+  </tr>
+  </tbody>
+</table>
+

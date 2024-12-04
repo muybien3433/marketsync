@@ -21,6 +21,9 @@ public record AssetRequest(
         @Positive(message = "Purchase price should be positive")
         BigDecimal purchasePrice,
 
+        @NotNull(message = "Asset type should be present")
+        AssetType assetType,
+
         @NotNull(message = "Customer should be present")
         Long customerId
 ) {

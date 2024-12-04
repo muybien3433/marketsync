@@ -30,9 +30,10 @@ public class AssetService {
                 .name(request.uri().toLowerCase())
                 .count(request.count())
                 .purchasePrice(request.purchasePrice())
-                .wallet(wallet)
+                .type(request.assetType())
                 .customerId(customer.id())
                 .createdDate(LocalDateTime.now())
+                .wallet(wallet)
                 .build();
 
         assetRepository.save(asset);

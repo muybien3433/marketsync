@@ -28,6 +28,7 @@ public class Asset {
     private String name;
     private BigDecimal count;
     private BigDecimal purchasePrice;
+    private AssetType type;
     private Long customerId;
 
     @CreatedDate
