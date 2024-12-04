@@ -77,10 +77,8 @@ Ensure you have the following installed before running the project:
    ```
    
 3. Provide environment variables in config-server microservice:
-   For Database:
       - {DATABASE_USERNAME}
       - {DATABASE_PASSWORD}
-   For Gmail smtp:
       - {EMAIL_USERNAME}
       - {EMAIL_PASSWORD}
 
