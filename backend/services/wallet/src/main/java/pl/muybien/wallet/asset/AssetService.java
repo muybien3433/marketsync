@@ -27,10 +27,10 @@ public class AssetService {
 
         var wallet = walletService.findWalletByCustomerId(customer.id());
         var asset = Asset.builder()
+                .type(request.assetType())
                 .name(request.uri().toLowerCase())
                 .count(request.count())
                 .purchasePrice(request.purchasePrice())
-                .type(request.assetType())
                 .customerId(customer.id())
                 .createdDate(LocalDateTime.now())
                 .wallet(wallet)

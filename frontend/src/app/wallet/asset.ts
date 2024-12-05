@@ -1,6 +1,7 @@
 export class Asset {
 
-  constructor(public name: string,
+  constructor(public type: string,
+              public name: string,
               public value: number,
               public averagePurchasePrice: number,
               public currentPrice: number,

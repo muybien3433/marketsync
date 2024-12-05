@@ -19,6 +19,7 @@ and calculate real-time profits for each asset.
 ## Tech Stack
 
 - **Backend**: Java 23, SpringBoot 6, Kafka
+- **Frontend**: Angular 18
 - **Database**: PostgreSQL (Relational Database)
 - **Authentication**: OAuth2, Keyclock
 - **Cloud**: Docker, Eureka

@@ -1,7 +1,20 @@
-<div class="container">
-  <h1 class="mt-3 mb-3">Wallet</h1>
+<div class="navbar">
+  <div class="navbar-language">
+    <button (click)="useLanguage('en')">en</button>
+    <button (click)="useLanguage('pl')">pl</button>
+  </div>
+
+  <div class="navbar-wallet-subscription">
+    <button (click)="wallet()">{{ 'navbar.wallet' | translate }}</button>
+    <button (click)="wallet()">{{ 'navbar.subscription' | translate }}</button>
+  </div>
+
+  <div class="navbar-auth">
+    <button (click)="logIn()">{{ 'navbar.login' | translate }}</button>
+    <button (click)="signUp()">{{ 'navbar.register' | translate }}</button>
+  </div>
 </div>
 
 <app-wallet></app-wallet>
-<router-outlet></router-outlet>
 
+<router-outlet></router-outlet>

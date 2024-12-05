@@ -1,0 +1,21 @@
+th {
+  background: linear-gradient(to bottom, #222222, #333333);
+  color: antiquewhite;
+}
+
+th, td {
+  padding: 5px 10px;
+}
+
+.table {
+  transform: scale(0.99);
+}
+
+.table-header {
+  background: #999999;
+}
+
+.table-footer {
+  background: #999999;
+}
+

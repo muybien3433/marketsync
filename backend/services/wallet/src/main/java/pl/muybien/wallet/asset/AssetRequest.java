@@ -8,6 +8,10 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record AssetRequest(
+
+        @NotNull(message = "Asset type should be present")
+        AssetType assetType,
+
         @NotNull(message = "Uri is required")
         @NotEmpty(message = "Uri is required")
         @NotBlank(message = "Uri is required")
@@ -20,9 +24,6 @@ public record AssetRequest(
         @NotNull(message = "Purchase price should be present")
         @Positive(message = "Purchase price should be positive")
         BigDecimal purchasePrice,
-
-        @NotNull(message = "Asset type should be present")
-        AssetType assetType,
 
         @NotNull(message = "Customer should be present")
         Long customerId

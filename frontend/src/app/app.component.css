@@ -1,0 +1,26 @@
+.navbar {
+  position: absolute;
+  top: 25px;
+  width: 100%;
+}
+
+.navbar-language {
+  position: absolute;
+  left: 20px;
+}
+
+.navbar-wallet-subscription {
+  position: absolute;
+  left: 570px;
+}
+
+.navbar-wallet-subscription button {
+  top: 8px;
+  font-size: 16px;
+}
+
+.navbar-auth {
+  position: absolute;
+  right: 10px;
+}
+
