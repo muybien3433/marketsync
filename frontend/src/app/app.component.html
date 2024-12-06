@@ -4,9 +4,16 @@
     <button (click)="useLanguage('pl')">pl</button>
   </div>
 
-  <div class="navbar-wallet-subscription">
+  <div class="navbar-main">
+    <button (click)="main()">{{ 'navbar.main' | translate }}</button>
+  </div>
+
+  <div class="navbar-subscription">
+    <button (click)="subscription()">{{ 'navbar.subscription' | translate }}</button>
+  </div>
+
+  <div class="navbar-wallet">
     <button (click)="wallet()">{{ 'navbar.wallet' | translate }}</button>
-    <button (click)="wallet()">{{ 'navbar.subscription' | translate }}</button>
   </div>
 
   <div class="navbar-auth">
@@ -15,6 +22,4 @@
   </div>
 </div>
 
-<app-wallet></app-wallet>
-
-<router-outlet></router-outlet>
+<router-outlet/>

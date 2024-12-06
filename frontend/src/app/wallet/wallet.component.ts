@@ -27,6 +27,9 @@ export class WalletComponent {
 
   constructor(private translate: TranslateService) {
     this.groupAssetsByType();
+    this.translate.addLangs(['pl', 'en']);
+    this.translate.setDefaultLang('en');
+    this.translate.use('pl');
   }
 
   groupAssetsByType() {

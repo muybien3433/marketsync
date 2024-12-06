@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-    url: jdbc:postgresql://localhost:5432/customer
+    username: admin
+    password: admin
+    url: jdbc:postgresql://localhost:5432/marketsync
   jpa:
     hibernate:
       ddl-auto: update

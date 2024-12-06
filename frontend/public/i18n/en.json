@@ -1,6 +1,7 @@
 {
   "navbar.login": "Log In",
   "navbar.register": "Sign Up",
+  "navbar.main": "Main",
   "navbar.wallet": "Wallet",
   "navbar.subscription": "Subscription",
 
