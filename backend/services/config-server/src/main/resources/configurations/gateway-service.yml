@@ -24,7 +24,9 @@ spring:
           uri: lb:http://WALLET-SERVICE
           predicates:
             - Path=/api/v1/wallets/**
-
-  jwt:
-    decoder:
-      issuer-url: http://localhost:9098/realms/marketsync
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-url: http://localhost:8880/realms/marketsync
+          jwk-set-uri: https://localhost:8880/auth/realms/my-realm/protocol/openid-connect/certs
