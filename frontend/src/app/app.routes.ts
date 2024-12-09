@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import {LoginComponent} from './login/login.component';
-import {RegisterComponent} from './register/register.component';
-import {WalletComponent} from './wallet/wallet.component';
+import {LoginComponent} from './pages/login/login.component';
+import {RegisterComponent} from './pages/register/register.component';
+import {WalletComponent} from './pages/wallet/wallet.component';
 import {AppComponent} from './app.component';
-import {SubscriptionComponent} from './subscription/subscription.component';
+import {SubscriptionComponent} from './pages/subscription/subscription.component';
 
 export const routes: Routes = [
   { path: '', component: AppComponent },

@@ -1,25 +1,3 @@
-<div class="navbar">
-  <div class="navbar-language">
-    <button (click)="useLanguage('en')">en</button>
-    <button (click)="useLanguage('pl')">pl</button>
-  </div>
-
-  <div class="navbar-main">
-    <button (click)="main()">{{ 'navbar.main' | translate }}</button>
-  </div>
-
-  <div class="navbar-subscription">
-    <button (click)="subscription()">{{ 'navbar.subscription' | translate }}</button>
-  </div>
-
-  <div class="navbar-wallet">
-    <button (click)="wallet()">{{ 'navbar.wallet' | translate }}</button>
-  </div>
-
-  <div class="navbar-auth">
-    <button (click)="logIn()">{{ 'navbar.login' | translate }}</button>
-    <button (click)="signUp()">{{ 'navbar.register' | translate }}</button>
-  </div>
-</div>
+<app-menu></app-menu>
 
 <router-outlet/>
