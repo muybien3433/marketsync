@@ -27,4 +27,4 @@ spring:
 
   jwt:
     decoder:
-      issuer-url: http://localhost:9098/realms/micro-services
+      issuer-url: http://localhost:9098/realms/marketsync
