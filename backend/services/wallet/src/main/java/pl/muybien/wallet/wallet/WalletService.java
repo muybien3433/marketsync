@@ -2,6 +2,7 @@ package pl.muybien.wallet.wallet;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.wallet.asset.Asset;
@@ -14,9 +15,9 @@ import pl.muybien.wallet.finance.FinanceResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,12 +39,15 @@ public class WalletService {
         return findAndAggregateAllWalletAssets(wallet, customer.id());
     }
 
-    private Wallet findOrCreateWallet(String customerId) {
-        return walletRepository.findByCustomerId(customerId).orElse(
-                walletRepository.save(Wallet.builder()
-                        .customerId(customerId)
-                        .createdDate(LocalDateTime.now())
-                        .build()));
+    private synchronized Wallet findOrCreateWallet(String customerId) {
+        Optional<Wallet> existingWallet = walletRepository.findByCustomerId(customerId);
+        if (existingWallet.isPresent()) {
+            return existingWallet.get();
+        } else {
+            Wallet newWallet = new Wallet();
+            newWallet.setCustomerId(customerId);
+            return walletRepository.save(newWallet);
+        }
     }
 
     public Wallet findCustomerWallet(String authHeader) {
