@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.wallet.asset.Asset;
 import pl.muybien.wallet.asset.AssetDTO;
+import pl.muybien.wallet.asset.AssetType;
 import pl.muybien.wallet.customer.CustomerClient;
 import pl.muybien.wallet.exception.*;
 import pl.muybien.wallet.finance.FinanceClient;
@@ -76,6 +77,11 @@ public class WalletService {
                     String name = entry.getKey();
                     List<Asset> group = entry.getValue();
 
+                    AssetType type = group.stream()
+                            .map(Asset::getType)
+                            .findFirst()
+                            .orElse(AssetType.UNDEFINED);
+
                     BigDecimal totalCount = group.stream()
                             .map(Asset::getCount)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -93,16 +99,17 @@ public class WalletService {
                             .orElse(null);
 
                     var finance = fetchFinance(name);
-                    BigDecimal currentPrice = finance.priceUsd();
-                    BigDecimal value = totalCount.multiply(currentPrice);
-                    BigDecimal totalInvested = totalAveragePurchasePrice.multiply(totalCount);
+                    BigDecimal currentPrice = finance.priceUsd().setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal value = totalCount.multiply(currentPrice).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal totalInvested = totalAveragePurchasePrice.multiply(totalCount).setScale(2, RoundingMode.HALF_UP);
                     BigDecimal profit = value.subtract(totalInvested).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal profitInPercentage = totalInvested.compareTo(BigDecimal.ZERO) > 0
+                    BigDecimal profitInPercentage = totalInvested.setScale(2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) > 0
                             ? profit.multiply(BigDecimal.valueOf(100)).divide(totalInvested, RoundingMode.HALF_UP)
                             : BigDecimal.ZERO;
 
                     return AssetDTO.builder()
                             .name(name)
+                            .type(type)
                             .count(totalCount)
                             .averagePurchasePrice(totalAveragePurchasePrice)
                             .currentPrice(currentPrice)

@@ -44,6 +44,7 @@ public class SecurityConfig {
         corsConfig.addAllowedMethod("PUT");
         corsConfig.addAllowedMethod("DELETE");
         corsConfig.addAllowedHeader("Authorization");
+        corsConfig.addAllowedHeader("Content-Type");
         corsConfig.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -1,7 +1,11 @@
 package pl.muybien.wallet.asset;
 
+import lombok.ToString;
+
+@ToString
 public enum AssetType {
-    STOCKS,
+    UNDEFINED,
+    STOCK,
     BONDS,
     CRYPTO,
     CURRENCY

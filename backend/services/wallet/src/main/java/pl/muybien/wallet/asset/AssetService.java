@@ -9,6 +9,7 @@ import pl.muybien.wallet.exception.CustomerNotFoundException;
 import pl.muybien.wallet.exception.OwnershipException;
 import pl.muybien.wallet.wallet.WalletService;
 
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Service
@@ -27,10 +28,10 @@ public class AssetService {
         }
         var wallet = walletService.findCustomerWallet(authHeader);
         var asset = Asset.builder()
-                .type(request.assetType())
+                .type(request.type())
                 .name(request.uri().toLowerCase())
-                .count(request.count())
-                .purchasePrice(request.purchasePrice())
+                .count(request.count().setScale(2, RoundingMode.HALF_UP))
+                .purchasePrice(request.purchasePrice().setScale(2, RoundingMode.HALF_UP))
                 .customerId(customer.id())
                 .createdDate(LocalDateTime.now())
                 .wallet(wallet)

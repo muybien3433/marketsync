@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Builder
 public record AssetDTO(
         String name,
+        AssetType type,
         BigDecimal value,
         BigDecimal count,
         BigDecimal averagePurchasePrice,

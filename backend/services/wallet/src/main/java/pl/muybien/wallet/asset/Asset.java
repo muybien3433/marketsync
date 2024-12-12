@@ -28,8 +28,10 @@ public class Asset {
     private String name;
     private BigDecimal count;
     private BigDecimal purchasePrice;
-    private AssetType type;
     private String customerId;
+
+    @Enumerated(EnumType.STRING)
+    private AssetType type;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
