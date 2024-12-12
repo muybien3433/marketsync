@@ -1,0 +1,47 @@
+<table class="table table-hover">
+  <thead class="table-dark">
+  <tr>
+    <th>{{ 'wallet.asset.name' | translate }}</th>
+    <th>{{ 'wallet.asset.value' | translate }}</th>
+    <th>{{ 'wallet.asset.averagePurchasePrice' | translate }}</th>
+    <th>{{ 'wallet.asset.currentPrice' | translate }}</th>
+    <th>{{ 'wallet.asset.investmentStartDate' | translate }}</th>
+    <th>{{ 'wallet.asset.profitInPercentage' | translate }}</th>
+    <th>{{ 'wallet.asset.profit' | translate }}</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <ng-container *ngFor="let type of Object.keys(groupedAssets)">
+    <tr>
+      <td class="table-header" colspan="7"><strong>{{ type }}</strong></td>
+    </tr>
+
+    <tr class="table" *ngFor="let asset of groupedAssets[type]">
+      <td>{{ asset.name }}</td>
+      <td>{{ asset.value }}</td>
+      <td>{{ asset.averagePurchasePrice }}</td>
+      <td>{{ asset.currentPrice }}</td>
+      <td>{{ asset.investmentStartDate }}</td>
+      <td [ngStyle]="{ color: asset.profitInPercentage >= 0 ? 'green' : 'red' }">
+        {{ asset.profitInPercentage }}%
+      </td>
+      <td [ngStyle]="{ color: asset.profit >= 0 ? 'green' : 'red' }">
+        {{ asset.profit }}
+      </td>
+    </tr>
+  </ng-container>
+  <tr>
+    <td class="table-footer" colspan="7"><strong>{{ 'wallet.asset.sum' | translate }}</strong></td>
+  </tr>
+  <tr>
+    <td colspan="5"></td>
+    <td [ngStyle]="{ color: getTotalProfit() >= 0 ? 'green' : 'red' }">
+      {{ getTotalProfit() }}
+    </td>
+    <td [ngStyle]="{ color: getTotalProfitInPercentage() >= 0 ? 'green' : 'red' }">
+      {{ getTotalProfitInPercentage() }}
+    </td>
+  </tr>
+  </tbody>
+</table>

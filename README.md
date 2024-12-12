@@ -19,6 +19,7 @@ and calculate real-time profits for each asset.
 ## Tech Stack
 
 - **Backend**: Java 23, SpringBoot 6, Kafka
+- **Frontend**: Angular 18
 - **Database**: PostgreSQL (Relational Database)
 - **Authentication**: OAuth2, Keyclock
 - **Cloud**: Docker, Eureka
@@ -36,7 +37,7 @@ Ensure you have the following installed before running the project:
 
 ## API Endpoints
 
-**API will be available at localhost:8080/api/v1**
+**API will be available at localhost:9999/api/v1**
 
 - *Finance*: `/finances`
     - `GET /{uri}` – Fetch the current price of a financial asset.
@@ -58,11 +59,7 @@ Ensure you have the following installed before running the project:
     - `DELETE /{id}` – Remove an asset from the wallet.
   
 - *Customer*: `/customers`
-    - `POST /` – Create new Customer.
-    - `PUT /` – Edit existing Customer.
-    - `GET /{customer-id}` – Find customer by id.
-    - `DELETE /{customer-id}` – Delete customer by id.
-
+    - `GET /` – Find and extract customer data by auth header.
 
 ## Installation
 

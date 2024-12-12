@@ -1,4 +1,16 @@
 services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: marketsync
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -39,9 +51,9 @@ services:
 
   keycloak:
     container_name: keycloak-ms
-    image: quay.io/keycloak/keycloak:24.0.2
+    image: quay.io/keycloak/keycloak:26.0.7
     ports:
-      - 9098:8080
+      - "8880:8080"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -55,6 +67,7 @@ networks:
     driver: bridge
 
 volumes:
+  postgres_db:
   zookeeper_data:
   kafka_1_data:
   kafka_2_data:
