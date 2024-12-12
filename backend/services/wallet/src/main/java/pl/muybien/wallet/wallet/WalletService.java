@@ -39,16 +39,11 @@ public class WalletService {
     }
 
     private Wallet findOrCreateWallet(String customerId) {
-        try {
-            return findCustomerWallet(customerId);
-        } catch (EntityNotFoundException e) {
-            return walletRepository.save(Wallet.builder()
-                    .customerId(customerId)
-                    .createdDate(LocalDateTime.now())
-                    .build());
-        } catch (Exception e) {
-            throw new WalletCreationException("Wallet could not be created");
-        }
+        return walletRepository.findByCustomerId(customerId).orElse(
+                walletRepository.save(Wallet.builder()
+                        .customerId(customerId)
+                        .createdDate(LocalDateTime.now())
+                        .build()));
     }
 
     public Wallet findCustomerWallet(String authHeader) {

@@ -27,7 +27,6 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Mono<J
                         extractResourceRoles(source).stream()
                 ).collect(Collectors.toSet())
         );
-        System.out.println(authenticationToken.getToken());
         return Mono.just(authenticationToken);
     }
 
