@@ -1,0 +1,33 @@
+server:
+  port: 9999
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: customer-service
+          uri: lb:http://CUSTOMER-SERVICE
+          predicates:
+            - Path=/api/v1/customers/**
+        - id: finance-service
+          uri: lb:http://FINANCE-SERVICE
+          predicates:
+            - Path=/api/v1/finances/**
+        - id: subscription-service
+          uri: lb:http://SUBSCRIPTION-SERVICE
+          predicates:
+            - Path=/api/v1/subscriptions/**
+        - id: wallet-service
+          uri: lb:http://WALLET-SERVICE
+          predicates:
+            - Path=/api/v1/wallets/**
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-url: http://localhost:8880/realms/marketsync
+          jwk-set-uri: http://localhost:8880/realms/master/protocol/openid-connect/certs
+
