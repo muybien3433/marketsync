@@ -22,12 +22,11 @@ public class AssetController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{asset-id}")
     public ResponseEntity<String> deleteAsset(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody @Valid AssetDeletionRequest request
-    ) {
-        service.deleteAsset(authHeader, request);
+            @PathVariable("asset-id") Long assetId) {
+        service.deleteAsset(authHeader, assetId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

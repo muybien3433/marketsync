@@ -37,7 +37,7 @@ class AssetServiceTest {
     private static final String authHeader = "Bearer token";
     private static final String email = "john.doe@example.com";
     private static final String uri = "Uri";
-    private static final Long customerId = 1L;
+    private static final String customerId = "test123";
     private static final Long assetId = 1L;
 
     @BeforeEach
@@ -47,12 +47,12 @@ class AssetServiceTest {
 
     @Test
     void createAsset_shouldCreateAssetSuccessfully() {
-        var assetRequest = new AssetRequest(uri, BigDecimal.valueOf(11), BigDecimal.valueOf(1_000), customerId);
+        var assetRequest = new AssetRequest(AssetType.CRYPTO, uri, BigDecimal.valueOf(11), BigDecimal.valueOf(1_000));
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var wallet = new Wallet();
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
-        when(walletService.findWalletByCustomerId(customerId)).thenReturn(wallet);
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
+        when(walletService.findCustomerWallet(authHeader)).thenReturn(wallet);
 
         service.createAsset(authHeader, assetRequest);
 
@@ -71,73 +71,69 @@ class AssetServiceTest {
 
     @Test
     void createAsset_shouldThrowCustomerNotFoundException_whenCustomerNotFound() {
-        var assetRequest = new AssetRequest(uri, BigDecimal.valueOf(11), BigDecimal.valueOf(1_000), customerId);
+        var assetRequest = new AssetRequest(AssetType.CRYPTO, uri, BigDecimal.valueOf(11), BigDecimal.valueOf(1_000));
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.empty());
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(null);
 
         CustomerNotFoundException exception = assertThrows(CustomerNotFoundException.class, () ->
                 service.createAsset(authHeader, assetRequest));
 
-        assertEquals("Asset not created:: No Customer exists with ID: 1", exception.getMessage());
+        assertEquals("Customer not found", exception.getMessage());
     }
 
     @Test
     void deleteAsset_shouldDeleteAssetSuccessfully() {
-        var assetDeletionRequest = new AssetDeletionRequest(assetId, customerId);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var asset = Asset.builder()
+                .id(assetId)
                 .customerId(customerId)
                 .build();
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(assetRepository.findById(assetId)).thenReturn(Optional.of(asset));
 
-        service.deleteAsset(authHeader, assetDeletionRequest);
+        service.deleteAsset(authHeader, asset.getId());
 
         verify(assetRepository, times(1)).delete(asset);
     }
 
     @Test
     void deleteAsset_shouldThrowOwnershipException_whenCustomerIdMismatch() {
-        Long otherCustomerId = 2L;
-        var assetDeletionRequest = new AssetDeletionRequest(assetId, customerId);
+        String otherCustomerId = "wrong123";
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var anotherAsset = Asset.builder()
                 .id(assetId)
                 .customerId(otherCustomerId)
                 .build();
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(assetRepository.findById(assetId)).thenReturn(Optional.of(anotherAsset));
 
         OwnershipException exception = assertThrows(OwnershipException.class, () ->
-                service.deleteAsset(authHeader, assetDeletionRequest));
+                service.deleteAsset(authHeader, assetId));
 
         assertEquals("Asset deletion failed:: Customer id mismatch", exception.getMessage());
     }
 
     @Test
     void deleteAsset_shouldThrowCustomerNotFoundException_whenCustomerNotFound() {
-        var assetDeletionRequest = new AssetDeletionRequest(assetId, customerId);
-
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.empty());
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(null);
 
         CustomerNotFoundException exception = assertThrows(CustomerNotFoundException.class, () ->
-                service.deleteAsset(authHeader, assetDeletionRequest));
+                service.deleteAsset(authHeader, assetId));
 
-        assertEquals("Asset not deleted:: No Customer exists with ID: 1", exception.getMessage());
+        assertEquals("Customer not found", exception.getMessage());
     }
 
     @Test
     void deleteAsset_shouldThrowEntityNotFoundException_whenAssetNotFound() {
-        var assetDeletionRequest = new AssetDeletionRequest(assetId, customerId);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(assetRepository.findById(assetId)).thenReturn(Optional.empty());
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
-                service.deleteAsset(authHeader, assetDeletionRequest));
+                service.deleteAsset(authHeader, assetId));
 
         assertEquals("Asset with ID: 1 not found", exception.getMessage());
     }

@@ -29,7 +29,7 @@ public class Asset {
     private BigDecimal count;
     private BigDecimal purchasePrice;
     private AssetType type;
-    private Long customerId;
+    private String customerId;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)

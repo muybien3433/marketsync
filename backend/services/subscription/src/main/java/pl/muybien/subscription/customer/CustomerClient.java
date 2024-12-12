@@ -13,9 +13,9 @@ import java.util.Optional;
 )
 public interface CustomerClient {
 
-    @GetMapping("/{customer-id}")
-    Optional<CustomerResponse> findCustomerById(
-            @RequestHeader(value = "Authorization") String authorizationHeader,
-            @PathVariable("customer-id") Long customerId
+    @GetMapping
+    CustomerResponse fetchCustomerFromHeader(
+            @RequestHeader(value = "Authorization") String authorizationHeader
     );
 }
+

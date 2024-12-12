@@ -22,7 +22,7 @@
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-        private Long customerId;
+        private String customerId;
 
         private String financeName;
         private BigDecimal upperBoundPrice;

@@ -17,7 +17,13 @@
   </div>
 
   <div class="navbar-auth">
-    <button (click)="logIn()">{{ 'navbar.login' | translate }}</button>
-    <button (click)="signUp()">{{ 'navbar.register' | translate }}</button>
+    <ng-container *ngIf="isLoggedIn(); else loggedOutTemplate">
+      <button (click)="logout()">{{ 'navbar.logout' | translate }}</button>
+    </ng-container>
+    <ng-template #loggedOutTemplate>
+      <button (click)="login()">{{ 'navbar.login' | translate }}</button>
+      <button (click)="register()">{{ 'navbar.register' | translate }}</button>
+    </ng-template>
   </div>
+
 </div>

@@ -33,20 +33,19 @@ public class SubscriptionController {
                 .body(service.createDecreaseSubscription(authHeader, request));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{subscription-detail-id}")
     public ResponseEntity<String> deleteSubscription(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody @Valid SubscriptionDeletionRequest request
+            @PathVariable("subscription-detail-id") Long subscriptionDetailId
     ) {
-        service.deleteSubscription(authHeader, request);
+        service.deleteSubscription(authHeader, subscriptionDetailId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public ResponseEntity<List<SubscriptionDetailDTO>> findAllSubscriptions(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestParam("customer-id") Long customerId
+            @RequestHeader("Authorization") String authHeader
     ) {
-        return ResponseEntity.ok(service.findAllSubscriptions(authHeader, customerId));
+        return ResponseEntity.ok(service.findAllSubscriptions(authHeader));
     }
 }

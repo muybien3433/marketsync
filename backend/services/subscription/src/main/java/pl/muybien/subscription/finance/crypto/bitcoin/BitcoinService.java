@@ -31,21 +31,22 @@ public class BitcoinService implements FinanceService {
     @Override
     @Scheduled(fixedRateString = "${api.bitcoin.fetch-time-ms}")
     public void fetchCurrentFinanceAndCompare() {
-        var financeResponse = financeClient.findFinanceByUri(name.toLowerCase()).orElseThrow(() ->
-                new FinanceNotFoundException("Finance not found for %s".formatted(name)));
-
-        if (financeResponse != null) {
-            var subscriptions = repository.findAll();
-            subscriptions.forEach(subscription -> {
-                if (financeComparator.priceMetSubscriptionCondition(financeResponse.priceUsd(), subscription)) {
-                    repository.delete(subscription);
-                }
-            });
+        var finance = financeClient.findFinanceByUri(name.toLowerCase());
+        if (finance == null) {
+            throw new FinanceNotFoundException("Finance not found for %s".formatted(name));
         }
+
+        var subscriptions = repository.findAll();
+        subscriptions.forEach(subscription -> {
+                    if (financeComparator.priceMetSubscriptionCondition(finance.priceUsd(), subscription)) {
+                        repository.delete(subscription);
+                    }
+                }
+        );
     }
 
     @Override
-    public SubscriptionDetail createIncreaseSubscription(BigDecimal value, String customerEmail, Long customerId) {
+    public SubscriptionDetail createIncreaseSubscription(BigDecimal value, String customerEmail, String customerId) {
         var subscription = Bitcoin.builder()
                 .financeName(name)
                 .upperBoundPrice(value)
@@ -68,7 +69,7 @@ public class BitcoinService implements FinanceService {
     }
 
     @Override
-    public SubscriptionDetail createDecreaseSubscription(BigDecimal value, String customerEmail, Long customerId) {
+    public SubscriptionDetail createDecreaseSubscription(BigDecimal value, String customerEmail, String customerId) {
         var subscription = Bitcoin.builder()
                 .financeName(name)
                 .upperBoundPrice(null)
@@ -89,7 +90,7 @@ public class BitcoinService implements FinanceService {
     }
 
     @Override
-    public void deleteSubscription(Long subscriptionId, Long customerId) {
+    public void deleteSubscription(Long subscriptionId, String customerId) {
         var subscription = repository.findById(subscriptionId).orElseThrow(() ->
                 new EntityNotFoundException("Subscription with id %s not found".formatted(subscriptionId)));
 

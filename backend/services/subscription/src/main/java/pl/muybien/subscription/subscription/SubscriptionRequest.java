@@ -16,10 +16,6 @@ public record SubscriptionRequest(
 
         @NotNull(message = "Value should be present")
         @Positive(message = "Value should be positive")
-        BigDecimal value,
-
-        @NotNull(message = "Customer should be present")
-        Long customerId
-
+        BigDecimal value
 ) {
 }

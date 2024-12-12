@@ -1,23 +1,28 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {Router} from '@angular/router';
-import {KeycloakService} from '../../services/keycloak/keycloak.service';
+import {KeycloakService} from 'keycloak-angular';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-    imports: [
-        TranslatePipe
-    ],
+  imports: [
+    TranslatePipe,
+    NgIf
+  ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
 export class MenuComponent {
-  constructor(private router: Router, private translate: TranslateService,
-              private keycloakService: KeycloakService) {
+  constructor(private router: Router, private translate: TranslateService, private keycloakService: KeycloakService) {
     this.translate.addLangs(['pl', 'en']);
     this.translate.setDefaultLang('pl');
     this.translate.use('pl');
+  }
+
+  isLoggedIn() {
+    return this.keycloakService.isLoggedIn();
   }
 
   useLanguage(language: string): void {
@@ -28,16 +33,16 @@ export class MenuComponent {
     this.router.navigate(['/']);
   }
 
-  logIn() {
-    this.router.navigate(['login']);
+  async login() {
+    await this.keycloakService.login();
   }
 
-  signUp() {
-    this.router.navigate(['register']);
+  async register() {
+    await this.keycloakService.register()
   }
 
-  async logOut() {
-    this.keycloakService.keycloak?.logout();
+  logout(): void {
+    this.keycloakService.logout();
   }
 
   wallet() {

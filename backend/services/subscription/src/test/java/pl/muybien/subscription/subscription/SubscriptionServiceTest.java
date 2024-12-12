@@ -53,13 +53,13 @@ class SubscriptionServiceTest {
     private static final String financeName = "FinanceName";
     private static final String authHeader = "Bearer token";
     private static final String uri = "Uri";
-    private static final Long customerId = 1L;
+    private static final String customerId = "test123";
 
     @Test
     void createIncreaseSubscription_shouldCreateAndReturnSubscriptionDetail() {
         BigDecimal value = BigDecimal.valueOf(100_000);
 
-        var request = new SubscriptionRequest(uri, value, customerId);
+        var request = new SubscriptionRequest(uri, value);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var financeService = mock(FinanceService.class);
         var subscription = Subscription.builder()
@@ -75,7 +75,7 @@ class SubscriptionServiceTest {
                 .createdDate(LocalDateTime.now())
                 .build();
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(subscriptionRepository.findByCustomerId(customerId)).thenReturn(Optional.of(subscription));
         when(financeServiceFactory.getService(uri)).thenReturn(financeService);
         when(financeService.createIncreaseSubscription(value, email, customerId)).thenReturn(createdSubscriptionDetail);
@@ -88,7 +88,7 @@ class SubscriptionServiceTest {
         assertThat(result.upperBoundPrice()).isEqualTo(value);
         assertThat(result.lowerBoundPrice()).isNull();
 
-        verify(customerClient).findCustomerById(authHeader, customerId);
+        verify(customerClient).fetchCustomerFromHeader(authHeader);
         verify(subscriptionRepository).findByCustomerId(customerId);
         verify(financeServiceFactory).getService(uri);
         verify(financeService).createIncreaseSubscription(value, email, customerId);
@@ -106,7 +106,7 @@ class SubscriptionServiceTest {
     void createDecreaseSubscription_shouldCreateAndReturnSubscriptionDetail() {
         BigDecimal value = BigDecimal.valueOf(100_000);
 
-        var request = new SubscriptionRequest(uri, value, customerId);
+        var request = new SubscriptionRequest(uri, value);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var financeService = mock(FinanceService.class);
         var subscription = Subscription.builder()
@@ -122,7 +122,7 @@ class SubscriptionServiceTest {
                 .createdDate(LocalDateTime.now())
                 .build();
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(subscriptionRepository.findByCustomerId(customerId)).thenReturn(Optional.of(subscription));
         when(financeServiceFactory.getService(uri)).thenReturn(financeService);
         when(financeService.createDecreaseSubscription(value, email, customerId)).thenReturn(createdSubscriptionDetail);
@@ -135,7 +135,7 @@ class SubscriptionServiceTest {
         assertThat(result.upperBoundPrice()).isNull();
         assertThat(result.lowerBoundPrice()).isEqualTo(value);
 
-        verify(customerClient).findCustomerById(authHeader, customerId);
+        verify(customerClient).fetchCustomerFromHeader(authHeader);
         verify(subscriptionRepository).findByCustomerId(customerId);
         verify(financeServiceFactory).getService(uri);
         verify(financeService).createDecreaseSubscription(value, email, customerId);
@@ -153,7 +153,6 @@ class SubscriptionServiceTest {
     void deleteSubscription_shouldDeleteSubscriptionDetail() {
         Long subscriptionDetailId = 1L;
         Long subscriptionId = 1L;
-        var request = new SubscriptionDeletionRequest(subscriptionDetailId, customerId);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var subscription = Subscription.builder()
                 .id(subscriptionId)
@@ -169,14 +168,14 @@ class SubscriptionServiceTest {
 
         var financeService = mock(FinanceService.class);
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(subscriptionRepository.findByCustomerId(customerId)).thenReturn(Optional.of(subscription));
         when(subscriptionDetailRepository.findById(subscriptionDetailId)).thenReturn(Optional.of(subscriptionDetail));
         when(financeServiceFactory.getService(financeName)).thenReturn(financeService);
 
-        service.deleteSubscription(authHeader, request);
+        service.deleteSubscription(authHeader, subscriptionDetailId);
 
-        verify(customerClient).findCustomerById(authHeader, customerId);
+        verify(customerClient).fetchCustomerFromHeader(authHeader);
         verify(subscriptionRepository).findByCustomerId(customerId);
         verify(subscriptionDetailRepository).findById(subscriptionDetailId);
         verify(financeServiceFactory).getService(financeName);
@@ -187,50 +186,46 @@ class SubscriptionServiceTest {
     @Test
     void deleteSubscription_shouldThrowBusinessExceptionWhenCustomerNotFound() {
         Long subscriptionDetailId = 1L;
-        var request = new SubscriptionDeletionRequest(subscriptionDetailId, customerId);
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.empty());
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(null);
 
-        assertThatThrownBy(() -> service.deleteSubscription(authHeader, request))
+        assertThatThrownBy(() -> service.deleteSubscription(authHeader, subscriptionDetailId))
                 .isInstanceOf(CustomerNotFoundException.class)
-                .hasMessage("Subscription not deleted:: No Customer exists with ID: 1");
+                .hasMessage("Customer not found");
     }
 
     @Test
     void deleteSubscription_shouldThrowBusinessExceptionWhenSubscriptionNotFound() {
         Long subscriptionDetailId = 1L;
-        var request = new SubscriptionDeletionRequest(subscriptionDetailId, customerId);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(subscriptionRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.deleteSubscription(authHeader, request))
+        assertThatThrownBy(() -> service.deleteSubscription(authHeader, subscriptionDetailId))
                 .isInstanceOf(SubscriptionNotFoundException.class)
-                .hasMessage("Subscription not deleted:: No Subscription exists with ID: 1");
+                .hasMessage("Subscription not deleted:: No Subscription exists for customer ID: %s".formatted(customerId));
     }
 
     @Test
     void deleteSubscription_shouldThrowEntityNotFoundExceptionWhenSubscriptionDetailNotFound() {
         Long subscriptionDetailId = 1L;
-        var request = new SubscriptionDeletionRequest(subscriptionDetailId, customerId);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var subscription = Subscription.builder().id(1L).customerId(customerId).build();
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(subscriptionRepository.findByCustomerId(customerId)).thenReturn(Optional.of(subscription));
         when(subscriptionDetailRepository.findById(subscriptionDetailId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.deleteSubscription(authHeader, request))
+        assertThatThrownBy(() -> service.deleteSubscription(authHeader, subscriptionDetailId))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessage("Subscription not deleted:: No Subscription exists with ID: 1");
+                .hasMessage("Subscription not deleted:: No Subscription exists with ID: %d".formatted(subscriptionDetailId));
     }
 
     @Test
     void deleteSubscription_shouldThrowOwnershipExceptionWhenCustomerMismatch() {
-        Long differentCustomerId = 2L;
+        String differentCustomerId = "differentCustomerId";
         Long subscriptionDetailId = 1L;
-        var request = new SubscriptionDeletionRequest(subscriptionDetailId, customerId);
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var subscription = Subscription.builder().id(1L).customerId(customerId).build();
         var subscriptionDetail = SubscriptionDetail.builder()
@@ -239,11 +234,11 @@ class SubscriptionServiceTest {
                 .subscription(subscription)
                 .build();
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(subscriptionRepository.findByCustomerId(customerId)).thenReturn(Optional.of(subscription));
         when(subscriptionDetailRepository.findById(subscriptionDetailId)).thenReturn(Optional.of(subscriptionDetail));
 
-        assertThatThrownBy(() -> service.deleteSubscription(authHeader, request))
+        assertThatThrownBy(() -> service.deleteSubscription(authHeader, subscriptionDetailId))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Subscription deletion failed:: Customer id mismatch");
     }
@@ -266,10 +261,10 @@ class SubscriptionServiceTest {
                 .customerId(customerId)
                 .build();
 
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(subscriptionRepository.findByCustomerId(customerId)).thenReturn(Optional.of(subscription));
 
-        List<SubscriptionDetailDTO> result = service.findAllSubscriptions(authHeader, customerId);
+        List<SubscriptionDetailDTO> result = service.findAllSubscriptions(authHeader);
 
         assertNotNull(result);
         assertEquals(3, result.size());
@@ -278,14 +273,14 @@ class SubscriptionServiceTest {
         assertEquals(detailDTOMapper.mapToDTO(subscriptionDetail1), result.get(2));
 
         verify(detailDTOMapper, times(6)).mapToDTO(any(SubscriptionDetail.class));
-        verify(customerClient).findCustomerById(authHeader, customerId);
+        verify(customerClient).fetchCustomerFromHeader(authHeader);
         verify(subscriptionRepository).findByCustomerId(customerId);
     }
 
     @Test
     void testFindAllSubscriptionsCustomerNotFound() {
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.empty());
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(null);
 
-        assertThrows(CustomerNotFoundException.class, () -> service.findAllSubscriptions(authHeader, customerId));
+        assertThrows(CustomerNotFoundException.class, () -> service.findAllSubscriptions(authHeader));
     }
 }

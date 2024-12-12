@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
     @Query("SELECT s FROM Subscription s WHERE s.customerId = :customerId")
-    Optional<Subscription> findByCustomerId(@Param("customerId") Long customerId);
+    Optional<Subscription> findByCustomerId(@Param("customerId") String customerId);
 }

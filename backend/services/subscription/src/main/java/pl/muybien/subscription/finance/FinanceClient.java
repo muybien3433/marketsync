@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface FinanceClient {
 
     @GetMapping("/{uri}")
-    Optional<FinanceResponse> findFinanceByUri(@PathVariable("uri") String uri);
+    FinanceResponse findFinanceByUri(@PathVariable("uri") String uri);
 }

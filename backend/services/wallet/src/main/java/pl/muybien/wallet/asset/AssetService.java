@@ -21,11 +21,11 @@ public class AssetService {
 
     @Transactional
     protected void createAsset(String authHeader, AssetRequest request) {
-        var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        "Asset not created:: No Customer exists with ID: %d".formatted(request.customerId())));
-
-        var wallet = walletService.findWalletByCustomerId(customer.id());
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
+        var wallet = walletService.findCustomerWallet(authHeader);
         var asset = Asset.builder()
                 .type(request.assetType())
                 .name(request.uri().toLowerCase())
@@ -40,13 +40,13 @@ public class AssetService {
     }
 
     @Transactional
-    protected void deleteAsset(String authHeader, AssetDeletionRequest request) {
-        var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        "Asset not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
-
-        var asset = assetRepository.findById(request.assetId()).orElseThrow(() ->
-                new EntityNotFoundException("Asset with ID: %s not found".formatted(request.assetId())));
+    protected void deleteAsset(String authHeader, Long assetId) {
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
+        var asset = assetRepository.findById(assetId).orElseThrow(() ->
+                new EntityNotFoundException("Asset with ID: %s not found".formatted(assetId)));
 
         if (!asset.getCustomerId().equals(customer.id())) {
             throw new OwnershipException("Asset deletion failed:: Customer id mismatch");

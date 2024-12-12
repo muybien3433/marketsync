@@ -1,6 +1,5 @@
 package pl.muybien.wallet.wallet;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -41,7 +40,7 @@ class WalletServiceTest {
     private WalletRepository walletRepository;
 
     private static final String authHeader = "Bearer token";
-    private static final Long customerId = 1L;
+    private static final String customerId = "test123";
 
     @BeforeEach
     void setUp() {
@@ -50,109 +49,68 @@ class WalletServiceTest {
 
     @Test
     void displayOrCreateWallet_shouldThrowCustomerNotFoundExceptionWhenCustomerDoesNotExist() {
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.empty());
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(null);
 
-        WalletRequest request = WalletRequest.builder()
-                .authorizationHeader(authHeader)
-                .customerId(customerId)
-                .build();
-
-        assertThatThrownBy(() -> service.displayOrCreateWallet(authHeader, request))
+        assertThatThrownBy(() -> service.displayOrCreateWallet(authHeader))
                 .isInstanceOf(CustomerNotFoundException.class)
-                .hasMessageContaining("Wallet not shown:: No Customer exists with ID: %d".formatted(customerId));
+                .hasMessageContaining("Customer not found");
     }
 
     @Test
-    void findOrCreateWallet_shouldFindExistingWallet() {
-        Wallet existingWallet = Wallet.builder()
-                .customerId(customerId)
-                .createdDate(LocalDateTime.now())
+    void findCustomerWallet_shouldReturnWalletWhenFound() {
+        var customer = CustomerResponse.builder()
+                .id(customerId)
                 .build();
-        when(walletRepository.findByCustomerId(customerId)).thenReturn(Optional.of(existingWallet));
-
-        Wallet wallet = service.findOrCreateWallet(customerId);
-
-        assertThat(wallet).isEqualTo(existingWallet);
-        verify(walletRepository, times(1)).findByCustomerId(customerId);
-        verify(walletRepository, never()).save(any(Wallet.class));
-    }
-
-    @Test
-    void findOrCreateWallet_shouldCreateNewWallet() {
-        when(walletRepository.findByCustomerId(customerId)).thenThrow(EntityNotFoundException.class);
-
-        Wallet newWallet = Wallet.builder()
-                .customerId(customerId)
-                .createdDate(LocalDateTime.now())
-                .build();
-        when(walletRepository.save(any(Wallet.class))).thenReturn(newWallet);
-
-        Wallet wallet = service.findOrCreateWallet(customerId);
-
-        assertThat(wallet.getCustomerId()).isEqualTo(customerId);
-        assertThat(wallet.getCreatedDate()).isNotNull();
-        verify(walletRepository, times(1)).findByCustomerId(customerId);
-        verify(walletRepository, times(1)).save(any(Wallet.class));
-    }
-
-    @Test
-    void findOrCreateWallet_shouldThrowWalletCreationExceptionOnError() {
-        when(walletRepository.findByCustomerId(customerId)).thenThrow(new RuntimeException("Database error"));
-
-        assertThatThrownBy(() -> service.findOrCreateWallet(customerId))
-                .isInstanceOf(WalletCreationException.class)
-                .hasMessageContaining("Wallet could not be created");
-    }
-
-    @Test
-    void findWalletByCustomerId_shouldReturnWalletWhenFound() {
         var wallet = Wallet.builder()
-                .customerId(customerId)
+                .customerId(customer.id())
                 .assets(Collections.emptyList())
                 .build();
 
-        when(walletRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wallet));
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
+        when(walletRepository.findByCustomerId(customer.id())).thenReturn(Optional.of(wallet));
 
-        Wallet result = service.findWalletByCustomerId(customerId);
+        Wallet result = service.findCustomerWallet(authHeader);
 
         assertThat(result).isEqualTo(wallet);
         verify(walletRepository).findByCustomerId(customerId);
     }
 
     @Test
-    void findWalletByCustomerId_shouldThrowExceptionWhenNotFound() {
+    void findCustomerWallet_shouldThrowExceptionWhenNotFound() {
+        var customer = CustomerResponse.builder()
+                .id(customerId)
+                .build();
+        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(walletRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.findWalletByCustomerId(customerId))
+        assertThatThrownBy(() -> service.findCustomerWallet(authHeader))
                 .isInstanceOf(WalletNotFoundException.class)
-                .hasMessage("Wallet for customerId: %d not found".formatted(customerId));
+                .hasMessage("Wallet not found");
 
         verify(walletRepository).findByCustomerId(customerId);
     }
 
     @Test
     void findAndAggregateAllWalletAssets_shouldReturnEmptyListWhenNoAssets() {
-        var request = new WalletRequest(authHeader, customerId);
         var wallet = Wallet.builder()
                 .customerId(customerId)
                 .assets(null)
                 .build();
 
-        List<AssetDTO> result = service.findAndAggregateAllWalletAssets(wallet, request);
+        List<AssetDTO> result = service.findAndAggregateAllWalletAssets(wallet, customerId);
 
         assertThat(result).isEmpty();
     }
 
     @Test
     void findAndAggregateAllWalletAssets_shouldThrowOwnershipExceptionForCustomerIdMismatch() {
-        Long otherCustomerId = 2L;
+        String otherCustomerId = "wrong123";
         var wallet = Wallet.builder()
                 .customerId(otherCustomerId)
                 .assets(List.of(Asset.builder().customerId(customerId).build()))
                 .build();
-        var request = new WalletRequest(authHeader, customerId);
 
-        Throwable thrown = catchThrowable(() -> service.findAndAggregateAllWalletAssets(wallet, request));
+        Throwable thrown = catchThrowable(() -> service.findAndAggregateAllWalletAssets(wallet, customerId));
         assertThat(thrown)
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Wallet displaying failed:: Customer id mismatch");
@@ -183,10 +141,6 @@ class WalletServiceTest {
                 .createdDate(LocalDateTime.now())
                 .assets(List.of(asset1, asset2, asset3))
                 .build();
-        var request = WalletRequest.builder()
-                .authorizationHeader(authHeader)
-                .customerId(customerId)
-                .build();
         var bitcoinResponse = FinanceResponse.builder()
                 .name("Bitcoin")
                 .priceUsd(BigDecimal.valueOf(45_000))
@@ -196,9 +150,9 @@ class WalletServiceTest {
                 .priceUsd(BigDecimal.valueOf(3000))
                 .build();
 
-        when(financeClient.findFinanceByUri("Bitcoin")).thenReturn(Optional.of(bitcoinResponse));
-        when(financeClient.findFinanceByUri("Ethereum")).thenReturn(Optional.of(ethereumResponse));
-        List<AssetDTO> result = service.findAndAggregateAllWalletAssets(wallet, request);
+        when(financeClient.findFinanceByUri("Bitcoin")).thenReturn(bitcoinResponse);
+        when(financeClient.findFinanceByUri("Ethereum")).thenReturn(ethereumResponse);
+        List<AssetDTO> result = service.findAndAggregateAllWalletAssets(wallet, customerId);
 
         assertThat(result).hasSize(2);
 
@@ -232,7 +186,7 @@ class WalletServiceTest {
                 .priceUsd(BigDecimal.valueOf(50000))
                 .build();
 
-        when(financeClient.findFinanceByUri(uri)).thenReturn(Optional.of(expectedFinance));
+        when(financeClient.findFinanceByUri(uri)).thenReturn(expectedFinance);
 
         FinanceResponse result = service.fetchFinance(uri);
 
@@ -245,107 +199,11 @@ class WalletServiceTest {
     @Test
     void fetchFinance_shouldThrowExceptionWhenFinanceNotFound() {
         String notExistingUri = "NonExistentFinance";
-        when(financeClient.findFinanceByUri(notExistingUri)).thenReturn(Optional.empty());
+        when(financeClient.findFinanceByUri(notExistingUri)).thenReturn(null);
 
         assertThatThrownBy(() -> service.fetchFinance(notExistingUri))
                 .isInstanceOf(FinanceNotFoundException.class)
                 .hasMessage("Finance not found for URI: NonExistentFinance");
         verify(financeClient).findFinanceByUri(notExistingUri);
-    }
-
-    @Test
-    void deleteWallet_shouldDeleteWalletWhenValid() {
-        var wallet = Wallet.builder()
-                .customerId(customerId)
-                .assets(Collections.emptyList())
-                .build();
-        var customer = CustomerResponse.builder()
-                .id(customerId)
-                .firstName("John")
-                .lastName("Doe")
-                .build();
-        var request = WalletRequest.builder()
-                .authorizationHeader(authHeader)
-                .customerId(customerId)
-                .build();
-
-        when(walletRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wallet));
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
-
-        service.deleteWallet(authHeader, request);
-
-        verify(walletRepository).findByCustomerId(customerId);
-        verify(customerClient).findCustomerById(authHeader, customerId);
-        verify(walletRepository).delete(wallet);
-    }
-
-    @Test
-    void deleteWallet_shouldThrowExceptionWhenCustomerNotFound() {
-        var wallet = Wallet.builder()
-                .customerId(customerId)
-                .assets(Collections.emptyList())
-                .build();
-        var request = WalletRequest.builder()
-                .authorizationHeader(authHeader)
-                .customerId(customerId)
-                .build();
-
-        when(walletRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wallet));
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.deleteWallet(authHeader, request))
-                .isInstanceOf(CustomerNotFoundException.class)
-                .hasMessage("Wallet not deleted:: No Customer exists with ID: %d".formatted(customerId));
-
-        verify(walletRepository).findByCustomerId(customerId);
-        verify(customerClient).findCustomerById(authHeader, customerId);
-        verify(walletRepository, never()).delete(any());
-    }
-
-    @Test
-    void deleteWallet_shouldThrowExceptionWhenOwnershipMismatch() {
-        Long otherCustomerId = 2L;
-        var wallet = Wallet.builder()
-                .customerId(customerId)
-                .assets(Collections.emptyList())
-                .build();
-        var customer = CustomerResponse.builder()
-                .id(otherCustomerId)
-                .firstName("Ela")
-                .lastName("Smith")
-                .build();
-        var request = WalletRequest.builder()
-                .authorizationHeader(authHeader)
-                .customerId(customerId)
-                .build();
-
-        when(walletRepository.findByCustomerId(customerId)).thenReturn(Optional.of(wallet));
-        when(customerClient.findCustomerById(authHeader, customerId)).thenReturn(Optional.of(customer));
-
-        assertThatThrownBy(() -> service.deleteWallet(authHeader, request))
-                .isInstanceOf(OwnershipException.class)
-                .hasMessage("Wallet deletion failed:: Customer id mismatch");
-
-        verify(walletRepository).findByCustomerId(customerId);
-        verify(customerClient).findCustomerById(authHeader, customerId);
-        verify(walletRepository, never()).delete(any());
-    }
-
-    @Test
-    void deleteWallet_shouldThrowExceptionWhenWalletNotFound() {
-        var request = WalletRequest.builder()
-                .authorizationHeader(authHeader)
-                .customerId(customerId)
-                .build();
-
-        when(walletRepository.findByCustomerId(customerId)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.deleteWallet(authHeader, request))
-                .isInstanceOf(WalletNotFoundException.class)
-                .hasMessage("Wallet for customerId: %d not found".formatted(customerId) );
-
-        verify(walletRepository).findByCustomerId(customerId);
-        verify(customerClient, never()).findCustomerById(any(), any());
-        verify(walletRepository, never()).delete(any());
     }
 }

@@ -25,15 +25,14 @@ public class SubscriptionService {
 
     @Transactional
     protected SubscriptionDetailDTO createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
-        var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        "Subscription not created:: No Customer exists with ID: %d"
-                                .formatted(request.customerId())));
-
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
         var subscription = subscriptionRepository.findByCustomerId(customer.id())
                 .orElseThrow(() -> new SubscriptionNotFoundException(
-                        "Subscription not created:: No Customer exists with ID: %d"
-                                .formatted(request.customerId())));
+                        "Subscription not created:: No Customer exists with ID: %s"
+                                .formatted(customer.id())));
 
         var financeService = financeServiceFactory.getService(request.uri());
         var createdSubscription = financeService.createIncreaseSubscription(
@@ -53,15 +52,15 @@ public class SubscriptionService {
 
     @Transactional
     protected SubscriptionDetailDTO createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
-        var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        "Subscription not created:: No Customer exists with ID: %d"
-                                .formatted(request.customerId())));
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
 
         var subscription = subscriptionRepository.findByCustomerId(customer.id())
                 .orElseThrow(() -> new SubscriptionNotFoundException(
-                        "Subscription not created:: No Customer exists with ID: %d"
-                                .formatted(request.customerId())));
+                        "Subscription not created:: No Customer exists with ID: %s"
+                                .formatted(customer.id())));
 
         var financeService = financeServiceFactory.getService(request.uri());
         var createdSubscription = financeService.createDecreaseSubscription(
@@ -80,20 +79,21 @@ public class SubscriptionService {
     }
 
     @Transactional
-    protected void deleteSubscription(String authHeader, SubscriptionDeletionRequest request) {
-        var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        "Subscription not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
+    protected void deleteSubscription(String authHeader, Long subscriptionDetailId) {
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
 
         var subscription = subscriptionRepository.findByCustomerId(customer.id())
                 .orElseThrow(() -> new SubscriptionNotFoundException(
-                        "Subscription not deleted:: No Subscription exists with ID: %d"
-                                .formatted(request.customerId())));
+                        "Subscription not deleted:: No Subscription exists for customer ID: %s"
+                                .formatted(customer.id())));
 
-        var subscriptionDetail = subscriptionDetailRepository.findById(request.subscriptionDetailId())
+        var subscriptionDetail = subscriptionDetailRepository.findById(subscriptionDetailId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Subscription not deleted:: No Subscription exists with ID: %d".
-                                formatted(request.subscriptionDetailId())));
+                                formatted(subscriptionDetailId)));
 
         if (!subscriptionDetail.getCustomerId().equals(customer.id())) {
             throw new OwnershipException("Subscription deletion failed:: Customer id mismatch");
@@ -106,10 +106,11 @@ public class SubscriptionService {
     }
 
     @Transactional(readOnly = true)
-    public List<SubscriptionDetailDTO> findAllSubscriptions(String authHeader, Long customerId) {
-        var customer = customerClient.findCustomerById(authHeader, customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        "Subscription not found:: No Customer exists with ID: %d".formatted(customerId)));
+    public List<SubscriptionDetailDTO> findAllSubscriptions(String authHeader) {
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
 
         return subscriptionRepository.findByCustomerId(customer.id())
                 .stream()

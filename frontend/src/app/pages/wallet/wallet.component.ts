@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Asset } from './asset';
 import {NgForOf, NgStyle} from '@angular/common';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {KeycloakService} from 'keycloak-angular';
 
 @Component({
   selector: 'app-wallet',
@@ -16,20 +18,27 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 })
 export class WalletComponent {
 
-  private _assets: Asset[] = [
-    new Asset("CRYPTO", "Bitcoin", 200000, 100000, 100000, 1, 0.0, 0),
-    new Asset("CRYPTO","Bitcoin", 100000, 50000, 100000, 1, 150.0, 50000),
-    new Asset("STOCK", "Apple", 200000, 100000, 100000, 1, -10.0, -10000),
-    new Asset("STOCK", "Tesla", 200000, 100000, 100000, 1, 0.0, 0),
-  ];
-
+  private _assets: Asset[] = [];
   groupedAssets: { [key: string]: Asset[] } = {};
 
-  constructor(private translate: TranslateService) {
-    this.groupAssetsByType();
+  constructor(private translate: TranslateService, private http: HttpClient) {
     this.translate.addLangs(['pl', 'en']);
     this.translate.setDefaultLang('en');
     this.translate.use('pl');
+    this.fetchWalletAssets();
+  }
+
+  fetchWalletAssets() {
+    this.http.get<Asset[]>('http://localhost:9999/api/v1/wallets').subscribe({
+      next: assets => {
+        this._assets = Array.isArray(assets) ? assets : [];
+        this.groupAssetsByType();
+      },
+      error: err => {
+        console.error("Error fetching wallet assets", err);
+        this._assets = [];
+      }
+    });
   }
 
   groupAssetsByType() {

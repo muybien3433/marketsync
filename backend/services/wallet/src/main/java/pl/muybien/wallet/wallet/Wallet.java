@@ -23,8 +23,7 @@ public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long customerId;
+    private String customerId;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)

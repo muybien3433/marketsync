@@ -28,19 +28,19 @@ public class WalletService {
     private final WalletRepository walletRepository;
 
     @Transactional
-    protected List<AssetDTO> displayOrCreateWallet(String authHeader, WalletRequest request) {
-        var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        "Wallet not shown:: No Customer exists with ID: %d".formatted(request.customerId())));
+    List<AssetDTO> displayOrCreateWallet(String authHeader) {
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
         var wallet = findOrCreateWallet(customer.id());
 
-        return findAndAggregateAllWalletAssets(wallet, request);
+        return findAndAggregateAllWalletAssets(wallet, customer.id());
     }
 
-    @Transactional
-    protected Wallet findOrCreateWallet(Long customerId) {
+    private Wallet findOrCreateWallet(String customerId) {
         try {
-            return findWalletByCustomerId(customerId);
+            return findCustomerWallet(customerId);
         } catch (EntityNotFoundException e) {
             return walletRepository.save(Wallet.builder()
                     .customerId(customerId)
@@ -51,19 +51,22 @@ public class WalletService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public Wallet findWalletByCustomerId(Long customerId) {
-        return walletRepository.findByCustomerId(customerId).orElseThrow(() ->
-                new WalletNotFoundException("Wallet for customerId: %d not found".formatted(customerId)));
+    public Wallet findCustomerWallet(String authHeader) {
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
+        return walletRepository.findByCustomerId(customer.id()).orElseThrow(() ->
+                new WalletNotFoundException("Wallet not found"));
     }
 
     @Transactional(readOnly = true)
-    protected List<AssetDTO> findAndAggregateAllWalletAssets(Wallet wallet, WalletRequest request) {
+    List<AssetDTO> findAndAggregateAllWalletAssets(Wallet wallet, String customerId) {
         if (wallet.getAssets() == null) {
             return Collections.emptyList();
         }
 
-        if (!wallet.getCustomerId().equals(request.customerId())) {
+        if (!wallet.getCustomerId().equals(customerId)) {
             throw new OwnershipException("Wallet displaying failed:: Customer id mismatch");
         }
 
@@ -115,29 +118,13 @@ public class WalletService {
 
     @Transactional
     protected FinanceResponse fetchFinance(String uri) {
-        FinanceResponse finance = financeClient.findFinanceByUri(uri).orElseThrow(() ->
-                new FinanceNotFoundException("Finance not found for URI: %s".formatted(uri)));
-
+        var finance = financeClient.findFinanceByUri(uri);
+        if (finance == null) {
+            throw new FinanceNotFoundException("Finance not found for URI: " + uri);
+        }
         return FinanceResponse.builder()
                 .name(finance.name())
                 .priceUsd(finance.priceUsd())
                 .build();
     }
-
-    @Transactional
-    protected void deleteWallet(String authHeader, WalletRequest request) {
-        var wallet = findWalletByCustomerId(request.customerId());
-
-        var customer = customerClient.findCustomerById(authHeader, request.customerId())
-                .orElseThrow(() -> new CustomerNotFoundException(
-                        "Wallet not deleted:: No Customer exists with ID: %d".formatted(request.customerId())));
-
-
-        if (!wallet.getCustomerId().equals(customer.id())) {
-            throw new OwnershipException("Wallet deletion failed:: Customer id mismatch");
-        }
-        walletRepository.delete(wallet);
-    }
-
-
 }

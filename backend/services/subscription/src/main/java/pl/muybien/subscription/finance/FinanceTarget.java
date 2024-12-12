@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public interface FinanceTarget {
 
     Long getId();
-    Long getCustomerId();
+    String getCustomerId();
     String getCustomerEmail();
     String getFinanceName();
     BigDecimal getUpperBoundPrice();

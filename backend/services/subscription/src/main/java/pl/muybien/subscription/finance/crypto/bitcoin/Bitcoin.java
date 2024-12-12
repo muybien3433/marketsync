@@ -29,7 +29,7 @@ public class Bitcoin implements FinanceTarget {
         private BigDecimal upperBoundPrice;
         private BigDecimal lowerBoundPrice;
         private String customerEmail;
-        private Long customerId;
+        private String customerId;
 
         @CreatedDate
         @Column(updatable = false, nullable = false)
