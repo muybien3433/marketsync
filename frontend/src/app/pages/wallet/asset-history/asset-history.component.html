@@ -16,7 +16,7 @@
       <td>{{ asset.averagePurchasePrice }}</td>
       <td>{{ asset.investmentStartDate }}</td>
       <td class="button-cell">
-        <button (click)="editAsset()" class="btn btn-primary btn-sm">{{ 'common.edit' | translate }}</button>
+        <button (click)="editAsset(asset)" class="btn btn-primary btn-sm">{{ 'common.edit' | translate }}</button>
         <button (click)="deleteAsset(asset.id)" class="btn btn-danger btn-sm">{{ 'common.delete' | translate }}</button>
       </td>
     </tr>

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import {TranslatePipe} from "@ngx-translate/core";
-import {Asset} from '../../../asset-model';
+import {Asset} from '../asset-model';
 import {HttpClient} from '@angular/common/http';
 import {NgForOf} from '@angular/common';
-import {WalletFooterNavbarComponent} from '../../../wallet-footer-navbar/wallet-footer-navbar.component';
+import {WalletFooterNavbarComponent} from '../wallet-footer-navbar/wallet-footer-navbar.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-asset-history',
@@ -20,7 +21,7 @@ export class AssetHistoryComponent {
   private _baseUrl = 'http://localhost:9999/api/v1/wallets';
   protected _assets: Asset[] = [];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.fetchWalletAssetsHistory();
   }
 
@@ -30,14 +31,14 @@ export class AssetHistoryComponent {
         this._assets = Array.isArray(assets) ? assets : [];
       },
       error: (err) => {
-        console.error('Error fetching wallet assets', err);
+        console.error(err);
         this._assets = [];
       },
     });
   }
 
-  editAsset() {
-
+  editAsset(asset: Asset) {
+    this.router.navigate(['edit-asset'], { state: {asset} });
   }
 
   deleteAsset(assetId: number) {
@@ -47,7 +48,7 @@ export class AssetHistoryComponent {
         console.log(`Asset with ID ${assetId} deleted successfully.`);
       },
       error: (err) => {
-        console.error(`Error deleting asset with ID ${assetId}`, err);
+        console.error(err);
       }
     })
   }

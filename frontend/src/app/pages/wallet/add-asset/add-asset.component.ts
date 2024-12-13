@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {NgIf} from '@angular/common';
 import {TranslatePipe} from '@ngx-translate/core';
-import {WalletFooterNavbarComponent} from '../../wallet-footer-navbar/wallet-footer-navbar.component';
+import {WalletFooterNavbarComponent} from '../wallet-footer-navbar/wallet-footer-navbar.component';
 
 @Component({
   selector: 'app-add-asset',
@@ -26,19 +26,19 @@ export class AddAssetComponent {
   successMessage: string = '';
   errorMessage: string = '';
 
-  private baseUrl = 'http://localhost:9999/api/v1/wallets/assets';
+  private baseUrl = 'http://localhost:9999/api/v1/wallets';
 
 constructor(private fb: FormBuilder, private http: HttpClient) {
     this.addAssetForm = this.fb.group({
       type: ['', Validators.required],
       uri: ['', [Validators.required, Validators.minLength(1)]],
-      count: [0, [Validators.required, Validators.min(0.01)]],
+      count: [0, [Validators.required, Validators.min(0.001)]],
       purchasePrice: [0, [Validators.required, Validators.min(0.01)]],
     });
   }
 
   addAssetToWallet(assetData: { type: string; uri: string; count: number; purchasePrice: number }): Observable<any> {
-    return this.http.post(`${this.baseUrl}`, assetData);
+    return this.http.post(`${this.baseUrl}/assets`, assetData);
   }
 
   onSubmit(): void {
@@ -59,7 +59,7 @@ constructor(private fb: FormBuilder, private http: HttpClient) {
       error: (err) => {
         this.errorMessage = 'Failed to add asset. Please try again.';
         this.successMessage = '';
-        console.error(err);
+        console.error();
         this.isSubmitting = false;
       },
     });

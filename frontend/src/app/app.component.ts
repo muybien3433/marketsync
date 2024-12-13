@@ -77,7 +77,7 @@ export class AppComponent {
       // this.keycloakService.getKeycloakInstance().tokenParsed
 
     })
-      .catch(e => { this.statusPanel = 'Error occurred while parsing. check console logs'; console.error(e) });
+      .catch(e => { this.statusPanel = 'Error occurred while parsing. check console logs'; console.error() });
   }
 
   public isTokenExpired(): void {
@@ -103,7 +103,7 @@ export class AppComponent {
       this.statusPanel = (refreshed ? 'Token was refreshed' : 'Token is still valid');
     } catch (error) {
       this.statusPanel = 'Failed to refresh the token check console logs'
-      console.error('Failed to refresh the token:', error);
+      console.error(error);
     }
   }
 

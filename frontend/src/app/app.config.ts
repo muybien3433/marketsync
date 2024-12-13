@@ -42,7 +42,7 @@ export function initializeKeycloak(keycloak: KeycloakService): () => Promise<boo
         console.log('Keycloak Initialized');
         return true;
       }).catch((error) => {
-        console.error('Keycloak Initialization Failed', error);
+        console.error(error);
         return false;
       });
   } else {

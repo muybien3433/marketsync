@@ -22,6 +22,16 @@ public class AssetController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PutMapping("/{asset-id}")
+    public ResponseEntity<String> updateAsset(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid AssetRequest request,
+            @PathVariable("asset-id") Long assetId
+    ) {
+        service.updateAsset(authHeader, request, assetId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     @DeleteMapping("/{asset-id}")
     public ResponseEntity<String> deleteAsset(
             @RequestHeader("Authorization") String authHeader,

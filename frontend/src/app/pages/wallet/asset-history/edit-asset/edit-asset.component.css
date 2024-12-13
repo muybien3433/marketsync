@@ -1,0 +1,110 @@
+/* Edit Asset Form Styles */
+form {
+  max-width: 800px;
+  padding: 35px;
+  border-radius: 12px;
+  background-color: lightgray; /* Lighter background for editing */
+  margin: 7% auto auto;
+}
+
+h2 {
+  text-align: center;
+  color: #4caf50;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Form Group */
+div {
+  margin-bottom: 20px;
+}
+
+/* Label Styles */
+label {
+  font-weight: bold;
+  color: black;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Input Field Styles */
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Disabled Inputs (for type and name) */
+input[readonly] {
+  background-color: #f2f2f2;  /* Light gray background for readonly inputs */
+  cursor: not-allowed; /* Show the disabled cursor */
+  border: 1px solid #ddd;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+input[type="number"] {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+/* Error Messages */
+small.error {
+  color: red;
+  font-size: 12px;
+}
+
+/* Success/Error Messages */
+.success {
+  color: green;
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Submit Button */
+button[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 80%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 10%;
+  margin-top: 25px;
+  margin-bottom: 30px;
+}
+
+button[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+button[type="submit"]:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Spacing for Read-only Fields */
+input[readonly] {
+  padding: 10px;
+  border-radius: 4px;
+}

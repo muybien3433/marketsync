@@ -76,6 +76,7 @@ public class WalletService {
 
         return wallet.getAssets().reversed().stream().map(asset -> AssetDTO.builder()
                 .id(asset.getId())
+                .type(asset.getType().name().toLowerCase())
                 .name(asset.getName())
                 .count(asset.getCount())
                 .averagePurchasePrice(asset.getPurchasePrice())
@@ -133,7 +134,7 @@ public class WalletService {
 
                     return AssetDTO.builder()
                             .name(name)
-                            .type(type)
+                            .type(type.name().toLowerCase())
                             .count(totalCount)
                             .averagePurchasePrice(totalAveragePurchasePrice)
                             .currentPrice(currentPrice)

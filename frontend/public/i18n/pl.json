@@ -2,7 +2,7 @@
   "common.wallet": "Portfel",
   "common.subscription": "Subskrybcje",
   "common.action": "Akcje",
-  "common.edit": "Edutyj",
+  "common.edit": "Edutuj",
   "common.delete": "Usuń",
 
   "navbar.login": "Zaloguj się",
@@ -23,6 +23,9 @@
   "wallet.asset.add.asset": "Dodaj aktywo",
   "wallet.asset.add.success": "Aktywo dodane pomyślnie!",
   "wallet.asset.add.fail": "Nieudało się dodać aktywa. Spróbuj ponownie",
+  "wallet.asset.edit.asset": "Edytuj aktywo",
+  "wallet.asset.edit.success": "Aktywo editowane pomyślnie!",
+  "wallet.asset.edit.fail": "Nie udało się edytować aktywa. Spróbuj ponownie",
   "wallet.asset.type.crypto": "Kryptowaluty",
   "wallet.asset.type.stock": "Giełda",
   "wallet.asset.name":  "Nazwa",

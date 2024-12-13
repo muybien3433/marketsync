@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public record AssetDTO(
         Long id,
         String name,
-        AssetType type,
+        String type,
         BigDecimal value,
         BigDecimal count,
         BigDecimal averagePurchasePrice,

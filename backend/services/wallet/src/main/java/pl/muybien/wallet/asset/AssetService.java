@@ -21,7 +21,7 @@ public class AssetService {
     private final AssetRepository assetRepository;
 
     @Transactional
-    protected void createAsset(String authHeader, AssetRequest request) {
+    void createAsset(String authHeader, AssetRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
         if (customer == null) {
             throw new CustomerNotFoundException("Customer not found");
@@ -41,7 +41,27 @@ public class AssetService {
     }
 
     @Transactional
-    protected void deleteAsset(String authHeader, Long assetId) {
+    void updateAsset(String authHeader, AssetRequest request, Long assetId) {
+        var asset = assetRepository.findById(assetId).orElseThrow(() ->
+                new EntityNotFoundException("Asset with ID %s not found".formatted(assetId)));
+
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
+
+        if (!customer.id().equals(asset.getCustomerId())) {
+            throw new OwnershipException("Asset updating failed:: Customer id mismatch");
+        }
+
+        asset.setCount(request.count().setScale(2, RoundingMode.HALF_UP));
+        asset.setPurchasePrice(request.purchasePrice().setScale(2, RoundingMode.HALF_UP));
+
+        assetRepository.save(asset);
+    }
+
+    @Transactional
+    void deleteAsset(String authHeader, Long assetId) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
         if (customer == null) {
             throw new CustomerNotFoundException("Customer not found");

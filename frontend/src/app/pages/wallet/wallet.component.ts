@@ -32,7 +32,7 @@ export class WalletComponent {
         this.groupAssetsByType();
       },
       error: (err) => {
-        console.error('Error fetching wallet assets', err);
+        console.error(err);
         this._assets = [];
       },
     });
@@ -43,7 +43,7 @@ export class WalletComponent {
     this.groupedAssets = {};
     this._assets.forEach((asset) => {
       this.translate
-          .get(`wallet.asset.type.${asset.type}`.toLowerCase())
+          .get(`wallet.asset.type.${asset.type}`)
           .subscribe((translatedType) => {
             this.groupedAssets[translatedType] = this.groupedAssets[translatedType] || [];
             this.groupedAssets[translatedType].push(asset);
