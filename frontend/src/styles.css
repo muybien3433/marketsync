@@ -32,6 +32,20 @@
     }
   }
 
+  /* Form Styles */
+  form {
+    max-width: 800px;
+    padding: 35px;
+    border-radius: 12px;
+    background-color: burlywood;
+    margin: 7% auto auto;
+  }
+
+  /* Form Group */
+  div {
+    margin-bottom: 20px;
+  }
+
   /* Heading */
   h1, h2, h3 {
     font-family: 'Roboto Slab', serif;
@@ -118,6 +132,26 @@
     left: -25%;
     width: 150%;
     height: 150%;
+  }
+
+  /* Label Styles */
+  label {
+    font-weight: bold;
+    color: black;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* Input Field Styles */
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
   }
 
   /* Table */
@@ -241,6 +275,26 @@
 
   .card:hover::after {
     opacity: 1;
+  }
+
+  /* Success/Error Messages */
+  .success {
+    color: green;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .error {
+    color: red;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  small.error {
+    color: red;
+    font-size: 12px;
   }
 
   /* Input Field */
