@@ -7,7 +7,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatCardModule} from '@angular/material/card';
 import {Clipboard, ClipboardModule} from '@angular/cdk/clipboard';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
-import {MenuComponent} from './pages/menu/menu.component';
+import {NavbarComponent} from './pages/navbar/navbar.component';
 
 
 @Component({
@@ -19,7 +19,7 @@ import {MenuComponent} from './pages/menu/menu.component';
     MatListModule,
     MatCardModule,
     ClipboardModule,
-    RouterModule, MenuComponent],
+    RouterModule, NavbarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

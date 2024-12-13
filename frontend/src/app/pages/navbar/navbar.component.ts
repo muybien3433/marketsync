@@ -11,10 +11,10 @@ import {NgIf} from '@angular/common';
     TranslatePipe,
     NgIf
   ],
-  templateUrl: './menu.component.html',
-  styleUrl: './menu.component.css'
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.css'
 })
-export class MenuComponent {
+export class NavbarComponent {
   constructor(private router: Router, private translate: TranslateService, private keycloakService: KeycloakService) {
     this.translate.addLangs(['pl', 'en']);
     this.translate.setDefaultLang('pl');

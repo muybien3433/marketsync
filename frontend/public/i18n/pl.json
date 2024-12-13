@@ -1,10 +1,14 @@
 {
+  "common.wallet": "Portfel",
+  "common.subscription": "Subskrybcje",
+  "common.action": "Akcje",
+  "common.edit": "Edutyj",
+  "common.delete": "Usuń",
+
   "navbar.login": "Zaloguj się",
   "navbar.register": "Zarejestruj się",
   "navbar.logout": "Wyloguj się",
   "navbar.main": "Menu",
-  "navbar.wallet": "Portfel",
-  "navbar.subscription": "Subskrybcje",
 
   "wallet.name": "Twój Portfel",
   "wallet.asset.count": "Ilość",
@@ -25,8 +29,12 @@
   "wallet.asset.value": "Wartość",
   "wallet.asset.averagePurchasePrice": "Śr. Cena Zakupu",
   "wallet.asset.currentPrice": "Aktualna Cena",
-  "wallet.asset.investmentStartDate": "Dni Inwestycyjne",
+  "wallet.asset.investmentStartDate": "Data utworzenia",
   "wallet.asset.profitInPercentage": "Zysk %",
   "wallet.asset.profit": "Zysk",
-  "wallet.asset.sum": "Suma"
+  "wallet.asset.sum": "Suma",
+  "wallet.asset.add": "Dodaj aktywa",
+  "wallet.asset.delete": "Usuń aktywa",
+  "wallet.asset.history": "Historia",
+  "wallet.asset.change.currency": "Zmień walutę"
 }

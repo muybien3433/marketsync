@@ -1,5 +1,8 @@
 import { createRequire } from 'module';const require = createRequire(import.meta.url);
 import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-BU2IDENW.js";
+import {
   A,
   CdkObserveContent,
   ENTER,
@@ -18,9 +21,6 @@ import {
   hasModifierKey
 } from "./chunk-4LWZ4NM2.js";
 import "./chunk-MGCYDESQ.js";
-import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-BU2IDENW.js";
 import "./chunk-HTY7NTQM.js";
 import "./chunk-AUVTLKCH.js";
 import {

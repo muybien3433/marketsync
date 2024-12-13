@@ -1,6 +1,6 @@
   /* Global Body */
   body {
-    background: radial-gradient(circle, #1a1a1a, #0d0d0d);
+    background: radial-gradient(circle, #777777, #0d0d0d);
     color: #f0f0f0;
     font-family: 'Poppins', Arial, sans-serif;
     font-size: 15px;
@@ -124,7 +124,7 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    background: darkgoldenrod;
+    background: red;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease-in-out;
@@ -134,7 +134,7 @@
   }
 
   td {
-    border-bottom: 1px solid darkgoldenrod;
+    border-bottom: 1px solid black;
     transition: all 0.2s ease;
   }
 
@@ -146,6 +146,17 @@
   tr {
     transition: all 0.3s ease;
   }
+
+  tbody {
+    font-size: 16px;
+  }
+
+  tbody td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+
 
   /* Header */
   header {

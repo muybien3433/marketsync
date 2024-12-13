@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Builder
 public record AssetDTO(
+        Long id,
         String name,
         AssetType type,
         BigDecimal value,

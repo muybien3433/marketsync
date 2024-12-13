@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {NgIf} from '@angular/common';
 import {TranslatePipe} from '@ngx-translate/core';
+import {WalletFooterNavbarComponent} from '../../wallet-footer-navbar/wallet-footer-navbar.component';
 
 @Component({
   selector: 'app-add-asset',
@@ -12,7 +13,8 @@ import {TranslatePipe} from '@ngx-translate/core';
     FormsModule,
     ReactiveFormsModule,
     NgIf,
-    TranslatePipe
+    TranslatePipe,
+    WalletFooterNavbarComponent
   ],
   templateUrl: './add-asset.component.html',
   styleUrl: './add-asset.component.css'

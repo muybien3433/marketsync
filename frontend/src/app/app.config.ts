@@ -34,9 +34,10 @@ export function initializeKeycloak(keycloak: KeycloakService): () => Promise<boo
           clientId: 'angular-client'
         },
         initOptions: {
-          onLoad: 'login-required',
+          onLoad: 'check-sso',
           checkLoginIframe: false,
         },
+        bearerExcludedUrls: ['']
       }).then(() => {
         console.log('Keycloak Initialized');
         return true;
@@ -82,3 +83,4 @@ export const appConfig: ApplicationConfig = {
     ])
   ],
 };
+

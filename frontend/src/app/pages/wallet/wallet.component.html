@@ -37,7 +37,9 @@
       <td class="table-footer" colspan="8"><strong>{{ 'wallet.asset.sum' | translate }}</strong></td>
     </tr>
     <tr>
-      <td colspan="6"></td>
+      <td colspan="2"></td>
+      <td colspan="1">{{ getTotalValue() }}</td>
+      <td colspan="3"></td>
       <td [ngStyle]="{ color: getTotalProfitInPercentage() >= 0 ? 'green' : 'red' }">
         {{ getTotalProfitInPercentage() + ' %'}}
       </td>
@@ -47,10 +49,5 @@
     </tr>
     </tbody>
   </table>
-  <div class="footer">
-    <button (click)="addAsset()">Dodaj aktywa</button>
-    <button>Edytuj aktywa</button>
-    <button>Historia dodawania</button>
-    <button>Zmień walutę</button>
-  </div>
+  <app-wallet-footer-navbar></app-wallet-footer-navbar>
 </div>

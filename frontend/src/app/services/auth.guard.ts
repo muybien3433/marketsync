@@ -1,15 +1,14 @@
-import {CanActivateFn, Router} from '@angular/router';
+import {CanActivateFn} from '@angular/router';
 import {inject} from '@angular/core';
 import {KeycloakService} from 'keycloak-angular';
 
-/**
- * This guard return true if the user is logged in
- * This guard can be further modifier to:
- * * * check user roles using keycloakService.isUserInRole() function
- */
-export const AuthGuard: CanActivateFn = (route, state) => {
+export const AuthGuard: CanActivateFn = async () => {
   const keycloakService = inject(KeycloakService);
-  const router = inject(Router);
+  const userIsNotLoggedIn = !keycloakService.isLoggedIn();
 
-  return keycloakService.isLoggedIn();
+  if (userIsNotLoggedIn) {
+    await keycloakService.login();
+    return false;
+  }
+  return true;
 }

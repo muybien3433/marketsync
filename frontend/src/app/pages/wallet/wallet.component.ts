@@ -4,26 +4,29 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import {Asset} from "./asset-model";
+import {
+  WalletFooterNavbarComponent
+} from "./wallet-footer-navbar/wallet-footer-navbar.component";
 
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [NgForOf, NgStyle, TranslatePipe],
+  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent],
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css'],
 })
 export class WalletComponent {
-  private baseUrl = 'http://localhost:9999/api/v1/wallets';
+  private _baseUrl = 'http://localhost:9999/api/v1/wallets';
   private _assets: Asset[] = [];
-  groupedAssets: { [key: string]: Asset[] } = {};
   protected readonly Object = Object;
+  groupedAssets: { [key: string]: Asset[] } = {};
 
   constructor(private translate: TranslateService, private http: HttpClient, private router: Router) {
     this.fetchWalletAssets();
   }
 
   fetchWalletAssets() {
-    this.http.get<Asset[]>(this.baseUrl).subscribe({
+    this.http.get<Asset[]>(this._baseUrl).subscribe({
       next: (assets) => {
         this._assets = Array.isArray(assets) ? assets : [];
         this.groupAssetsByType();
@@ -34,6 +37,7 @@ export class WalletComponent {
       },
     });
   }
+
 
   groupAssetsByType() {
     this.groupedAssets = {};
@@ -59,7 +63,7 @@ export class WalletComponent {
     return parseFloat(profitInPercentage.toFixed(2));
   }
 
-  addAsset() {
-    this.router.navigate(['/add-asset']);
+  getTotalValue() {
+    return this._assets.reduce((total, asset) => total +(asset.value || 0), 0);
   }
 }

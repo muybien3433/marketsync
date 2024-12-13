@@ -10,11 +10,11 @@ th, td {
 }
 
 .table-header {
-  text-align: center;
+  text-align: left;
   background: antiquewhite;
 }
 
 .table-footer {
-  text-align: center;
+  text-align: left;
   background: antiquewhite;
 }

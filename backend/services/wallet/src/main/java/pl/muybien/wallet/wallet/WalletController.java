@@ -20,4 +20,11 @@ public class WalletController {
     ) {
         return ResponseEntity.ok(service.displayOrCreateWallet(authHeader));
     }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<AssetDTO>> displayWalletAssetHistory(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        return ResponseEntity.ok(service.findWalletAssetsHistory(authHeader));
+    }
 }
