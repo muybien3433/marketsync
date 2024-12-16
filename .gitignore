@@ -42,3 +42,14 @@ build/
 node_modules/
 npm-debug.log
 yarn-error.log
+
+# Ignore Angular build and cache files
+**/.angular/cache/
+
+# Ignore Vite dependencies
+**/vite/deps/
+
+# Ignore specific cache and deps files
+**/.angular/cache/**/*
+**/vite/deps/**/* 
+**/vite/deps_ssr/**/*
