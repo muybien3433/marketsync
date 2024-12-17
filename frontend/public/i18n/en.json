@@ -1,43 +1,60 @@
 {
-  "common.wallet": "Wallet",
-  "common.subscription": "Subscription",
-  "common.action": "Action",
-  "common.edit": "Edit",
-  "common.delete": "Delete",
+  "common": {
+    "wallet": "Wallet",
+    "subscription": "Subscription",
+    "action": "Action",
+    "edit": "Edit",
+    "delete": "Delete",
+    "count": "Count",
+    "asset": "Asset",
+    "name": "Name",
+    "value": "Value",
+    "current.price": "Current Price",
+    "history": "History",
+    "sum": "Sum",
+    "type.to.search": "Type to search"
+  },
 
-  "navbar.login": "Log In",
-  "navbar.register": "Sign Up",
-  "navbar.logout": "Logout",
-  "navbar.main": "Main",
+  "navbar": {
+    "login": "Log In",
+    "register": "Sign Up",
+    "logout": "Logout",
+    "main": "Main"
+  },
 
-  "wallet.name": "Your Wallet",
-  "wallet.asset.count": "Count",
-  "wallet.asset.count.error": "Count should be a positive number",
-  "wallet.asset.type.selection": "Select asset type",
-  "wallet.asset.type": "Asset type",
-  "wallet.asset.type.error": "Asset type is required",
-  "wallet.asset.uri": "Asset",
-  "wallet.asset.uri.error": "Asset is required",
-  "wallet.asset.purchase.price": "Purchase price",
-  "wallet.asset.purchase.price.error": "Purchase price should be a positive number",
-  "wallet.asset.add.asset": "Add asset",
-  "wallet.asset.add.success": "Asset added successfully!",
-  "wallet.asset.add.fail": "Failed to add asset. Please try again",
-  "wallet.asset.edit.asset": "Edit asset",
-  "wallet.asset.edit.success": "Asset edited successfully!",
-  "wallet.asset.edit.fail": "Failed to edit asset. Please try again",
-  "wallet.asset.type.crypto": "Crypto",
-  "wallet.asset.type.stock": "Stock",
-  "wallet.asset.name":  "Name",
-  "wallet.asset.value": "Value",
-  "wallet.asset.averagePurchasePrice": "Avg. Purchase Price",
-  "wallet.asset.currentPrice": "Current Price",
-  "wallet.asset.investmentStartDate": "Creation date",
-  "wallet.asset.profitInPercentage": "Profit %",
-  "wallet.asset.profit": "Profit",
-  "wallet.asset.sum": "Sum",
-  "wallet.asset.add": "Add assets",
-  "wallet.asset.delete": "Delete assets",
-  "wallet.asset.history": "History",
-  "wallet.asset.change.currency": "Change currency"
+  "asset": {
+    "type": "Asset type",
+    "name": "Asset name",
+    "add.asset": "Add asset",
+    "edit.asset": "Edit asset",
+    "type.crypto": "Crypto",
+    "type.stock": "Stock",
+    "type.selection": "Select asset type",
+    "search.asset": "Search asset",
+    "purchase.price": "Purchase price",
+    "average.purchase.price": "Avg. Purchase Price",
+    "investment.start.date": "Creation date",
+    "profit.in.percentage": "Profit %",
+    "profit": "Profit",
+    "delete.asset": "Delete asset"
+  },
+
+  "wallet": {
+    "name": "Your Wallet",
+    "change.currency": "Change currency"
+  },
+
+  "success": {
+    "asset.add.success": "Asset added successfully!",
+    "asset.edit.success": "Asset edited successfully!"
+  },
+
+  "error": {
+    "number.should.be.positive": "Should be a positive number",
+    "asset.is.required": "Asset is required",
+    "asset.type.required": "Asset type is required",
+    "purchase.price.should.be.positive": "Purchase price should be a positive number",
+    "asset.add.fail": "Failed to add asset. Please try again",
+    "asset.edit.fail": "Failed to edit asset. Please try again"
+  }
 }

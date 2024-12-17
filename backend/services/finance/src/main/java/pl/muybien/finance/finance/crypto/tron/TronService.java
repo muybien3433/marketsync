@@ -15,9 +15,9 @@ public class TronService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.tron.url}")
+    @Value("${crypto.api.tron.url}")
     private String url;
-    @Value("${api.tron.uri}")
+    @Value("${crypto.api.tron.uri}")
     private String serviceName;
 
     @Override

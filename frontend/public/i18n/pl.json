@@ -1,43 +1,60 @@
 {
-  "common.wallet": "Portfel",
-  "common.subscription": "Subskrybcje",
-  "common.action": "Akcje",
-  "common.edit": "Edutuj",
-  "common.delete": "Usuń",
+  "common": {
+    "wallet": "Wallet",
+    "subscription": "Subscription",
+    "action": "Action",
+    "edit": "Edit",
+    "delete": "Delete",
+    "count": "Count",
+    "asset": "Asset",
+    "name": "Name",
+    "value": "Value",
+    "current.price": "Current Price",
+    "history": "History",
+    "sum": "Sum",
+    "type.to.search": "Type to search"
+  },
 
-  "navbar.login": "Zaloguj się",
-  "navbar.register": "Zarejestruj się",
-  "navbar.logout": "Wyloguj się",
-  "navbar.main": "Menu",
+  "navbar": {
+    "login": "Log In",
+    "register": "Sign Up",
+    "logout": "Logout",
+    "main": "Main"
+  },
 
-  "wallet.name": "Twój Portfel",
-  "wallet.asset.count": "Ilość",
-  "wallet.asset.count.error": "Ilość powinna być większą od zera",
-  "wallet.asset.type.selection": "Wybierz rodzaj aktywa",
-  "wallet.asset.type": "Rodzaj aktywa",
-  "wallet.asset.type.error": "Rodzaj aktywa jest wymagany",
-  "wallet.asset.uri": "Aktywo",
-  "wallet.asset.uri.error": "Aktywo jest wymagane",
-  "wallet.asset.purchase.price": "Cena zakupu",
-  "wallet.asset.purchase.price.error": "Cena zakupu powinna być większa od zera",
-  "wallet.asset.add.asset": "Dodaj aktywo",
-  "wallet.asset.add.success": "Aktywo dodane pomyślnie!",
-  "wallet.asset.add.fail": "Nieudało się dodać aktywa. Spróbuj ponownie",
-  "wallet.asset.edit.asset": "Edytuj aktywo",
-  "wallet.asset.edit.success": "Aktywo editowane pomyślnie!",
-  "wallet.asset.edit.fail": "Nie udało się edytować aktywa. Spróbuj ponownie",
-  "wallet.asset.type.crypto": "Kryptowaluty",
-  "wallet.asset.type.stock": "Giełda",
-  "wallet.asset.name":  "Nazwa",
-  "wallet.asset.value": "Wartość",
-  "wallet.asset.averagePurchasePrice": "Śr. Cena Zakupu",
-  "wallet.asset.currentPrice": "Aktualna Cena",
-  "wallet.asset.investmentStartDate": "Data utworzenia",
-  "wallet.asset.profitInPercentage": "Zysk %",
-  "wallet.asset.profit": "Zysk",
-  "wallet.asset.sum": "Suma",
-  "wallet.asset.add": "Dodaj aktywa",
-  "wallet.asset.delete": "Usuń aktywa",
-  "wallet.asset.history": "Historia",
-  "wallet.asset.change.currency": "Zmień walutę"
+  "asset": {
+    "type": "Asset type",
+    "name": "Asset name",
+    "add.asset": "Add asset",
+    "edit.asset": "Edit asset",
+    "type.crypto": "Crypto",
+    "type.stock": "Stock",
+    "type.selection": "Select asset type",
+    "search.asset": "Search asset",
+    "purchase.price": "Purchase price",
+    "average.purchase.price": "Avg. Purchase Price",
+    "investment.start.date": "Creation date",
+    "profit.in.percentage": "Profit %",
+    "profit": "Profit",
+    "delete.asset": "Delete asset"
+  },
+
+  "wallet": {
+    "name": "Your Wallet",
+    "change.currency": "Change currency"
+  },
+
+  "success": {
+    "asset.add.success": "Asset added successfully!",
+    "asset.edit.success": "Asset edited successfully!"
+  },
+
+  "error": {
+    "number.should.be.positive": "Should be a positive number",
+    "asset.is.required": "Asset is required",
+    "asset.type.required": "Asset type is required",
+    "purchase.price.should.be.positive": "Purchase price should be a positive number",
+    "asset.add.fail": "Failed to add asset. Please try again",
+    "asset.edit.fail": "Failed to edit asset. Please try again"
+  }
 }

@@ -15,9 +15,9 @@ public class BitcoinService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.bitcoin.url}")
+    @Value("${crypto.api.bitcoin.url}")
     private String url;
-    @Value("${api.bitcoin.uri}")
+    @Value("${crypto.api.bitcoin.uri}")
     private String serviceName;
 
     @Override

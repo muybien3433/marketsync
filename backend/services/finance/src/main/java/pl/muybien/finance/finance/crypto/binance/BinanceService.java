@@ -15,9 +15,9 @@ public class BinanceService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.binance.url}")
+    @Value("${crypto.api.binance.url}")
     private String url;
-    @Value("${api.binance.uri}")
+    @Value("${crypto.api.binance.uri}")
     private String serviceName;
 
     @Override

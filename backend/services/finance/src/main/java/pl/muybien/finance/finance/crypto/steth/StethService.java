@@ -15,9 +15,9 @@ public class StethService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.steth.url}")
+    @Value("${crypto.api.steth.url}")
     private String url;
-    @Value("${api.steth.uri}")
+    @Value("${crypto.api.steth.uri}")
     private String serviceName;
 
     @Override

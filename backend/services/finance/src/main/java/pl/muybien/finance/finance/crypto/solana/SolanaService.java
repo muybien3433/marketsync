@@ -15,9 +15,9 @@ public class SolanaService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.solana.url}")
+    @Value("${crypto.api.solana.url}")
     private String url;
-    @Value("${api.solana.uri}")
+    @Value("${crypto.api.solana.uri}")
     private String serviceName;
 
     @Override

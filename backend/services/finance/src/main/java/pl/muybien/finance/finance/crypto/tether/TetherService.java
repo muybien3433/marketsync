@@ -15,9 +15,9 @@ public class TetherService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.tether.url}")
+    @Value("${crypto.api.tether.url}")
     private String url;
-    @Value("${api.tether.uri}")
+    @Value("${crypto.api.tether.uri}")
     private String serviceName;
 
     @Override

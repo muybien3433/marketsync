@@ -26,6 +26,7 @@ public class AssetService {
         if (customer == null) {
             throw new CustomerNotFoundException("Customer not found");
         }
+
         var wallet = walletService.findCustomerWallet(authHeader);
         var asset = Asset.builder()
                 .type(request.type())

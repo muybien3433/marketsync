@@ -1,47 +1,76 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
-import {NgIf} from '@angular/common';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import {TranslatePipe} from '@ngx-translate/core';
 import {WalletFooterNavbarComponent} from '../wallet-footer-navbar/wallet-footer-navbar.component';
+import {NgIf} from '@angular/common';
+import {
+  AssetSelectionComponent
+} from '../asset-selection-list/asset-selection/asset-selection/asset-selection.component';
+import {AssetService} from '../../../services/asset-service';
 
 @Component({
   selector: 'app-add-asset',
   standalone: true,
   imports: [
     FormsModule,
-    ReactiveFormsModule,
-    NgIf,
     TranslatePipe,
-    WalletFooterNavbarComponent
+    WalletFooterNavbarComponent,
+    NgIf,
+    AssetSelectionComponent,
+    ReactiveFormsModule
   ],
   templateUrl: './add-asset.component.html',
-  styleUrl: './add-asset.component.css'
+  styleUrls: ['./add-asset.component.css'],
 })
-
-export class AddAssetComponent {
-  addAssetForm: FormGroup;
+export class AddAssetComponent implements OnInit {
+  addAssetForm!: FormGroup;
+  assetListForm!: FormGroup;
   isSubmitting = false;
   successMessage: string = '';
   errorMessage: string = '';
+  assetTypes: { type: string, label: string }[] = [];
+  filteredAssetTypes: { type: string, label: string }[] = [];
+  selectedAssetUri: string = '';
 
-  private baseUrl = 'http://localhost:9999/api/v1/wallets';
+  private baseUrl = 'http://localhost:9999/api/v1';
 
-constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private assetService: AssetService) {
     this.addAssetForm = this.fb.group({
-      type: ['', Validators.required],
+      type: ['crypto', Validators.required],
       uri: ['', [Validators.required, Validators.minLength(1)]],
       count: [0, [Validators.required, Validators.min(0.001)]],
       purchasePrice: [0, [Validators.required, Validators.min(0.01)]],
     });
+
+    this.assetListForm = this.fb.group({
+      type: [''],
+    });
+  }
+
+  ngOnInit(): void {
+    this.assetService.assetUri$.subscribe(uri => {
+      this.selectedAssetUri = uri;
+      this.addAssetForm.get('uri')?.setValue(uri);
+    })
+    this.filteredAssetTypes = this.assetTypes;
   }
 
   addAssetToWallet(assetData: { type: string; uri: string; count: number; purchasePrice: number }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/assets`, assetData);
+    assetData.type.toUpperCase(); // need to be upper case to satisfy java enum
+    return this.http.post(`${this.baseUrl}/wallets/assets`, assetData);
   }
 
   onSubmit(): void {
+    console.log("Form Validity: ", this.addAssetForm.valid);
+    console.log("Form control validity: ", {
+      count: this.addAssetForm.get('count')?.valid,
+      purchasePrice: this.addAssetForm.get('purchasePrice')?.valid,
+      type: this.addAssetForm.get('type')?.valid,
+      uri: this.addAssetForm.get('uri')?.valid
+    });
+
     if (this.addAssetForm.invalid) {
       return;
     }
@@ -59,7 +88,7 @@ constructor(private fb: FormBuilder, private http: HttpClient) {
       error: (err) => {
         this.errorMessage = 'Failed to add asset. Please try again.';
         this.successMessage = '';
-        console.error();
+        console.error(err);
         this.isSubmitting = false;
       },
     });

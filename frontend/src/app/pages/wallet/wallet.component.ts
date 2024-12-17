@@ -43,7 +43,7 @@ export class WalletComponent {
     this.groupedAssets = {};
     this._assets.forEach((asset) => {
       this.translate
-          .get(`wallet.asset.type.${asset.type}`)
+          .get(`asset.type.${asset.type}`)
           .subscribe((translatedType) => {
             this.groupedAssets[translatedType] = this.groupedAssets[translatedType] || [];
             this.groupedAssets[translatedType].push(asset);

@@ -15,9 +15,9 @@ public class EthereumService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.ethereum.url}")
+    @Value("${crypto.api.ethereum.url}")
     private String url;
-    @Value("${api.ethereum.uri}")
+    @Value("${crypto.api.ethereum.uri}")
     private String serviceName;
 
     @Override

@@ -1,5 +1,4 @@
 HELP.md
->>>>>>> 7ed9eba061880c0a64e7e71f36c704c47bf7e0fa
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -28,7 +27,7 @@ target/
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
-/dist/
+/dist/x
 /nbdist/
 /.nb-gradle/
 build/
@@ -42,14 +41,3 @@ build/
 node_modules/
 npm-debug.log
 yarn-error.log
-
-# Ignore Angular build and cache files
-**/.angular/cache/
-
-# Ignore Vite dependencies
-**/vite/deps/
-
-# Ignore specific cache and deps files
-**/.angular/cache/**/*
-**/vite/deps/**/* 
-**/vite/deps_ssr/**/*

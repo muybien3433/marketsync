@@ -15,9 +15,9 @@ public class UsdcoinService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.usdcoin.url}")
+    @Value("${crypto.api.usdcoin.url}")
     private String url;
-    @Value("${api.usdcoin.uri}")
+    @Value("${crypto.api.usdcoin.uri}")
     private String serviceName;
 
     @Override

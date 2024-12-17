@@ -104,7 +104,7 @@ public class WalletService {
                     AssetType type = group.stream()
                             .map(Asset::getType)
                             .findFirst()
-                            .orElse(AssetType.UNDEFINED);
+                            .orElse(AssetType.undefined);
 
                     BigDecimal totalCount = group.stream()
                             .map(Asset::getCount)

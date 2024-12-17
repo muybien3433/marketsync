@@ -4,9 +4,9 @@ import lombok.ToString;
 
 @ToString
 public enum AssetType {
-    UNDEFINED,
-    STOCK,
-    BONDS,
-    CRYPTO,
-    CURRENCY
+    undefined,
+    stock,
+    bonds,
+    crypto,
+    currency
 }

@@ -1,50 +1,45 @@
 <form [formGroup]="addAssetForm" (ngSubmit)="onSubmit()">
   <div>
+
     <div>
-      <label for="type">{{ 'wallet.asset.type' | translate }}</label>
-      <select id="type" formControlName="type" required>
-        <option value="">{{ 'wallet.asset.type.selection' | translate }}</option>
-        <option value="CRYPTO">{{ 'wallet.asset.type.crypto' | translate }}</option>
-        <option value="STOCKS">{{ 'wallet.asset.type.stock' | translate }}</option>
-      </select>
-      <div *ngIf="addAssetForm.get('type')?.invalid && addAssetForm.get('type')?.touched">
-        <small class="error">{{ 'wallet.asset.type.error' | translate }}</small>
-      </div>
+      <app-asset-selection></app-asset-selection>
     </div>
 
     <div>
-      <label for="uri">{{ 'wallet.asset.uri' | translate }}</label>
-      <select id="uri" formControlName="uri" required>
-        <option value="">Wybierz opcje</option>
-        <option value="bitcoin">Bitcoin</option>
-        <option value="ethereum">Ethereum</option>
-      </select>
-      <div *ngIf="addAssetForm.get('uri')?.invalid && addAssetForm.get('uri')?.touched">
-        <small class="error">{{ 'wallet.asset.uri.error' | translate }}</small>
-      </div>
-    </div>
-
-    <div>
-      <label for="count">{{ 'wallet.asset.count' | translate }}</label>
-      <input type="number" id="count" formControlName="count" min="0.01" required/>
+      <label for="count">{{ 'common.count' | translate }}</label>
+      <input
+        type="number"
+        id="count"
+        formControlName="count"
+        min="0.01"
+        required
+      />
       <div *ngIf="addAssetForm.get('count')?.invalid && addAssetForm.get('count')?.touched">
-        <small class="error">{{ 'wallet.asset.count.error' | translate }}</small>
+        <small class="error">{{ 'common.count.error' | translate }}</small>
       </div>
     </div>
 
     <div>
-      <label for="purchasePrice">{{ 'wallet.asset.purchase.price' | translate }}</label>
-      <input type="number" id="purchasePrice" formControlName="purchasePrice" min="0.01" required/>
+      <label for="purchasePrice">{{ 'asset.purchase.price' | translate }}</label>
+      <input
+        type="number"
+        id="purchasePrice"
+        formControlName="purchasePrice"
+        min="0.01"
+        required
+      />
       <div *ngIf="addAssetForm.get('purchasePrice')?.invalid && addAssetForm.get('purchasePrice')?.touched">
-        <small class="error">{{ 'wallet.asset.purchase.price.error' | translate }}</small>
+        <small class="error">{{ 'error.purchase.price.should.be.positive' | translate }}</small>
       </div>
     </div>
 
-    <button type="submit" [disabled]="isSubmitting">{{ 'wallet.asset.add.asset' | translate }}</button>
+    <button type="submit" [disabled]="isSubmitting">
+      {{ 'asset.add.asset' | translate }}
+    </button>
 
-    <div *ngIf="successMessage" class="success">{{ 'wallet.asset.add.success' | translate }}</div>
-    <div *ngIf="errorMessage" class="error">{{ 'wallet.asset.add.fail' | translate }}</div>
+    <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
   </div>
+
   <app-wallet-footer-navbar></app-wallet-footer-navbar>
 </form>
-

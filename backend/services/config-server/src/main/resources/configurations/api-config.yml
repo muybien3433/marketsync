@@ -1,41 +1,62 @@
-api:
-  binance:
-    url: https://api.coincap.io/v2/assets/binance-coin
-    uri: binance
-    fetch-time-ms: 10_000
-  bitcoin:
-    url: https://api.coincap.io/v2/assets/bitcoin
-    uri: bitcoin
-    fetch-time-ms: 10_000
-  dogecoin:
-    url: https://api.coincap.io/v2/assets/dogecoin
-    uri: dogecoin
-    fetch-time-ms: 10_000
-  ethereum:
-    url: https://api.coincap.io/v2/assets/ethereum
-    uri: ethereum
-    fetch-time-ms: 10_000
-  solana:
-    url: https://api.coincap.io/v2/assets/solana
-    uri: solana
-    fetch-time-ms: 10_000
-  steth:
-    url: https://api.coincap.io/v2/assets/steth
-    uri: steth
-    fetch-time-ms: 10_000
-  tether:
-    url: https://api.coincap.io/v2/assets/tether
-    uri: tether
-    fetch-time-ms: 10_000
-  tron:
-    url: https://api.coincap.io/v2/assets/tron
-    uri: tron
-    fetch-time-ms: 10_000
-  usdcoin:
-    url: https://api.coincap.io/v2/assets/usd-coin
-    uri: usdcoin
-    fetch-time-ms: 10_000
-  xrp:
-    url: https://api.coincap.io/v2/assets/xrp
-    uri: xrp
-    fetch-time-ms: 10_000
+crypto:
+  api:
+    binance:
+      name: Binance Coin
+      symbol: BNB
+      url: https://api.coincap.io/v2/assets/binance-coin
+      uri: binance
+      fetch-time-ms: 10_000
+    bitcoin:
+      name: Bitcoin
+      symbol: BTC
+      url: https://api.coincap.io/v2/assets/bitcoin
+      uri: bitcoin
+      fetch-time-ms: 10_000
+    dogecoin:
+      name: Dogecoin
+      symbol: DOGE
+      url: https://api.coincap.io/v2/assets/dogecoin
+      uri: dogecoin
+      fetch-time-ms: 10_000
+    ethereum:
+      name: Ethereum
+      symbol: ETH
+      url: https://api.coincap.io/v2/assets/ethereum
+      uri: ethereum
+      fetch-time-ms: 10_000
+    solana:
+      name: Solana
+      symbol: SOL
+      url: https://api.coincap.io/v2/assets/solana
+      uri: solana
+      fetch-time-ms: 10_000
+    steth:
+      name: Lido Staked ETH
+      symbol: STETH
+      url: https://api.coincap.io/v2/assets/steth
+      uri: steth
+      fetch-time-ms: 10_000
+    tether:
+      name: Tether
+      symbol: USDT
+      url: https://api.coincap.io/v2/assets/tether
+      uri: tether
+      fetch-time-ms: 10_000
+    tron:
+      name: Tron
+      symbol: TRX
+      url: https://api.coincap.io/v2/assets/tron
+      uri: tron
+      fetch-time-ms: 10_000
+    usdcoin:
+      name: USD Coin
+      symbol: USDC
+      url: https://api.coincap.io/v2/assets/usd-coin
+      uri: usdcoin
+      fetch-time-ms: 10_000
+    xrp:
+      name: XRP
+      symbol: XRP
+      url: https://api.coincap.io/v2/assets/xrp
+      uri: xrp
+      fetch-time-ms: 10_000

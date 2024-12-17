@@ -1,35 +1,35 @@
 <form [formGroup]="editAssetForm" (ngSubmit)="onSubmit()">
   <div>
     <div>
-      <label for="type">{{ 'wallet.asset.type' | translate }}</label>
+      <label for="type">{{ 'asset.type' | translate }}</label>
       <input type="text" id="type" formControlName="type" readonly />
     </div>
 
     <div>
-      <label for="uri">{{ 'wallet.asset.uri' | translate }}</label>
+      <label for="uri">{{ 'asset.name' | translate }}</label>
       <input type="text" id="uri" formControlName="uri" readonly />
     </div>
 
     <div>
-      <label for="count">{{ 'wallet.asset.count' | translate }}</label>
+      <label for="count">{{ 'common.count' | translate }}</label>
       <input type="number" id="count" formControlName="count" min="0.01" required />
       <div *ngIf="editAssetForm.get('count')?.invalid && editAssetForm.get('count')?.touched">
-        <small class="error">{{ 'wallet.asset.count.error' | translate }}</small>
+        <small class="error">{{ 'common.count.error' | translate }}</small>
       </div>
     </div>
 
     <div>
-      <label for="purchasePrice">{{ 'wallet.asset.purchase.price' | translate }}</label>
+      <label for="purchasePrice">{{ 'asset.purchase.price' | translate }}</label>
       <input type="number" id="purchasePrice" formControlName="purchasePrice" min="0.01" required />
       <div *ngIf="editAssetForm.get('purchasePrice')?.invalid && editAssetForm.get('purchasePrice')?.touched">
         <small class="error">{{ 'wallet.asset.purchase.price.error' | translate }}</small>
       </div>
     </div>
 
-    <button type="submit" [disabled]="isSubmitting">{{ 'wallet.asset.edit.asset' | translate }}</button>
+    <button type="submit" [disabled]="isSubmitting">{{ 'asset.edit.asset' | translate }}</button>
 
-    <div *ngIf="successMessage" class="success">{{ 'wallet.asset.edit.success' | translate }}</div>
-    <div *ngIf="errorMessage" class="error">{{ 'wallet.asset.edit.fail' | translate }}</div>
+    <div *ngIf="successMessage" class="success">{{ 'error.asset.edit.success' | translate }}</div>
+    <div *ngIf="errorMessage" class="error">{{ 'error.asset.edit.fail' | translate }}</div>
   </div>
   <app-wallet-footer-navbar></app-wallet-footer-navbar>
 </form>

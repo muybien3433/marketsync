@@ -15,9 +15,9 @@ public class DogecoinService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.dogecoin.url}")
+    @Value("${crypto.api.dogecoin.url}")
     private String url;
-    @Value("${api.dogecoin.uri}")
+    @Value("${crypto.api.dogecoin.uri}")
     private String serviceName;
 
     @Override

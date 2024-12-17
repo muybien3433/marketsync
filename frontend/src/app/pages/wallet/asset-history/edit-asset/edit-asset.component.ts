@@ -49,7 +49,7 @@ export class EditAssetComponent {
       });
 
       this.translate
-        .get(`wallet.asset.type.${asset.type}`)
+        .get(`asset.type.${asset.type}`)
         .subscribe(translatedType => {
           this.editAssetForm.get('type')?.setValue(translatedType);
         });

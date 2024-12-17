@@ -15,9 +15,9 @@ public class XrpService implements FinanceService {
 
     private final WebClient.Builder webClientBuilder;
 
-    @Value("${api.xrp.url}")
+    @Value("${crypto.api.xrp.url}")
     private String url;
-    @Value("${api.xrp.uri}")
+    @Value("${crypto.api.xrp.uri}")
     private String serviceName;
 
     @Override
