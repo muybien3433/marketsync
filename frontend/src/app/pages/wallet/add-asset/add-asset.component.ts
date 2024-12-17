@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import {TranslatePipe} from '@ngx-translate/core';
 import {WalletFooterNavbarComponent} from '../wallet-footer-navbar/wallet-footer-navbar.component';
 import {NgIf} from '@angular/common';
 import {
   AssetSelectionComponent
-} from '../asset-selection-list/asset-selection/asset-selection/asset-selection.component';
+} from '../asset-selection-list/asset-selection/asset-selection.component';
 import {AssetService} from '../../../services/asset-service';
+import {environment} from '../../../../environments/environment.development';
+import {API_ENDPOINTS} from '../../../services/api-endpoints';
 
 @Component({
   selector: 'app-add-asset',
@@ -34,8 +35,6 @@ export class AddAssetComponent implements OnInit {
   filteredAssetTypes: { type: string, label: string }[] = [];
   selectedAssetUri: string = '';
 
-  private baseUrl = 'http://localhost:9999/api/v1';
-
   constructor(private fb: FormBuilder, private http: HttpClient, private assetService: AssetService) {
     this.addAssetForm = this.fb.group({
       type: ['crypto', Validators.required],
@@ -57,40 +56,33 @@ export class AddAssetComponent implements OnInit {
     this.filteredAssetTypes = this.assetTypes;
   }
 
-  addAssetToWallet(assetData: { type: string; uri: string; count: number; purchasePrice: number }): Observable<any> {
-    assetData.type.toUpperCase(); // need to be upper case to satisfy java enum
-    return this.http.post(`${this.baseUrl}/wallets/assets`, assetData);
-  }
-
   onSubmit(): void {
-    console.log("Form Validity: ", this.addAssetForm.valid);
-    console.log("Form control validity: ", {
-      count: this.addAssetForm.get('count')?.valid,
-      purchasePrice: this.addAssetForm.get('purchasePrice')?.valid,
-      type: this.addAssetForm.get('type')?.valid,
-      uri: this.addAssetForm.get('uri')?.valid
-    });
-
     if (this.addAssetForm.invalid) {
       return;
     }
 
     this.isSubmitting = true;
-    const assetData = this.addAssetForm.value;
 
-    this.addAssetToWallet(assetData).subscribe({
+    const assetData = {
+      type: this.addAssetForm.get('type')?.value?.toUpperCase(), // needs to be upper case to satisfy java's enum
+      uri: this.addAssetForm.get('uri')?.value,
+      count: this.addAssetForm.get('count')?.value,
+      purchasePrice: this.addAssetForm.get('purchasePrice')?.value,
+    };
+
+    this.addAsset(assetData)?.subscribe({
       next: () => {
-        this.successMessage = 'Asset added successfully!';
-        this.errorMessage = '';
-        this.addAssetForm.reset();
+        this.successMessage = 'Asset added successfully.';
         this.isSubmitting = false;
       },
-      error: (err) => {
-        this.errorMessage = 'Failed to add asset. Please try again.';
-        this.successMessage = '';
-        console.error(err);
+      error: () => {
+        this.errorMessage = 'Failed to add asset.';
         this.isSubmitting = false;
-      },
+      }
     });
+  }
+
+  addAsset(assetData: { type: string; uri: string; count: number; purchasePrice: number }) {
+    return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.ASSET}`, assetData);
   }
 }

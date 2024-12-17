@@ -6,6 +6,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Asset } from '../../asset-model';
+import {environment} from '../../../../../environments/environment.development';
+import {API_ENDPOINTS} from '../../../../services/api-endpoints';
 
 @Component({
   selector: 'app-edit-asset',
@@ -26,8 +28,6 @@ export class EditAssetComponent {
   successMessage: string = '';
   errorMessage: string = '';
   assetId: number | null = null;
-
-  private baseUrl: string = 'http://localhost:9999/api/v1/wallets';
 
   constructor(
     private fb: FormBuilder,
@@ -96,6 +96,6 @@ export class EditAssetComponent {
       this.errorMessage = 'Invalid asset ID.';
       return;
     }
-    return this.http.put(`${this.baseUrl}/assets/${this.assetId}`, assetData);
+    return this.http.put(`${environment.baseUrl}${API_ENDPOINTS.ASSET}/${this.assetId}`, assetData);
   }
 }

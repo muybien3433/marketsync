@@ -27,10 +27,6 @@ export class WalletFooterNavbarComponent {
     this.router.navigate(['/asset-history']);
   }
 
-  deleteAsset() {
-
-  }
-
   changeCurrency() {
 
   }

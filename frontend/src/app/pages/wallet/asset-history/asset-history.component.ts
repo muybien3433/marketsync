@@ -5,6 +5,8 @@ import {HttpClient} from '@angular/common/http';
 import {NgForOf} from '@angular/common';
 import {WalletFooterNavbarComponent} from '../wallet-footer-navbar/wallet-footer-navbar.component';
 import {Router} from '@angular/router';
+import {environment} from '../../../../environments/environment.development';
+import {API_ENDPOINTS} from '../../../services/api-endpoints';
 
 @Component({
   selector: 'app-asset-history',
@@ -18,7 +20,6 @@ import {Router} from '@angular/router';
   styleUrl: './asset-history.component.css'
 })
 export class AssetHistoryComponent {
-  private _baseUrl = 'http://localhost:9999/api/v1/wallets';
   protected _assets: Asset[] = [];
 
   constructor(private http: HttpClient, private router: Router) {
@@ -26,7 +27,7 @@ export class AssetHistoryComponent {
   }
 
   fetchWalletAssetsHistory() {
-    this.http.get<Asset[]>(this._baseUrl + '/history').subscribe({
+    this.http.get<Asset[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET_HISTORY}`).subscribe({
       next: (assets) => {
         this._assets = Array.isArray(assets) ? assets : [];
       },
@@ -42,7 +43,7 @@ export class AssetHistoryComponent {
   }
 
   deleteAsset(assetId: number) {
-    this.http.delete(`${this._baseUrl}/assets/${assetId}`).subscribe({
+    this.http.delete(`${environment.baseUrl}${API_ENDPOINTS.ASSET}/${assetId}`).subscribe({
       next: () => {
         this._assets = this._assets.filter(asset => asset.id !== assetId);
         console.log(`Asset with ID ${assetId} deleted successfully.`);

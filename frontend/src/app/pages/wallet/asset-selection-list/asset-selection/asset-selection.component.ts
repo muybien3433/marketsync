@@ -2,9 +2,12 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {MatSelectModule} from '@angular/material/select';
 import {NgForOf, TitleCasePipe} from '@angular/common';
-import {AssetListComponent} from '../../asset-list/asset-list/asset-list.component';
+import {AssetListComponent} from '../asset-list/asset-list/asset-list.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {environment} from '../../../../../environments/environment.development';
+import {API_ENDPOINTS} from '../../../../services/api-endpoints';
+import {catchError, map, of} from 'rxjs';
 
 @Component({
   selector: 'app-asset-selection',
@@ -21,7 +24,6 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
   styleUrl: './asset-selection.component.css'
 })
 export class AssetSelectionComponent implements OnInit {
-  baseUri = 'http://localhost:9999/api/v1'
   assetTypes = ['crypto', 'stock']
   selectedType = 'crypto'; // default
   assets: any[] = [];
@@ -42,15 +44,19 @@ export class AssetSelectionComponent implements OnInit {
   }
 
   fetchAssets(type: string) {
-    const url = this.baseUri + `/finances/${type}`;
-    this.http.get<any[]>(url).subscribe((data) => {
-        this.assets = Object.values(data);
-      },
-      (error) => {
-        console.error('Error fetching assets: ', error);
-        this.assets = [];
-      }
-    )
+    this.http
+      .get<any[]>(`${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${type}`)
+      .pipe(
+        map((data) => {
+          this.assets = Object.values(data);
+        }),
+        catchError((error) => {
+          console.error('Error fetching assets: ', error);
+          this.assets = [];
+          return of([]);
+        })
+      )
+      .subscribe();
   }
 
   onTypeChange(type: string) {

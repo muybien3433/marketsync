@@ -21,15 +21,15 @@
       <tr class="table" *ngFor="let asset of groupedAssets[type]">
         <td>{{ asset.name }}</td>
         <td>{{ asset.count }}</td>
-        <td>{{ asset.value }}</td>
-        <td>{{ asset.averagePurchasePrice }}</td>
-        <td>{{ asset.currentPrice }}</td>
+        <td>{{ asset.value | currency: 'USD'}}</td>
+        <td>{{ asset.averagePurchasePrice | currency: 'USD' }}</td>
+        <td>{{ asset.currentPrice | currency: 'USD' }}</td>
         <td>{{ asset.investmentStartDate }}</td>
         <td [ngStyle]="{ color: asset.profitInPercentage >= 0 ? 'green' : 'red' }">
           {{ asset.profitInPercentage }}%
         </td>
         <td [ngStyle]="{ color: asset.profit >= 0 ? 'green' : 'red' }">
-          {{ asset.profit }}
+          {{ asset.profit | currency: 'USD' }}
         </td>
       </tr>
     </ng-container>
@@ -38,13 +38,13 @@
     </tr>
     <tr>
       <td colspan="2"></td>
-      <td colspan="1">{{ getTotalValue() }}</td>
+      <td colspan="1">{{ getTotalValue() | currency: 'USD' }}</td>
       <td colspan="3"></td>
       <td [ngStyle]="{ color: getTotalProfitInPercentage() >= 0 ? 'green' : 'red' }">
         {{ getTotalProfitInPercentage() + ' %'}}
       </td>
       <td [ngStyle]="{ color: getTotalProfit() >= 0 ? 'green' : 'red' }">
-        {{ getTotalProfit() }}
+        {{ getTotalProfit() | currency: 'USD' }}
       </td>
     </tr>
     </tbody>

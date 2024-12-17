@@ -13,12 +13,13 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {
   HTTP_INTERCEPTORS,
   HttpClient,
-  provideHttpClient,
+  provideHttpClient, withFetch,
   withInterceptorsFromDi
 } from '@angular/common/http';
 import {KeycloakService} from 'keycloak-angular';
 import {TokenInterceptor} from './services/token-interceptor';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import {environment} from '../environments/environment.development';
 
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './i18n/', '.json');
@@ -30,9 +31,9 @@ export function initializeKeycloak(keycloak: KeycloakService): () => Promise<boo
     return () =>
       keycloak.init({
         config: {
-          url: 'http://localhost:8880',
-          realm: 'master',
-          clientId: 'angular-client'
+          url: environment.keycloakUrl,
+          realm: environment.keycloakRealm,
+          clientId: environment.keycloakClientId
         },
         initOptions: {
           onLoad: 'check-sso',
@@ -70,7 +71,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptorsFromDi(), withFetch()),
     KeycloakService,
     KeycloakInitializerProvider,
     KeycloakBearerInterceptorProvider,
