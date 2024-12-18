@@ -6,17 +6,22 @@ export const AuthGuard: CanActivateFn = async () => {
   const keycloakService = inject(KeycloakService);
 
   try {
-    const isLoggedIn = keycloakService.isLoggedIn();
+    const initialized = keycloakService.getKeycloakInstance()?.authenticated !== undefined;
 
-    if (!isLoggedIn) {
-      console.warn('User is not logged in, redirecting to Keycloak login...');
-      await keycloakService.login();
+    if (!initialized) {
       return false;
     }
 
+    const isLoggedIn = keycloakService.isLoggedIn();
+    if (!isLoggedIn) {
+      console.info('User is not logged in. Redirecting to Keycloak login...');
+      await keycloakService.login();
+      return false;
+    }
     return true;
+
   } catch (error) {
-    console.error('Error checking Keycloak authentication:', error);
+    console.error('Error in AuthGuard during authentication check:', error);
     await keycloakService.login();
     return false;
   }
