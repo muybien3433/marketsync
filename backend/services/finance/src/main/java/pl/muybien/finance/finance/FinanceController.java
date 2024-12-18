@@ -16,15 +16,28 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FinanceController {
 
-    private final FinanceServiceFactory financeServiceFactory;
+    private final FinanceProvider financeProvider;
     private final FinanceViewer financeViewer;
 
     @GetMapping("/{uri}")
-    public ResponseEntity<Mono<Finance>> getFinance(
+    public ResponseEntity<Mono<Finance>> fetchFinance(
             @PathVariable String uri
     ) {
-        return ResponseEntity.ok(financeServiceFactory.getService(uri).fetchCurrentFinance());
+        return ResponseEntity.ok(financeProvider.fetchFinance(uri));
     }
+
+    @GetMapping("/{uri}/{currency}")
+    public ResponseEntity<Mono<Finance>> fetchFinanceWithDesiredCurrency(
+            @PathVariable String uri,
+            @PathVariable String currency
+    ) {
+        return ResponseEntity.ok(financeProvider.fetchFinanceWithDesiredCurrency(uri, currency));
+    }
+
+//    @GetMapping("/currencies")
+//    public ResponseEntity<Map<String, @@>> displayAvailableCurrencies() {
+//        return ResponseEntity.ok(financeViewer.displayAvailableCurrencies());
+//    }
 
     @GetMapping("/crypto")
     public ResponseEntity<Map<String, CryptoConfig>> displayAvailableCrypto() {

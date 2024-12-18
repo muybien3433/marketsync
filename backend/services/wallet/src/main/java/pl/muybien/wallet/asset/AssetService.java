@@ -41,7 +41,6 @@ public class AssetService {
         assetRepository.save(asset);
     }
 
-    @Transactional
     void updateAsset(String authHeader, AssetRequest request, Long assetId) {
         var asset = assetRepository.findById(assetId).orElseThrow(() ->
                 new EntityNotFoundException("Asset with ID %s not found".formatted(assetId)));

@@ -5,7 +5,7 @@ import pl.muybien.finance.finance.Finance;
 import reactor.core.publisher.Mono;
 
 @Service
-public class CurrencyProvider {
+public class CurrencyService {
 
     public Mono<Finance> convertToDesiredCurrency(Mono<Finance> currentAssetPriceInUsd, String currency) {
         return null;
