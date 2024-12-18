@@ -41,25 +41,27 @@ Ensure you have the following installed before running the project:
 
 - *Finance*: `/finances`
     - `GET /{uri}` – Fetch the current price of a financial asset.
+    - `GET /crypto` – Display available crypto as list.
 
 - *Subscription*: `/subscriptions`
     - `GET /` – List all active subscriptions for the customer.
     - `POST /increase` – Add a new subscription with a condition: actualValue > value.
     - `POST /decrease` – Add new subscription with condition actualValue < value.
-    - `DELETE /{uri}/{id}` – Delete subscription.
+    - `DELETE /{id}` – Delete subscription.
 
 - *Wallet*: `/wallets`
     - `GET /` – View all assets in the customer’s wallet as list.
+    - `GET /history` – View all assets addition history.
     - `DELETE /` – Delete the customer’s wallet.
     - `POST /assets` – Add a new asset to the wallet.
-    - `DELETE /assets` – Remove an asset from the wallet.
+    - `DELETE /assets/{id}` – Remove an asset from the wallet.
 
 - *Asset*: `/assets`
     - `POST /` – Add a new asset to the wallet.
     - `DELETE /{id}` – Remove an asset from the wallet.
   
 - *Customer*: `/customers`
-    - `GET /` – Find and extract customer data by auth header.
+    - `GET /` – Find and extract customer data from auth header.
 
 ## Installation
 
