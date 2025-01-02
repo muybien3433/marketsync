@@ -49,15 +49,11 @@ Ensure you have the following installed before running the project:
     - `POST /decrease` – Add new subscription with condition actualValue < value.
     - `DELETE /{id}` – Delete subscription.
 
-- *Wallet*: `/wallets`
+- *Wallet*: `/wallets/assets`
     - `GET /` – View all assets in the customer’s wallet as list.
     - `GET /history` – View all assets addition history.
-    - `DELETE /` – Delete the customer’s wallet.
-    - `POST /assets` – Add a new asset to the wallet.
-    - `DELETE /assets/{id}` – Remove an asset from the wallet.
-
-- *Asset*: `/assets`
-    - `POST /` – Add a new asset to the wallet.
+    - `POST ` – Add a new asset to the wallet.
+    - `PUT ` – Edit asset in the wallet.
     - `DELETE /{id}` – Remove an asset from the wallet.
   
 - *Customer*: `/customers`
