@@ -15,7 +15,7 @@ public class FinanceViewer {
         this.cryptos = apiProperties.getApi();
     }
 
-    public Map<String, CryptoConfig> displayAvailableCrypto() {
+    Map<String, CryptoConfig> displayAvailableCrypto() {
         return cryptos;
     }
 }

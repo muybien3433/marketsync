@@ -24,7 +24,7 @@ public class SubscriptionService {
     private final SubscriptionDetailDTOMapper detailDTOMapper;
 
     @Transactional
-    protected SubscriptionDetailDTO createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
+    SubscriptionDetailDTO createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
         if (customer == null) {
             throw new CustomerNotFoundException("Customer not found");
@@ -51,7 +51,7 @@ public class SubscriptionService {
     }
 
     @Transactional
-    protected SubscriptionDetailDTO createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
+    SubscriptionDetailDTO createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
         if (customer == null) {
             throw new CustomerNotFoundException("Customer not found");
@@ -79,7 +79,7 @@ public class SubscriptionService {
     }
 
     @Transactional
-    protected void deleteSubscription(String authHeader, Long subscriptionDetailId) {
+    void deleteSubscription(String authHeader, Long subscriptionDetailId) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
         if (customer == null) {
             throw new CustomerNotFoundException("Customer not found");
@@ -106,7 +106,7 @@ public class SubscriptionService {
     }
 
     @Transactional(readOnly = true)
-    public List<SubscriptionDetailDTO> findAllSubscriptions(String authHeader) {
+    List<SubscriptionDetailDTO> findAllSubscriptions(String authHeader) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
         if (customer == null) {
             throw new CustomerNotFoundException("Customer not found");

@@ -11,7 +11,7 @@ public class CustomerService {
 
     private final JwtDecoder jwtDecoder;
 
-    public CustomerResponse fetchCustomerFromHeader(String authHeader) {
+    CustomerResponse fetchCustomerFromHeader(String authHeader) {
         return decodeTokenAndMapToCustomerResponse(authHeader);
     }
 
