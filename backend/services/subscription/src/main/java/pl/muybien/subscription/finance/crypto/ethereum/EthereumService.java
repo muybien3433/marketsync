@@ -25,11 +25,11 @@ public class EthereumService implements FinanceService {
     private final EthereumRepository repository;
     private final FinanceClient financeClient;
 
-    @Value("${api.ethereum.uri}")
+    @Value("${crypto.api.ethereum.uri}")
     private String name;
 
     @Override
-    @Scheduled(fixedRateString = "${api.ethereum.fetch-time-ms}")
+    @Scheduled(fixedRateString = "${crypto.api.ethereum.fetch-time-ms}")
     public void fetchCurrentFinanceAndCompare() {
         var finance = financeClient.findFinanceByUri(name.toLowerCase());
         if (finance == null) {

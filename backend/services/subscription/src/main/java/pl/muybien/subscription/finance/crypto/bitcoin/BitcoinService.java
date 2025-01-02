@@ -25,11 +25,11 @@ public class BitcoinService implements FinanceService {
     private final BitcoinRepository repository;
     private final FinanceClient financeClient;
 
-    @Value("${api.bitcoin.uri}")
+    @Value("${crypto.api.bitcoin.uri}")
     private String name;
 
     @Override
-    @Scheduled(fixedRateString = "${api.bitcoin.fetch-time-ms}")
+    @Scheduled(fixedRateString = "${crypto.api.bitcoin.fetch-time-ms}")
     public void fetchCurrentFinanceAndCompare() {
         var finance = financeClient.findFinanceByUri(name.toLowerCase());
         if (finance == null) {
