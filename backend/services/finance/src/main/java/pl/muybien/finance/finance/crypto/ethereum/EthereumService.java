@@ -31,7 +31,7 @@ public class EthereumService implements FinanceService {
                             var data = response.data();
                             return Finance.builder()
                                     .name(data.name())
-                                    .priceUsd(data.priceUsd())
+                                    .price(data.priceUsd())
                                     .build();
                         }
                 );

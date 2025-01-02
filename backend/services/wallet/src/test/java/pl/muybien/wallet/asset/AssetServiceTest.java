@@ -47,7 +47,7 @@ class AssetServiceTest {
 
     @Test
     void createAsset_shouldCreateAssetSuccessfully() {
-        var assetRequest = new AssetRequest(AssetType.CRYPTO, uri, BigDecimal.valueOf(11), BigDecimal.valueOf(1_000));
+        var assetRequest = new AssetRequest(AssetType.CRYPTO, uri, new BigDecimal("11.00"), new BigDecimal("1000.00"));
         var customer = new CustomerResponse(customerId, "John", "Doe", email);
         var wallet = new Wallet();
 
@@ -60,6 +60,7 @@ class AssetServiceTest {
         verify(assetRepository, times(1)).save(assetCaptor.capture());
 
         Asset savedAsset = assetCaptor.getValue();
+
         assertNotNull(savedAsset);
         assertEquals(assetRequest.uri().toLowerCase(), savedAsset.getName());
         assertEquals(assetRequest.count(), savedAsset.getCount());
@@ -71,7 +72,7 @@ class AssetServiceTest {
 
     @Test
     void createAsset_shouldThrowCustomerNotFoundException_whenCustomerNotFound() {
-        var assetRequest = new AssetRequest(AssetType.CRYPTO, uri, BigDecimal.valueOf(11), BigDecimal.valueOf(1_000));
+        var assetRequest = new AssetRequest(AssetType.CRYPTO, uri, BigDecimal.valueOf(11.00), BigDecimal.valueOf(1_000));
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(null);
 

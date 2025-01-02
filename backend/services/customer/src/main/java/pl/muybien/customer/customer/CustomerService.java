@@ -3,6 +3,7 @@ package pl.muybien.customer.customer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
+import pl.muybien.customer.exception.CustomerNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,10 @@ public class CustomerService {
         String email = decodedToken.getClaimAsString("email");
         String firstName = decodedToken.getClaimAsString("given_name");
         String lastName = decodedToken.getClaimAsString("family_name");
+
+        if (customerId == null || email == null) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
 
         return new CustomerResponse(customerId, email, firstName, lastName);
     }

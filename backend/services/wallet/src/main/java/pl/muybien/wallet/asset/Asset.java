@@ -5,10 +5,8 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import pl.muybien.wallet.wallet.Wallet;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,8 +24,10 @@ public class Asset {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String uri;
     private BigDecimal count;
     private BigDecimal purchasePrice;
+    private String currency;
     private String customerId;
 
     @Enumerated(EnumType.STRING)
@@ -40,7 +40,4 @@ public class Asset {
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
-
-    @ManyToOne
-    private Wallet wallet;
 }

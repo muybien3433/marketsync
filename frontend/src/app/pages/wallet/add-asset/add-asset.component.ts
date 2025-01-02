@@ -83,6 +83,6 @@ export class AddAssetComponent implements OnInit {
   }
 
   addAsset(assetData: { type: string; uri: string; count: number; purchasePrice: number }) {
-    return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.ASSET}`, assetData);
+    return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, assetData);
   }
 }

@@ -7,6 +7,6 @@ import java.math.BigDecimal;
 @Builder
 public record Finance(
         String name,
-        BigDecimal priceUsd
+        BigDecimal price
 ) {
 }

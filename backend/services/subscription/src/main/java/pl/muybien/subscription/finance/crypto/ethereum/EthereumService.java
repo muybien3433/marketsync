@@ -38,7 +38,7 @@ public class EthereumService implements FinanceService {
 
         var subscriptions = repository.findAll();
         subscriptions.forEach(subscription -> {
-                    if (financeComparator.priceMetSubscriptionCondition(finance.priceUsd(), subscription)) {
+                    if (financeComparator.priceMetSubscriptionCondition(finance.price(), subscription)) {
                         repository.delete(subscription);
                     }
                 }

@@ -45,6 +45,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
+    @ExceptionHandler(AssetNotFoundException.class)
+    public ResponseEntity<String> handleAssetNotFoundException(AssetNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
     //                          Other
     @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)
     public ResponseEntity<String> handleEntityNotFoundException(jakarta.persistence.EntityNotFoundException e) {

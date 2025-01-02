@@ -1,7 +1,6 @@
 export const API_ENDPOINTS = {
-  WALLET: '/wallets',
-  WALLET_HISTORY: '/wallets/history',
+  WALLET: '/wallets/assets',
+  WALLET_HISTORY: '/wallets/assets/history',
   FINANCE: '/finances',
-  ASSET: '/wallets/assets',
   SUBSCRIPTION: '/subscriptions',
 }

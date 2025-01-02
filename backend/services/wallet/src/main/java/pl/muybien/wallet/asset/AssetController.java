@@ -6,12 +6,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/wallets/assets")
 @RequiredArgsConstructor
 public class AssetController {
 
     private final AssetService service;
+
+    @GetMapping
+    public ResponseEntity<List<AssetDTO>> findAllCustomerAssets(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        return ResponseEntity.ok(service.findAllCustomerAssets(authHeader));
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<AssetHistoryDTO>> findAllHistoryAssets(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        return ResponseEntity.ok(service.findAllAssetHistory(authHeader));
+    }
 
     @PostMapping
     public ResponseEntity<String> createAsset(

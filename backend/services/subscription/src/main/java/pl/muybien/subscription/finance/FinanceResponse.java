@@ -4,6 +4,6 @@ import java.math.BigDecimal;
 
 public record FinanceResponse(
         String name,
-        BigDecimal priceUsd
+        BigDecimal price
 ) {
 }

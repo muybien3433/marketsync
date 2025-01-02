@@ -10,12 +10,13 @@ public record AssetDTO(
         Long id,
         String name,
         String type,
-        BigDecimal value,
         BigDecimal count,
-        BigDecimal averagePurchasePrice,
         BigDecimal currentPrice,
-        LocalDate investmentStartDate,
-        BigDecimal profitInPercentage,
-        BigDecimal profit
+        String currency,
+        BigDecimal value,
+        BigDecimal averagePurchasePrice,
+        LocalDate createdDate,
+        BigDecimal profit,
+        BigDecimal profitInPercentage
 ) {
 }
