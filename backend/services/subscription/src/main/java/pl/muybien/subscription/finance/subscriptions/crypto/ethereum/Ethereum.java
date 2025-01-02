@@ -1,4 +1,4 @@
-package pl.muybien.subscription.finance.crypto.ethereum;
+package pl.muybien.subscription.finance.subscriptions.crypto.ethereum;
 
 import jakarta.persistence.*;
 import lombok.*;

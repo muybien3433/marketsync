@@ -13,13 +13,13 @@ public class NotificationConsumer {
 
     private final EmailService emailService;
 
-    @KafkaListener(topics = "subscription-topic")
-    public void consumeSubscriptionSuccessNotification(SubscriptionConfirmation subscriptionConfirmation) {
-        log.info("Consuming message from subscription-topic {}", subscriptionConfirmation);
+    @KafkaListener(topics = "subscription-email-notification-topic")
+    public void consumeSubscriptionSuccessNotification(SubscriptionEmailConfirmation subscriptionEmailConfirmation) {
+        log.info("Consuming message from subscription-topic {}", subscriptionEmailConfirmation);
         emailService.sendNotification(
-                subscriptionConfirmation.email(),
-                subscriptionConfirmation.subject(),
-                subscriptionConfirmation.body()
+                subscriptionEmailConfirmation.email(),
+                subscriptionEmailConfirmation.subject(),
+                subscriptionEmailConfirmation.body()
         );
     }
 }

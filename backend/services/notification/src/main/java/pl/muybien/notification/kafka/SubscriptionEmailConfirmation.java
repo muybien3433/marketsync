@@ -1,6 +1,6 @@
 package pl.muybien.notification.kafka;
 
-public record SubscriptionConfirmation(
+public record SubscriptionEmailConfirmation(
 
         String email,
         String subject,

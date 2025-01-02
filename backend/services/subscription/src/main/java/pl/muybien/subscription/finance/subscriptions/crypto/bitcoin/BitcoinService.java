@@ -1,4 +1,4 @@
-package pl.muybien.subscription.finance.crypto.bitcoin;
+package pl.muybien.subscription.finance.subscriptions.crypto.bitcoin;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
