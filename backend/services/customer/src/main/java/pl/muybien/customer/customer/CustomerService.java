@@ -15,7 +15,7 @@ public class CustomerService {
         return decodeTokenAndMapToCustomerResponse(authHeader);
     }
 
-    private CustomerResponse decodeTokenAndMapToCustomerResponse(String authHeader) {
+    CustomerResponse decodeTokenAndMapToCustomerResponse(String authHeader) {
         String token = extractTokenFromHeader(authHeader);
         var decodedToken = jwtDecoder.decode(token);
 
@@ -28,10 +28,10 @@ public class CustomerService {
             throw new CustomerNotFoundException("Customer not found");
         }
 
-        return new CustomerResponse(customerId, email, firstName, lastName);
+        return new CustomerResponse(customerId, firstName, lastName, email);
     }
 
-    private String extractTokenFromHeader(String authHeader) {
+    String extractTokenFromHeader(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Invalid Authorization header");
         }
