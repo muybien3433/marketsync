@@ -14,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,6 +25,7 @@ public class Bitcoin implements FinanceTarget {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @EqualsAndHashCode.Include
         private Long id;
         private String financeName;
         private BigDecimal upperBoundPrice;

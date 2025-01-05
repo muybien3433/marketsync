@@ -11,6 +11,7 @@
 
     @Entity
     @Builder
+    @EqualsAndHashCode
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
