@@ -2,6 +2,7 @@ spring:
   config:
     import:
     - optional:configserver:http://localhost:7777
-    - optional:configserver:http://localhost:7777/api-config
+    - configserver:http://localhost:7777/coinmarketcap
   application:
     name: finance-service
+

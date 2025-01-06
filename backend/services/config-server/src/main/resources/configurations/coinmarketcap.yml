@@ -1,0 +1,23 @@
+coinmarketcap:
+  file-name: coinmarketcap.csv
+  base-url-currencies: https://coinmarketcap.com/currencies/
+  base-url-page: https://www.coinmarketcap.com/?page=
+  update-schedule-cron: 0 0 4,5 * * ?
+  page-size: 106
+  jsoup-connect-timeout-in-ms: 60000
+
+  #It's used for both sections
+  name-selector: span[data-role=coin-name]
+  name-attribute: title
+  price-selector: span[data-test=text-cdp-price-display]
+  link-selector: a.cmc-link
+  link-attribute: href
+
+  #Website uses different section for some date, that's why two sections are needed
+  first-section-name-selector: .coin-item-name
+  first-section-symbol-selector: .coin-item-symbol
+
+  second-section-rows-selector: tr.sc-240ce903-0.iPeVVh
+  second-section-name-selector: span
+  second-section-span-number: 1
+  second-section-symbol-selector: .crypto-symbol

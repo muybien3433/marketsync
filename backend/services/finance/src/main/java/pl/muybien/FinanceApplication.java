@@ -2,11 +2,10 @@ package pl.muybien;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import pl.muybien.config.api.ApiProperties;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableConfigurationProperties(ApiProperties.class)
+@EnableScheduling
 public class FinanceApplication {
 
     public static void main(String[] args) {
