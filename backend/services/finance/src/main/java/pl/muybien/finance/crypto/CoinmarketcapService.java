@@ -1,4 +1,4 @@
-package pl.muybien.finance.crypto.coinmarketcap;
+package pl.muybien.finance.crypto;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +64,7 @@ public class CoinmarketcapService {
 
     private final FinanceFileManager financeFileManager;
 
-    public FinanceResponse fetchCrypto(String uri) {
+    public FinanceResponse fetchFinance(String uri) {
         try {
             if (uri == null || uri.isBlank()) {
                 throw new IllegalArgumentException("Crypto identifier cannot be null or blank");

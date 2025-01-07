@@ -13,8 +13,8 @@ import java.nio.file.Paths;
 @Slf4j
 public class FinanceFileResolver {
 
-    @Value("${coinmarketcap.file-name}")
-    private String coinmarketcapFileName;
+    @Value("${finance.crypto-file-name}")
+    private String cryptoFileName;
 
     Path resolvePathAndCheckDirectory(String type) {
         String fileName = fileNameResolver(type);
@@ -29,12 +29,11 @@ public class FinanceFileResolver {
     }
 
     private String fileNameResolver(String type) {
-        switch (type.trim().toLowerCase()) {
-            case "cryptos": return coinmarketcapFileName;
-            case "stocks": return "";
-        }
-        log.error("Type not recognized: {}", type);
-        return "";
+        return switch (type.trim().toLowerCase()) {
+            case "cryptos" -> cryptoFileName;
+            case "stocks" -> "";
+            default -> throw new IllegalArgumentException("Unsupported type: " + type);
+        };
     }
 
     private void ensureDirectoryExists(Path dataDirectoryPath) {

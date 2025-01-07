@@ -1,6 +1,6 @@
 coinmarketcap:
   type: cryptos
-  file-name: coinmarketcap.csv
+  file-name: cryptos.csv
   base-url-currencies: https://coinmarketcap.com/currencies/
   base-url-page: https://www.coinmarketcap.com/?page=
   update-schedule-cron: 0 0 4,5 * * ?

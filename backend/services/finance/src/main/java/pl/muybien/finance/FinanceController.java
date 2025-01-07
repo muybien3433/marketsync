@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.muybien.finance.crypto.coinmarketcap.CoinmarketcapService;
 
 import java.util.List;
 
@@ -15,20 +14,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FinanceController {
 
-    private final CoinmarketcapService coinmarketcapService;
-    private final FinanceFileReader financeFileReader;
+    private final FinanceService service;
 
-    @GetMapping("/cryptos/{uri}")
+    @GetMapping("/{type}/{uri}")
     public ResponseEntity<FinanceResponse> getFinance(
+            @PathVariable String type,
             @PathVariable String uri
     ) {
-        return ResponseEntity.ok(coinmarketcapService.fetchCrypto(uri));
+        return ResponseEntity.ok(service.fetchFinance(type, uri));
     }
 
     @GetMapping("/{type}")
     public ResponseEntity<List<FinanceFileDTO>> displayAvailableFinance(
             @PathVariable String type
     ) {
-        return ResponseEntity.ok(financeFileReader.displayAvailableFinance(type));
+        return ResponseEntity.ok(service.displayAvailableFinance(type));
     }
 }
