@@ -1,5 +1,6 @@
 package pl.muybien.finance.crypto.coinmarketcap;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -10,9 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.muybien.exception.FinanceNotFoundException;
-import pl.muybien.finance.Finance;
-import pl.muybien.finance.FinanceFileManager;
 import pl.muybien.finance.FinanceResponse;
+import pl.muybien.finance.FinanceFileManager;
+import pl.muybien.finance.FinanceFileDTO;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -62,7 +63,7 @@ public class CoinmarketcapService {
 
     private final FinanceFileManager financeFileManager;
 
-    public Finance fetchCrypto(String uri) {
+    public FinanceResponse fetchCrypto(String uri) {
         try {
             if (uri == null || uri.isBlank()) {
                 throw new IllegalArgumentException("Crypto identifier cannot be null or blank");
@@ -75,7 +76,11 @@ public class CoinmarketcapService {
             if (name != null && price != null) {
                 BigDecimal priceAsBigDecimal = new BigDecimal(price.replaceAll("[$,]", ""));
                 String currency = price.trim().substring(0, 1).replace("$", "USD");
-                return new Finance(name, priceAsBigDecimal, currency);
+                return FinanceResponse.builder()
+                        .name(name)
+                        .price(priceAsBigDecimal)
+                        .currency(currency)
+                        .build();
             } else {
                 log.warn("Missing data: name={}, price={}", name, price);
                 throw new FinanceNotFoundException("Name or/and price not found");
@@ -96,10 +101,16 @@ public class CoinmarketcapService {
         return element != null ? element.attr(attribute): null;
     }
 
+    @PostConstruct
+    private void runOnStartup() {
+        updateAvailableCryptoList();
+    }
+
+    @PostConstruct
     @Scheduled(cron = "${coinmarketcap.update-schedule-cron}")
     private void updateAvailableCryptoList() {
         if (financeFileManager.isUpdateRequired(fileName)) {
-            var cryptos = new LinkedHashSet<FinanceResponse>();
+            var cryptos = new LinkedHashSet<FinanceFileDTO>();
             int pageCounter = 1;
             while (pageCounter <= pageSize) {
                 try {
@@ -113,11 +124,11 @@ public class CoinmarketcapService {
                     throw new FinanceNotFoundException("Error fetching finance data");
                 }
             }
-            saveCryptoToFile(cryptos);
+            sortAndSaveToFile(cryptos);
         }
     }
 
-    private void scrapDataFromFirstSection(Document doc, LinkedHashSet<FinanceResponse> cryptos) {
+    private void scrapDataFromFirstSection(Document doc, LinkedHashSet<FinanceFileDTO> cryptos) {
         Elements links = doc.select(linkSelector);
         for (Element link : links) {
             String name = link.select(firstSectionNameSelector).text();
@@ -125,12 +136,12 @@ public class CoinmarketcapService {
             String uri = link.attr(linkAttribute);
 
             if (!name.isBlank() && !symbol.isBlank() && !uri.isBlank()) {
-                cryptos.add(new FinanceResponse(name, symbol, uri));
+                cryptos.add(new FinanceFileDTO(name, symbol, uri));
             }
         }
     }
 
-    private void scrapDataFromSecondSection(Document doc, LinkedHashSet<FinanceResponse> cryptos) {
+    private void scrapDataFromSecondSection(Document doc, LinkedHashSet<FinanceFileDTO> cryptos) {
         Elements rows = doc.select(secondSectionRowsSelector);
         for (Element row : rows) {
             Element link = row.selectFirst(linkSelector);
@@ -140,15 +151,15 @@ public class CoinmarketcapService {
                 String uri = link.attr(linkAttribute);
 
                 if (!name.isBlank() && !symbol.isBlank() && !uri.isBlank()) {
-                    cryptos.add(new FinanceResponse(name, symbol, uri));
+                    cryptos.add(new FinanceFileDTO(name, symbol, uri));
                 }
             }
         }
     }
 
-    private void saveCryptoToFile(LinkedHashSet<FinanceResponse> cryptos) {
+    private void sortAndSaveToFile(LinkedHashSet<FinanceFileDTO> cryptos) {
         var sortedCryptos = cryptos.stream()
-                .sorted(Comparator.comparing(FinanceResponse::name))
+                .sorted(Comparator.comparing(FinanceFileDTO::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         financeFileManager.writeDataToFile(sortedCryptos, fileName);

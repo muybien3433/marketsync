@@ -19,13 +19,13 @@ public class FinanceFileManager {
 
     private static final int STALE_THRESHOLD_MINUTES = 1440;
 
-    public void writeDataToFile(LinkedHashSet<FinanceResponse> sortedAssets, String fileName) {
+    public void writeDataToFile(LinkedHashSet<FinanceFileDTO> sortedAssets, String fileName) {
         Path filePath = resolvePathAndCheckDirectory(fileName);
 
         try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
             log.info("Writing data to file...: {}", filePath);
             for (var asset : sortedAssets) {
-                writer.write(asset.name() + "," + asset.symbol() + "," + asset.uri());
+                writer.write(asset.getName() + "," + asset.getSymbol() + "," + asset.getUri());
                 writer.newLine();
             }
             log.info("Data written successfully to file: {}", filePath);
@@ -34,7 +34,7 @@ public class FinanceFileManager {
         }
     }
 
-    private Path resolvePathAndCheckDirectory(String fileName) {
+    Path resolvePathAndCheckDirectory(String fileName) {
         Path classPath = Paths.get(FinanceFileManager.class
                 .getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
 
