@@ -25,17 +25,18 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CoinmarketcapService {
 
-    @Value("${coinmarketcap.file-name}")
-    private String fileName;
+    @Value("${coinmarketcap.type}")
+    private String type;
     @Value("${coinmarketcap.base-url-currencies}")
     private String baseUrlCurrencies;
     @Value("${coinmarketcap.base-url-page}")
     private String baseUrlPage;
     @Value("${coinmarketcap.page-size}")
     private int pageSize;
-    @Value("${coinmarketcap.jsoup-connect-timeout-in-ms}")
-    private int jsoupConnectTimeoutInMs;
-
+    @Value("${coinmarketcap.jsoup-update-connect-timeout-in-ms}")
+    private int jsoupConnectUpdateTimeoutInMs;
+    @Value("${coinmarketcap.jsoup-fetch-connect-timeout-in-ms}")
+    private int jsoupConnectFetchTimeoutInMs;
     @Value("${coinmarketcap.name-selector}")
     private String nameSelector;
     @Value("${coinmarketcap.name-attribute}")
@@ -69,7 +70,7 @@ public class CoinmarketcapService {
                 throw new IllegalArgumentException("Crypto identifier cannot be null or blank");
             }
 
-            Document doc = Jsoup.connect(baseUrlCurrencies + uri).timeout(5000).get();
+            Document doc = Jsoup.connect(baseUrlCurrencies + uri).timeout(jsoupConnectFetchTimeoutInMs).get();
             String name = getElement(doc, nameSelector, nameAttribute);
             String price = getElement(doc, priceSelector);
 
@@ -102,20 +103,15 @@ public class CoinmarketcapService {
     }
 
     @PostConstruct
-    private void runOnStartup() {
-        updateAvailableCryptoList();
-    }
-
-    @PostConstruct
     @Scheduled(cron = "${coinmarketcap.update-schedule-cron}")
-    private void updateAvailableCryptoList() {
-        if (financeFileManager.isUpdateRequired(fileName)) {
+    public void updateAvailableCryptoList() {
+        if (financeFileManager.isUpdateRequired(type)) {
             var cryptos = new LinkedHashSet<FinanceFileDTO>();
             int pageCounter = 1;
             while (pageCounter <= pageSize) {
                 try {
                     Document doc = Jsoup.connect(baseUrlPage + pageCounter)
-                            .timeout(jsoupConnectTimeoutInMs).get();
+                            .timeout(jsoupConnectUpdateTimeoutInMs).get();
 
                     scrapDataFromFirstSection(doc, cryptos);
                     scrapDataFromSecondSection(doc, cryptos);
@@ -133,12 +129,20 @@ public class CoinmarketcapService {
         for (Element link : links) {
             String name = link.select(firstSectionNameSelector).text();
             String symbol = link.select(firstSectionSymbolSelector).text();
-            String uri = link.attr(linkAttribute);
+            String uri = extractUri(link.attr(linkAttribute));
 
             if (!name.isBlank() && !symbol.isBlank() && !uri.isBlank()) {
                 cryptos.add(new FinanceFileDTO(name, symbol, uri));
             }
         }
+    }
+
+    private String extractUri(String uri) {
+        if (uri != null && uri.startsWith("/currencies")) {
+            return uri.substring("/currencies/".length(),
+                    uri.endsWith("/") ? uri.length() - 1 : uri.length());
+        }
+        return "";
     }
 
     private void scrapDataFromSecondSection(Document doc, LinkedHashSet<FinanceFileDTO> cryptos) {
@@ -148,7 +152,7 @@ public class CoinmarketcapService {
             if (link != null) {
                 String name = link.select(secondSectionNameSelector).get(secondSectionSpanNumber).text();
                 String symbol = link.select(secondSectionSymbolSelector).text();
-                String uri = link.attr(linkAttribute);
+                String uri = extractUri(link.attr(linkAttribute));
 
                 if (!name.isBlank() && !symbol.isBlank() && !uri.isBlank()) {
                     cryptos.add(new FinanceFileDTO(name, symbol, uri));
@@ -162,6 +166,6 @@ public class CoinmarketcapService {
                 .sorted(Comparator.comparing(FinanceFileDTO::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        financeFileManager.writeDataToFile(sortedCryptos, fileName);
+        financeFileManager.writeDataToFile(sortedCryptos, type);
     }
 }

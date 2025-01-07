@@ -1,5 +1,6 @@
 package pl.muybien.finance;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -7,20 +8,22 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class FinanceFileManager {
 
     private static final int STALE_THRESHOLD_MINUTES = 1440;
 
-    public void writeDataToFile(LinkedHashSet<FinanceFileDTO> sortedAssets, String fileName) {
-        Path filePath = resolvePathAndCheckDirectory(fileName);
+    private final FinanceFileResolver financeFileResolver;
+
+    public void writeDataToFile(LinkedHashSet<FinanceFileDTO> sortedAssets, String type) {
+        Path filePath = financeFileResolver.resolvePathAndCheckDirectory(type);
 
         try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
             log.info("Writing data to file...: {}", filePath);
@@ -34,30 +37,8 @@ public class FinanceFileManager {
         }
     }
 
-    Path resolvePathAndCheckDirectory(String fileName) {
-        Path classPath = Paths.get(FinanceFileManager.class
-                .getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
-
-        Path dataDirectoryPath = classPath.resolve("data");
-        Path filePath = dataDirectoryPath.resolve(fileName);
-        ensureDirectoryExists(dataDirectoryPath);
-
-        return filePath;
-    }
-
-    private void ensureDirectoryExists(Path dataDirectoryPath) {
-        if (Files.notExists(dataDirectoryPath)) {
-            try {
-                Files.createDirectories(dataDirectoryPath);
-                log.info("Directory created at path: {}", dataDirectoryPath);
-            } catch (IOException e) {
-                log.error("Error creating directory at path: {}", dataDirectoryPath, e);
-            }
-        }
-    }
-
-    public boolean isUpdateRequired(String fileName) {
-        Path filePath = resolvePathAndCheckDirectory(fileName);
+    public boolean isUpdateRequired(String type) {
+        Path filePath = financeFileResolver.resolvePathAndCheckDirectory(type);
         if (Files.notExists(filePath)) {
             log.info("File {} not found, start creating new one...", filePath);
             return true;

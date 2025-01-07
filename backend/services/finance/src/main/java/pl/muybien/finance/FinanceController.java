@@ -26,9 +26,9 @@ public class FinanceController {
     }
 
     @GetMapping("/{type}")
-    public ResponseEntity<List<FinanceFileDTO>> displayAvailableCrypto(
+    public ResponseEntity<List<FinanceFileDTO>> displayAvailableFinance(
             @PathVariable String type
     ) {
-        return ResponseEntity.ok(financeFileReader.displayAvailableCrypto(type));
+        return ResponseEntity.ok(financeFileReader.displayAvailableFinance(type));
     }
 }

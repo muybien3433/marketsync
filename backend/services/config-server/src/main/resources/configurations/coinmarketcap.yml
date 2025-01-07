@@ -1,10 +1,12 @@
 coinmarketcap:
+  type: cryptos
   file-name: coinmarketcap.csv
   base-url-currencies: https://coinmarketcap.com/currencies/
   base-url-page: https://www.coinmarketcap.com/?page=
   update-schedule-cron: 0 0 4,5 * * ?
   page-size: 106
-  jsoup-connect-timeout-in-ms: 60000
+  jsoup-update-connect-timeout-in-ms: 60000
+  jsoup-fetch-connect-timeout-in-ms: 7000
 
   #It's used for both sections
   name-selector: span[data-role=coin-name]

@@ -3,7 +3,6 @@ package pl.muybien.finance;
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.FileReader;
@@ -18,24 +17,12 @@ import java.util.List;
 @Slf4j
 public class FinanceFileReader {
 
-    private final FinanceFileManager financeFileManager;
+    private final FinanceFileResolver financeFileResolver;
 
-    @Value("${coinmarketcap.file-name}")
-    private String cryptoFileName;
-
-    public List<FinanceFileDTO> displayAvailableCrypto(String type) {
-        String fileName = fileNameResolver(type);
-        Path filePath = financeFileManager.resolvePathAndCheckDirectory(fileName);
+    public List<FinanceFileDTO> displayAvailableFinance(String type) {
+        Path filePath = financeFileResolver.resolvePathAndCheckDirectory(type);
 
         return readFinanceFromFile(filePath);
-    }
-
-    private String fileNameResolver(String type) {
-        switch (type.toLowerCase()) {
-            case "cryptos": return cryptoFileName;
-            case "stocks": return "stocks";
-            default: return "";
-        }
     }
 
     private List<FinanceFileDTO> readFinanceFromFile(Path filePath) {
