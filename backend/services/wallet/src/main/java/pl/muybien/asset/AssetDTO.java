@@ -3,7 +3,7 @@ package pl.muybien.asset;
 import lombok.Builder;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 public record AssetDTO(
@@ -15,7 +15,7 @@ public record AssetDTO(
         String currency,
         BigDecimal value,
         BigDecimal averagePurchasePrice,
-        LocalDate createdDate,
+        LocalDateTime createdDate,
         BigDecimal profit,
         BigDecimal profitInPercentage
 ) {
