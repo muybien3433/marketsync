@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.muybien.subscription.dto.SubscriptionDetailDTO;
+import pl.muybien.subscription.request.SubscriptionDeletionRequest;
+import pl.muybien.subscription.request.SubscriptionRequest;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package pl.muybien.subscription;
+package pl.muybien.subscription.data;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

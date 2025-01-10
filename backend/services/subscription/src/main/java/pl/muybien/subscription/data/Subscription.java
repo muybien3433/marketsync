@@ -1,4 +1,4 @@
-package pl.muybien.subscription;
+package pl.muybien.subscription.data;
 
 import lombok.Getter;
 import lombok.Setter;

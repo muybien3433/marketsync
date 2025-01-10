@@ -1,4 +1,4 @@
-package pl.muybien.subscription;
+package pl.muybien.subscription.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

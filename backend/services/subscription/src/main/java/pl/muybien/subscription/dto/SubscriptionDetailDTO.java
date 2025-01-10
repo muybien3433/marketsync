@@ -1,4 +1,4 @@
-package pl.muybien.subscription;
+package pl.muybien.subscription.dto;
 
 import lombok.Builder;
 

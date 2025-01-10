@@ -10,6 +10,13 @@ import pl.muybien.customer.CustomerClient;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.exception.SubscriptionNotFoundException;
 import pl.muybien.finance.FinanceClient;
+import pl.muybien.subscription.data.Subscription;
+import pl.muybien.subscription.data.SubscriptionDetail;
+import pl.muybien.subscription.data.SubscriptionRepository;
+import pl.muybien.subscription.dto.SubscriptionDetailDTO;
+import pl.muybien.subscription.dto.SubscriptionDetailDTOMapper;
+import pl.muybien.subscription.request.SubscriptionDeletionRequest;
+import pl.muybien.subscription.request.SubscriptionRequest;
 
 import java.time.LocalDateTime;
 import java.util.*;

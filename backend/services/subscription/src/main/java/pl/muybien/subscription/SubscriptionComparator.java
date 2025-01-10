@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.exception.InvalidSubscriptionParametersException;
 import pl.muybien.kafka.SubscriptionEmailConfirmation;
 import pl.muybien.kafka.SubscriptionProducer;
+import pl.muybien.subscription.data.SubscriptionDetail;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +24,6 @@ public class SubscriptionComparator {
 
             if (upperTargetPrice != null) {
                 if (price.compareTo(upperTargetPrice) >= 0) {
-                    log.info("Subscription {} met condition at {}", subscriptionDetail.getUri(), upperTargetPrice);
                     sendNotificationToSpecifiedTopic(subscriptionDetail, price, upperTargetPrice);
                     return;
                 }
@@ -30,7 +31,6 @@ public class SubscriptionComparator {
 
             if (lowerTargetPrice != null) {
                 if (price.compareTo(lowerTargetPrice) <= 0) {
-                    log.info("Subscription {} met condition at {}", subscriptionDetail.getUri(), lowerTargetPrice);
                     sendNotificationToSpecifiedTopic(subscriptionDetail, price, lowerTargetPrice);
                     return;
                 }
@@ -42,13 +42,10 @@ public class SubscriptionComparator {
 
     private void sendNotificationToSpecifiedTopic(
             SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
-        if (subscriptionDetail.getNotificationType() == null) {
-            throw new IllegalStateException("Notification type is null for subscription detail: " + subscriptionDetail);
-        }
 
         switch (subscriptionDetail.getNotificationType()) {
             case EMAIL -> createEmailConfirmation(subscriptionDetail, price, targetPrice);
-            default -> throw new IllegalStateException("Subscription type not recognized: "
+            default -> throw new InvalidSubscriptionParametersException("Subscription type not recognized: "
                     + subscriptionDetail.getNotificationType());
         }
     }

@@ -11,18 +11,6 @@ import java.rmi.AccessException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    //                          Finance
-    @ExceptionHandler(FinanceNotFoundException.class)
-    public ResponseEntity<String> handleFinanceNotFoundException(FinanceNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-
-    //                          Customer
-    @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity<String> handleCustomerNotFoundException(CustomerNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-
     //                          Kafka
     @ExceptionHandler(TransferServiceException.class)
     public ResponseEntity<String> handleTransferServiceException(TransferServiceException e) {
@@ -38,11 +26,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidSubscriptionParametersException.class)
     public ResponseEntity<String> handleInvalidSubscriptionParametersException(InvalidSubscriptionParametersException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    }
-
-    @ExceptionHandler(ServiceNotFoundException.class)
-    public ResponseEntity<String> handleServiceNotFoundException(ServiceNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(SubscriptionNotFoundException.class)

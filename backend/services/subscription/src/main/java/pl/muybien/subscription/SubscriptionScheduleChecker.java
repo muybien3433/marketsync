@@ -9,6 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.muybien.finance.FinanceClient;
+import pl.muybien.subscription.data.Subscription;
+import pl.muybien.subscription.data.SubscriptionDetail;
+import pl.muybien.subscription.data.SubscriptionRepository;
 
 import java.util.List;
 import java.util.Map;
