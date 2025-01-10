@@ -22,7 +22,7 @@ import java.util.Map;
 public class SubscriptionScheduleChecker {
 
     @Value("${schedule.fetch-page-size-per-round}")
-    private Integer fetchPagesSizePerRound;
+    Integer fetchPagesSizePerRound;
 
     private final SubscriptionComparator subscriptionComparator;
     private final SubscriptionRepository subscriptionRepository;
@@ -41,7 +41,7 @@ public class SubscriptionScheduleChecker {
         } while (!subscriptionPage.isEmpty());
     }
 
-    private void processSubscription(Subscription subscription) {
+    void processSubscription(Subscription subscription) {
         for (Map.Entry<String, List<SubscriptionDetail>> entry : subscription.getSubscriptions().entrySet()) {
             String uri = entry.getKey();
             List<SubscriptionDetail> subscriptionDetails = entry.getValue();

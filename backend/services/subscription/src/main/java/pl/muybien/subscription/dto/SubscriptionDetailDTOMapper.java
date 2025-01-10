@@ -7,6 +7,7 @@ import pl.muybien.subscription.data.SubscriptionDetail;
 public class SubscriptionDetailDTOMapper {
     public SubscriptionDetailDTO mapToDTO(SubscriptionDetail subscriptionDetail) {
         return SubscriptionDetailDTO.builder()
+                .id(subscriptionDetail.getId())
                 .customerId(subscriptionDetail.getCustomerId())
                 .financeName(subscriptionDetail.getFinanceName())
                 .upperBoundPrice(subscriptionDetail.getUpperBoundPrice())

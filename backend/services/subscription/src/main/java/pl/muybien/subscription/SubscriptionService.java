@@ -35,7 +35,7 @@ public class SubscriptionService {
 
     @Transactional
     public void createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
-        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+        var customer = customerClient.fetchCustomerFromHeader(authHeader);
         var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
 
         var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
@@ -43,7 +43,8 @@ public class SubscriptionService {
 
         var subscriptionDetail = SubscriptionDetail.builder()
                 .id(UUID.randomUUID().toString())
-                .customerId(customerId)
+                .customerId(customer.id())
+                .customerEmail(customer.email())
                 .financeName(finance.name())
                 .upperBoundPrice(request.value())
                 .lowerBoundPrice(null)
@@ -53,7 +54,7 @@ public class SubscriptionService {
                 .build();
 
         subscription.getSubscriptions()
-                .computeIfAbsent(request.uri().trim().toLowerCase(), _ -> new LinkedList<>())
+                .computeIfAbsent(finance.name().trim().toLowerCase(), _ -> new LinkedList<>())
                 .add(subscriptionDetail);
 
         subscriptionRepository.save(subscription);
@@ -68,6 +69,7 @@ public class SubscriptionService {
                 .orElseGet(Subscription::new);
 
         var subscriptionDetail = SubscriptionDetail.builder()
+                .id(UUID.randomUUID().toString())
                 .customerId(customer.id())
                 .customerEmail(customer.email())
                 .financeName(finance.name())
