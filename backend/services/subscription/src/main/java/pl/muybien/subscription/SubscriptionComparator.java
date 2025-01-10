@@ -2,12 +2,20 @@ package pl.muybien.subscription;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.enums.EnumUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import pl.muybien.exception.InvalidSubscriptionParametersException;
 import pl.muybien.kafka.SubscriptionEmailConfirmation;
 import pl.muybien.kafka.SubscriptionProducer;
 import pl.muybien.subscription.data.SubscriptionDetail;
+
+import java.awt.*;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+import static pl.muybien.subscription.SubscriptionNotificationType.EMAIL;
 
 @Service
 @RequiredArgsConstructor
@@ -40,17 +48,16 @@ public class SubscriptionComparator {
         }
     }
 
-    private void sendNotificationToSpecifiedTopic(
+    void sendNotificationToSpecifiedTopic(
             SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
 
-        switch (subscriptionDetail.getNotificationType()) {
+        var notificationType = SubscriptionNotificationType.findByValue(subscriptionDetail.getNotificationType());
+        switch (notificationType) {
             case EMAIL -> createEmailConfirmation(subscriptionDetail, price, targetPrice);
-            default -> throw new InvalidSubscriptionParametersException("Subscription type not recognized: "
-                    + subscriptionDetail.getNotificationType());
         }
     }
 
-    private void createEmailConfirmation(SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
+    void createEmailConfirmation(SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
         var subscriptionEmailConfirmation = SubscriptionEmailConfirmation.builder()
                 .email(subscriptionDetail.getCustomerEmail())
                 .subject("Your %s subscription notification!".formatted(subscriptionDetail.getFinanceName()))

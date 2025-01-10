@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import pl.muybien.subscription.SubscriptionNotificationType;
 
 public record SubscriptionRequest(
 
@@ -23,6 +22,8 @@ public record SubscriptionRequest(
         String assetType,
 
         @NotNull(message = "Notification type is required")
-        SubscriptionNotificationType notificationType
+        @NotEmpty(message = "Notification type is required")
+        @NotBlank(message = "Notification type is required")
+        String notificationType
 ) {
 }

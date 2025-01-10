@@ -24,8 +24,7 @@ public class SubscriptionDetail {
     private Double upperBoundPrice;
     private Double lowerBoundPrice;
     private String assetType;
-
-    private SubscriptionNotificationType notificationType;
+    private String notificationType;
 
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
