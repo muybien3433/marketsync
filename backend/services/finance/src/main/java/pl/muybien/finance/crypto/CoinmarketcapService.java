@@ -64,7 +64,7 @@ public class CoinmarketcapService {
 
     private final FinanceFileManager financeFileManager;
 
-    public FinanceResponse fetchFinance(String uri) {
+    public FinanceResponse fetchFinance(String uri, String type) {
         try {
             if (uri == null || uri.isBlank()) {
                 throw new IllegalArgumentException("Crypto identifier cannot be null or blank");
@@ -81,6 +81,7 @@ public class CoinmarketcapService {
                         .name(name)
                         .price(priceAsBigDecimal)
                         .currency(currency)
+                        .assetType(type.toLowerCase())
                         .build();
             } else {
                 log.warn("Missing data: name={}, price={}", name, price);

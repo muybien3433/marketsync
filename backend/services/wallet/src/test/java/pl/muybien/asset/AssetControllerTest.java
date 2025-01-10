@@ -37,7 +37,7 @@ class AssetControllerTest {
         );
         when(assetService.findAllCustomerAssets(authHeader)).thenReturn(assets);
 
-        ResponseEntity<List<AssetDTO>> response = assetController.findAllCustomerAssets(authHeader);
+        var response = assetController.findAllCustomerAssets(authHeader);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(assets);
@@ -92,7 +92,7 @@ class AssetControllerTest {
 
         doNothing().when(assetService).deleteAsset(authHeader, assetId);
 
-        ResponseEntity<String> response = assetController.deleteAsset(authHeader, assetId);
+        var response = assetController.deleteAsset(authHeader, assetId);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         verify(assetService).deleteAsset(authHeader, assetId);

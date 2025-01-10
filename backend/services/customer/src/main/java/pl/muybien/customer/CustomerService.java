@@ -27,7 +27,6 @@ public class CustomerService {
         if (customerId == null || email == null) {
             throw new CustomerNotFoundException("Customer not found");
         }
-
         return new CustomerResponse(customerId, firstName, lastName, email);
     }
 

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 public record FinanceResponse(
         String name,
         BigDecimal price,
-        String currency
+        String currency,
+        String assetType
 ) {
 }

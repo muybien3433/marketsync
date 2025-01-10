@@ -15,7 +15,7 @@ public class FinanceService {
 
     FinanceResponse fetchFinance(String type, String uri) {
         return switch (type) {
-            case "cryptos" -> coinmarketcapService.fetchFinance(uri);
+            case "cryptos" -> coinmarketcapService.fetchFinance(uri, type);
             case "stocks" -> null;
             default -> null;
         };

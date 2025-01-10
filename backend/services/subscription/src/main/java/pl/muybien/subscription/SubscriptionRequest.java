@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-import java.math.BigDecimal;
-
 public record SubscriptionRequest(
 
         @NotNull(message = "Uri is required")
@@ -16,6 +14,14 @@ public record SubscriptionRequest(
 
         @NotNull(message = "Value should be present")
         @Positive(message = "Value should be positive")
-        BigDecimal value
+        Double value,
+
+        @NotNull(message = "Asset type is required")
+        @NotEmpty(message = "Asset type is required")
+        @NotBlank(message = "Asset type is required")
+        String assetType,
+
+        @NotNull(message = "Notification type is required")
+        SubscriptionNotificationType notificationType
 ) {
 }

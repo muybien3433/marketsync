@@ -11,6 +11,18 @@ services:
     volumes:
       - postgres_db:/var/lib/postgresql/data
 
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: marketsync
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -24,6 +36,7 @@ services:
       - microservices-net
     volumes:
       - zookeeper_data:/var/lib/zookeeper
+
   zipkin:
     container_name: zipkin
     image: openzipkin/zipkin
@@ -68,6 +81,7 @@ networks:
 
 volumes:
   postgres_db:
+  mongodb_data:
   zookeeper_data:
   kafka_1_data:
   kafka_2_data:

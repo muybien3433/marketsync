@@ -34,14 +34,20 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Mono<J
         Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
 
         if (resourceAccess != null && resourceAccess.containsKey("account")) {
-            Map<String, List<String>> accountAccess = (Map<String, List<String>>) resourceAccess.get("account");
-            List<String> roles = accountAccess != null ? accountAccess.get("roles") : null;
+            Object accountObject = resourceAccess.get("account");
 
-            if (roles != null) {
-                return roles.stream()
-                        .map(role -> new SimpleGrantedAuthority(
-                                "ROLE_" + role.replace("-", "_")))
-                        .collect(Collectors.toSet());
+            if (accountObject instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, List<String>> accountAccess = (Map<String, List<String>>) accountObject;
+
+                List<String> roles = accountAccess.get("roles");
+
+                if (roles != null) {
+                    return roles.stream()
+                            .map(role -> new SimpleGrantedAuthority(
+                                    "ROLE_" + role.replace("-", "_").toUpperCase()))
+                            .collect(Collectors.toSet());
+                }
             }
         }
         return Set.of();

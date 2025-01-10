@@ -1,122 +1,133 @@
 package pl.muybien.subscription;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.customer.CustomerClient;
-import pl.muybien.exception.CustomerNotFoundException;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.exception.SubscriptionNotFoundException;
-import pl.muybien.finance.FinanceServiceFactory;
+import pl.muybien.finance.FinanceClient;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class SubscriptionService {
 
-    private final FinanceServiceFactory financeServiceFactory;
     private final CustomerClient customerClient;
+    private final FinanceClient financeClient;
     private final SubscriptionRepository subscriptionRepository;
-    private final SubscriptionDetailRepository subscriptionDetailRepository;
     private final SubscriptionDetailDTOMapper detailDTOMapper;
 
+    private final MongoTemplate mongoTemplate;
+
     @Transactional
-    SubscriptionDetailDTO createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
-        var customer = customerClient.fetchCustomerFromHeader(authHeader);
-        if (customer == null) {
-            throw new CustomerNotFoundException("Customer not found");
-        }
-        var subscription = subscriptionRepository.findByCustomerId(customer.id())
-                .orElseThrow(() -> new SubscriptionNotFoundException(
-                        "Subscription not created:: No Customer exists with ID: %s"
-                                .formatted(customer.id())));
+    public void createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
+        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
 
-        var financeService = financeServiceFactory.getService(request.uri());
-        var createdSubscription = financeService.createIncreaseSubscription(
-                request.value(), customer.email(), customer.id());
+        var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
+                .orElseGet(Subscription::new);
 
-        createdSubscription.setSubscription(subscription);
-
-        subscriptionDetailRepository.save(createdSubscription);
-
-        return SubscriptionDetailDTO.builder()
-                .financeName(createdSubscription.getFinanceName())
-                .upperBoundPrice(createdSubscription.getUpperBoundPrice())
-                .lowerBoundPrice(createdSubscription.getLowerBoundPrice())
-                .createdDate(createdSubscription.getCreatedDate())
+        var subscriptionDetail = SubscriptionDetail.builder()
+                .id(UUID.randomUUID().toString())
+                .customerId(customerId)
+                .financeName(finance.name())
+                .upperBoundPrice(request.value())
+                .lowerBoundPrice(null)
+                .assetType(finance.assetType())
+                .notificationType(request.notificationType())
+                .createdDate(LocalDateTime.now())
                 .build();
+
+        subscription.getSubscriptions()
+                .computeIfAbsent(request.uri().trim().toLowerCase(), _ -> new LinkedList<>())
+                .add(subscriptionDetail);
+
+        subscriptionRepository.save(subscription);
     }
 
     @Transactional
-    SubscriptionDetailDTO createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
+    public void createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
-        if (customer == null) {
-            throw new CustomerNotFoundException("Customer not found");
-        }
+        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
 
-        var subscription = subscriptionRepository.findByCustomerId(customer.id())
-                .orElseThrow(() -> new SubscriptionNotFoundException(
-                        "Subscription not created:: No Customer exists with ID: %s"
-                                .formatted(customer.id())));
+        var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
+                .orElseGet(Subscription::new);
 
-        var financeService = financeServiceFactory.getService(request.uri());
-        var createdSubscription = financeService.createDecreaseSubscription(
-                request.value(), customer.email(), customer.id());
-
-        createdSubscription.setSubscription(subscription);
-
-        subscriptionDetailRepository.save(createdSubscription);
-
-        return SubscriptionDetailDTO.builder()
-                .financeName(createdSubscription.getFinanceName())
-                .upperBoundPrice(createdSubscription.getUpperBoundPrice())
-                .lowerBoundPrice(createdSubscription.getLowerBoundPrice())
-                .createdDate(createdSubscription.getCreatedDate())
+        var subscriptionDetail = SubscriptionDetail.builder()
+                .customerId(customer.id())
+                .customerEmail(customer.email())
+                .financeName(finance.name())
+                .upperBoundPrice(null)
+                .lowerBoundPrice(request.value())
+                .assetType(finance.assetType())
+                .notificationType(request.notificationType())
+                .createdDate(LocalDateTime.now())
                 .build();
+
+        subscription.getSubscriptions()
+                .computeIfAbsent(finance.name().trim().toLowerCase(), _ -> new LinkedList<>())
+                .add(subscriptionDetail);
+
+        subscriptionRepository.save(subscription);
     }
 
     @Transactional
-    void deleteSubscription(String authHeader, Long subscriptionDetailId) {
-        var customer = customerClient.fetchCustomerFromHeader(authHeader);
-        if (customer == null) {
-            throw new CustomerNotFoundException("Customer not found");
+    public void deleteSubscription(String authHeader, SubscriptionDeletionRequest request) {
+        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+
+        var subscription = subscriptionRepository.findByUri(request.uri())
+                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for URI: " + request.uri()));
+
+        var subscriptionDetailList = subscription.getSubscriptions().get(request.uri());
+        if (subscriptionDetailList == null || subscriptionDetailList.isEmpty()) {
+            throw new SubscriptionNotFoundException("Subscription not found for URI: " + request.uri());
         }
 
-        var subscription = subscriptionRepository.findByCustomerId(customer.id())
-                .orElseThrow(() -> new SubscriptionNotFoundException(
-                        "Subscription not deleted:: No Subscription exists for customer ID: %s"
-                                .formatted(customer.id())));
+        var subscriptionDetail = subscriptionDetailList.stream()
+                .filter(detail -> detail.getId().equals(request.id()))
+                .findFirst()
+                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for ID: " + request.id()));
 
-        var subscriptionDetail = subscriptionDetailRepository.findById(subscriptionDetailId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Subscription not deleted:: No Subscription exists with ID: %d".
-                                formatted(subscriptionDetailId)));
-
-        if (!subscriptionDetail.getCustomerId().equals(customer.id())) {
+        if (!Objects.equals(subscriptionDetail.getCustomerId(), customerId)) {
             throw new OwnershipException("Subscription deletion failed:: Customer id mismatch");
         }
 
-        var financeService = financeServiceFactory.getService(subscriptionDetail.getFinanceName());
-        financeService.deleteSubscription(subscription.getId(), customer.id());
-
-        subscriptionDetailRepository.delete(subscriptionDetail);
+        subscriptionDetailList.remove(subscriptionDetail);
+        subscriptionRepository.save(subscription);
     }
 
     @Transactional(readOnly = true)
-    List<SubscriptionDetailDTO> findAllSubscriptions(String authHeader) {
-        var customer = customerClient.fetchCustomerFromHeader(authHeader);
-        if (customer == null) {
-            throw new CustomerNotFoundException("Customer not found");
-        }
+    public List<SubscriptionDetailDTO> findAllCustomerSubscriptions(String authHeader) {
+        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
 
-        return subscriptionRepository.findByCustomerId(customer.id())
-                .stream()
-                .flatMap(s -> s.getSubscriptionDetails()
-                        .stream()
-                        .map(detailDTOMapper::mapToDTO))
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("subscriptions").exists(true)),
+                Aggregation.project()
+                        .andExpression("{$objectToArray: '$subscriptions'}").as("subscriptionEntries"),
+                Aggregation.unwind("subscriptionEntries"),
+                Aggregation.unwind("subscriptionEntries.v"),
+                Aggregation.match(Criteria.where("subscriptionEntries.v.customerId").is(customerId)),
+
+                Aggregation.project()
+                        .and("subscriptionEntries.k").as("assetType")
+                        .and("subscriptionEntries.v.financeName").as("financeName")
+                        .and("subscriptionEntries.v.upperBoundPrice").as("upperBoundPrice")
+                        .and("subscriptionEntries.v.lowerBoundPrice").as("lowerBoundPrice")
+                        .and("subscriptionEntries.v.createdDate").as("createdDate")
+                        .and("subscriptionEntries.v.customerId").as("customerId")
+        );
+
+        var results = mongoTemplate.aggregate(aggregation, Subscription.class, SubscriptionDetail.class);
+
+        return results.getMappedResults().stream()
+                .map(detailDTOMapper::mapToDTO)
                 .collect(Collectors.toList());
     }
 }

@@ -47,7 +47,7 @@ Ensure you have the following installed before running the project:
     - `GET /` – List all active subscriptions for the customer.
     - `POST /increase` – Add a new subscription with a condition: actualValue > value.
     - `POST /decrease` – Add new subscription with condition actualValue < value.
-    - `DELETE /{id}` – Delete subscription.
+    - `DELETE /` – Delete subscription.
 
 - *Wallet*: `/wallets/assets`
     - `GET /` – View all assets in the customer’s wallet as list.
@@ -72,8 +72,6 @@ Ensure you have the following installed before running the project:
    ```
    
 3. Provide environment variables in config-server microservice:
-      - {DATABASE_USERNAME}
-      - {DATABASE_PASSWORD}
       - {EMAIL_USERNAME}
       - {EMAIL_PASSWORD}
 

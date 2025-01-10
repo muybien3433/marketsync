@@ -16,29 +16,29 @@ public class SubscriptionController {
     private final SubscriptionService service;
 
     @PostMapping("/increase")
-    public ResponseEntity<SubscriptionDetailDTO> createIncreaseSubscription(
+    public ResponseEntity<String> createIncreaseSubscription(
             @RequestHeader("Authorization") String authHeader,
             @RequestBody @Valid SubscriptionRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.createIncreaseSubscription(authHeader, request));
+        service.createIncreaseSubscription(authHeader, request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/decrease")
-    public ResponseEntity<SubscriptionDetailDTO> createDecreaseSubscription(
+    public ResponseEntity<String> createDecreaseSubscription(
             @RequestHeader("Authorization") String authHeader,
             @RequestBody @Valid SubscriptionRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.createDecreaseSubscription(authHeader, request));
+        service.createDecreaseSubscription(authHeader, request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/{subscription-detail-id}")
+    @DeleteMapping
     public ResponseEntity<String> deleteSubscription(
             @RequestHeader("Authorization") String authHeader,
-            @PathVariable("subscription-detail-id") Long subscriptionDetailId
+            @RequestBody @Valid SubscriptionDeletionRequest request
     ) {
-        service.deleteSubscription(authHeader, subscriptionDetailId);
+        service.deleteSubscription(authHeader, request);
         return ResponseEntity.noContent().build();
     }
 
@@ -46,6 +46,6 @@ public class SubscriptionController {
     public ResponseEntity<List<SubscriptionDetailDTO>> findAllSubscriptions(
             @RequestHeader("Authorization") String authHeader
     ) {
-        return ResponseEntity.ok(service.findAllSubscriptions(authHeader));
+        return ResponseEntity.ok(service.findAllCustomerSubscriptions(authHeader));
     }
 }

@@ -1,42 +1,32 @@
-    package pl.muybien.subscription;
+package pl.muybien.subscription;
 
-    import jakarta.persistence.*;
-    import lombok.*;
-    import org.springframework.data.annotation.CreatedDate;
-    import org.springframework.data.annotation.LastModifiedDate;
-    import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-    import java.math.BigDecimal;
-    import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
-    @Entity
-    @Builder
-    @EqualsAndHashCode
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    @Setter
-    @EntityListeners(AuditingEntityListener.class)
-    @Table(name = "subscription_detail")
-    public class SubscriptionDetail {
+@Document(collection = "subscriptions_detail")
+@Builder
+@Getter
+@Setter
+public class SubscriptionDetail {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-        private String customerId;
+    @Id
+    private String id;
+    private String uri;
+    private String customerId;
+    private String customerEmail;
+    private String financeName;
+    private Double upperBoundPrice;
+    private Double lowerBoundPrice;
+    private String assetType;
 
-        private String financeName;
-        private BigDecimal upperBoundPrice;
-        private BigDecimal lowerBoundPrice;
+    private SubscriptionNotificationType notificationType;
 
-        @CreatedDate
-        @Column(updatable = false, nullable = false)
-        private LocalDateTime createdDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
+}
 
-        @LastModifiedDate
-        @Column(insertable = false)
-        private LocalDateTime lastModifiedDate;
-
-        @ManyToOne(fetch = FetchType.EAGER)
-        private Subscription subscription;
-    }

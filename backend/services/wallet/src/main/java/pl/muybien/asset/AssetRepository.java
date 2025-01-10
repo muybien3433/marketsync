@@ -5,12 +5,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     @Query(
             """
-                    SELECT new pl.muybien.wallet.asset.AssetHistoryDTO(
+                    SELECT new pl.muybien.asset.AssetHistoryDTO(
                             a.id,
                             a.name,
                             a.type,
@@ -24,7 +25,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     @Query(
             """
-                    SELECT new pl.muybien.wallet.asset.AssetGroupDTO(
+                    SELECT new pl.muybien.asset.AssetGroupDTO(
                         a.id,
                         a.name,
                         a.uri,
@@ -36,5 +37,5 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
                     FROM Asset a
                     WHERE a.customerId = :customerId
                     GROUP BY a.name, a.currency, a.uri, a.customerId, a.id""")
-    List<AssetGroupDTO> findAndAggregateAssetsByCustomerId(@Param("customerId") String customerId);
+    Optional<List<AssetGroupDTO>> findAndAggregateAssetsByCustomerId(@Param("customerId") String customerId);
 }

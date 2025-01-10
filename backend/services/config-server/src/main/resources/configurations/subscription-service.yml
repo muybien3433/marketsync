@@ -1,16 +1,15 @@
 server:
   port: 8900
 
+schedule:
+  time-ms: 5000
+  fetch-page-size-per-round: 5
+
 spring:
-  datasource:
-    username: admin
-    password: admin
-    url: jdbc:postgresql://localhost:5432/marketsync
-  jpa:
-    hibernate:
-      ddl-auto: update
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017/market-sync?authSource=admin
+      database: market-sync
 
   kafka:
     producer:

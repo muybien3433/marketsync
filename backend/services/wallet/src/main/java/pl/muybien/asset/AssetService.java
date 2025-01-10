@@ -89,10 +89,9 @@ public class AssetService {
     List<AssetDTO> findAllCustomerAssets(String authHeader) {
         var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
 
-        List<AssetGroupDTO> groupedAssets = repository.findAndAggregateAssetsByCustomerId(customerId);
-        if (groupedAssets.isEmpty()) {
-            return Collections.emptyList();
-        }
+        var groupedAssets = repository
+                .findAndAggregateAssetsByCustomerId(customerId)
+                .orElse(Collections.emptyList());
 
         var aggregatedAssets = new ArrayList<AssetDTO>();
         groupedAssets.forEach(asset -> aggregatedAssets.add(aggregateAsset(asset)));
