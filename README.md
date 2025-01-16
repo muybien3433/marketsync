@@ -40,7 +40,7 @@ Ensure you have the following installed before running the project:
 **API will be available at localhost:9999/api/v1**
 
 - *Finance*: `/finances`
-    - `GET /{type}/{uri}` – Fetch the current price for specified type and uri.
+    - `GET /{type}/{uri}/{currency}` – Fetch the current price for specified type and uri and calculate desired by currency.
     - `GET /{type}` – Display available uri to assets in specified type as list.
 
 - *Subscription*: `/subscriptions`
