@@ -1,4 +1,4 @@
-package pl.muybien.finance.crypto;
+package pl.muybien.finance.crypto.scraper;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,9 @@ import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.finance.FinanceResponse;
 import pl.muybien.finance.FinanceFileManager;
 import pl.muybien.finance.FinanceFileDTO;
+import pl.muybien.finance.crypto.CryptoService;
+import pl.muybien.finance.currency.CurrencyService;
+import pl.muybien.finance.currency.CurrencyType;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CoinmarketcapService {
+public class CoinmarketcapService implements CryptoService {
 
     @Value("${coinmarketcap.type}")
     private String type;
@@ -63,8 +66,9 @@ public class CoinmarketcapService {
     private String secondSectionSymbolSelector;
 
     private final FinanceFileManager financeFileManager;
+    private final CurrencyService currencyService;
 
-    public FinanceResponse fetchFinance(String uri, String type) {
+    public FinanceResponse fetchCrypto(String uri, String type, String currency) {
         try {
             if (uri == null || uri.isBlank()) {
                 throw new IllegalArgumentException("Crypto identifier cannot be null or blank");
@@ -76,11 +80,18 @@ public class CoinmarketcapService {
 
             if (name != null && price != null) {
                 BigDecimal priceAsBigDecimal = new BigDecimal(price.replaceAll("[$,]", ""));
-                String currency = price.trim().substring(0, 1).replace("$", "USD");
+
+                String from = "USD"; // all prices from Coinmarketcap are in USD
+                if (!from.equals(currency.toUpperCase())) {
+                    BigDecimal exchangeRate = currencyService.getCurrencyPairValue(
+                            CurrencyType.fromString(from), CurrencyType.fromString(currency));
+                    priceAsBigDecimal = priceAsBigDecimal.multiply(exchangeRate);
+                }
+
                 return FinanceResponse.builder()
                         .name(name)
                         .price(priceAsBigDecimal)
-                        .currency(currency)
+                        .currency(CurrencyType.fromString(currency))
                         .assetType(type.toLowerCase())
                         .build();
             } else {

@@ -1,6 +1,7 @@
 package pl.muybien.finance;
 
 import lombok.Builder;
+import pl.muybien.finance.currency.CurrencyType;
 
 import java.math.BigDecimal;
 
@@ -8,7 +9,7 @@ import java.math.BigDecimal;
 public record FinanceResponse(
         String name,
         BigDecimal price,
-        String currency,
+        CurrencyType currency,
         String assetType
 ) {
 }

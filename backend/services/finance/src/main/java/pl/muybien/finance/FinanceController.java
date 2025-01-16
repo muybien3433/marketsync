@@ -16,12 +16,13 @@ public class FinanceController {
 
     private final FinanceService service;
 
-    @GetMapping("/{type}/{uri}")
+    @GetMapping("/{type}/{uri}/{currency}")
     public ResponseEntity<FinanceResponse> getFinance(
             @PathVariable String type,
-            @PathVariable String uri
+            @PathVariable String uri,
+            @PathVariable String currency
     ) {
-        return ResponseEntity.ok(service.fetchFinance(type, uri));
+        return ResponseEntity.ok(service.fetchFinance(type, uri, currency));
     }
 
     @GetMapping("/{type}")

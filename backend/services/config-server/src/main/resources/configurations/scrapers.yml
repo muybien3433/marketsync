@@ -3,10 +3,10 @@ coinmarketcap:
   file-name: cryptos.csv
   base-url-currencies: https://coinmarketcap.com/currencies/
   base-url-page: https://www.coinmarketcap.com/?page=
-  update-schedule-cron: 0 0 4,5 * * ?
+  update-schedule-cron: 0 0 4,5 * * ? # every day at 4 and 5 o'clock
   page-size: 106
-  jsoup-update-connect-timeout-in-ms: 60000
-  jsoup-fetch-connect-timeout-in-ms: 7000
+  jsoup-update-connect-timeout-in-ms: 60000 # 60s
+  jsoup-fetch-connect-timeout-in-ms: 7000 # 7s
 
   #It's used for both sections
   name-selector: span[data-role=coin-name]
@@ -23,3 +23,12 @@ coinmarketcap:
   second-section-name-selector: span
   second-section-span-number: 1
   second-section-symbol-selector: .crypto-symbol
+
+wise:
+  currency-updater-frequency-ms: 60000 # 60s
+  max-fetch-retries: 3
+  retry-delay-ms: 5000 # 5s
+  base-url: https://wise.com/gb/currency-converter/
+  url-separator: -to-
+  rate-amount: -rate?amount=1
+

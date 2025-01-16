@@ -2,7 +2,7 @@ package pl.muybien.finance;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.muybien.finance.crypto.CoinmarketcapService;
+import pl.muybien.finance.crypto.CryptoService;
 
 import java.util.List;
 
@@ -10,12 +10,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FinanceService {
 
-    private final CoinmarketcapService coinmarketcapService;
     private final FinanceFileReader financeFileReader;
+    private final CryptoService cryptoService;
 
-    FinanceResponse fetchFinance(String type, String uri) {
+    FinanceResponse fetchFinance(String type, String uri, String currency) {
         return switch (type) {
-            case "cryptos" -> coinmarketcapService.fetchFinance(uri, type);
+            case "cryptos" -> cryptoService.fetchCrypto(uri, type, currency);
             case "stocks" -> null;
             default -> null;
         };

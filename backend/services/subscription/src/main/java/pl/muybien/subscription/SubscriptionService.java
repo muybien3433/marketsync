@@ -50,7 +50,6 @@ public class SubscriptionService {
                 .lowerBoundPrice(null)
                 .assetType(finance.assetType())
                 .notificationType(request.notificationType())
-                .createdDate(LocalDateTime.now())
                 .build();
 
         subscription.getSubscriptions()
@@ -77,7 +76,6 @@ public class SubscriptionService {
                 .lowerBoundPrice(request.value())
                 .assetType(finance.assetType())
                 .notificationType(request.notificationType())
-                .createdDate(LocalDateTime.now())
                 .build();
 
         subscription.getSubscriptions()
