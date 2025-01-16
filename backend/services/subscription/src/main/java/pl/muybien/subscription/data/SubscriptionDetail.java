@@ -1,6 +1,7 @@
 package pl.muybien.subscription.data;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -11,12 +12,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Document(collection = "subscriptions_detail")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 @Getter
 @Setter
 public class SubscriptionDetail {
 
     @Id
+    @EqualsAndHashCode.Include
     private String id;
     private String uri;
     private String customerId;
