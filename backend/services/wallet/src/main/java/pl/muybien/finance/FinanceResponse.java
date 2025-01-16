@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 @Builder
 public record FinanceResponse(
         String name,
-        BigDecimal price
+        BigDecimal price,
+        String currency,
+        String assetType
 ) {
 }

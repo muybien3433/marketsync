@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 )
 public interface FinanceClient {
 
-    @GetMapping("/{uri}")
-    FinanceResponse findFinanceByUri(@PathVariable("uri") String uri);
+    @GetMapping("/{type}/{uri}/{currency}")
+    FinanceResponse findFinanceByUriAndTypeAndCurrency(
+            @PathVariable("type") String type,
+            @PathVariable("uri") String uri,
+            @PathVariable("currency") String currency
+    );
 }

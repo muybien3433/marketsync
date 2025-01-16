@@ -5,8 +5,19 @@ import lombok.ToString;
 @ToString
 public enum AssetType {
     UNDEFINED,
-    STOCK,
+    STOCKS,
     BONDS,
-    CRYPTO,
-    CURRENCY
+    CRYPTOS,
+    CURRENCIES;
+
+    public static AssetType fromString(String type) {
+        if (type != null) {
+            try {
+                return AssetType.valueOf(type.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Asset type " + type + " not supported");
+            }
+        }
+        throw new IllegalArgumentException("Asset type is null");
+    }
 }

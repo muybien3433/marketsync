@@ -26,7 +26,6 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     @Query(
             """
                     SELECT new pl.muybien.asset.AssetGroupDTO(
-                        a.id,
                         a.name,
                         a.uri,
                         a.type,
@@ -36,6 +35,6 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
                         a.customerId)
                     FROM Asset a
                     WHERE a.customerId = :customerId
-                    GROUP BY a.name, a.currency, a.uri, a.customerId, a.id""")
+                    GROUP BY a.name, a.uri, a.type, a.currency, a.customerId""")
     Optional<List<AssetGroupDTO>> findAndAggregateAssetsByCustomerId(@Param("customerId") String customerId);
 }

@@ -11,7 +11,6 @@ import pl.muybien.finance.FinanceClient;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,13 +28,13 @@ public class AssetService {
     void createAsset(String authHeader, AssetRequest request) {
         var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
         repository.save(Asset.builder()
-                .type(request.type())
-                .name(request.uri().toLowerCase())
+                .type(AssetType.fromString(request.type()))
+                .name(request.uri())
                 .uri(request.uri())
                 .count(request.count().setScale(2, RoundingMode.HALF_UP))
                 .purchasePrice(request.purchasePrice().setScale(2, RoundingMode.HALF_UP))
+                .currency(request.currency())
                 .customerId(customerId)
-                .createdDate(LocalDateTime.now())
                 .build()
         );
     }
@@ -52,6 +51,7 @@ public class AssetService {
         } else {
             asset.setCount(request.count().setScale(2, RoundingMode.HALF_UP));
             asset.setPurchasePrice(request.purchasePrice().setScale(2, RoundingMode.HALF_UP));
+            asset.setCurrency(request.currency());
 
             repository.save(asset);
         }
@@ -86,7 +86,7 @@ public class AssetService {
     }
 
     @Transactional(readOnly = true)
-    List<AssetDTO> findAllCustomerAssets(String authHeader) {
+    List<AssetDTO> findAllCustomerAssets(String authHeader, String desiredCurrency) {
         var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
 
         var groupedAssets = repository
@@ -94,15 +94,16 @@ public class AssetService {
                 .orElse(Collections.emptyList());
 
         var aggregatedAssets = new ArrayList<AssetDTO>();
-        groupedAssets.forEach(asset -> aggregatedAssets.add(aggregateAsset(asset)));
+        groupedAssets.forEach(asset -> aggregatedAssets.add(aggregateAsset(asset, desiredCurrency)));
 
         return aggregatedAssets;
     }
 
-    private AssetDTO aggregateAsset(AssetGroupDTO asset) {
+    private AssetDTO aggregateAsset(AssetGroupDTO asset, String desiredCurrency) {
         String type = asset.type().name().toLowerCase();
-        BigDecimal currentPrice = financeClient.findFinanceByUri(asset.uri()).price().setScale(2, RoundingMode.HALF_UP);
-        BigDecimal value = asset.count().multiply(currentPrice).setScale(2, RoundingMode.HALF_UP);
+        var finance = financeClient.findFinanceByUriAndTypeAndCurrency(type, asset.uri(), desiredCurrency);
+
+        BigDecimal value = asset.count().multiply(finance.price()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal averagePurchasePrice = BigDecimal.valueOf(asset.averagePurchasePrice()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalInvested = averagePurchasePrice.multiply(asset.count()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal profit = value.subtract(totalInvested).setScale(2, RoundingMode.HALF_UP);
@@ -110,12 +111,12 @@ public class AssetService {
                 profit.multiply(new BigDecimal("100")).divide(totalInvested, 2, RoundingMode.HALF_UP);
 
         return AssetDTO.builder()
-                .id(asset.id())
                 .name(asset.name())
                 .type(type)
                 .count(asset.count())
-                .currentPrice(currentPrice)
-                .currency(asset.currency())
+                .currentPrice(finance.price().setScale(2, RoundingMode.HALF_UP))
+                .additionCurrency(asset.currency())
+                .currency(finance.currency())
                 .value(value)
                 .averagePurchasePrice(averagePurchasePrice)
                 .profit(profit)

@@ -15,11 +15,12 @@ public class AssetController {
 
     private final AssetService service;
 
-    @GetMapping
+    @GetMapping("/{currency}")
     public ResponseEntity<List<AssetDTO>> findAllCustomerAssets(
-            @RequestHeader("Authorization") String authHeader
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("currency") String currency
     ) {
-        return ResponseEntity.ok(service.findAllCustomerAssets(authHeader));
+        return ResponseEntity.ok(service.findAllCustomerAssets(authHeader, currency));
     }
 
     @GetMapping("/history")

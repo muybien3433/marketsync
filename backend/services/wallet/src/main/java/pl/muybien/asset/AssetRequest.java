@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public record AssetRequest(
 
         @NotNull(message = "Asset type should be present")
-        AssetType type,
+        String type,
 
         @NotNull(message = "Uri is required")
         @NotEmpty(message = "Uri is required")
@@ -23,6 +23,11 @@ public record AssetRequest(
 
         @NotNull(message = "Purchase price should be present")
         @Positive(message = "Purchase price should be positive")
-        BigDecimal purchasePrice
+        BigDecimal purchasePrice,
+
+        @NotNull(message = "Currency is required")
+        @NotEmpty(message = "Currency is required")
+        @NotBlank(message = "Currency is required")
+        String currency
 ) {
 }

@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Builder
 public record AssetGroupDTO(
-        Long id,
         String name,
         String uri,
         AssetType type,

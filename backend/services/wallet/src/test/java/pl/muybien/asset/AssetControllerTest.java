@@ -30,23 +30,24 @@ class AssetControllerTest {
 
     @Test
     void findAllCustomerAssets_shouldReturnAssetList() {
+        String desiredCurrency = "USD";
         var assets = List.of(
-                new AssetDTO(1L, "Bitcoin", AssetType.CRYPTO.toString(), BigDecimal.valueOf(2),
-                        BigDecimal.valueOf(30000), "USD", BigDecimal.valueOf(60000),
-                        BigDecimal.valueOf(20000), LocalDateTime.now(), BigDecimal.valueOf(10000), BigDecimal.valueOf(50))
+                new AssetDTO("Bitcoin", AssetType.CRYPTOS.name(), BigDecimal.valueOf(2),
+                        BigDecimal.valueOf(30000), "USD", desiredCurrency, BigDecimal.valueOf(60000),
+                        BigDecimal.valueOf(20000), BigDecimal.valueOf(10000), BigDecimal.valueOf(50))
         );
-        when(assetService.findAllCustomerAssets(authHeader)).thenReturn(assets);
+        when(assetService.findAllCustomerAssets(authHeader, desiredCurrency)).thenReturn(assets);
 
-        var response = assetController.findAllCustomerAssets(authHeader);
+        var response = assetController.findAllCustomerAssets(authHeader, desiredCurrency);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(assets);
-        verify(assetService).findAllCustomerAssets(authHeader);
+        verify(assetService).findAllCustomerAssets(authHeader, desiredCurrency);
     }
 
     @Test
     void findAllHistoryAssets_shouldReturnHistoryList() {
-        var history = List.of(new AssetHistoryDTO(1L, "Bitcoin", AssetType.CRYPTO,
+        var history = List.of(new AssetHistoryDTO(1L, "Bitcoin", AssetType.CRYPTOS,
                         BigDecimal.valueOf(2), BigDecimal.valueOf(100000), LocalDateTime.now())
         );
 
@@ -61,8 +62,9 @@ class AssetControllerTest {
 
     @Test
     void createAsset_shouldReturnCreatedStatus() {
+        String currency = "USD";
         AssetRequest request = new AssetRequest(
-                AssetType.CRYPTO, "bitcoin", BigDecimal.valueOf(2), BigDecimal.valueOf(30000));
+                "cryptos", "bitcoin", BigDecimal.valueOf(2), BigDecimal.valueOf(30000), currency);
 
         doNothing().when(assetService).createAsset(authHeader, request);
 
@@ -75,8 +77,9 @@ class AssetControllerTest {
     @Test
     void updateAsset_shouldReturnOkStatus() {
         Long assetId = 1L;
+        String currency = "USD";
         AssetRequest request = new AssetRequest(
-                AssetType.CRYPTO, "bitcoin", BigDecimal.valueOf(3), BigDecimal.valueOf(40000));
+                "cryptos", "bitcoin", BigDecimal.valueOf(3), BigDecimal.valueOf(40000), currency);
 
         doNothing().when(assetService).updateAsset(authHeader, request, assetId);
 
