@@ -21,6 +21,11 @@ public record SubscriptionRequest(
         @NotBlank(message = "Asset type is required")
         String assetType,
 
+        @NotNull(message = "Currency is required")
+        @NotEmpty(message = "Currency is required")
+        @NotBlank(message = "Currency is required")
+        String currency,
+
         @NotNull(message = "Notification type is required")
         @NotEmpty(message = "Notification type is required")
         @NotBlank(message = "Notification type is required")

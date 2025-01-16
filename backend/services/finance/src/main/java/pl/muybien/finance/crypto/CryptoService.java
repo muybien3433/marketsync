@@ -3,5 +3,7 @@ package pl.muybien.finance.crypto;
 import pl.muybien.finance.FinanceResponse;
 
 public interface CryptoService {
-    FinanceResponse fetchCrypto(String uri, String type, String currency);
+    FinanceResponse fetchCrypto(String uri, String assetType, String currency);
+    FinanceResponse fetchCrypto(String uri, String assetType);
+
 }

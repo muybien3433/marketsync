@@ -20,6 +20,6 @@ public enum SubscriptionNotificationType {
             }
         }
         throw new InvalidSubscriptionParametersException(
-                "Subscription type not recognized: " + value);
+                "Subscription assetType not recognized: " + value);
     }
 }

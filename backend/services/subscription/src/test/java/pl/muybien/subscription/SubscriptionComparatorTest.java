@@ -108,6 +108,6 @@ class SubscriptionComparatorTest {
                 InvalidSubscriptionParametersException.class,
                 () -> subscriptionComparator.priceMetSubscriptionCondition(120.0, subscriptionDetail)
         );
-        assertEquals("Subscription type not recognized: INVALID_TYPE", exception.getMessage());
+        assertEquals("Subscription assetType not recognized: INVALID_TYPE", exception.getMessage());
     }
 }

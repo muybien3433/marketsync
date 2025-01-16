@@ -61,12 +61,12 @@ class SubscriptionServiceTest {
     @Test
     void createIncreaseSubscription_shouldAddNewSubscription() {
         String authHeader = "Bearer token";
-        var request = new SubscriptionRequest("bitcoin", 3000.0, "cryptos", "email");
+        var request = new SubscriptionRequest("bitcoin", 3000.0, "cryptos", "USD", "email");
         var finance = new FinanceResponse("Bitcoin", BigDecimal.valueOf(100000.0), "USD", "cryptos");
         var existingSubscription = new Subscription();
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
-        when(financeClient.findFinanceByTypeAndUri("cryptos", "bitcoin")).thenReturn(finance);
+        when(financeClient.findFinanceWithDefaultCurrency("cryptos", "bitcoin")).thenReturn(finance);
         when(subscriptionRepository.findByUri("bitcoin")).thenReturn(Optional.of(existingSubscription));
 
         subscriptionService.createIncreaseSubscription(authHeader, request);
@@ -78,12 +78,12 @@ class SubscriptionServiceTest {
     @Test
     void createDecreaseSubscription_shouldAddNewSubscription() {
         String authHeader = "Bearer token";
-        var request = new SubscriptionRequest("ethereum", 3000.0, "cryptos", "email");
+        var request = new SubscriptionRequest("ethereum", 3000.0, "cryptos", "USD", "email");
         var finance = new FinanceResponse("Ethereum", BigDecimal.valueOf(100000.0), "USD", "cryptos");
         var existingSubscription = new Subscription();
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
-        when(financeClient.findFinanceByTypeAndUri("cryptos", "ethereum")).thenReturn(finance);
+        when(financeClient.findFinanceWithDefaultCurrency("cryptos", "ethereum")).thenReturn(finance);
         when(subscriptionRepository.findByUri("ethereum")).thenReturn(Optional.of(existingSubscription));
 
         subscriptionService.createDecreaseSubscription(authHeader, request);

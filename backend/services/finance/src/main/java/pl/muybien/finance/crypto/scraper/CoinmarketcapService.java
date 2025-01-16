@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class CoinmarketcapService implements CryptoService {
 
     @Value("${coinmarketcap.type}")
-    private String type;
+    private String assetType;
     @Value("${coinmarketcap.base-url-currencies}")
     private String baseUrlCurrencies;
     @Value("${coinmarketcap.base-url-page}")
@@ -68,7 +68,8 @@ public class CoinmarketcapService implements CryptoService {
     private final FinanceFileManager financeFileManager;
     private final CurrencyService currencyService;
 
-    public FinanceResponse fetchCrypto(String uri, String type, String currency) {
+    @Override
+    public FinanceResponse fetchCrypto(String uri, String assetType, String currency) {
         try {
             if (uri == null || uri.isBlank()) {
                 throw new IllegalArgumentException("Crypto identifier cannot be null or blank");
@@ -80,19 +81,21 @@ public class CoinmarketcapService implements CryptoService {
 
             if (name != null && price != null) {
                 BigDecimal priceAsBigDecimal = new BigDecimal(price.replaceAll("[$,]", ""));
+                String baseCurrency = "USD"; // USD is default in this website
 
-                String from = "USD"; // all prices from Coinmarketcap are in USD
-                if (!from.equals(currency.toUpperCase())) {
-                    BigDecimal exchangeRate = currencyService.getCurrencyPairValue(
-                            CurrencyType.fromString(from), CurrencyType.fromString(currency));
+                if (currency != null && !baseCurrency.equals(currency.toUpperCase())) {
+                    BigDecimal exchangeRate = currencyService.getCurrencyPairExchange(
+                            CurrencyType.fromString(baseCurrency), CurrencyType.fromString(currency));
                     priceAsBigDecimal = priceAsBigDecimal.multiply(exchangeRate);
+                } else {
+                    currency = baseCurrency;
                 }
 
                 return FinanceResponse.builder()
                         .name(name)
                         .price(priceAsBigDecimal)
                         .currency(CurrencyType.fromString(currency))
-                        .assetType(type.toLowerCase())
+                        .assetType(assetType.toLowerCase())
                         .build();
             } else {
                 log.warn("Missing data: name={}, price={}", name, price);
@@ -102,6 +105,11 @@ public class CoinmarketcapService implements CryptoService {
             log.error("Error fetching data for crypto: {}", uri, e);
             throw new FinanceNotFoundException("Error fetching finance data");
         }
+    }
+
+    @Override
+    public FinanceResponse fetchCrypto(String uri, String assetType) {
+        return fetchCrypto(uri, assetType, null);
     }
 
     private String getElement(Document doc, String selector) {
@@ -117,7 +125,7 @@ public class CoinmarketcapService implements CryptoService {
     @PostConstruct
     @Scheduled(cron = "${coinmarketcap.update-schedule-cron}")
     public void updateAvailableCryptoList() {
-        if (financeFileManager.isUpdateRequired(type)) {
+        if (financeFileManager.isUpdateRequired(assetType)) {
             var cryptos = new LinkedHashSet<FinanceFileDTO>();
             int pageCounter = 1;
             while (pageCounter <= pageSize) {
@@ -178,6 +186,6 @@ public class CoinmarketcapService implements CryptoService {
                 .sorted(Comparator.comparing(FinanceFileDTO::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        financeFileManager.writeDataToFile(sortedCryptos, type);
+        financeFileManager.writeDataToFile(sortedCryptos, assetType);
     }
 }

@@ -15,9 +15,9 @@ public enum AssetType {
             try {
                 return AssetType.valueOf(type.toUpperCase());
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Asset type " + type + " not supported");
+                throw new IllegalArgumentException("Asset assetType " + type + " not supported");
             }
         }
-        throw new IllegalArgumentException("Asset type is null");
+        throw new IllegalArgumentException("Asset assetType is null");
     }
 }

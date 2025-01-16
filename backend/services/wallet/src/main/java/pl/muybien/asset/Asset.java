@@ -32,7 +32,7 @@ public class Asset {
     private String customerId;
 
     @Enumerated(EnumType.STRING)
-    private AssetType type;
+    private AssetType assetType;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)

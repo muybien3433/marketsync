@@ -18,7 +18,7 @@ import pl.muybien.subscription.dto.SubscriptionDetailDTOMapper;
 import pl.muybien.subscription.request.SubscriptionDeletionRequest;
 import pl.muybien.subscription.request.SubscriptionRequest;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,7 +36,17 @@ public class SubscriptionService {
     @Transactional
     public void createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
-        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
+        var finance = financeClient.findFinanceWithDefaultCurrency(request.assetType(), request.uri());
+        System.out.println(finance.currency());
+        System.out.println(finance.name());
+        System.out.println(finance.assetType());
+        System.out.println(finance.currency());
+
+        BigDecimal value = BigDecimal.valueOf(request.value());
+        if (!request.currency().equals(finance.currency())) {
+            String exchange = financeClient.findExchangeRate(request.currency(), finance.currency());
+            value = BigDecimal.valueOf(request.value()).multiply(new BigDecimal(exchange));
+        }
 
         var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
                 .orElseGet(Subscription::new);
@@ -46,7 +56,9 @@ public class SubscriptionService {
                 .customerId(customer.id())
                 .customerEmail(customer.email())
                 .financeName(finance.name())
-                .upperBoundPrice(request.value())
+                .requestedValue(request.value())
+                .requestedCurrency(request.currency())
+                .upperBoundPrice(value.doubleValue())
                 .lowerBoundPrice(null)
                 .assetType(finance.assetType())
                 .notificationType(request.notificationType())
@@ -62,7 +74,13 @@ public class SubscriptionService {
     @Transactional
     public void createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
-        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
+        var finance = financeClient.findFinanceWithDefaultCurrency(request.assetType(), request.uri());
+
+        BigDecimal value = BigDecimal.valueOf(request.value());
+        if (!request.currency().equals(finance.currency())) {
+            String exchange = financeClient.findExchangeRate(request.currency(), finance.currency());
+            value = BigDecimal.valueOf(request.value()).multiply(new BigDecimal(exchange));
+        }
 
         var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
                 .orElseGet(Subscription::new);
@@ -72,8 +90,10 @@ public class SubscriptionService {
                 .customerId(customer.id())
                 .customerEmail(customer.email())
                 .financeName(finance.name())
+                .requestedValue(request.value())
+                .requestedCurrency(request.currency())
                 .upperBoundPrice(null)
-                .lowerBoundPrice(request.value())
+                .lowerBoundPrice(value.doubleValue())
                 .assetType(finance.assetType())
                 .notificationType(request.notificationType())
                 .build();
@@ -123,7 +143,7 @@ public class SubscriptionService {
                 Aggregation.match(Criteria.where("subscriptionEntries.v.customerId").is(customerId)),
 
                 Aggregation.project()
-                        .and("subscriptionEntries.k").as("assetType")
+                        .and("subscriptionEntries.k").as("type")
                         .and("subscriptionEntries.v.financeName").as("financeName")
                         .and("subscriptionEntries.v.upperBoundPrice").as("upperBoundPrice")
                         .and("subscriptionEntries.v.lowerBoundPrice").as("lowerBoundPrice")

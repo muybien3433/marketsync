@@ -14,7 +14,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
                     SELECT new pl.muybien.asset.AssetHistoryDTO(
                             a.id,
                             a.name,
-                            a.type,
+                            a.assetType,
                             a.count,
                             a.purchasePrice,
                             a.createdDate
@@ -28,13 +28,13 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
                     SELECT new pl.muybien.asset.AssetGroupDTO(
                         a.name,
                         a.uri,
-                        a.type,
+                        a.assetType,
                         SUM(a.count),
                         AVG(a.purchasePrice),
                         a.currency,
                         a.customerId)
                     FROM Asset a
                     WHERE a.customerId = :customerId
-                    GROUP BY a.name, a.uri, a.type, a.currency, a.customerId""")
+                    GROUP BY a.name, a.uri, a.assetType, a.currency, a.customerId""")
     Optional<List<AssetGroupDTO>> findAndAggregateAssetsByCustomerId(@Param("customerId") String customerId);
 }

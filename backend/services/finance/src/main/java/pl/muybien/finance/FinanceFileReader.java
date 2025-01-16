@@ -19,8 +19,8 @@ public class FinanceFileReader {
 
     private final FinanceFileResolver financeFileResolver;
 
-    public List<FinanceFileDTO> displayAvailableFinance(String type) {
-        Path filePath = financeFileResolver.resolvePathAndCheckDirectory(type);
+    public List<FinanceFileDTO> displayAvailableFinance(String assetType) {
+        Path filePath = financeFileResolver.resolvePathAndCheckDirectory(assetType);
 
         return readFinanceFromFile(filePath);
     }

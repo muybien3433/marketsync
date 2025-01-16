@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public record AssetHistoryDTO(
         Long id,
         String name,
-        AssetType type,
+        AssetType assetType,
         BigDecimal count,
         BigDecimal purchasePrice,
         LocalDateTime createdDate

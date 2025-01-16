@@ -74,7 +74,7 @@ class AssetServiceTest {
         verify(repository).save(assetCaptor.capture());
         Asset capturedAsset = assetCaptor.getValue();
 
-        assertThat(capturedAsset.getType()).isEqualTo(AssetType.CRYPTOS);
+        assertThat(capturedAsset.getAssetType()).isEqualTo(AssetType.CRYPTOS);
         assertThat(capturedAsset.getName()).isEqualTo("bitcoin");
         assertThat(capturedAsset.getCount()).isEqualTo(BigDecimal.valueOf(2).setScale(2, RoundingMode.HALF_UP));
         assertThat(capturedAsset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(30000).setScale(2, RoundingMode.HALF_UP));
@@ -207,7 +207,7 @@ class AssetServiceTest {
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(repository.findAndAggregateAssetsByCustomerId(customer.id())).thenReturn(Optional.of(List.of(assetGroup)));
-        when(financeClient.findFinanceByUriAndTypeAndCurrency(AssetType.CRYPTOS.name().toLowerCase(), uri, currency))
+        when(financeClient.findFinanceByTypeAndUriAndCurrency(AssetType.CRYPTOS.name().toLowerCase(), uri, currency))
                 .thenReturn(new FinanceResponse("Ethereum", BigDecimal.valueOf(35000), currency, AssetType.CRYPTOS.name()));
 
 

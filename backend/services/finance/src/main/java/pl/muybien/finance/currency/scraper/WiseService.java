@@ -37,7 +37,7 @@ public class WiseService implements CurrencyService {
     private String rateAmount;
 
     @Override
-    public BigDecimal getCurrencyPairValue(CurrencyType from, CurrencyType to) {
+    public BigDecimal getCurrencyPairExchange(CurrencyType from, CurrencyType to) {
         var exchange = repository.findCurrencyByName(currencyNameResolver(from, to))
                 .orElseThrow(() -> new FinanceNotFoundException(
                         "Could not find currency pair for " + from + " to " + to));

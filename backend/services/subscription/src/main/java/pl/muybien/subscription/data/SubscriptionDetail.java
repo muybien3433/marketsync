@@ -7,7 +7,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pl.muybien.subscription.SubscriptionNotificationType;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +22,8 @@ public class SubscriptionDetail {
     private String customerId;
     private String customerEmail;
     private String financeName;
+    private Double requestedValue;
+    private String requestedCurrency;
     private Double upperBoundPrice;
     private Double lowerBoundPrice;
     private String assetType;

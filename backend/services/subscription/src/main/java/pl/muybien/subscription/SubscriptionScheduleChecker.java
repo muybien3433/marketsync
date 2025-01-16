@@ -47,7 +47,7 @@ public class SubscriptionScheduleChecker {
             List<SubscriptionDetail> subscriptionDetails = entry.getValue();
 
             try {
-                var finance = financeClient.findFinanceByTypeAndUri("cryptos", uri);
+                var finance = financeClient.findFinanceWithDefaultCurrency("cryptos", uri);
                 double currentPrice = finance.price().doubleValue();
 
                 for (SubscriptionDetail subscriptionDetail : subscriptionDetails) {

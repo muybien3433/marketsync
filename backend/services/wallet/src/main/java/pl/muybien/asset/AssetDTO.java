@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 @Builder
 public record AssetDTO(
         String name,
-        String type,
+        String assetType,
         BigDecimal count,
         BigDecimal currentPrice,
-        String additionCurrency,
+        String requestedCurrency,
         String currency,
         BigDecimal value,
         BigDecimal averagePurchasePrice,

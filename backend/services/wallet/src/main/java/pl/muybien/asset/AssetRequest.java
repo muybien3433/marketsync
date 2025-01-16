@@ -9,8 +9,10 @@ import java.math.BigDecimal;
 
 public record AssetRequest(
 
-        @NotNull(message = "Asset type should be present")
-        String type,
+        @NotNull(message = "Asset type is required")
+        @NotEmpty(message = "Asset type is required")
+        @NotBlank(message = "Asset type is required")
+        String assetType,
 
         @NotNull(message = "Uri is required")
         @NotEmpty(message = "Uri is required")
