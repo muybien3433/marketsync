@@ -59,11 +59,6 @@
             <artifactId>jsoup</artifactId>
             <version>1.15.3</version>
         </dependency>
-        <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>5.9</version>
-        </dependency>
         <!--		Data		-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

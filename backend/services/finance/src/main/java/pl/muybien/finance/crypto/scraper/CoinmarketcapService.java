@@ -1,6 +1,5 @@
 package pl.muybien.finance.crypto.scraper;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -8,12 +7,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.muybien.exception.FinanceNotFoundException;
+import pl.muybien.finance.FinanceDetail;
 import pl.muybien.finance.FinanceResponse;
-import pl.muybien.finance.FinanceFileManager;
-import pl.muybien.finance.FinanceFileDTO;
+import pl.muybien.finance.FinanceUpdater;
 import pl.muybien.finance.crypto.CryptoService;
 import pl.muybien.finance.currency.CurrencyService;
 import pl.muybien.finance.currency.CurrencyType;
@@ -21,7 +23,6 @@ import pl.muybien.finance.currency.CurrencyType;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,8 +66,32 @@ public class CoinmarketcapService implements CryptoService {
     @Value("${coinmarketcap.second-section-symbol-selector}")
     private String secondSectionSymbolSelector;
 
-    private final FinanceFileManager financeFileManager;
     private final CurrencyService currencyService;
+    private final FinanceUpdater financeUpdater;
+
+    @Async
+    @EventListener(ApplicationReadyEvent.class)
+    @Scheduled(cron = "${coinmarketcap.update-schedule-cron}")
+    @Override
+    public void updateAvailableFinanceList() {
+        var cryptos = new LinkedHashSet<FinanceDetail>();
+        int pageCounter = 1;
+        log.info("Starting updating available cryptos list...");
+        while (pageCounter <= pageSize) {
+            try {
+                Document doc = Jsoup.connect(baseUrlPage + pageCounter)
+                        .timeout(jsoupConnectUpdateTimeoutInMs).get();
+
+                scrapDataFromFirstSection(doc, cryptos);
+                scrapDataFromSecondSection(doc, cryptos);
+                pageCounter++;
+            } catch (IOException e) {
+                throw new FinanceNotFoundException("Error fetching finance data");
+            }
+        }
+        log.info("Finished updating available cryptos list");
+        financeUpdater.sortAndSaveFinanceToDatabase(assetType, cryptos);
+    }
 
     @Override
     public FinanceResponse fetchCrypto(String uri, String assetType, String currency) {
@@ -122,29 +147,7 @@ public class CoinmarketcapService implements CryptoService {
         return element != null ? element.attr(attribute): null;
     }
 
-    @PostConstruct
-    @Scheduled(cron = "${coinmarketcap.update-schedule-cron}")
-    public void updateAvailableCryptoList() {
-        if (financeFileManager.isUpdateRequired(assetType)) {
-            var cryptos = new LinkedHashSet<FinanceFileDTO>();
-            int pageCounter = 1;
-            while (pageCounter <= pageSize) {
-                try {
-                    Document doc = Jsoup.connect(baseUrlPage + pageCounter)
-                            .timeout(jsoupConnectUpdateTimeoutInMs).get();
-
-                    scrapDataFromFirstSection(doc, cryptos);
-                    scrapDataFromSecondSection(doc, cryptos);
-                    pageCounter++;
-                } catch (IOException e) {
-                    throw new FinanceNotFoundException("Error fetching finance data");
-                }
-            }
-            sortAndSaveToFile(cryptos);
-        }
-    }
-
-    private void scrapDataFromFirstSection(Document doc, LinkedHashSet<FinanceFileDTO> cryptos) {
+    private void scrapDataFromFirstSection(Document doc, LinkedHashSet<FinanceDetail> cryptos) {
         Elements links = doc.select(linkSelector);
         for (Element link : links) {
             String name = link.select(firstSectionNameSelector).text();
@@ -152,7 +155,12 @@ public class CoinmarketcapService implements CryptoService {
             String uri = extractUri(link.attr(linkAttribute));
 
             if (!name.isBlank() && !symbol.isBlank() && !uri.isBlank()) {
-                cryptos.add(new FinanceFileDTO(name, symbol, uri));
+                var financeDetail = FinanceDetail.builder()
+                        .name(name)
+                        .symbol(symbol)
+                        .uri(uri)
+                        .build();
+                cryptos.add(financeDetail);
             }
         }
     }
@@ -165,7 +173,7 @@ public class CoinmarketcapService implements CryptoService {
         return "";
     }
 
-    private void scrapDataFromSecondSection(Document doc, LinkedHashSet<FinanceFileDTO> cryptos) {
+    private void scrapDataFromSecondSection(Document doc, LinkedHashSet<FinanceDetail> cryptos) {
         Elements rows = doc.select(secondSectionRowsSelector);
         for (Element row : rows) {
             Element link = row.selectFirst(linkSelector);
@@ -175,17 +183,14 @@ public class CoinmarketcapService implements CryptoService {
                 String uri = extractUri(link.attr(linkAttribute));
 
                 if (!name.isBlank() && !symbol.isBlank() && !uri.isBlank()) {
-                    cryptos.add(new FinanceFileDTO(name, symbol, uri));
+                    var financeDetail = FinanceDetail.builder()
+                            .name(name)
+                            .symbol(symbol)
+                            .uri(uri)
+                            .build();
+                    cryptos.add(financeDetail);
                 }
             }
         }
-    }
-
-    private void sortAndSaveToFile(LinkedHashSet<FinanceFileDTO> cryptos) {
-        var sortedCryptos = cryptos.stream()
-                .sorted(Comparator.comparing(FinanceFileDTO::getName))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        financeFileManager.writeDataToFile(sortedCryptos, assetType);
     }
 }
