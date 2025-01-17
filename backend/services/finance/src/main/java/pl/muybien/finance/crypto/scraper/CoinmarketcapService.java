@@ -1,8 +1,6 @@
 package pl.muybien.finance.crypto.scraper;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,8 +26,6 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Getter
-@Setter
 @Slf4j
 public class CoinmarketcapService implements CryptoService {
 
