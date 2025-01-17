@@ -18,7 +18,9 @@ public class FinanceUpdater {
                 .sorted(Comparator.comparing(FinanceDetail::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        saveFinanceToDatabase(assetType, sortedFinances);
+        if (!sortedFinances.isEmpty()) {
+            saveFinanceToDatabase(assetType, sortedFinances);
+        }
     }
 
     private void saveFinanceToDatabase(String assetType, LinkedHashSet<FinanceDetail> sortedFinances) {
