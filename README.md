@@ -30,7 +30,6 @@ bases and asset types as market demands evolve.
 ## Tech Stack
 
 - **Backend**: Java 23, SpringBoot 6, Kafka
-- **Frontend**: Angular 18
 - **Database**: PostgreSQL and MongoDB for NoSQL
 - **Authentication**: OAuth2, Keyclock
 - **Cloud**: Docker, Eureka

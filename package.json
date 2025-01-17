@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "keycloak-angular": "^16.1.0",
-    "keycloak-js": "^26.0.7"
-  }
-}
