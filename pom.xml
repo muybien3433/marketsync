@@ -38,9 +38,18 @@
                 <groupId>com.github.ferstl</groupId>
                 <artifactId>depgraph-maven-plugin</artifactId>
                 <version>4.0.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>graph</goal>
+                        </goals>
+                        <configuration>
+                            <outputFileName>dependency-graph.json</outputFileName>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
 
 </project>
