@@ -4,5 +4,5 @@ export const environment = {
 
   keycloakUrl: 'http://localhost:8880',
   keycloakRealm: 'master',
-  keycloakClientId: 'angular-client'
+  keycloakClientId: 'angular'
 };

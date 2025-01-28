@@ -41,7 +41,7 @@ export class EditAssetComponent {
     if (asset) {
       this.assetId = asset.id;
       this.editAssetForm = this.fb.group({
-        originalType: [asset.type],
+        originalType: [asset.assetType],
         type: [{ value: '', disabled: true }],
         uri: [{ value: asset.name, disabled: true }],
         count: [asset.count, [Validators.required, Validators.min(0.001)]],
@@ -49,7 +49,7 @@ export class EditAssetComponent {
       });
 
       this.translate
-        .get(`asset.type.${asset.type}`)
+        .get(`asset.type.${asset.assetType}`)
         .subscribe(translatedType => {
           this.editAssetForm.get('type')?.setValue(translatedType);
         });

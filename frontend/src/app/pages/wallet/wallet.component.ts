@@ -8,11 +8,13 @@ import {
 } from "./wallet-footer-navbar/wallet-footer-navbar.component";
 import {environment} from '../../../environments/environment.development';
 import {API_ENDPOINTS} from '../../services/api-endpoints';
+import {PreferenceService} from '../../services/preference-service';
+import {CurrencyComponent} from '../currency/currency.component';
 
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe],
+  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe, CurrencyComponent],
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css'],
 })
@@ -21,15 +23,18 @@ export class WalletComponent {
   protected readonly Object = Object;
   groupedAssets: { [key: string]: Asset[] } = {};
 
-  constructor(private translate: TranslateService, private http: HttpClient) {
+  constructor(private translate: TranslateService, private http: HttpClient, private preference: PreferenceService) {
     this.fetchWalletAssets();
   }
 
   fetchWalletAssets() {
-    this.http.get<Asset[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`).subscribe({
+    const preferredCurrency = this.preference.getPreferredCurrency();
+
+    this.http.get<Asset[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${preferredCurrency}`).subscribe({
       next: (assets) => {
         this._assets = Array.isArray(assets) ? assets : [];
         this.groupAssetsByType();
+        console.log(preferredCurrency);
       },
       error: (err) => {
         console.error(err);
@@ -42,7 +47,7 @@ export class WalletComponent {
     this.groupedAssets = {};
     this._assets.forEach((asset) => {
       this.translate
-          .get(`asset.type.${asset.type}`)
+          .get(`asset.type.${asset.assetType}`)
           .subscribe((translatedType) => {
             this.groupedAssets[translatedType] = this.groupedAssets[translatedType] || [];
             this.groupedAssets[translatedType].push(asset);
