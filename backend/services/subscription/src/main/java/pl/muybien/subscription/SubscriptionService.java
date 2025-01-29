@@ -10,6 +10,7 @@ import pl.muybien.customer.CustomerClient;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.exception.SubscriptionNotFoundException;
 import pl.muybien.finance.FinanceClient;
+import pl.muybien.finance.FinanceResponse;
 import pl.muybien.subscription.data.Subscription;
 import pl.muybien.subscription.data.SubscriptionDetail;
 import pl.muybien.subscription.data.SubscriptionRepository;
@@ -37,19 +38,9 @@ public class SubscriptionService {
     public void createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
         var finance = financeClient.findFinanceWithDefaultCurrency(request.assetType(), request.uri());
-        System.out.println(finance.currency());
-        System.out.println(finance.name());
-        System.out.println(finance.assetType());
-        System.out.println(finance.currency());
-
-        BigDecimal value = BigDecimal.valueOf(request.value());
-        if (!request.currency().equals(finance.currency())) {
-            String exchange = financeClient.findExchangeRate(request.currency(), finance.currency());
-            value = BigDecimal.valueOf(request.value()).multiply(new BigDecimal(exchange));
-        }
-
         var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
                 .orElseGet(Subscription::new);
+        BigDecimal value = resolveValueByCurrency(request, finance);
 
         var subscriptionDetail = SubscriptionDetail.builder()
                 .id(UUID.randomUUID().toString())
@@ -75,15 +66,9 @@ public class SubscriptionService {
     public void createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
         var finance = financeClient.findFinanceWithDefaultCurrency(request.assetType(), request.uri());
-
-        BigDecimal value = BigDecimal.valueOf(request.value());
-        if (!request.currency().equals(finance.currency())) {
-            String exchange = financeClient.findExchangeRate(request.currency(), finance.currency());
-            value = BigDecimal.valueOf(request.value()).multiply(new BigDecimal(exchange));
-        }
-
         var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
                 .orElseGet(Subscription::new);
+        BigDecimal value = resolveValueByCurrency(request, finance);
 
         var subscriptionDetail = SubscriptionDetail.builder()
                 .id(UUID.randomUUID().toString())
@@ -103,6 +88,15 @@ public class SubscriptionService {
                 .add(subscriptionDetail);
 
         subscriptionRepository.save(subscription);
+    }
+
+    BigDecimal resolveValueByCurrency(SubscriptionRequest request, FinanceResponse finance) {
+        BigDecimal value = BigDecimal.valueOf(request.value());
+        if (!request.currency().equals(finance.currency())) {
+            String exchange = financeClient.findExchangeRate(request.currency(), finance.currency());
+            value = BigDecimal.valueOf(request.value()).multiply(new BigDecimal(exchange));
+        }
+        return value;
     }
 
     @Transactional
