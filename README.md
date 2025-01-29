@@ -30,7 +30,7 @@ bases and asset types as market demands evolve.
 ## Tech Stack
 
 - **Backend**: Java 23, SpringBoot 6, Kafka
-- **Database**: PostgreSQL and MongoDB for NoSQL
+- **Database**: PostgreSQL for SQL and MongoDB for NoSQL
 - **Authentication**: OAuth2, Keyclock
 - **Cloud**: Docker, Eureka
 - **Testing**: JUnit 5
@@ -40,7 +40,7 @@ bases and asset types as market demands evolve.
 
 Ensure you have the following installed before running the project:
 
-- **Java**: 23
+- **Java 23**
 - **Maven**
 - **Docker**
 
