@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SubscriptionService {
 
+    private final ArrayList ar = new ArrayList();
     private final CustomerClient customerClient;
     private final FinanceClient financeClient;
     private final SubscriptionRepository subscriptionRepository;
