@@ -3,7 +3,10 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import { HttpClient } from '@angular/common/http';
 import {TranslatePipe} from '@ngx-translate/core';
 import {WalletFooterNavbarComponent} from '../wallet-footer-navbar/wallet-footer-navbar.component';
-import {NgForOf, NgIf} from '@angular/common';
+import {NgIf} from '@angular/common';
+import {
+  AssetSelectionComponent
+} from '../asset-selection-list/asset-selection/asset-selection.component';
 import {AssetService} from '../../../services/asset-service';
 import {environment} from '../../../../environments/environment.development';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
@@ -16,8 +19,8 @@ import {API_ENDPOINTS} from '../../../services/api-endpoints';
     TranslatePipe,
     WalletFooterNavbarComponent,
     NgIf,
-    ReactiveFormsModule,
-    NgForOf
+    AssetSelectionComponent,
+    ReactiveFormsModule
   ],
   templateUrl: './add-asset.component.html',
   styleUrls: ['./add-asset.component.css'],
