@@ -1,0 +1,18 @@
+<div class="container" [formGroup]="addAssetForm">
+  <mat-form-field class="asset-type">
+    <mat-label>{{ 'asset.type' | translate }}</mat-label>
+    <mat-select
+      formControlName="type"
+      (selectionChange)="onTypeChange($event.value)"
+      panelClass="custom-select-panel">
+      <mat-option *ngFor="let type of assetTypes" [value]="type">
+        {{ type | titlecase }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <app-asset-list
+    class="asset-list"
+    [assets]="assets">
+  </app-asset-list>
+</div>

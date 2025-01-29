@@ -23,8 +23,9 @@ import {catchError, map, of} from 'rxjs';
   templateUrl: './asset-selection.component.html',
   styleUrl: './asset-selection.component.css'
 })
-export class AssetSelectionComponent {
-  assetTypes = ['cryptos', 'stocks']
+export class AssetSelectionComponent implements OnInit {
+  assetTypes = ['crypto', 'stock']
+  selectedType = 'crypto'; // default
   assets: any[] = [];
 
   @Output() assetSelected = new EventEmitter<string>();
@@ -38,8 +39,11 @@ export class AssetSelectionComponent {
     });
   }
 
+  ngOnInit() {
+    this.fetchAssets(this.selectedType);
+  }
+
   fetchAssets(type: string) {
-    console.log(`${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${type}`);
     this.http
       .get<any[]>(`${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${type}`)
       .pipe(
@@ -56,6 +60,7 @@ export class AssetSelectionComponent {
   }
 
   onTypeChange(type: string) {
+    this.selectedType = type;
     this.fetchAssets(type);
   }
 }

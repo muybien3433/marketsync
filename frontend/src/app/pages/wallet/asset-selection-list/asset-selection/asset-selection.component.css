@@ -1,0 +1,15 @@
+.container {
+  align-items: flex-start;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  color: black;
+}
+
+.custom-select-panel {
+  position: absolute !important; /* Ensure it doesn’t get misplaced */
+  top: 100% !important; /* Open directly below the mat-select */
+  left: 0; /* Align the panel with the left side of the select input */
+  width: 100% !important; /* Ensure the panel matches the select width */
+  z-index: 9999; /* Make sure the dropdown appears above other elements */
+}

@@ -1,13 +1,8 @@
 <form [formGroup]="addAssetForm" (ngSubmit)="onSubmit()">
   <div>
 
-    <div class="currency-list">
-      <div
-        *ngFor="let currency of Currency"
-        [class.selected]="selectedCurrency === "
-        selectCurrency()
-        >
-      </div>
+    <div>
+      <app-asset-selection></app-asset-selection>
     </div>
 
     <div>
@@ -20,7 +15,7 @@
         required
       />
       <div *ngIf="addAssetForm.get('count')?.invalid && addAssetForm.get('count')?.touched">
-        <small class="error">{{ 'error.count.error' | translate }}</small>
+        <small class="error">{{ 'common.count.error' | translate }}</small>
       </div>
     </div>
 

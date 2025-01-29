@@ -43,9 +43,10 @@ export class AssetHistoryComponent {
   }
 
   deleteAsset(assetId: number) {
-    this.http.delete(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${assetId}`).subscribe({
+    this.http.delete(`${environment.baseUrl}${API_ENDPOINTS.WALLET_HISTORY}/${assetId}`).subscribe({
       next: () => {
         this._assets = this._assets.filter(asset => asset.id !== assetId);
+        console.log(`Asset with ID ${assetId} deleted successfully.`);
       },
       error: (err) => {
         console.error(err);

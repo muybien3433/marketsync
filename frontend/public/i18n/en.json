@@ -12,7 +12,6 @@
     "current.price": "Current Price",
     "history": "History",
     "sum": "Sum",
-    "currency": "Currency",
     "type.to.search": "Type to search"
   },
 
@@ -41,7 +40,8 @@
   },
 
   "wallet": {
-    "name": "Your Wallet"
+    "name": "Your Wallet",
+    "change.currency": "Change currency"
   },
 
   "success": {

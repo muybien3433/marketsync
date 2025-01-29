@@ -1,0 +1,20 @@
+th {
+  background: burlywood;
+  color: black;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+  color: black;
+}
+
+.table-header {
+  text-align: left;
+  background: antiquewhite;
+}
+
+.table-footer {
+  text-align: left;
+  background: antiquewhite;
+}

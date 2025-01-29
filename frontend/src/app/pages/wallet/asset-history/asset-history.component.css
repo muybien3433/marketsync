@@ -1,0 +1,10 @@
+th {
+  background: burlywood;
+  color: black;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+  color: black;
+}
