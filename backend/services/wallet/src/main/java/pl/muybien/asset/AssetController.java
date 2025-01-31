@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.muybien.asset.dto.AssetAggregateDTO;
+import pl.muybien.asset.dto.AssetHistoryDTO;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class AssetController {
     private final AssetService service;
 
     @GetMapping("/{currency}")
-    public ResponseEntity<List<AssetDTO>> findAllCustomerAssets(
+    public ResponseEntity<List<AssetAggregateDTO>> findAllCustomerAssets(
             @RequestHeader("Authorization") String authHeader,
             @PathVariable("currency") String currency
     ) {
@@ -39,7 +41,7 @@ public class AssetController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("/{asset-id}")
+    @PatchMapping("/{asset-id}")
     public ResponseEntity<String> updateAsset(
             @RequestHeader("Authorization") String authHeader,
             @RequestBody @Valid AssetRequest request,

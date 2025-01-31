@@ -26,31 +26,33 @@ const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: Http
 
 const Keycloak = typeof window !== 'undefined' ? import('keycloak-js') : null;
 
-export function initializeKeycloak(keycloak: KeycloakService): () => Promise<boolean> {
-  if (Keycloak !== null) {
-    return () =>
-      keycloak.init({
+function initializeKeycloak(keycloak: KeycloakService): () => Promise<boolean> {
+  return async () => {
+    if (typeof window === 'undefined') return true;
+
+    try {
+      await keycloak.init({
         config: {
           url: environment.keycloakUrl,
           realm: environment.keycloakRealm,
           clientId: environment.keycloakClientId
         },
         initOptions: {
-          onLoad: 'check-sso',
+          onLoad: 'login-required',
           checkLoginIframe: false,
+          enableLogging: true,
+          pkceMethod: 'S256',
+          flow: 'standard',
         },
         bearerExcludedUrls: ['']
-      }).then(() => {
-        console.log('Keycloak Initialized');
-        return true;
-      }).catch((error) => {
-        console.error(error);
-        return false;
       });
-  } else {
-    return () =>
-      new Promise<boolean>((resolve) => resolve(true));
-  }
+      console.log('Keycloak Initialized');
+      return true;
+    } catch (error) {
+      console.error('Keycloak Initialization Failed:', error);
+      return false;
+    }
+  };
 }
 
 const KeycloakInitializerProvider: Provider = {

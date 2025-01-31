@@ -14,22 +14,20 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class FinanceService {
 
-    private static final String cryptos = "cryptos";
-
     private final CryptoService cryptoService;
     private final CurrencyService currencyService;
     private final FinanceRepository repository;
 
     FinanceResponse fetchFinance(String assetType, String uri, String currency) {
-        return switch (assetType) {
-            case cryptos -> cryptoService.fetchCrypto(uri, assetType, currency);
+        return switch (AssetType.fromString(assetType)) {
+            case CRYPTOS -> cryptoService.fetchCrypto(uri, assetType, currency);
             default -> null;
         };
     }
 
     FinanceResponse fetchFinance(String assetType, String uri) {
-        return switch (assetType) {
-            case cryptos -> cryptoService.fetchCrypto(uri, assetType);
+        return switch (AssetType.fromString(assetType)) {
+            case CRYPTOS -> cryptoService.fetchCrypto(uri, assetType);
             default -> null;
         };
     }
@@ -42,7 +40,7 @@ public class FinanceService {
     }
 
     Set<FinanceDetail> displayAvailableFinance(String assetType) {
-        return repository.findFinanceByAssetType(assetType)
+        return repository.findFinanceByAssetType(assetType.toLowerCase())
                 .map(Finance::getFinanceDetails)
                 .orElse(Collections.emptySet());
     }

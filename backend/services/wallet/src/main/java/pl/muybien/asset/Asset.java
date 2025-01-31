@@ -25,6 +25,7 @@ public class Asset {
     @EqualsAndHashCode.Include
     private Long id;
     private String name;
+    private String symbol;
     private String uri;
     private BigDecimal count;
     private BigDecimal purchasePrice;

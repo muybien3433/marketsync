@@ -1,11 +1,6 @@
 <form [formGroup]="editAssetForm" (ngSubmit)="onSubmit()">
   <div>
     <div>
-      <label for="type">{{ 'asset.type' | translate }}</label>
-      <input type="text" id="type" formControlName="type" readonly />
-    </div>
-
-    <div>
       <label for="uri">{{ 'asset.name' | translate }}</label>
       <input type="text" id="uri" formControlName="uri" readonly />
     </div>
@@ -28,7 +23,6 @@
 
     <button type="submit" [disabled]="isSubmitting">{{ 'asset.edit.asset' | translate }}</button>
 
-    <div *ngIf="successMessage" class="success">{{ 'success.asset.edit.success' | translate }}</div>
     <div *ngIf="errorMessage" class="error">{{ 'error.asset.edit.fail' | translate }}</div>
   </div>
   <app-wallet-footer-navbar></app-wallet-footer-navbar>

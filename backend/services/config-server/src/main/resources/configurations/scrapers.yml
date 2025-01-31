@@ -10,6 +10,7 @@ coinmarketcap:
   #It's used for both sections
   name-selector: span[data-role=coin-name]
   name-attribute: title
+  symbol-selector: span[data-role=coin-symbol]
   price-selector: span[data-test=text-cdp-price-display]
   link-selector: a.cmc-link
   link-attribute: href

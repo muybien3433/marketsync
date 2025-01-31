@@ -1,6 +1,7 @@
-package pl.muybien.asset;
+package pl.muybien.asset.dto;
 
 import lombok.Builder;
+import pl.muybien.asset.AssetType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,9 +10,11 @@ import java.time.LocalDateTime;
 public record AssetHistoryDTO(
         Long id,
         String name,
-        AssetType assetType,
+        String symbol,
         BigDecimal count,
+        String currency,
         BigDecimal purchasePrice,
-        LocalDateTime createdDate
+        LocalDateTime createdDate,
+        AssetType assetType
 ) {
 }

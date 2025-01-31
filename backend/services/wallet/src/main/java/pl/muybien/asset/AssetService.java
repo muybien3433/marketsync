@@ -4,6 +4,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.asset.dto.AssetAggregateDTO;
+import pl.muybien.asset.dto.AssetGroupDTO;
+import pl.muybien.asset.dto.AssetHistoryDTO;
 import pl.muybien.customer.CustomerClient;
 import pl.muybien.exception.AssetNotFoundException;
 import pl.muybien.exception.OwnershipException;
@@ -27,9 +30,12 @@ public class AssetService {
     @Transactional
     void createAsset(String authHeader, AssetRequest request) {
         var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
+
         repository.save(Asset.builder()
                 .assetType(AssetType.fromString(request.assetType()))
-                .name(request.uri())
+                .name(finance.name().substring(0, 1).toUpperCase() + finance.name().substring(1))
+                .symbol(finance.symbol())
                 .uri(request.uri())
                 .count(request.count().setScale(2, RoundingMode.HALF_UP))
                 .purchasePrice(request.purchasePrice().setScale(2, RoundingMode.HALF_UP))
@@ -86,41 +92,63 @@ public class AssetService {
     }
 
     @Transactional(readOnly = true)
-    List<AssetDTO> findAllCustomerAssets(String authHeader, String desiredCurrency) {
+    List<AssetAggregateDTO> findAllCustomerAssets(String authHeader, String desiredCurrency) {
         var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
-
         var groupedAssets = repository
                 .findAndAggregateAssetsByCustomerId(customerId)
                 .orElse(Collections.emptyList());
 
-        var aggregatedAssets = new ArrayList<AssetDTO>();
+        var aggregatedAssets = new ArrayList<AssetAggregateDTO>();
         groupedAssets.forEach(asset -> aggregatedAssets.add(aggregateAsset(asset, desiredCurrency)));
 
         return aggregatedAssets;
     }
 
-    private AssetDTO aggregateAsset(AssetGroupDTO asset, String desiredCurrency) {
+    private AssetAggregateDTO aggregateAsset(AssetGroupDTO asset, String desiredCurrency) {
         String type = asset.assetType().name().toLowerCase();
-        var finance = financeClient.findFinanceByTypeAndUriAndCurrency(type, asset.uri(), desiredCurrency);
+        var finance = financeClient.findFinanceByTypeAndUri(type, asset.uri());
 
-        BigDecimal value = asset.count().multiply(finance.price()).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal averagePurchasePrice = BigDecimal.valueOf(asset.averagePurchasePrice()).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal totalInvested = averagePurchasePrice.multiply(asset.count()).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal profit = value.subtract(totalInvested).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal profitInPercentage = totalInvested.compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO :
-                profit.multiply(new BigDecimal("100")).divide(totalInvested, 2, RoundingMode.HALF_UP);
+        BigDecimal currentPrice;
+        BigDecimal value;
+        BigDecimal averagePurchasePrice;
+        BigDecimal totalInvested;
+        BigDecimal totalValue;
+        BigDecimal profit;
+        BigDecimal profitPercentage;
 
-        return AssetDTO.builder()
+        boolean assetCurrencyEqualsFinanceResponseCurrency = asset.currency().equalsIgnoreCase(finance.currency());
+        if (assetCurrencyEqualsFinanceResponseCurrency) {
+            currentPrice = finance.price();
+        } else {
+            var exchangeRate = financeClient.findExchangeRate(finance.currency(), asset.currency());
+            currentPrice = finance.price().multiply(exchangeRate);
+        }
+
+        value = asset.count().multiply(currentPrice);
+        averagePurchasePrice = BigDecimal.valueOf(asset.averagePurchasePrice());
+        totalInvested = averagePurchasePrice.multiply(asset.count());
+        totalValue = value;
+        profit = totalValue.subtract(totalInvested);
+        profitPercentage = totalInvested.compareTo(BigDecimal.ZERO) > 0
+                ? profit.divide(totalInvested, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))
+                : BigDecimal.ZERO;
+
+        BigDecimal exchangeRateToDesired = asset.currency().equalsIgnoreCase(desiredCurrency) ?
+                BigDecimal.ONE :
+                financeClient.findExchangeRate(asset.currency(), desiredCurrency);
+
+        return AssetAggregateDTO.builder()
                 .name(asset.name())
+                .symbol(asset.symbol())
                 .assetType(type)
                 .count(asset.count())
-                .currentPrice(finance.price().setScale(2, RoundingMode.HALF_UP))
-                .requestedCurrency(asset.currency())
-                .currency(finance.currency())
+                .currentPrice(currentPrice)
+                .currency(asset.currency())
                 .value(value)
                 .averagePurchasePrice(averagePurchasePrice)
                 .profit(profit)
-                .profitInPercentage(profitInPercentage)
+                .profitInPercentage(profitPercentage)
+                .exchangeRateToDesired(exchangeRateToDesired)
                 .build();
     }
 }

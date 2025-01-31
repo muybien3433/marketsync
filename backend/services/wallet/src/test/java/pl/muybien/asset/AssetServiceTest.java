@@ -7,6 +7,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import pl.muybien.asset.dto.AssetAggregateDTO;
+import pl.muybien.asset.dto.AssetGroupDTO;
+import pl.muybien.asset.dto.AssetHistoryDTO;
 import pl.muybien.customer.CustomerClient;
 import pl.muybien.customer.CustomerResponse;
 import pl.muybien.exception.AssetNotFoundException;
@@ -211,10 +214,10 @@ class AssetServiceTest {
                 .thenReturn(new FinanceResponse("Ethereum", BigDecimal.valueOf(35000), currency, AssetType.CRYPTOS.name()));
 
 
-        List<AssetDTO> assets = assetService.findAllCustomerAssets(authHeader, currency);
+        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(authHeader, currency);
 
         assertThat(assets).hasSize(1);
-        AssetDTO asset = assets.getFirst();
+        AssetAggregateDTO asset = assets.getFirst();
         assertThat(asset.name()).isEqualTo("Ethereum");
         assertThat(asset.currentPrice()).isEqualTo(BigDecimal.valueOf(35000).setScale(2, RoundingMode.HALF_UP));
     }

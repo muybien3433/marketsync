@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
-import { WalletFooterNavbarComponent } from '../../wallet-footer-navbar/wallet-footer-navbar.component';
+import { WalletFooterNavbarComponent } from '../../navbar/wallet-footer-navbar/wallet-footer-navbar.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Asset } from '../../asset-model';
-import {environment} from '../../../../../environments/environment.development';
-import {API_ENDPOINTS} from '../../../../services/api-endpoints';
+import { AssetAggregate } from '../../../models/asset-aggregate';
+import {environment} from '../../../../environments/environment.development';
+import {API_ENDPOINTS} from '../../../services/api-endpoints';
+import {AssetHistory} from "../../../models/asset-history";
 
 @Component({
   selector: 'app-edit-asset',
@@ -23,44 +24,27 @@ import {API_ENDPOINTS} from '../../../../services/api-endpoints';
   styleUrls: ['./edit-asset.component.css']
 })
 export class EditAssetComponent {
-  editAssetForm: FormGroup;
+  editAssetForm!: FormGroup;
   isSubmitting = false;
-  successMessage: string = '';
   errorMessage: string = '';
   assetId: number | null = null;
 
   constructor(
-    private fb: FormBuilder,
-    private http: HttpClient,
-    private router: Router,
-    private translate: TranslateService
+      private fb: FormBuilder,
+      private http: HttpClient,
+      private router: Router
   ) {
     const navigation = this.router.getCurrentNavigation();
-    const asset = navigation?.extras.state?.['asset'] as Asset;
+    const asset = navigation?.extras.state?.['asset'] as AssetHistory;
 
     if (asset) {
       this.assetId = asset.id;
       this.editAssetForm = this.fb.group({
-        originalType: [asset.type],
-        type: [{ value: '', disabled: true }],
+        assetType: [{ value: asset.assetType, disabled: true }],
         uri: [{ value: asset.name, disabled: true }],
         count: [asset.count, [Validators.required, Validators.min(0.001)]],
-        purchasePrice: [asset.averagePurchasePrice, [Validators.required, Validators.min(0.01)]],
-      });
-
-      this.translate
-        .get(`asset.type.${asset.type}`)
-        .subscribe(translatedType => {
-          this.editAssetForm.get('type')?.setValue(translatedType);
-        });
-    } else {
-      this.errorMessage = 'No asset data provided. Redirecting back.';
-      this.editAssetForm = this.fb.group({
-        originalType: [''],
-        type: [{ value: '', disabled: true }],
-        uri: [{ value: '', disabled: true }],
-        count: [0, [Validators.required, Validators.min(0.01)]],
-        purchasePrice: [0, [Validators.required, Validators.min(0.01)]],
+        purchasePrice: [asset.purchasePrice, [Validators.required, Validators.min(0.01)]],
+        currency: [asset.currency, [Validators.required, Validators.minLength(3)]],
       });
     }
   }
@@ -73,15 +57,16 @@ export class EditAssetComponent {
     this.isSubmitting = true;
 
     const assetData = {
-      type: this.editAssetForm.get('originalType')?.value?.toUpperCase(),
+      assetType: this.editAssetForm.get('assetType')?.value,
       uri: this.editAssetForm.get('uri')?.value,
       count: this.editAssetForm.get('count')?.value,
       purchasePrice: this.editAssetForm.get('purchasePrice')?.value,
+      currency: this.editAssetForm.get('currency')?.value,
     };
 
     this.editAsset(assetData)?.subscribe({
       next: () => {
-        this.successMessage = 'Asset updated successfully.';
+        this.router.navigate(['asset-history']);
         this.isSubmitting = false;
       },
       error: () => {
@@ -91,7 +76,7 @@ export class EditAssetComponent {
     });
   }
 
-  editAsset(assetData: { type: string; uri: string; count: number; purchasePrice: number }) {
+  editAsset(assetData: { assetType: string; uri: string; count: number; purchasePrice: number; currency: string }) {
     if (this.assetId === null) {
       this.errorMessage = 'Invalid asset ID.';
       return;

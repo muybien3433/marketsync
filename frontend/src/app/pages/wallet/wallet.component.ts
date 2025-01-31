@@ -1,39 +1,51 @@
-import { Component } from '@angular/core';
-import {CurrencyPipe, NgForOf, NgStyle} from '@angular/common';
+import {ChangeDetectorRef, Component, OnChanges, SimpleChanges} from '@angular/core';
+import {CurrencyPipe, NgForOf, NgIf, NgStyle, SlicePipe, UpperCasePipe} from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
-import {Asset} from "./asset-model";
+import {AssetAggregate} from "../../models/asset-aggregate";
 import {
   WalletFooterNavbarComponent
-} from "./wallet-footer-navbar/wallet-footer-navbar.component";
+} from "../navbar/wallet-footer-navbar/wallet-footer-navbar.component";
 import {environment} from '../../../environments/environment.development';
 import {API_ENDPOINTS} from '../../services/api-endpoints';
+import {PreferenceService} from "../../services/preference-service";
+import {CurrencyComponent} from "../currency/currency.component";
 
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe],
+  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe, CurrencyComponent, NgIf, SlicePipe, UpperCasePipe],
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css'],
 })
 export class WalletComponent {
-  private _assets: Asset[] = [];
+  private _assets: AssetAggregate[] = [];
   protected readonly Object = Object;
-  groupedAssets: { [key: string]: Asset[] } = {};
+  groupedAssets: { [key: string]: AssetAggregate[] } = {};
+  selectedCurrency: string;
+  isLoading: boolean = false;
 
-  constructor(private translate: TranslateService, private http: HttpClient) {
+  constructor(
+      private translate: TranslateService,
+      private http: HttpClient,
+      private preferenceService: PreferenceService
+  ) {
+    this.selectedCurrency = this.preferenceService.getPreferredCurrency() || 'USD';
     this.fetchWalletAssets();
   }
 
   fetchWalletAssets() {
-    this.http.get<Asset[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`).subscribe({
+    this.isLoading = true;
+    this.http.get<AssetAggregate[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`).subscribe({
       next: (assets) => {
         this._assets = Array.isArray(assets) ? assets : [];
         this.groupAssetsByType();
+        this.isLoading = false;
       },
       error: (err) => {
         console.error(err);
         this._assets = [];
+        this.isLoading = false;
       },
     });
   }
@@ -42,7 +54,7 @@ export class WalletComponent {
     this.groupedAssets = {};
     this._assets.forEach((asset) => {
       this.translate
-          .get(`asset.type.${asset.type}`)
+          .get(`asset.assetType.${asset.assetType}`)
           .subscribe((translatedType) => {
             this.groupedAssets[translatedType] = this.groupedAssets[translatedType] || [];
             this.groupedAssets[translatedType].push(asset);
@@ -50,19 +62,37 @@ export class WalletComponent {
     });
   }
 
+  getTotalValue(): number {
+    return this._assets.reduce((total, asset) => {
+      const valueInSelectedCurrency = asset.value * asset.exchangeRateToDesired;
+      return total + valueInSelectedCurrency;
+    }, 0);
+  }
+
   getTotalProfit(): number {
-    return parseFloat(this._assets.reduce((sum, asset) => sum + asset.profit, 0).toFixed(2));
+    return this._assets.reduce((total, asset) => {
+      const profitInSelectedCurrency = asset.profit * asset.exchangeRateToDesired;
+      return total + profitInSelectedCurrency;
+    }, 0);
   }
 
   getTotalProfitInPercentage(): number {
-    const totalValue = this._assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
-    const totalProfit = this._assets.reduce((sum, asset) => sum + ((asset.profitInPercentage || 0) * asset.value), 0);
-    const profitInPercentage = totalValue > 0 ? (totalProfit / totalValue) : 0;
+    const totalValue = this.getTotalValue();
+    const totalProfit = this.getTotalProfit();
 
+    if (totalValue === 0) return 0;
+
+    const profitInPercentage = (totalProfit / totalValue) * 100;
     return parseFloat(profitInPercentage.toFixed(2));
   }
 
-  getTotalValue() {
-    return this._assets.reduce((total, asset) => total +(asset.value || 0), 0);
+  getCurrencyForSum() {
+    return this.selectedCurrency;
+  }
+
+  onCurrencyChange(newCurrency: string) {
+    this.preferenceService.setPreferredCurrency(newCurrency);
+    this.selectedCurrency = newCurrency;
+    this.fetchWalletAssets();
   }
 }

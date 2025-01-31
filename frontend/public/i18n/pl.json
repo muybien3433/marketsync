@@ -9,9 +9,10 @@
     "asset": "Aktywo",
     "name": "Nazwa",
     "value": "Wartość",
-    "current.price": "Aktualna Cena",
+    "current.price": "Cena Jednostki",
     "history": "Historia",
     "sum": "Suma",
+    "currency": "Waluta",
     "type.to.search": "Wpisz by wyszukać"
   },
 
@@ -50,11 +51,12 @@
   },
 
   "error": {
-    "number.should.be.positive": "Should be a positive number",
-    "asset.is.required": "Asset is required",
-    "asset.type.required": "Asset type is required",
-    "purchase.price.should.be.positive": "Purchase price should be a positive number",
-    "asset.add.fail": "Failed to add asset. Please try again",
-    "asset.edit.fail": "Failed to edit asset. Please try again"
+    "currency.is.required": "Waluta jest wymagana",
+    "count.should.be.positive": "Ilość powinna być liczbą dodatnią",
+    "asset.is.required": "Aktywo jest wymagane",
+    "asset.type.required": "Typ aktywa jest wymagany",
+    "purchase.price.should.be.positive": "Cena zakupu powinna być liczbą dodatnią",
+    "asset.add.fail": "Nie udało się dodać aktywa. Spróbuj ponownie",
+    "asset.edit.fail": "Nie udało się edytować aktywa. Spróbuj ponownie"
   }
 }

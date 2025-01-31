@@ -9,9 +9,10 @@
     "asset": "Asset",
     "name": "Name",
     "value": "Value",
-    "current.price": "Current Price",
+    "current.price": "Unit Price",
     "history": "History",
     "sum": "Sum",
+    "currency": "Currency",
     "type.to.search": "Type to search"
   },
 
@@ -39,9 +40,13 @@
     "delete.asset": "Delete asset"
   },
 
+  "asset-type": {
+    "crypto": "Crypto",
+    "stock": "Stock"
+  },
+
   "wallet": {
-    "name": "Your Wallet",
-    "change.currency": "Change currency"
+    "name": "Your Wallet"
   },
 
   "success": {
@@ -50,7 +55,8 @@
   },
 
   "error": {
-    "number.should.be.positive": "Should be a positive number",
+    "currency.is.required": "Currency is required",
+    "count.should.be.positive": "Count should be a positive number",
     "asset.is.required": "Asset is required",
     "asset.type.required": "Asset type is required",
     "purchase.price.should.be.positive": "Purchase price should be a positive number",

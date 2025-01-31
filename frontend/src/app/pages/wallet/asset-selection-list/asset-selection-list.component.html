@@ -1,0 +1,31 @@
+<div class="container" [formGroup]="addAssetForm">
+    <mat-form-field class="asset-type">
+        <mat-label>{{ 'asset.type' | translate }}</mat-label>
+        <mat-select
+                formControlName="assetType"
+                (selectionChange)="onTypeSelect($event.value)"
+                panelClass="custom-select-panel">
+            <mat-option *ngFor="let assetType of assetTypeOptions" [value]="assetType">
+                {{ assetType | titlecase }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <ng-container *ngIf="addAssetForm.get('assetType')?.value">
+        <div>
+            <mat-form-field class="inline-form-field">
+                <input matInput formControlName="searchTerm" placeholder="{{ 'common.type.to.search' | translate }}">
+            </mat-form-field>
+
+            <div class="asset-list">
+                <div *ngFor="let asset of assets | filterByName: addAssetForm.get('searchTerm')?.value"
+                     class="asset-item"
+                     [class.selected]="selectedAssetUri === asset.uri"
+                     (click)="onAssetSelect(asset.uri)">
+                    ({{ asset.symbol }}) {{ asset.name }}
+                </div>
+            </div>
+        </div>
+
+    </ng-container>
+</div>

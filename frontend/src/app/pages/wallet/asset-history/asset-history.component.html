@@ -1,27 +1,31 @@
 <div class="container">
-  <table class="table table-hover">
-    <thead class="table-dark">
-    <tr>
-      <th>{{ 'asset.name' | translate }}</th>
-      <th>{{ 'common.count' | translate }}</th>
-      <th>{{ 'asset.purchase.price' | translate }}</th>
-      <th>{{ 'asset.investment.start.date' | translate }}</th>
-      <th>{{ 'common.action' | translate}}</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr class="table" *ngFor="let asset of _assets">
-      <td>{{ asset.name }}</td>
-      <td>{{ asset.count }}</td>
-      <td>{{ asset.purchasePrice }}</td>
-      <td>{{ asset.createdDate }}</td>
-      <td class="button-cell">
-        <button (click)="editAsset(asset)" class="btn btn-primary btn-sm">{{ 'common.edit' | translate }}</button>
-        <button (click)="deleteAsset(asset.id)" class="btn btn-danger btn-sm">{{ 'common.delete' | translate }}</button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-  <app-wallet-footer-navbar></app-wallet-footer-navbar>
+    <table class="table table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>{{ 'asset.name' | translate }}</th>
+            <th>{{ 'common.count' | translate }}</th>
+            <th>{{ 'common.currency' | translate }}</th>
+            <th>{{ 'asset.purchase.price' | translate }}</th>
+            <th>{{ 'asset.investment.start.date' | translate }}</th>
+            <th>{{ 'common.action' | translate }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="table" *ngFor="let asset of _assets">
+            <td>({{ asset.symbol }}) {{ asset.name }}</td>
+            <td>{{ asset.count }}</td>
+            <td>{{ asset.currency }}</td>
+            <td>{{ asset.purchasePrice }}</td>
+            <td>{{ asset.createdDate | date:'dd-MM-yyyy | | HH:mm:ss' }}</td>
+            <td class="button-cell">
+                <button (click)="editAsset(asset)" class="btn btn-primary btn-sm">{{ 'common.edit' | translate }}
+                </button>
+                <button (click)="deleteAsset(asset.id)"
+                        class="btn btn-danger btn-sm">{{ 'common.delete' | translate }}
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <app-wallet-footer-navbar></app-wallet-footer-navbar>
 </div>
-

@@ -5,7 +5,7 @@ import {AuthGuard} from './services/auth.guard';
 import {HomeComponent} from './pages/home/home.component';
 import {AddAssetComponent} from './pages/wallet/add-asset/add-asset.component';
 import {AssetHistoryComponent} from './pages/wallet/asset-history/asset-history.component';
-import {EditAssetComponent} from './pages/wallet/asset-history/edit-asset/edit-asset.component';
+import {EditAssetComponent} from './pages/wallet/edit-asset/edit-asset.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },

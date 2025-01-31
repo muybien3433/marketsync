@@ -26,8 +26,4 @@ export class WalletFooterNavbarComponent {
   assetHistory() {
     this.router.navigate(['/asset-history']);
   }
-
-  changeCurrency() {
-
-  }
 }
