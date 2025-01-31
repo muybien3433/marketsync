@@ -6,6 +6,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import pl.muybien.asset.dto.AssetAggregateDTO;
+import pl.muybien.asset.dto.AssetHistoryDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -32,7 +34,7 @@ class AssetControllerTest {
     void findAllCustomerAssets_shouldReturnAssetList() {
         String desiredCurrency = "USD";
         var assets = List.of(
-                new AssetDTO("Bitcoin", AssetType.CRYPTOS.name(), BigDecimal.valueOf(2),
+                new AssetAggregateDTO("Bitcoin", AssetType.CRYPTOS.name(), BigDecimal.valueOf(2),
                         BigDecimal.valueOf(30000), "USD", desiredCurrency, BigDecimal.valueOf(60000),
                         BigDecimal.valueOf(20000), BigDecimal.valueOf(10000), BigDecimal.valueOf(50))
         );

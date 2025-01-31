@@ -45,6 +45,8 @@ public class CoinmarketcapService implements CryptoService {
     private String nameSelector;
     @Value("${coinmarketcap.name-attribute}")
     private String nameAttribute;
+    @Value("${coinmarketcap.symbol-selector}")
+    private String symbolSelector;
     @Value("${coinmarketcap.price-selector}")
     private String priceSelector;
     @Value("${coinmarketcap.link-selector}")
@@ -103,6 +105,7 @@ public class CoinmarketcapService implements CryptoService {
             Document doc = Jsoup.connect(baseUrlCurrencies + uri).timeout(jsoupConnectFetchTimeoutInMs).get();
             String name = getElement(doc, nameSelector, nameAttribute);
             String price = getElement(doc, priceSelector);
+            String symbol = getElement(doc, symbolSelector);
 
             if (name != null && price != null) {
                 BigDecimal priceAsBigDecimal = new BigDecimal(price.replaceAll("[$,]", ""));
@@ -118,6 +121,7 @@ public class CoinmarketcapService implements CryptoService {
 
                 return FinanceResponse.builder()
                         .name(name)
+                        .symbol(symbol)
                         .price(priceAsBigDecimal)
                         .currency(CurrencyType.fromString(currency))
                         .assetType(assetType.toLowerCase())

@@ -1,20 +1,21 @@
-package pl.muybien.asset;
+package pl.muybien.asset.dto;
 
 import lombok.Builder;
 
 import java.math.BigDecimal;
 
 @Builder
-public record AssetDTO(
+public record AssetAggregateDTO(
         String name,
+        String symbol,
         String assetType,
         BigDecimal count,
         BigDecimal currentPrice,
-        String requestedCurrency,
         String currency,
         BigDecimal value,
         BigDecimal averagePurchasePrice,
         BigDecimal profit,
-        BigDecimal profitInPercentage
+        BigDecimal profitInPercentage,
+        BigDecimal exchangeRateToDesired
 ) {
 }

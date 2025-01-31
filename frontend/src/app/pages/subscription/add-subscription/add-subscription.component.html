@@ -1,0 +1,26 @@
+<div class="price-alert-container">
+  <form class="alert-form">
+    <div class="form-group">
+      <label for="notification-method">Send me an</label>
+      <select id="notification-method">
+        <option>Email</option>
+      </select>
+      <label>as soon as</label>
+      <app-asset-selection></app-asset-selection>
+      <label>goes</label>
+      <select id="condition">
+        <option>above</option>
+        <option>below</option>
+      </select>
+      <input type="number" id="price" placeholder="0.00" />
+      <select id="currency">
+        <option>Dollars (USD)</option>
+      </select>
+    </div>
+    <button type="submit">
+      {{ 'subscription.add.subscription' | translate }}
+    </button>
+  </form>
+
+  <p class="current-price">The price of <span class="crypto">BTC</span> is currently <span class="price">102,485.10 USD</span>.</p>
+</div>

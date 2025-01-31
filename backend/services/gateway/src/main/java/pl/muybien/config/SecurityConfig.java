@@ -13,38 +13,33 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
+    private static final String FRONTEND_URL = "http://localhost:4200";
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange((authorize) -> authorize
+                .authorizeExchange(authorize -> authorize
                         .pathMatchers(
                                 "/eureka/**",
-                                "api/v1/finances/**"
-                        )
-                        .permitAll()
-                        .anyExchange()
-                        .authenticated()
+                                "/api/v1/finances/**"
+                        ).permitAll()
+                        .anyExchange().authenticated()
                 )
-                .oauth2ResourceServer((oauth2) ->
-                        oauth2.jwt(token ->
-                                token.jwtAuthenticationConverter(
-                                        new KeycloakJwtAuthenticationConverter()))
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwtSpec ->
+                                jwtSpec.jwtAuthenticationConverter(new KeycloakJwtAuthenticationConverter())
+                        )
                 );
-
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.addAllowedOrigin("http://localhost:4200");
-        corsConfig.addAllowedMethod("GET");
-        corsConfig.addAllowedMethod("POST");
-        corsConfig.addAllowedMethod("PUT");
-        corsConfig.addAllowedMethod("DELETE");
-        corsConfig.addAllowedHeader("Authorization");
-        corsConfig.addAllowedHeader("Content-Type");
+        corsConfig.addAllowedOrigin(FRONTEND_URL);
+        corsConfig.addAllowedMethod("*");
+        corsConfig.addAllowedHeader("*");
         corsConfig.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
