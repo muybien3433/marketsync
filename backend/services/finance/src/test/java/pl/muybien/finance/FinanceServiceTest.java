@@ -40,7 +40,7 @@ class FinanceServiceTest {
         String assetType = "cryptos";
         String uri = "bitcoin";
         String currency = "USD";
-        var expectedResponse = new FinanceResponse("Bitcoin", BigDecimal.valueOf(100000), CurrencyType.USD, assetType);
+        var expectedResponse = new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100000), CurrencyType.USD, assetType);
         when(cryptoService.fetchCrypto(uri, assetType, currency)).thenReturn(expectedResponse);
 
         FinanceResponse result = financeService.fetchFinance(assetType, uri, currency);
@@ -54,7 +54,7 @@ class FinanceServiceTest {
     void testFetchFinanceWithUriOnly() {
         String assetType = "cryptos";
         String uri = "ethereum";
-        var expectedResponse = new FinanceResponse("Ethereum", BigDecimal.valueOf(3000), CurrencyType.USD, assetType);
+        var expectedResponse = new FinanceResponse("Ethereum", "ETH", BigDecimal.valueOf(3000), CurrencyType.USD, assetType);
 
         when(cryptoService.fetchCrypto(uri, assetType)).thenReturn(expectedResponse);
 

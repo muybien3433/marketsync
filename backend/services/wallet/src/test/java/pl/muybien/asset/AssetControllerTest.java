@@ -33,10 +33,11 @@ class AssetControllerTest {
     @Test
     void findAllCustomerAssets_shouldReturnAssetList() {
         String desiredCurrency = "USD";
+        BigDecimal exchangeRateToDesired = new BigDecimal("0.01");
         var assets = List.of(
-                new AssetAggregateDTO("Bitcoin", AssetType.CRYPTOS.name(), BigDecimal.valueOf(2),
-                        BigDecimal.valueOf(30000), "USD", desiredCurrency, BigDecimal.valueOf(60000),
-                        BigDecimal.valueOf(20000), BigDecimal.valueOf(10000), BigDecimal.valueOf(50))
+                new AssetAggregateDTO("Bitcoin", "BTC", AssetType.CRYPTOS.name(), BigDecimal.valueOf(2),
+                        BigDecimal.valueOf(30000), "USD", BigDecimal.valueOf(60000),
+                        BigDecimal.valueOf(20000), BigDecimal.valueOf(10000), BigDecimal.valueOf(50), exchangeRateToDesired)
         );
         when(assetService.findAllCustomerAssets(authHeader, desiredCurrency)).thenReturn(assets);
 
@@ -49,8 +50,8 @@ class AssetControllerTest {
 
     @Test
     void findAllHistoryAssets_shouldReturnHistoryList() {
-        var history = List.of(new AssetHistoryDTO(1L, "Bitcoin", AssetType.CRYPTOS,
-                        BigDecimal.valueOf(2), BigDecimal.valueOf(100000), LocalDateTime.now())
+        var history = List.of(new AssetHistoryDTO(1L, "Bitcoin", "BTC",
+                        BigDecimal.valueOf(2), "USD", BigDecimal.valueOf(100000), LocalDateTime.now(), AssetType.CRYPTOS)
         );
 
         when(assetService.findAllAssetHistory(authHeader)).thenReturn(history);

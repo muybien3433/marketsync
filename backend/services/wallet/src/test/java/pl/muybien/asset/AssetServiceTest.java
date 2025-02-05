@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class AssetServiceTest {
@@ -71,6 +72,9 @@ class AssetServiceTest {
                 .thenReturn(new CustomerResponse(
                         "customerId", "Joe", "Doe", "joe.doe@example.com"));
 
+        when(financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri()))
+                .thenReturn(new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100_000), "USD", "cryptos"));
+
         assetService.createAsset(authHeader, request);
 
         ArgumentCaptor<Asset> assetCaptor = ArgumentCaptor.forClass(Asset.class);
@@ -78,7 +82,7 @@ class AssetServiceTest {
         Asset capturedAsset = assetCaptor.getValue();
 
         assertThat(capturedAsset.getAssetType()).isEqualTo(AssetType.CRYPTOS);
-        assertThat(capturedAsset.getName()).isEqualTo("bitcoin");
+        assertThat(capturedAsset.getName()).isEqualTo("Bitcoin");
         assertThat(capturedAsset.getCount()).isEqualTo(BigDecimal.valueOf(2).setScale(2, RoundingMode.HALF_UP));
         assertThat(capturedAsset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(30000).setScale(2, RoundingMode.HALF_UP));
     }
@@ -203,15 +207,15 @@ class AssetServiceTest {
     void findAllCustomerAssets_shouldAggregateAssets() {
         String uri = "ethereum";
         String currency = "USD";
-        var assetGroup = new AssetGroupDTO("Ethereum", uri,
+        var assetGroup = new AssetGroupDTO("Ethereum", "ETH", uri,
                 AssetType.CRYPTOS, BigDecimal.valueOf(2),
-                30000.0, "USD", "customerId"
+                30000.0, currency, "customerId"
         );
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(repository.findAndAggregateAssetsByCustomerId(customer.id())).thenReturn(Optional.of(List.of(assetGroup)));
-        when(financeClient.findFinanceByTypeAndUriAndCurrency(AssetType.CRYPTOS.name().toLowerCase(), uri, currency))
-                .thenReturn(new FinanceResponse("Ethereum", BigDecimal.valueOf(35000), currency, AssetType.CRYPTOS.name()));
+        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name().toLowerCase(), uri))
+                .thenReturn(new FinanceResponse("Ethereum", "ETH", BigDecimal.valueOf(35000), currency, AssetType.CRYPTOS.name()));
 
 
         List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(authHeader, currency);
@@ -219,6 +223,6 @@ class AssetServiceTest {
         assertThat(assets).hasSize(1);
         AssetAggregateDTO asset = assets.getFirst();
         assertThat(asset.name()).isEqualTo("Ethereum");
-        assertThat(asset.currentPrice()).isEqualTo(BigDecimal.valueOf(35000).setScale(2, RoundingMode.HALF_UP));
+        assertEquals(String.format("%.2f", BigDecimal.valueOf(35000)), String.format("%.2f", asset.currentPrice()));
     }
 }

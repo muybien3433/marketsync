@@ -38,7 +38,7 @@ class FinanceControllerTest {
         String assetType = "cryptos";
         String uri = "bitcoin";
         String currency = "USD";
-        var response = new FinanceResponse("Bitcoin", BigDecimal.valueOf(100000), CurrencyType.USD, assetType);
+        var response = new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100000), CurrencyType.USD, assetType);
 
         when(financeService.fetchFinance(assetType, uri, currency)).thenReturn(response);
 
@@ -54,7 +54,7 @@ class FinanceControllerTest {
     void testFindFinanceWithDefaultCurrency() throws Exception {
         String assetType = "cryptos";
         String uri = "ethereum";
-        var response = new FinanceResponse("Ethereum", BigDecimal.valueOf(3000), CurrencyType.USD, assetType);
+        var response = new FinanceResponse("Ethereum", "BTC", BigDecimal.valueOf(3000), CurrencyType.USD, assetType);
 
         when(financeService.fetchFinance(assetType, uri)).thenReturn(response);
 

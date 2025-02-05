@@ -62,7 +62,7 @@ class SubscriptionServiceTest {
     void createIncreaseSubscription_shouldAddNewSubscription() {
         String authHeader = "Bearer token";
         var request = new SubscriptionRequest("bitcoin", 3000.0, "cryptos", "USD", "email");
-        var finance = new FinanceResponse("Bitcoin", BigDecimal.valueOf(100000.0), "USD", "cryptos");
+        var finance = new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100000.0), "USD", "cryptos");
         var existingSubscription = new Subscription();
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
@@ -79,7 +79,7 @@ class SubscriptionServiceTest {
     void createDecreaseSubscription_shouldAddNewSubscription() {
         String authHeader = "Bearer token";
         var request = new SubscriptionRequest("ethereum", 3000.0, "cryptos", "USD", "email");
-        var finance = new FinanceResponse("Ethereum", BigDecimal.valueOf(100000.0), "USD", "cryptos");
+        var finance = new FinanceResponse("Ethereum", "BTC", BigDecimal.valueOf(100000.0), "USD", "cryptos");
         var existingSubscription = new Subscription();
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
