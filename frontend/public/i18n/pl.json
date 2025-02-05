@@ -37,7 +37,9 @@
     "investment.start.date": "Data utworzenia",
     "profit.in.percentage": "Zysk w %",
     "profit": "Zysk",
-    "delete.asset": "Usuń aktywo"
+    "delete.asset": "Usuń aktywo",
+    "cryptos": "Kryptowaluty",
+    "stocks": "Akcje"
   },
 
   "wallet": {

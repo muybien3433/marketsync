@@ -6,7 +6,7 @@
                 (selectionChange)="onTypeSelect($event.value)"
                 panelClass="custom-select-panel">
             <mat-option *ngFor="let assetType of assetTypeOptions" [value]="assetType">
-                {{ assetType | titlecase }}
+                {{ 'asset.' + assetType.toLowerCase() | translate }}
             </mat-option>
         </mat-select>
     </mat-form-field>

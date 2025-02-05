@@ -29,10 +29,12 @@ bases and asset types as market demands evolve.
 
 ## Tech Stack
 
+- **Frontend**: Angular 18
 - **Backend**: Java 23, SpringBoot 6, Kafka
 - **Database**: PostgreSQL for SQL and MongoDB for NoSQL
 - **Authentication**: OAuth2, Keyclock
 - **Cloud**: Docker, Eureka
+- **Scrap**: Selenium, JSoup
 - **Testing**: JUnit 5
 - **Build Tool**: Maven, Docker
 
@@ -93,7 +95,7 @@ Ensure you have the following installed before running the project:
    
 5. Run tests
    ```bash
-   mvn test
+   mvn clean test
    ```
 
 ## Contributing

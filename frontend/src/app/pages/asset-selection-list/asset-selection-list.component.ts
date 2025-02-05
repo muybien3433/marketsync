@@ -5,14 +5,14 @@ import {MatSelect} from "@angular/material/select";
 import {NgForOf, NgIf, TitleCasePipe} from "@angular/common";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {TranslatePipe} from "@ngx-translate/core";
-import {FilterByNamePipe} from "../../../services/filter-by-name-pipe";
+import {FilterByNamePipe} from "../../services/filter-by-name-pipe";
 import {MatInput} from "@angular/material/input";
 import {HttpClient} from "@angular/common/http";
-import {AssetSelectionService} from "../../../services/asset-selection-service";
-import {environment} from "../../../../environments/environment.development";
-import {API_ENDPOINTS} from "../../../services/api-endpoints";
+import {AssetSelectionService} from "../../services/asset-selection-service";
+import {environment} from "../../../environments/environment.development";
+import {API_ENDPOINTS} from "../../services/api-endpoints";
 import {catchError, map, of} from "rxjs";
-import {AssetType} from "../../../models/asset-type";
+import {AssetType} from "../../models/asset-type";
 import {Router} from "@angular/router";
 
 @Component({

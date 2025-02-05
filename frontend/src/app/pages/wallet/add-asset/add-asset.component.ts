@@ -9,7 +9,7 @@ import {API_ENDPOINTS} from '../../../services/api-endpoints';
 import {Currency} from "../../../models/currency";
 import {AssetType} from "../../../models/asset-type";
 import {AssetSelectionService} from "../../../services/asset-selection-service";
-import {AssetSelectionListComponent} from "../asset-selection-list/asset-selection-list.component";
+import {AssetSelectionListComponent} from "../../asset-selection-list/asset-selection-list.component";
 import {Router} from "@angular/router";
 
 @Component({

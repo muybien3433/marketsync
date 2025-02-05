@@ -37,7 +37,9 @@
     "investment.start.date": "Creation date",
     "profit.in.percentage": "Profit %",
     "profit": "Profit",
-    "delete.asset": "Delete asset"
+    "delete.asset": "Delete asset",
+    "cryptos": "Cryptos",
+    "stocks": "Stocks"
   },
 
   "asset-type": {
