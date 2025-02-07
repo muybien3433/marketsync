@@ -209,7 +209,7 @@ class AssetServiceTest {
         String currency = "USD";
         var assetGroup = new AssetGroupDTO("Ethereum", "ETH", uri,
                 AssetType.CRYPTOS, BigDecimal.valueOf(2),
-                30000.0, currency, "customerId"
+                new BigDecimal("30000.0"), currency, "customerId"
         );
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);

@@ -1,5 +1,6 @@
 package pl.muybien.finance;
 
+import com.mongodb.lang.Nullable;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -7,7 +8,9 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "finances_detail")
+import java.math.BigDecimal;
+
+@Document(collection = "finance_detail")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 @Getter
@@ -19,4 +22,8 @@ public class FinanceDetail {
     private String name;
     private String symbol;
     private String uri;
+    @Nullable
+    private BigDecimal price;
+    private CurrencyType currency;
+    private AssetType assetType;
 }

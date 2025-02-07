@@ -1,5 +1,4 @@
 coinmarketcap:
-  type: cryptos
   base-url-currencies: https://coinmarketcap.com/currencies/
   base-url-page: https://www.coinmarketcap.com/?page=
   update-schedule-cron: 0 0 4,5 * * ? # every day at 4 and 5 o'clock
@@ -32,3 +31,8 @@ wise:
   url-separator: -to-
   rate-amount: -rate?amount=1
 
+newconnect:
+  update-rate-ms: 600000 # 10 minutes
+
+gpw:
+  update-rate-ms: 600000 # 10 minutes

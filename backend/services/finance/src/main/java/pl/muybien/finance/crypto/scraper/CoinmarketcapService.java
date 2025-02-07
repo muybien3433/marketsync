@@ -12,13 +12,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.exception.FinanceNotFoundException;
-import pl.muybien.finance.FinanceDetail;
-import pl.muybien.finance.FinanceResponse;
-import pl.muybien.finance.FinanceUpdater;
+import pl.muybien.finance.*;
 import pl.muybien.finance.crypto.CryptoService;
-import pl.muybien.finance.currency.CurrencyService;
-import pl.muybien.finance.currency.CurrencyType;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -29,8 +26,6 @@ import java.util.*;
 @Slf4j
 public class CoinmarketcapService implements CryptoService {
 
-    @Value("${coinmarketcap.type}")
-    private String assetType;
     @Value("${coinmarketcap.base-url-currencies}")
     private String baseUrlCurrencies;
     @Value("${coinmarketcap.base-url-page}")
@@ -68,13 +63,12 @@ public class CoinmarketcapService implements CryptoService {
     @Value("${coinmarketcap.second-section-symbol-selector}")
     private String secondSectionSymbolSelector;
 
-    private final CurrencyService currencyService;
     private final FinanceUpdater financeUpdater;
 
     @Async
+    @Transactional
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(cron = "${coinmarketcap.update-schedule-cron}")
-    @Override
     public void updateAvailableFinanceList() {
         var cryptos = new LinkedHashSet<FinanceDetail>();
         int pageCounter = 1;
@@ -91,12 +85,12 @@ public class CoinmarketcapService implements CryptoService {
                 throw new FinanceNotFoundException("Error fetching finance data");
             }
         }
+        financeUpdater.sortAndSaveFinanceToDatabase(AssetType.CRYPTOS.name(), cryptos);
         log.info("Finished updating available cryptos list");
-        financeUpdater.sortAndSaveFinanceToDatabase(assetType, cryptos);
     }
 
     @Override
-    public FinanceResponse fetchCrypto(String uri, String assetType, String currency) {
+    public FinanceResponse fetchCrypto(String uri, AssetType assetType) {
         try {
             if (uri == null || uri.isBlank()) {
                 throw new IllegalArgumentException("Crypto identifier cannot be null or blank");
@@ -109,22 +103,13 @@ public class CoinmarketcapService implements CryptoService {
 
             if (name != null && price != null) {
                 BigDecimal priceAsBigDecimal = new BigDecimal(price.replaceAll("[$,]", ""));
-                String baseCurrency = "USD"; // USD is default in this website
-
-                if (currency != null && !baseCurrency.equals(currency.toUpperCase())) {
-                    BigDecimal exchangeRate = currencyService.getCurrencyPairExchange(
-                            CurrencyType.fromString(baseCurrency), CurrencyType.fromString(currency));
-                    priceAsBigDecimal = priceAsBigDecimal.multiply(exchangeRate);
-                } else {
-                    currency = baseCurrency;
-                }
 
                 return FinanceResponse.builder()
                         .name(name)
                         .symbol(symbol)
                         .price(priceAsBigDecimal)
-                        .currency(CurrencyType.fromString(currency))
-                        .assetType(assetType.toLowerCase())
+                        .currency(CurrencyType.USD)
+                        .assetType(AssetType.CRYPTOS)
                         .build();
             } else {
                 log.warn("Missing data: name={}, price={}", name, price);
@@ -134,11 +119,6 @@ public class CoinmarketcapService implements CryptoService {
             log.error("Error fetching data for crypto: {}", uri, e);
             throw new FinanceNotFoundException("Error fetching finance data");
         }
-    }
-
-    @Override
-    public FinanceResponse fetchCrypto(String uri, String assetType) {
-        return fetchCrypto(uri, assetType, null);
     }
 
     private String getElement(Document doc, String selector) {
@@ -191,6 +171,9 @@ public class CoinmarketcapService implements CryptoService {
                             .name(name)
                             .symbol(symbol)
                             .uri(uri)
+                            .price(null)
+                            .currency(CurrencyType.USD)
+                            .assetType(AssetType.CRYPTOS)
                             .build();
                     cryptos.add(financeDetail);
                 }

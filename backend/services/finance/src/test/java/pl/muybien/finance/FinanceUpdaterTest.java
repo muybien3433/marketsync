@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +31,11 @@ class FinanceUpdaterTest {
     void testSortAndSaveFinanceToDatabaseWhenFinanceExists() {
         String assetType = "cryptos";
         LinkedHashSet<FinanceDetail> financeDetails = new LinkedHashSet<>();
-        financeDetails.add(new FinanceDetail("Bitcoin", "BTC", "bitcoin"));
-        financeDetails.add(new FinanceDetail("Ethereum", "ETH", "ethereum"));
+        financeDetails.add(new FinanceDetail("Bitcoin", "BTC", "bitcoin", null, CurrencyType.USD, AssetType.CRYPTOS));
+        financeDetails.add(new FinanceDetail("Ethereum", "ETH", "ethereum", null, CurrencyType.USD, AssetType.CRYPTOS));
 
         Finance existingFinance = mock(Finance.class);
-        when(repository.findFinanceByAssetType(assetType.toLowerCase())).thenReturn(Optional.of(existingFinance));
+        when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.of(existingFinance));
 
         financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
@@ -46,10 +47,10 @@ class FinanceUpdaterTest {
     void testSortAndSaveFinanceToDatabaseWhenFinanceDoesNotExist() {
         String assetType = "stocks";
         LinkedHashSet<FinanceDetail> financeDetails = new LinkedHashSet<>();
-        financeDetails.add(new FinanceDetail("Apple", "APPLE", "apple"));
-        financeDetails.add(new FinanceDetail("Tesla", "TESLA", "tesla"));
+        financeDetails.add(new FinanceDetail("Apple", "APPLE", "apple", BigDecimal.ONE, CurrencyType.PLN, AssetType.STOCKS));
+        financeDetails.add(new FinanceDetail("Tesla", "TESLA", "tesla", BigDecimal.ONE, CurrencyType.PLN, AssetType.STOCKS));
 
-        when(repository.findFinanceByAssetType(assetType.toLowerCase())).thenReturn(Optional.empty());
+        when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.empty());
 
         financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
@@ -67,11 +68,11 @@ class FinanceUpdaterTest {
         String assetType = "cryptos";
         LinkedHashSet<FinanceDetail> financeDetails = new LinkedHashSet<>();
 
-        when(repository.findFinanceByAssetType(assetType.toLowerCase())).thenReturn(Optional.empty());
+        when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.empty());
 
         financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
-        verify(repository, never()).findFinanceByAssetType(assetType.toLowerCase());
+        verify(repository, never()).findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase());
         verify(repository, never()).save(any());
     }
 
@@ -79,11 +80,11 @@ class FinanceUpdaterTest {
     void testSortAndSaveFinanceToDatabaseWithUnsortedDetails() {
         String assetType = "cryptos";
         LinkedHashSet<FinanceDetail> financeDetails = new LinkedHashSet<>();
-        financeDetails.add(new FinanceDetail("Bitcoin", "BTC", "bitcoin"));
-        financeDetails.add(new FinanceDetail("Ethereum", "ETH", "ethereum"));
+        financeDetails.add(new FinanceDetail("Bitcoin", "BTC", "bitcoin", null, CurrencyType.USD, AssetType.CRYPTOS));
+        financeDetails.add(new FinanceDetail("Ethereum", "ETH", "ethereum", null, CurrencyType.USD, AssetType.CRYPTOS));
 
         Finance existingFinance = mock(Finance.class);
-        when(repository.findFinanceByAssetType(assetType.toLowerCase())).thenReturn(Optional.of(existingFinance));
+        when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.of(existingFinance));
 
         financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
@@ -96,14 +97,14 @@ class FinanceUpdaterTest {
     void testSortAndSaveFinanceToDatabaseHandlesCaseInsensitivity() {
         String assetType = "CRYPTOS";
         LinkedHashSet<FinanceDetail> financeDetails = new LinkedHashSet<>();
-        financeDetails.add(new FinanceDetail("Ethereum", "ETH", "ethereum"));
-        financeDetails.add(new FinanceDetail("Bitcoin", "BTC", "bitcoin"));
+        financeDetails.add(new FinanceDetail("Bitcoin", "BTC", "bitcoin", null, CurrencyType.USD, AssetType.CRYPTOS));
+        financeDetails.add(new FinanceDetail("Ethereum", "ETH", "ethereum", null, CurrencyType.USD, AssetType.CRYPTOS));
 
-        when(repository.findFinanceByAssetType(assetType.toLowerCase())).thenReturn(Optional.empty());
+        when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.empty());
 
         financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
-        verify(repository).findFinanceByAssetType(assetType.toLowerCase());
+        verify(repository).findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase());
         verify(repository).save(any(Finance.class));
     }
 
@@ -111,11 +112,11 @@ class FinanceUpdaterTest {
     void testSortAndSaveFinanceToDatabaseWhenDetailsAreAlreadySorted() {
         String assetType = "cryptos";
         LinkedHashSet<FinanceDetail> financeDetails = new LinkedHashSet<>();
-        financeDetails.add(new FinanceDetail("Bitcoin", "BTC", "bitcoin"));
-        financeDetails.add(new FinanceDetail("Ethereum", "ETH", "ethereum"));
+        financeDetails.add(new FinanceDetail("Bitcoin", "BTC", "bitcoin", null, CurrencyType.USD, AssetType.CRYPTOS));
+        financeDetails.add(new FinanceDetail("Ethereum", "ETH", "ethereum", null, CurrencyType.USD, AssetType.CRYPTOS));
 
         Finance existingFinance = mock(Finance.class);
-        when(repository.findFinanceByAssetType(assetType.toLowerCase())).thenReturn(Optional.of(existingFinance));
+        when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.of(existingFinance));
 
         financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 

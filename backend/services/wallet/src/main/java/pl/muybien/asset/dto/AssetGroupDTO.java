@@ -12,7 +12,7 @@ public record AssetGroupDTO(
         String uri,
         AssetType assetType,
         BigDecimal count,
-        Double averagePurchasePrice,
+        BigDecimal averagePurchasePrice,
         String currency,
         String customerId
 ) {

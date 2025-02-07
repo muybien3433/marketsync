@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pl.muybien.finance.crypto.CryptoService;
 import pl.muybien.finance.currency.CurrencyService;
-import pl.muybien.finance.currency.CurrencyType;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -37,28 +36,28 @@ class FinanceServiceTest {
 
     @Test
     void testFetchFinanceWithUriAndCurrency() {
-        String assetType = "cryptos";
+        AssetType assetType = AssetType.CRYPTOS;
         String uri = "bitcoin";
-        String currency = "USD";
-        var expectedResponse = new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100000), CurrencyType.USD, assetType);
-        when(cryptoService.fetchCrypto(uri, assetType, currency)).thenReturn(expectedResponse);
+        CurrencyType currency = CurrencyType.USD;
+        var expectedResponse = new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100000), currency, assetType);
+        when(cryptoService.fetchCrypto(uri, assetType)).thenReturn(expectedResponse);
 
-        FinanceResponse result = financeService.fetchFinance(assetType, uri, currency);
+        FinanceResponse result = financeService.fetchFinance(assetType.name(), uri);
 
         assertEquals(expectedResponse, result);
-        verify(cryptoService).fetchCrypto(uri, assetType, currency);
+        verify(cryptoService).fetchCrypto(uri, assetType);
         verifyNoInteractions(repository, currencyService);
     }
 
     @Test
     void testFetchFinanceWithUriOnly() {
-        String assetType = "cryptos";
+        AssetType assetType = AssetType.CRYPTOS;
         String uri = "ethereum";
         var expectedResponse = new FinanceResponse("Ethereum", "ETH", BigDecimal.valueOf(3000), CurrencyType.USD, assetType);
 
         when(cryptoService.fetchCrypto(uri, assetType)).thenReturn(expectedResponse);
 
-        FinanceResponse result = financeService.fetchFinance(assetType, uri);
+        FinanceResponse result = financeService.fetchFinance(assetType.name(), uri);
 
         assertEquals(expectedResponse, result);
         verify(cryptoService).fetchCrypto(uri, assetType);
@@ -67,34 +66,32 @@ class FinanceServiceTest {
 
     @Test
     void testFindExchangeRate() {
-        String from = "USD";
-        String to = "EUR";
-        CurrencyType fromCurrency = CurrencyType.fromString(from);
-        CurrencyType toCurrency = CurrencyType.fromString(to);
+        CurrencyType from = CurrencyType.USD;
+        CurrencyType to = CurrencyType.EUR;
         BigDecimal expectedRate = BigDecimal.valueOf(0.85);
 
-        when(currencyService.getCurrencyPairExchange(fromCurrency, toCurrency)).thenReturn(expectedRate);
+        when(currencyService.getCurrencyPairExchange(from, to)).thenReturn(expectedRate);
 
         BigDecimal result = financeService.findExchangeRate(from, to);
 
         assertEquals(expectedRate, result);
-        verify(currencyService).getCurrencyPairExchange(fromCurrency, toCurrency);
+        verify(currencyService).getCurrencyPairExchange(from, to);
         verifyNoInteractions(repository, cryptoService);
     }
 
     @Test
     void testDisplayAvailableFinance() {
         String assetType = "cryptos";
-        Set<FinanceDetail> expectedDetails = Set.of(new FinanceDetail("Bitcoin", "BTC", "bitcoin"));
+        Set<FinanceDetail> expectedDetails = Set.of(new FinanceDetail("Bitcoin", "BTC", "bitcoin", null, CurrencyType.USD, AssetType.CRYPTOS));
         Finance finance = mock(Finance.class);
 
-        when(repository.findFinanceByAssetType(assetType)).thenReturn(Optional.of(finance));
+        when(repository.findFinanceByAssetTypeIgnoreCase(assetType)).thenReturn(Optional.of(finance));
         when(finance.getFinanceDetails()).thenReturn(expectedDetails);
 
         Set<FinanceDetail> result = financeService.displayAvailableFinance(assetType);
 
         assertEquals(expectedDetails, result);
-        verify(repository).findFinanceByAssetType(assetType);
+        verify(repository).findFinanceByAssetTypeIgnoreCase(assetType);
         verify(finance).getFinanceDetails();
         verifyNoInteractions(cryptoService, currencyService);
     }
@@ -103,12 +100,12 @@ class FinanceServiceTest {
     void testDisplayAvailableFinanceWhenEmpty() {
         String assetType = "stocks";
 
-        when(repository.findFinanceByAssetType(assetType)).thenReturn(Optional.empty());
+        when(repository.findFinanceByAssetTypeIgnoreCase(assetType)).thenReturn(Optional.empty());
 
         Set<FinanceDetail> result = financeService.displayAvailableFinance(assetType);
 
         assertTrue(result.isEmpty());
-        verify(repository).findFinanceByAssetType(assetType);
+        verify(repository).findFinanceByAssetTypeIgnoreCase(assetType);
         verifyNoInteractions(cryptoService, currencyService);
     }
 }

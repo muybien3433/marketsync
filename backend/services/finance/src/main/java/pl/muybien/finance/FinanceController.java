@@ -17,15 +17,6 @@ public class FinanceController {
 
     private final FinanceService service;
 
-    @GetMapping("/{asset-type}/{uri}/{currency}")
-    public ResponseEntity<FinanceResponse> findFinanceByTypeAndUriAndCurrency(
-            @PathVariable("asset-type") String assetType,
-            @PathVariable("uri") String uri,
-            @PathVariable("currency") String currency
-    ) {
-        return ResponseEntity.ok(service.fetchFinance(assetType, uri, currency));
-    }
-
     @GetMapping("/{asset-type}/{uri}")
     public ResponseEntity<FinanceResponse> findFinanceWithDefaultCurrency(
             @PathVariable("asset-type") String assetType,
@@ -43,8 +34,8 @@ public class FinanceController {
 
     @GetMapping("/currencies/{from}/{to}")
     public ResponseEntity<BigDecimal> findExchangeRate(
-            @PathVariable("from") String from,
-            @PathVariable("to") String to
+            @PathVariable("from") CurrencyType from,
+            @PathVariable("to") CurrencyType to
     ) {
         return ResponseEntity.ok(service.findExchangeRate(from, to));
     }

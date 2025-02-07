@@ -35,7 +35,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
                         a.uri,
                         a.assetType,
                         SUM(a.count),
-                        AVG(a.purchasePrice),
+                        CAST(SUM(a.purchasePrice * a.count) / SUM(a.count) AS BIGDECIMAL),
                         a.currency,
                         a.customerId)
                     FROM Asset a

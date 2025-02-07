@@ -75,23 +75,17 @@ services:
     command:
       - "start-dev"
 
-  chrome:
-    image: selenium/node-chrome:4.28.1-20250202
-    shm_size: 2gb
-    depends_on:
-      - selenium-hub
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-
-  selenium-hub:
-    image: selenium/hub:4.28.1-20250202
-    container_name: selenium-hub
+  selenium-chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: selenium-chrome
     ports:
-      - "4442:4442"
-      - "4443:4443"
       - "4444:4444"
+    shm_size: "2gb"
+    environment:
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - JAVA_OPTS=-Dwebdriver.chrome.driver=/usr/local/bin/chromedriver
+    restart: unless-stopped
 
 networks:
   microservices-net:

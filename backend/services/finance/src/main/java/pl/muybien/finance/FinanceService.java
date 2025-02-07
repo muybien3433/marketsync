@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.muybien.finance.crypto.CryptoService;
 import pl.muybien.finance.currency.CurrencyService;
-import pl.muybien.finance.currency.CurrencyType;
+import pl.muybien.finance.stock.StockService;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -14,33 +14,26 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class FinanceService {
 
+    private final StockService stockService;
     private final CryptoService cryptoService;
     private final CurrencyService currencyService;
     private final FinanceRepository repository;
 
-    FinanceResponse fetchFinance(String assetType, String uri, String currency) {
-        return switch (AssetType.fromString(assetType)) {
-            case CRYPTOS -> cryptoService.fetchCrypto(uri, assetType, currency);
-            default -> null;
-        };
-    }
-
     FinanceResponse fetchFinance(String assetType, String uri) {
-        return switch (AssetType.fromString(assetType)) {
-            case CRYPTOS -> cryptoService.fetchCrypto(uri, assetType);
+        AssetType type = AssetType.fromString(assetType);
+        return switch (type) {
+            case CRYPTOS -> cryptoService.fetchCrypto(uri, type);
+            case STOCKS -> stockService.fetchStock(uri, type);
             default -> null;
         };
     }
 
-    BigDecimal findExchangeRate(String from, String to) {
-        CurrencyType fromCurrency = CurrencyType.fromString(from);
-        CurrencyType toCurrency = CurrencyType.fromString(to);
-
-        return currencyService.getCurrencyPairExchange(fromCurrency, toCurrency);
+    BigDecimal findExchangeRate(CurrencyType from, CurrencyType to) {
+        return currencyService.getCurrencyPairExchange(from, to);
     }
 
     Set<FinanceDetail> displayAvailableFinance(String assetType) {
-        return repository.findFinanceByAssetType(assetType.toLowerCase())
+        return repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())
                 .map(Finance::getFinanceDetails)
                 .orElse(Collections.emptySet());
     }

@@ -12,7 +12,7 @@ import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.finance.currency.Currency;
 import pl.muybien.finance.currency.CurrencyRepository;
 import pl.muybien.finance.currency.CurrencyService;
-import pl.muybien.finance.currency.CurrencyType;
+import pl.muybien.finance.CurrencyType;
 
 import java.io.IOException;
 import java.math.BigDecimal;

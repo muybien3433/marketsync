@@ -81,6 +81,6 @@ export class EditAssetComponent {
       this.errorMessage = 'Invalid asset ID.';
       return;
     }
-    return this.http.put(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.assetId}`, assetData);
+    return this.http.patch(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.assetId}`, assetData);
   }
 }

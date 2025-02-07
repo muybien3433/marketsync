@@ -1,14 +1,11 @@
 package pl.muybien.asset;
 
-import lombok.ToString;
-
-@ToString
 public enum AssetType {
     UNDEFINED,
     STOCKS,
-    BONDS,
     CRYPTOS,
-    CURRENCIES;
+    CURRENCIES,
+    BONDS;
 
     public static AssetType fromString(String type) {
         if (type != null) {

@@ -110,9 +110,7 @@ public class AssetService {
 
         BigDecimal currentPrice;
         BigDecimal value;
-        BigDecimal averagePurchasePrice;
         BigDecimal totalInvested;
-        BigDecimal totalValue;
         BigDecimal profit;
         BigDecimal profitPercentage;
 
@@ -125,10 +123,8 @@ public class AssetService {
         }
 
         value = asset.count().multiply(currentPrice);
-        averagePurchasePrice = BigDecimal.valueOf(asset.averagePurchasePrice());
-        totalInvested = averagePurchasePrice.multiply(asset.count());
-        totalValue = value;
-        profit = totalValue.subtract(totalInvested);
+        totalInvested = asset.averagePurchasePrice().multiply(asset.count());
+        profit = value.subtract(totalInvested);
         profitPercentage = totalInvested.compareTo(BigDecimal.ZERO) > 0
                 ? profit.divide(totalInvested, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))
                 : BigDecimal.ZERO;
@@ -145,7 +141,7 @@ public class AssetService {
                 .currentPrice(currentPrice)
                 .currency(asset.currency())
                 .value(value)
-                .averagePurchasePrice(averagePurchasePrice)
+                .averagePurchasePrice(asset.averagePurchasePrice())
                 .profit(profit)
                 .profitInPercentage(profitPercentage)
                 .exchangeRateToDesired(exchangeRateToDesired)

@@ -77,13 +77,19 @@ export class WalletComponent {
   }
 
   getTotalProfitInPercentage(): number {
-    const totalValue = this.getTotalValue();
+    const totalInvestment = this.getTotalInvestment();
     const totalProfit = this.getTotalProfit();
 
-    if (totalValue === 0) return 0;
+    if (totalInvestment === 0) return 0;
 
-    const profitInPercentage = (totalProfit / totalValue) * 100;
+    const profitInPercentage = (totalProfit / totalInvestment) * 100;
     return parseFloat(profitInPercentage.toFixed(2));
+  }
+
+  getTotalInvestment(): number {
+    return this._assets.reduce((total, asset) => {
+      return total + (asset.averagePurchasePrice * asset.count * asset.exchangeRateToDesired);
+    }, 0);
   }
 
   getCurrencyForSum() {
