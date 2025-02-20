@@ -78,25 +78,20 @@ Ensure you have the following installed before running the project:
    git clone https://github.com/muybien3433/marketsync.git
    ```
    
-2. Start docker containers
+2. Provide environment variables for SMTP in config-server microservice in notification-service.yml:
+    - {EMAIL_USERNAME}
+    - {EMAIL_PASSWORD}
+   
+3. Now everything you need to do is to start docker containers
    ```bash
    docker-compose up
    ```
    
-3. Provide environment variables for SMTP in config-server microservice:
-      - {EMAIL_USERNAME} 
-      - {EMAIL_PASSWORD}
-
-4. Build the project (order: config-server -> discovery -> allOthers)
-   ```bash
-   mvn clean install
-   ```
-   
-5. Run tests
+4. Run tests
    ```bash
    mvn clean test
    ```
-
+   
 ## Contributing
 Contributions are welcome! Feel free to submit issues and pull requests.
 
