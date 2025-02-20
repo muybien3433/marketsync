@@ -11,12 +11,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.finance.*;
+import pl.muybien.finance.FinanceUpdater;
 
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
@@ -29,18 +29,23 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GpwScraper {
+public class GpwScraper extends FinanceUpdater {
 
     private final static String TARGET_URL = "https://gpwglobalconnect.pl/notowania";
     private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
 
-    private final FinanceUpdater financeUpdater;
+    private final FinanceDatabaseUpdater databaseUpdater;
 
-    @Async
-    @Transactional
+    @Override
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(fixedRateString = "${gpw.update-rate-ms}")
-    public void updateAvailableFinanceList() {
+    public void scheduleUpdate() {
+        updateQueue("gpw", 3);
+    }
+
+    @Override
+    @Transactional
+    public void updateAssets() {
         LinkedHashSet<FinanceDetail> stocks = new LinkedHashSet<>();
 
         WebDriver driver = null;
@@ -50,6 +55,12 @@ public class GpwScraper {
             options.addArguments("--headless");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--disable-extensions");
+            options.addArguments("--disable-logging");
+            options.addArguments("--incognito");
+            options.addArguments("--disable-images");
+            options.addArguments("--disable-css");
 
             driver = new RemoteWebDriver(new URL(REMOTE_WEB_DRIVER), options);
             driver.get(TARGET_URL);
@@ -106,13 +117,17 @@ public class GpwScraper {
 
                 stocks.add(finance);
             }
-            financeUpdater.sortAndSaveFinanceToDatabase(AssetType.STOCKS.name(), stocks);
+            databaseUpdater.sortAndSaveFinanceToDatabase(AssetType.STOCKS.name(), stocks);
         } catch (MalformedURLException e) {
             throw new FinanceNotFoundException("Gpw data not found");
+        } catch (Exception e) {
+            throw new FinanceNotFoundException("Gpw data: " + e.getMessage());
         } finally {
             if (driver != null) {
                 driver.quit();
             }
+            System.gc();
+            setUpdate(false);
         }
         log.info("Finished updating available gpw list");
     }

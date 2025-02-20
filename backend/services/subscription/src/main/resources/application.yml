@@ -1,0 +1,6 @@
+spring:
+  config:
+    import:
+      - optional:configserver:http://config-server:7777
+  application:
+    name: subscription-service

@@ -11,16 +11,19 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
-class FinanceUpdaterTest {
+class FinanceDatabaseUpdaterTest {
 
     @Mock
     private FinanceRepository repository;
 
     @InjectMocks
-    private FinanceUpdater financeUpdater;
+    private FinanceDatabaseUpdater updater;
 
     @BeforeEach
     void setUp() {
@@ -37,7 +40,7 @@ class FinanceUpdaterTest {
         Finance existingFinance = mock(Finance.class);
         when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.of(existingFinance));
 
-        financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
+        updater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
         verify(existingFinance).getFinanceDetails();
         verify(repository).save(existingFinance);
@@ -52,7 +55,7 @@ class FinanceUpdaterTest {
 
         when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.empty());
 
-        financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
+        updater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
         verify(repository).save(argThat(finance -> {
             assertEquals(finance.getFinanceDetails().stream()
@@ -70,7 +73,7 @@ class FinanceUpdaterTest {
 
         when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.empty());
 
-        financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
+        updater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
         verify(repository, never()).findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase());
         verify(repository, never()).save(any());
@@ -86,7 +89,7 @@ class FinanceUpdaterTest {
         Finance existingFinance = mock(Finance.class);
         when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.of(existingFinance));
 
-        financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
+        updater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
         verify(existingFinance).getFinanceDetails();
         verify(repository).save(existingFinance);
@@ -102,7 +105,7 @@ class FinanceUpdaterTest {
 
         when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.empty());
 
-        financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
+        updater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
         verify(repository).findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase());
         verify(repository).save(any(Finance.class));
@@ -118,7 +121,7 @@ class FinanceUpdaterTest {
         Finance existingFinance = mock(Finance.class);
         when(repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())).thenReturn(Optional.of(existingFinance));
 
-        financeUpdater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
+        updater.sortAndSaveFinanceToDatabase(assetType, financeDetails);
 
         verify(existingFinance).getFinanceDetails();
         verify(repository).save(existingFinance);

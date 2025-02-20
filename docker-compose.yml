@@ -1,4 +1,5 @@
 services:
+  ######### [ Microservices ] #########
   config-server:
     build:
       context: ./backend/services/config-server
@@ -32,55 +33,11 @@ services:
       retries: 5
       start_period: 20s
 
-  customer-server:
-    build:
-      context: ./backend/services/customer
-    ports:
-      - "8110:8100"
-    networks:
-      - microservices-net
-    depends_on:
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-    restart: unless-stopped
-
-  finance-server:
-    build:
-      context: ./backend/services/finance
-    ports:
-      - "8880:8800"
-    networks:
-      - microservices-net
-    depends_on:
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-      mongodb:
-        condition: service_healthy
-    restart: unless-stopped
-
-  wallet-server:
-    build:
-      context: ./backend/services/wallet
-    ports:
-      - "8220:8200"
-    networks:
-      - microservices-net
-    depends_on:
-      config-server:
-        condition: service_healthy
-      eureka-server:
-        condition: service_healthy
-    restart: unless-stopped
-
   gateway-server:
     build:
       context: ./backend/services/gateway
     ports:
-      - "9990:9999"
+      - "9999:9999"
     networks:
       - microservices-net
     depends_on:
@@ -94,8 +51,70 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-      start_period: 25s
+      start_period: 20s
 
+  customer-server:
+    build:
+      context: ./backend/services/customer
+    ports:
+      - "8100:8100"
+    networks:
+      - microservices-net
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  finance-server:
+    build:
+      context: ./backend/services/finance
+    ports:
+      - "8800:8800"
+    networks:
+      - microservices-net
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  wallet-server:
+    build:
+      context: ./backend/services/wallet
+    ports:
+      - "8200:8200"
+    networks:
+      - microservices-net
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  subscription-server:
+    build:
+      context: ./backend/services/subscription
+    ports:
+      - "8900:8900"
+    networks:
+      - microservices-net
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  notification-server:
+    build:
+      context: ./backend/services/notification
+    ports:
+      - "9000:9000"
+    restart: unless-stopped
+
+  ######### [ Database ] #########
   mongodb:
     image: mongo:latest
     container_name: mongodb
@@ -131,11 +150,12 @@ services:
       - postgres_db:/var/lib/postgresql/data
     restart: unless-stopped
 
+  ######### [ Authentication ] #########
   keycloak:
     container_name: keycloak-ms
     image: quay.io/keycloak/keycloak:latest
     ports:
-      - "8888:8080"
+      - "8080:8080"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -145,32 +165,64 @@ services:
     command:
       - "start-dev"
 
+  ######### [ Selenium ] #########
   selenium-chrome:
     image: selenium/standalone-chrome:latest
-    platform: linux/amd64
+    platform: linux/arm64
     container_name: selenium-chrome
     ports:
       - "4444:4444"
     networks:
       - microservices-net
-    shm_size: "1gb"
+    shm_size: "512mb"
     environment:
       - SE_NODE_MAX_SESSIONS=5
       - SE_NODE_OVERRIDE_MAX_SESSIONS=true
       - JAVA_OPTS=-Dwebdriver.chrome.driver=/usr/local/bin/chromedriver
     restart: unless-stopped
 
+  ######### [ Kafka ] #########
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: ms_kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+    networks:
+      - microservices-net
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    restart: unless-stopped
+
+  ######### [ Frontend ] #########
   frontend:
     build:
       context: ./frontend
     ports:
       - "80:80"
-    depends_on:
-      gateway-server:
-        condition: service_healthy
     networks:
       - microservices-net
     restart: unless-stopped
+
 networks:
   microservices-net:
     driver: bridge
@@ -178,3 +230,4 @@ networks:
 volumes:
   postgres_db:
   mongodb_data:
+  kafka_data:

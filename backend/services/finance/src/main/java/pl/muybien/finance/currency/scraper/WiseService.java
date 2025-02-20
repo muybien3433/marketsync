@@ -6,9 +6,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.muybien.exception.FinanceNotFoundException;
+import pl.muybien.finance.FinanceUpdater;
 import pl.muybien.finance.currency.Currency;
 import pl.muybien.finance.currency.CurrencyRepository;
 import pl.muybien.finance.currency.CurrencyService;
@@ -21,7 +24,7 @@ import java.util.Arrays;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class WiseService implements CurrencyService {
+public class WiseService extends FinanceUpdater implements CurrencyService {
 
     private final CurrencyRepository repository;
 
@@ -37,16 +40,14 @@ public class WiseService implements CurrencyService {
     private String rateAmount;
 
     @Override
-    public BigDecimal getCurrencyPairExchange(CurrencyType from, CurrencyType to) {
-        var exchange = repository.findCurrencyByName(currencyNameResolver(from, to))
-                .orElseThrow(() -> new FinanceNotFoundException(
-                        "Could not find currency pair for " + from + " to " + to));
-
-        return exchange.getExchange();
+    @EventListener(ApplicationReadyEvent.class)
+    @Scheduled(fixedRateString = "${wise.currency-updater-frequency-ms}")
+    protected void scheduleUpdate() {
+        updateQueue("wise", 1);
     }
 
-    @Scheduled(fixedRateString = "${wise.currency-updater-frequency-ms}")
-    public void currencyPairUpdater() {
+    @Override
+    protected void updateAssets() {
         var allCurrencies = Arrays.asList(CurrencyType.values());
 
         for (int i = 0; i < allCurrencies.size(); i++) {
@@ -59,6 +60,15 @@ public class WiseService implements CurrencyService {
                 }
             }
         }
+    }
+
+    @Override
+    public BigDecimal getCurrencyPairExchange(CurrencyType from, CurrencyType to) {
+        var exchange = repository.findCurrencyByName(currencyNameResolver(from, to))
+                .orElseThrow(() -> new FinanceNotFoundException(
+                        "Could not find currency pair for " + from + " to " + to));
+
+        return exchange.getExchange();
     }
 
     private void calculateAndSaveNewExchangeRate(CurrencyType from, CurrencyType to) {

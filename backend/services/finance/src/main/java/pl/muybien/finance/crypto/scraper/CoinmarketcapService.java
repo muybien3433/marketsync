@@ -9,22 +9,23 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.finance.*;
 import pl.muybien.finance.crypto.CryptoService;
+import pl.muybien.finance.FinanceUpdater;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CoinmarketcapService implements CryptoService {
+public class CoinmarketcapService extends FinanceUpdater implements CryptoService {
 
     @Value("${coinmarketcap.base-url-currencies}")
     private String baseUrlCurrencies;
@@ -63,30 +64,43 @@ public class CoinmarketcapService implements CryptoService {
     @Value("${coinmarketcap.second-section-symbol-selector}")
     private String secondSectionSymbolSelector;
 
-    private final FinanceUpdater financeUpdater;
+    private final FinanceDatabaseUpdater databaseUpdater;
 
-    @Async
-    @Transactional
+    @Override
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(cron = "${coinmarketcap.update-schedule-cron}")
-    public void updateAvailableFinanceList() {
-        var cryptos = new LinkedHashSet<FinanceDetail>();
-        int pageCounter = 1;
-        log.info("Starting updating available cryptos list...");
-        while (pageCounter <= pageSize) {
-            try {
-                Document doc = Jsoup.connect(baseUrlPage + pageCounter)
-                        .timeout(jsoupConnectUpdateTimeoutInMs).get();
+    public void scheduleUpdate() {
+        updateQueue("coinmarketcap", 2);
+    }
 
-                scrapDataFromFirstSection(doc, cryptos);
-                scrapDataFromSecondSection(doc, cryptos);
-                pageCounter++;
-            } catch (IOException e) {
-                throw new FinanceNotFoundException("Error fetching finance data");
+    @Override
+    @Transactional
+    public void updateAssets() {
+        if (!isUpdate()) {
+            var cryptos = new LinkedHashSet<FinanceDetail>();
+            int pageCounter = 1;
+            log.info("Starting updating available cryptos list...");
+            while (pageCounter <= pageSize) {
+                try {
+                    Document doc = Jsoup.connect(baseUrlPage + pageCounter)
+                            .timeout(jsoupConnectUpdateTimeoutInMs).get();
+
+                    scrapDataFromFirstSection(doc, cryptos);
+                    scrapDataFromSecondSection(doc, cryptos);
+                    pageCounter++;
+
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (IOException e) {
+                    throw new FinanceNotFoundException("Error fetching finance data");
+                } catch (Exception e) {
+                    throw new FinanceNotFoundException("Coinmarketcap data: " + e.getMessage());
+                } finally {
+                    setUpdate(false);
+                }
             }
+            databaseUpdater.sortAndSaveFinanceToDatabase(AssetType.CRYPTOS.name(), cryptos);
+            log.info("Finished updating available cryptos list");
         }
-        financeUpdater.sortAndSaveFinanceToDatabase(AssetType.CRYPTOS.name(), cryptos);
-        log.info("Finished updating available cryptos list");
     }
 
     @Override
