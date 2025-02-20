@@ -1,0 +1,10 @@
+{
+  "routes": [
+    "/",
+    "/add-asset",
+    "/asset-history",
+    "/edit-asset",
+    "/subscription",
+    "/wallet"
+  ]
+}

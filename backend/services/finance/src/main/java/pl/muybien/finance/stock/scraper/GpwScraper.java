@@ -9,7 +9,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -33,7 +32,7 @@ import java.util.regex.Pattern;
 public class GpwScraper {
 
     private final static String TARGET_URL = "https://gpwglobalconnect.pl/notowania";
-    private final static String REMOTE_WEB_DRIVER = "http://localhost:4444/wd/hub";
+    private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
 
     private final FinanceUpdater financeUpdater;
 

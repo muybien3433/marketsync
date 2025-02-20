@@ -6,5 +6,5 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          jwk-set-uri: http://localhost:8880/realms/master/protocol/openid-connect/certs
+          jwk-set-uri: http://keycloak-ms:8888/realms/master/protocol/openid-connect/certs
 

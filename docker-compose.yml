@@ -1,15 +1,100 @@
 services:
-  postgres:
-    image: postgres:latest
-    container_name: postgres_db
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: marketsync
+  config-server:
+    build:
+      context: ./backend/services/config-server
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_db:/var/lib/postgresql/data
+      - "7777:7777"
+    networks:
+      - microservices-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:7777/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  eureka-server:
+    build:
+      context: ./backend/services/eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-net
+    depends_on:
+      config-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  customer-server:
+    build:
+      context: ./backend/services/customer
+    ports:
+      - "8110:8100"
+    networks:
+      - microservices-net
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  finance-server:
+    build:
+      context: ./backend/services/finance
+    ports:
+      - "8880:8800"
+    networks:
+      - microservices-net
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  wallet-server:
+    build:
+      context: ./backend/services/wallet
+    ports:
+      - "8220:8200"
+    networks:
+      - microservices-net
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  gateway-server:
+    build:
+      context: ./backend/services/gateway
+    ports:
+      - "9990:9999"
+    networks:
+      - microservices-net
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9999/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 25s
 
   mongodb:
     image: mongo:latest
@@ -20,73 +105,72 @@ services:
       MONGO_INITDB_DATABASE: marketsync
     ports:
       - "27017:27017"
+    networks:
+      - microservices-net
     volumes:
       - mongodb_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
     environment:
-      ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: marketsync
     ports:
-      - "22181:2181"
+      - "5432:5432"
     networks:
       - microservices-net
     volumes:
-      - zookeeper_data:/var/lib/zookeeper
-
-  zipkin:
-    container_name: zipkin
-    image: openzipkin/zipkin
-    ports:
-      - "9411:9411"
-    networks:
-      - microservices-net
-
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: ms_kafka
-    ports:
-      - "9092:9092"
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-    networks:
-      - microservices-net
+      - postgres_db:/var/lib/postgresql/data
+    restart: unless-stopped
 
   keycloak:
     container_name: keycloak-ms
-    image: quay.io/keycloak/keycloak:26.0.7
+    image: quay.io/keycloak/keycloak:latest
     ports:
-      - "8880:8080"
+      - "8888:8080"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     networks:
       - microservices-net
+    restart: unless-stopped
     command:
       - "start-dev"
 
   selenium-chrome:
     image: selenium/standalone-chrome:latest
+    platform: linux/amd64
     container_name: selenium-chrome
     ports:
       - "4444:4444"
-    shm_size: "2gb"
+    networks:
+      - microservices-net
+    shm_size: "1gb"
     environment:
       - SE_NODE_MAX_SESSIONS=5
       - SE_NODE_OVERRIDE_MAX_SESSIONS=true
       - JAVA_OPTS=-Dwebdriver.chrome.driver=/usr/local/bin/chromedriver
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      gateway-server:
+        condition: service_healthy
+    networks:
+      - microservices-net
+    restart: unless-stopped
 networks:
   microservices-net:
     driver: bridge
@@ -94,7 +178,3 @@ networks:
 volumes:
   postgres_db:
   mongodb_data:
-  zookeeper_data:
-  kafka_1_data:
-  kafka_2_data:
-  kafka_3_data:

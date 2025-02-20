@@ -1,8 +1,7 @@
 spring:
   config:
     import:
-    - optional:configserver:http://localhost:7777
-    - configserver:http://localhost:7777/scrapers
+      - configserver:http://config-server:7777
+      - configserver:http://config-server:7777/scrapers
   application:
     name: finance-service
-

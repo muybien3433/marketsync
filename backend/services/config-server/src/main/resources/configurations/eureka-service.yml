@@ -1,0 +1,17 @@
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: eureka-server
+  client:
+    registerWithEureka: false # eureka should not register itself
+    fetchRegistry: false # false when configuring itself
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}/${server.port}/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

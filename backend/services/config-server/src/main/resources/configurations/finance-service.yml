@@ -4,8 +4,6 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://admin:admin@localhost:27017/market-sync?authSource=admin
-      database: market-sync
-
-finance:
-  crypto-file-name: cryptos.csv
+      uri: mongodb://admin:admin@mongodb:27017/marketsync?authSource=admin&authMechanism=SCRAM-SHA-256
+      authentication-database: admin
+      database: marketsync
