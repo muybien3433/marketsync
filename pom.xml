@@ -13,8 +13,8 @@
         <module>backend/services/customer</module>
         <module>backend/services/finance</module>
         <module>backend/services/gateway</module>
-<!--        <module>backend/services/notification</module>-->
-<!--        <module>backend/services/subscription</module>-->
+        <module>backend/services/notification</module>
+        <module>backend/services/subscription</module>
         <module>backend/services/wallet</module>
     </modules>
 
