@@ -39,7 +39,7 @@ public class SubscriptionComparator {
         }
     }
 
-    void sendNotificationToSpecifiedTopic(
+    private void sendNotificationToSpecifiedTopic(
             SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
 
         var notificationType = SubscriptionNotificationType.findByValue(subscriptionDetail.getNotificationType());
@@ -48,7 +48,7 @@ public class SubscriptionComparator {
         }
     }
 
-    void createEmailConfirmation(SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
+    private void createEmailConfirmation(SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
         var subscriptionEmailConfirmation = SubscriptionEmailConfirmation.builder()
                 .email(subscriptionDetail.getCustomerEmail())
                 .subject("Your %s subscription notification!".formatted(subscriptionDetail.getFinanceName()))

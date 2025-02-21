@@ -1,8 +1,8 @@
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:9999/api/v1',
+  baseUrl: 'http://gateway-server:9999/api/v1',
 
-  keycloakUrl: 'http://localhost:8888',
+  keycloakUrl: 'http://keycloak-ms:8080',
   keycloakRealm: 'master',
   keycloakClientId: 'angular'
 }
