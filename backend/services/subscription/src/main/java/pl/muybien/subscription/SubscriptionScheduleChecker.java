@@ -22,7 +22,7 @@ import java.util.Map;
 public class SubscriptionScheduleChecker {
 
     @Value("${schedule.fetch-page-size-per-round}")
-    Integer fetchPagesSizePerRound;
+    private Integer fetchPagesSizePerRound;
 
     private final SubscriptionComparator subscriptionComparator;
     private final SubscriptionRepository subscriptionRepository;
@@ -41,13 +41,13 @@ public class SubscriptionScheduleChecker {
         } while (!subscriptionPage.isEmpty());
     }
 
-    void processSubscription(Subscription subscription) {
+    private void processSubscription(Subscription subscription) {
         for (Map.Entry<String, List<SubscriptionDetail>> entry : subscription.getSubscriptions().entrySet()) {
             String uri = entry.getKey();
             List<SubscriptionDetail> subscriptionDetails = entry.getValue();
 
             try {
-                var finance = financeClient.findFinanceWithDefaultCurrency("cryptos", uri);
+                var finance = financeClient.findFinanceByTypeAndUri("cryptos", uri);
                 double currentPrice = finance.price().doubleValue();
 
                 for (SubscriptionDetail subscriptionDetail : subscriptionDetails) {

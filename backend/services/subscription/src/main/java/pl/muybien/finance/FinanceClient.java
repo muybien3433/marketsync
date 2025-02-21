@@ -4,6 +4,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.math.BigDecimal;
+
 @FeignClient(
         name = "finance-service",
         url = "${application.config.finance-url}"
@@ -11,13 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface FinanceClient {
 
     @GetMapping("/{asset-type}/{uri}")
-    FinanceResponse findFinanceWithDefaultCurrency(
+    FinanceResponse findFinanceByTypeAndUri(
             @PathVariable("asset-type") String assetType,
             @PathVariable("uri") String uri
     );
 
     @GetMapping("/currencies/{from}/{to}")
-    String findExchangeRate(
+    BigDecimal findExchangeRate(
             @PathVariable("from") String from,
             @PathVariable("to") String to
     );

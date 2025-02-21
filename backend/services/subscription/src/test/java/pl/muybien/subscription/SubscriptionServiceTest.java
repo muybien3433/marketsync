@@ -66,7 +66,7 @@ class SubscriptionServiceTest {
         var existingSubscription = new Subscription();
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
-        when(financeClient.findFinanceWithDefaultCurrency("cryptos", "bitcoin")).thenReturn(finance);
+        when(financeClient.findFinanceByTypeAndUri("cryptos", "bitcoin")).thenReturn(finance);
         when(subscriptionRepository.findByUri("bitcoin")).thenReturn(Optional.of(existingSubscription));
 
         subscriptionService.createIncreaseSubscription(authHeader, request);
@@ -83,7 +83,7 @@ class SubscriptionServiceTest {
         var existingSubscription = new Subscription();
 
         when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
-        when(financeClient.findFinanceWithDefaultCurrency("cryptos", "ethereum")).thenReturn(finance);
+        when(financeClient.findFinanceByTypeAndUri("cryptos", "ethereum")).thenReturn(finance);
         when(subscriptionRepository.findByUri("ethereum")).thenReturn(Optional.of(existingSubscription));
 
         subscriptionService.createDecreaseSubscription(authHeader, request);

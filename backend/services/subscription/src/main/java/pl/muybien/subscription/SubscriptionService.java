@@ -31,15 +31,15 @@ public class SubscriptionService {
     private final FinanceClient financeClient;
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionDetailDTOMapper detailDTOMapper;
-
     private final MongoTemplate mongoTemplate;
 
     @Transactional
     public void createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
-        var finance = financeClient.findFinanceWithDefaultCurrency(request.assetType(), request.uri());
+        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
         var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
                 .orElseGet(Subscription::new);
+
         BigDecimal value = resolveValueByCurrency(request, finance);
 
         var subscriptionDetail = SubscriptionDetail.builder()
@@ -65,9 +65,10 @@ public class SubscriptionService {
     @Transactional
     public void createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
         var customer = customerClient.fetchCustomerFromHeader(authHeader);
-        var finance = financeClient.findFinanceWithDefaultCurrency(request.assetType(), request.uri());
+        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
         var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
                 .orElseGet(Subscription::new);
+
         BigDecimal value = resolveValueByCurrency(request, finance);
 
         var subscriptionDetail = SubscriptionDetail.builder()
@@ -90,11 +91,12 @@ public class SubscriptionService {
         subscriptionRepository.save(subscription);
     }
 
-    BigDecimal resolveValueByCurrency(SubscriptionRequest request, FinanceResponse finance) {
+    private BigDecimal resolveValueByCurrency(SubscriptionRequest request, FinanceResponse finance) {
         BigDecimal value = BigDecimal.valueOf(request.value());
+
         if (!request.currency().equals(finance.currency())) {
-            String exchange = financeClient.findExchangeRate(request.currency(), finance.currency());
-            value = BigDecimal.valueOf(request.value()).multiply(new BigDecimal(exchange));
+            BigDecimal exchange = financeClient.findExchangeRate(request.currency(), finance.currency());
+            value = BigDecimal.valueOf(request.value()).multiply(exchange);
         }
         return value;
     }
@@ -106,17 +108,15 @@ public class SubscriptionService {
         var subscription = subscriptionRepository.findByUri(request.uri())
                 .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for URI: " + request.uri()));
 
-        var subscriptionDetailList = subscription.getSubscriptions().get(request.uri());
-        if (subscriptionDetailList == null || subscriptionDetailList.isEmpty()) {
-            throw new SubscriptionNotFoundException("Subscription not found for URI: " + request.uri());
-        }
+        var subscriptionDetailList = Optional.ofNullable(subscription.getSubscriptions().get(request.uri()))
+                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for URI: " + request.uri()));
 
         var subscriptionDetail = subscriptionDetailList.stream()
                 .filter(detail -> detail.getId().equals(request.id()))
                 .findFirst()
                 .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for ID: " + request.id()));
 
-        if (!Objects.equals(subscriptionDetail.getCustomerId(), customerId)) {
+        if (!subscriptionDetail.getCustomerId().equals(customerId)) {
             throw new OwnershipException("Subscription deletion failed:: Customer id mismatch");
         }
 
@@ -127,8 +127,7 @@ public class SubscriptionService {
     @Transactional(readOnly = true)
     public List<SubscriptionDetailDTO> findAllCustomerSubscriptions(String authHeader) {
         var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
-
-        Aggregation aggregation = Aggregation.newAggregation(
+        var aggregation = Aggregation.newAggregation(
                 Aggregation.match(Criteria.where("subscriptions").exists(true)),
                 Aggregation.project()
                         .andExpression("{$objectToArray: '$subscriptions'}").as("subscriptionEntries"),
