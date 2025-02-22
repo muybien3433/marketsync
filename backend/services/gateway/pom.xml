@@ -57,7 +57,6 @@
 			<groupId>io.zipkin.reporter2</groupId>
 			<artifactId>zipkin-reporter-brave</artifactId>
 		</dependency>
-
 		<!--		Actuator		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -53,18 +53,6 @@ services:
       retries: 5
       start_period: 20s
 
-  customer-server:
-    build:
-      context: ./backend/services/customer
-    ports:
-      - "8100:8100"
-    networks:
-      - microservices-net
-    depends_on:
-      eureka-server:
-        condition: service_healthy
-    restart: unless-stopped
-
   finance-server:
     build:
       context: ./backend/services/finance
@@ -168,7 +156,7 @@ services:
   ######### [ Selenium ] #########
   selenium-chrome:
     image: selenium/standalone-chrome:latest
-    platform: linux/arm64
+    platform: linux/amd64
     container_name: selenium-chrome
     ports:
       - "4444:4444"

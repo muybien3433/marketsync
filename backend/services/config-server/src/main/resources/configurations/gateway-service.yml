@@ -8,10 +8,6 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: customer-service
-          uri: lb:http://CUSTOMER-SERVICE
-          predicates:
-            - Path=/api/v1/customers/**
         - id: finance-service
           uri: lb:http://FINANCE-SERVICE
           predicates:
@@ -28,8 +24,10 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          issuer-url: http://keycloak-ms:8880/realms/master
-          jwk-set-uri: http://keycloak-ms:8880/realms/master/protocol/openid-connect/certs
+          jwk-set-uri: http://keycloak-ms:8080/realms/master/protocol/openid-connect/certs
+
+frontend:
+  url: http://localhost:80
 
 management:
   endpoints:

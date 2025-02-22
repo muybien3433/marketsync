@@ -1,9 +1,12 @@
-package pl.muybien.customer;
+package pl.muybien.filter;
+
+import java.util.List;
 
 public record CustomerResponse(
         String id,
         String firstName,
         String lastName,
-        String email
+        String email,
+        List<String> roles
 ) {
 }

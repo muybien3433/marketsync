@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.customer.CustomerClient;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.exception.SubscriptionNotFoundException;
 import pl.muybien.finance.FinanceClient;
@@ -27,15 +26,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SubscriptionService {
 
-    private final CustomerClient customerClient;
     private final FinanceClient financeClient;
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionDetailDTOMapper detailDTOMapper;
     private final MongoTemplate mongoTemplate;
 
     @Transactional
-    public void createIncreaseSubscription(String authHeader, SubscriptionRequest request) {
-        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+    public void createIncreaseSubscription(String customerId, String customerEmail, SubscriptionRequest request) {
         var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
         var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
                 .orElseGet(Subscription::new);
@@ -44,8 +41,8 @@ public class SubscriptionService {
 
         var subscriptionDetail = SubscriptionDetail.builder()
                 .id(UUID.randomUUID().toString())
-                .customerId(customer.id())
-                .customerEmail(customer.email())
+                .customerId(customerId)
+                .customerEmail(customerEmail)
                 .financeName(finance.name())
                 .requestedValue(request.value())
                 .requestedCurrency(request.currency())
@@ -63,8 +60,7 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public void createDecreaseSubscription(String authHeader, SubscriptionRequest request) {
-        var customer = customerClient.fetchCustomerFromHeader(authHeader);
+    public void createDecreaseSubscription(String customerId, String customerEmail, SubscriptionRequest request) {
         var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
         var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
                 .orElseGet(Subscription::new);
@@ -73,8 +69,8 @@ public class SubscriptionService {
 
         var subscriptionDetail = SubscriptionDetail.builder()
                 .id(UUID.randomUUID().toString())
-                .customerId(customer.id())
-                .customerEmail(customer.email())
+                .customerId(customerId)
+                .customerEmail(customerEmail)
                 .financeName(finance.name())
                 .requestedValue(request.value())
                 .requestedCurrency(request.currency())
@@ -102,9 +98,7 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public void deleteSubscription(String authHeader, SubscriptionDeletionRequest request) {
-        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
-
+    public void deleteSubscription(String customerId, SubscriptionDeletionRequest request) {
         var subscription = subscriptionRepository.findByUri(request.uri())
                 .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for URI: " + request.uri()));
 
@@ -125,8 +119,7 @@ public class SubscriptionService {
     }
 
     @Transactional(readOnly = true)
-    public List<SubscriptionDetailDTO> findAllCustomerSubscriptions(String authHeader) {
-        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+    public List<SubscriptionDetailDTO> findAllCustomerSubscriptions(String customerId) {
         var aggregation = Aggregation.newAggregation(
                 Aggregation.match(Criteria.where("subscriptions").exists(true)),
                 Aggregation.project()

@@ -22,7 +22,6 @@ spring:
 
 application:
   config:
-    customer-url: http://customer-server:9999/api/v1/customers
     finance-url: http://finance-server:9999/api/v1/finances
 
 send-email-topic: send-email-topic

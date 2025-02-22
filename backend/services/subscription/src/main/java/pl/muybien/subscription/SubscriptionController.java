@@ -20,35 +20,37 @@ public class SubscriptionController {
 
     @PostMapping("/increase")
     public ResponseEntity<String> createIncreaseSubscription(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader("X-Customer-Id") String customerId,
+            @RequestHeader("X-Customer-Email") String customerEmail,
             @RequestBody @Valid SubscriptionRequest request
     ) {
-        service.createIncreaseSubscription(authHeader, request);
+        service.createIncreaseSubscription(customerId, customerEmail, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/decrease")
     public ResponseEntity<String> createDecreaseSubscription(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader("X-Customer-Id") String customerId,
+            @RequestHeader("X-Customer-Email") String customerEmail,
             @RequestBody @Valid SubscriptionRequest request
     ) {
-        service.createDecreaseSubscription(authHeader, request);
+        service.createDecreaseSubscription(customerId, customerEmail, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteSubscription(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader("X-Customer-Id") String customerId,
             @RequestBody @Valid SubscriptionDeletionRequest request
     ) {
-        service.deleteSubscription(authHeader, request);
+        service.deleteSubscription(customerId, request);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public ResponseEntity<List<SubscriptionDetailDTO>> findAllSubscriptions(
-            @RequestHeader("Authorization") String authHeader
+            @RequestHeader("X-Customer-Id") String customerId
     ) {
-        return ResponseEntity.ok(service.findAllCustomerSubscriptions(authHeader));
+        return ResponseEntity.ok(service.findAllCustomerSubscriptions(customerId));
     }
 }
