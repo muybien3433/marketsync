@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    username: admin
-    password: admin
-    url: jdbc:postgresql://postgres:5432/marketsync
+    username: wallet
+    password: wallet
+    url: jdbc:postgresql://postgres-wallet/wallet?sslmode=disable
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,4 +14,4 @@ spring:
 
 application:
   config:
-    finance-url: http://eureka-server:9999/api/v1/finances
+    finance-url: http://finance-server:8800/api/v1/finances

@@ -1,8 +1,11 @@
-package pl.muybien.finance;
+package pl.muybien.finance.updater;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.finance.Finance;
+import pl.muybien.finance.FinanceDetail;
+import pl.muybien.finance.FinanceRepository;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;

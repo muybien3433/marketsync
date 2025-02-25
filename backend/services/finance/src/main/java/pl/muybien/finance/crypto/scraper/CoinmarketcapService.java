@@ -15,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.finance.*;
 import pl.muybien.finance.crypto.CryptoService;
-import pl.muybien.finance.FinanceUpdater;
+import pl.muybien.finance.updater.FinanceDatabaseUpdater;
+import pl.muybien.finance.updater.FinanceUpdater;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -70,13 +71,13 @@ public class CoinmarketcapService extends FinanceUpdater implements CryptoServic
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(cron = "${coinmarketcap.update-schedule-cron}")
     public void scheduleUpdate() {
-        updateQueue("coinmarketcap", 2);
+        enqueueUpdate("coinmarketcap");
     }
 
     @Override
     @Transactional
     public void updateAssets() {
-        if (!isUpdate()) {
+        if (!isUpdating()) {
             var cryptos = new LinkedHashSet<FinanceDetail>();
             int pageCounter = 1;
             log.info("Starting updating available cryptos list...");
@@ -95,7 +96,7 @@ public class CoinmarketcapService extends FinanceUpdater implements CryptoServic
                 } catch (Exception e) {
                     throw new FinanceNotFoundException("Coinmarketcap data: " + e.getMessage());
                 } finally {
-                    setUpdate(false);
+                    setUpdating(false);
                 }
             }
             databaseUpdater.sortAndSaveFinanceToDatabase(AssetType.CRYPTOS.name(), cryptos);
@@ -118,13 +119,7 @@ public class CoinmarketcapService extends FinanceUpdater implements CryptoServic
             if (name != null && price != null) {
                 BigDecimal priceAsBigDecimal = new BigDecimal(price.replaceAll("[$,]", ""));
 
-                return FinanceResponse.builder()
-                        .name(name)
-                        .symbol(symbol)
-                        .price(priceAsBigDecimal)
-                        .currency(CurrencyType.USD)
-                        .assetType(AssetType.CRYPTOS)
-                        .build();
+                return new FinanceResponse(name, symbol, priceAsBigDecimal, CurrencyType.USD, AssetType.CRYPTOS);
             } else {
                 log.warn("Missing data: name={}, price={}", name, price);
                 throw new FinanceNotFoundException("Name or/and price not found");

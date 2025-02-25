@@ -1,21 +1,20 @@
 package pl.muybien.asset.dto;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
-@Builder
 public record AssetAggregateDTO(
-        String name,
-        String symbol,
-        String assetType,
-        BigDecimal count,
-        BigDecimal currentPrice,
-        String currency,
-        BigDecimal value,
-        BigDecimal averagePurchasePrice,
-        BigDecimal profit,
-        BigDecimal profitInPercentage,
-        BigDecimal exchangeRateToDesired
+        @JsonProperty("name") String name,
+        @JsonProperty("symbol") String symbol,
+        @JsonProperty("assetType") String assetType,
+        @JsonProperty("count") BigDecimal count,
+        @JsonProperty("currentPrice") BigDecimal currentPrice,
+        @JsonProperty("currency") String currency,
+        @JsonProperty("value") BigDecimal value,
+        @JsonProperty("averagePurchasePrice") BigDecimal averagePurchasePrice,
+        @JsonProperty("profit") BigDecimal profit,
+        @JsonProperty("profitInPercentage") BigDecimal profitInPercentage,
+        @JsonProperty("exchangeRateToDesired") BigDecimal exchangeRateToDesired
 ) {
 }

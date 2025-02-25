@@ -44,6 +44,7 @@ yarn-error.log
 
 # Angular
 .angular/
+frontend/dist
 
 # Environment files
 frontend/src/environments/environment.ts

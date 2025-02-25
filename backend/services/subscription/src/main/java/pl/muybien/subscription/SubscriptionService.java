@@ -140,7 +140,7 @@ public class SubscriptionService {
         var results = mongoTemplate.aggregate(aggregation, Subscription.class, SubscriptionDetail.class);
 
         return results.getMappedResults().stream()
-                .map(detailDTOMapper::mapToDTO)
+                .map(detailDTOMapper::toDTO)
                 .collect(Collectors.toList());
     }
 }

@@ -103,19 +103,20 @@ public class AssetService {
         BigDecimal profitPercentage = resolveProfitInPercentage(totalInvested, profit);
         BigDecimal exchangeRateToDesired = resolveExchangeRateToDesired(asset.currency(), desiredCurrency);
 
-        return AssetAggregateDTO.builder()
-                .name(asset.name())
-                .symbol(asset.symbol())
-                .assetType(type)
-                .count(asset.count())
-                .currentPrice(resolvePriceByCurrency(asset, finance))
-                .currency(asset.currency())
-                .value(value)
-                .averagePurchasePrice(asset.averagePurchasePrice())
-                .profit(profit)
-                .profitInPercentage(profitPercentage)
-                .exchangeRateToDesired(exchangeRateToDesired)
-                .build();
+        return new AssetAggregateDTO(
+                asset.name(),
+                asset.symbol(),
+                type,
+                asset.count(),
+                resolvePriceByCurrency(asset, finance),
+                asset.currency(),
+                value,
+                asset.averagePurchasePrice(),
+                profit,
+                profitPercentage,
+                exchangeRateToDesired
+
+        );
     }
 
     private BigDecimal resolvePriceByCurrency(AssetGroupDTO asset, FinanceResponse finance) {

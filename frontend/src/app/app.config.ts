@@ -24,8 +24,6 @@ import {environment} from '../environments/environment.development';
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './i18n/', '.json');
 
-const Keycloak = typeof window !== 'undefined' ? import('keycloak-js') : null;
-
 function initializeKeycloak(keycloak: KeycloakService): () => Promise<boolean> {
   return async () => {
     if (typeof window === 'undefined') return true;

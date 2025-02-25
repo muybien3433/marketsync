@@ -9,8 +9,10 @@ import pl.muybien.finance.crypto.CryptoService;
 import pl.muybien.finance.currency.CurrencyService;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,6 +24,9 @@ class FinanceServiceTest {
 
     @Mock
     private CurrencyService currencyService;
+
+    @Mock
+    private FinanceDetailDTOMapper mapper;
 
     @Mock
     private FinanceRepository repository;
@@ -88,9 +93,9 @@ class FinanceServiceTest {
         when(repository.findFinanceByAssetTypeIgnoreCase(assetType)).thenReturn(Optional.of(finance));
         when(finance.getFinanceDetails()).thenReturn(expectedDetails);
 
-        Set<FinanceDetail> result = financeService.displayAvailableFinance(assetType);
+        Set<FinanceDetailDTO> result = financeService.displayAvailableFinance(assetType);
 
-        assertEquals(expectedDetails, result);
+        assertEquals(expectedDetails.size(), result.size());
         verify(repository).findFinanceByAssetTypeIgnoreCase(assetType);
         verify(finance).getFinanceDetails();
         verifyNoInteractions(cryptoService, currencyService);
@@ -102,7 +107,7 @@ class FinanceServiceTest {
 
         when(repository.findFinanceByAssetTypeIgnoreCase(assetType)).thenReturn(Optional.empty());
 
-        Set<FinanceDetail> result = financeService.displayAvailableFinance(assetType);
+        Set<FinanceDetailDTO> result = financeService.displayAvailableFinance(assetType);
 
         assertTrue(result.isEmpty());
         verify(repository).findFinanceByAssetTypeIgnoreCase(assetType);

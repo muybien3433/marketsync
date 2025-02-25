@@ -26,7 +26,7 @@ public class FinanceController {
     }
 
     @GetMapping("/{asset-type}")
-    public ResponseEntity<Set<FinanceDetail>> displayAvailableFinance(
+    public ResponseEntity<Set<FinanceDetailDTO>> displayAvailableFinance(
             @PathVariable("asset-type") String assetType
     ) {
         return ResponseEntity.ok(service.displayAvailableFinance(assetType));

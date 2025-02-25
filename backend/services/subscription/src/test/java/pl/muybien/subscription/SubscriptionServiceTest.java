@@ -17,6 +17,7 @@ import pl.muybien.subscription.request.SubscriptionDeletionRequest;
 import pl.muybien.subscription.request.SubscriptionRequest;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -138,20 +139,21 @@ class SubscriptionServiceTest {
                 .assetType("cryptos")
                 .build();
 
-        var subscriptionDetailDTO = SubscriptionDetailDTO.builder()
-                .id("detail-id-123")
-                .customerId("customerId")
-                .financeName("Bitcoin")
-                .upperBoundPrice(45000.0)
-                .lowerBoundPrice(null)
-                .assetType("cryptos")
-                .build();
+        var subscriptionDetailDTO = new SubscriptionDetailDTO(
+                "detail-id-123",
+                "customerId",
+                "Bitcoin",
+                45000.0,
+                null,
+                "cryptos",
+                LocalDateTime.now()
+        );
 
         var mockResults = mock(AggregationResults.class);
 
         when(mongoTemplate.aggregate(any(), eq(Subscription.class), eq(SubscriptionDetail.class))).thenReturn(mockResults);
         when(mockResults.getMappedResults()).thenReturn(List.of(subscriptionDetail));
-        when(detailDTOMapper.mapToDTO(any())).thenReturn(subscriptionDetailDTO);
+        when(detailDTOMapper.toDTO(any())).thenReturn(subscriptionDetailDTO);
 
         var results = subscriptionService.findAllCustomerSubscriptions(customerId);
 

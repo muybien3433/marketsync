@@ -1,5 +1,0 @@
-spring:
-  config:
-    import: configserver:http://config-server:7777
-  application:
-    name: eureka-service

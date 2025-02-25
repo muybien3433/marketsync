@@ -1,15 +1,14 @@
 package pl.muybien.finance;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
-@Builder
 public record FinanceResponse(
-        String name,
-        String symbol,
-        BigDecimal price,
-        CurrencyType currency,
-        AssetType assetType
+        @JsonProperty("name") String name,
+        @JsonProperty("symbol")String symbol,
+        @JsonProperty("price")BigDecimal price,
+        @JsonProperty("currency")CurrencyType currency,
+        @JsonProperty("assetType")AssetType assetType
 ) {
 }

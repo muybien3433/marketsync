@@ -11,7 +11,7 @@ export class TokenInterceptor implements HttpInterceptor {
         return of(this.keycloakService.isLoggedIn()).pipe(
             switchMap((isLoggedIn: boolean) => {
                 if (isLoggedIn) {
-                    return of(this.keycloakService.isTokenExpired()).pipe( // Use of() instead of from()
+                    return of(this.keycloakService.isTokenExpired()).pipe(
                         switchMap((isExpired: boolean) => {
                             if (isExpired) {
                                 return from(this.keycloakService.updateToken(70)).pipe(
