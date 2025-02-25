@@ -9,6 +9,7 @@ import pl.muybien.finance.stock.StockService;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class FinanceService {
     private final CryptoService cryptoService;
     private final CurrencyService currencyService;
     private final FinanceRepository repository;
+    private final FinanceDetailDTOMapper mapper;
 
     FinanceResponse fetchFinance(String assetType, String uri) {
         AssetType type = AssetType.fromString(assetType);
@@ -32,9 +34,12 @@ public class FinanceService {
         return currencyService.getCurrencyPairExchange(from, to);
     }
 
-    Set<FinanceDetail> displayAvailableFinance(String assetType) {
+    Set<FinanceDetailDTO> displayAvailableFinance(String assetType) {
         return repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())
                 .map(Finance::getFinanceDetails)
+                .map(de -> de.stream()
+                        .map(mapper::toDTO)
+                        .collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
     }
 }

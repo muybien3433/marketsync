@@ -4,6 +4,6 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://admin:admin@mongodb:27017/marketsync?authSource=admin&authMechanism=SCRAM-SHA-256
+      uri: mongodb://finance:finance@mongodb-finance/finance?authSource=admin&authMechanism=SCRAM-SHA-256&tls=false
       authentication-database: admin
-      database: marketsync
+      database: finance

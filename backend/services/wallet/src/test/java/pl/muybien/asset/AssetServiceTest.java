@@ -10,8 +10,6 @@ import org.mockito.MockitoAnnotations;
 import pl.muybien.asset.dto.AssetAggregateDTO;
 import pl.muybien.asset.dto.AssetGroupDTO;
 import pl.muybien.asset.dto.AssetHistoryDTO;
-import pl.muybien.customer.CustomerClient;
-import pl.muybien.customer.CustomerResponse;
 import pl.muybien.exception.AssetNotFoundException;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.finance.FinanceClient;
@@ -30,9 +28,6 @@ import static org.mockito.Mockito.*;
 class AssetServiceTest {
 
     @Mock
-    private CustomerClient customerClient;
-
-    @Mock
     private AssetRepository repository;
 
     @Mock
@@ -41,41 +36,29 @@ class AssetServiceTest {
     @InjectMocks
     private AssetService assetService;
 
-    private CustomerResponse customer;
     private Asset asset;
-    private final String authHeader = "Bearer token";
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        customer = CustomerResponse.builder()
-                .id("customerId")
-                .firstName("Joe")
-                .lastName("Doe")
-                .email("joe.doe@example.com")
-                .build();
-
         asset = Asset.builder()
                 .id(1L)
-                .customerId(customer.id())
+                .customerId("customerId")
                 .build();
     }
 
     @Test
     void createAsset_shouldSaveAsset() {
+        String customerId = "customerId";
         String currency = "USD";
         AssetRequest request = new AssetRequest(
                 "cryptos", "bitcoin", BigDecimal.valueOf(2), BigDecimal.valueOf(30000), currency);
 
-        when(customerClient.fetchCustomerFromHeader(authHeader))
-                .thenReturn(new CustomerResponse(
-                        "customerId", "Joe", "Doe", "joe.doe@example.com"));
-
         when(financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri()))
                 .thenReturn(new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100_000), "USD", "cryptos"));
 
-        assetService.createAsset(authHeader, request);
+        assetService.createAsset(customerId, request);
 
         ArgumentCaptor<Asset> assetCaptor = ArgumentCaptor.forClass(Asset.class);
         verify(repository).save(assetCaptor.capture());
@@ -89,14 +72,14 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_shouldUpdateAsset() {
+        String customerId = "customerId";
         String currency = "USD";
         AssetRequest request = new AssetRequest(
                 "cryptos", "bitcoin", BigDecimal.valueOf(5), BigDecimal.valueOf(50000), currency);
 
-        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
 
-        assetService.updateAsset(authHeader, request, asset.getId());
+        assetService.updateAsset(customerId, request, asset.getId());
 
         assertThat(asset.getCount()).isEqualTo(BigDecimal.valueOf(5).setScale(2, RoundingMode.HALF_UP));
         assertThat(asset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(50000).setScale(2, RoundingMode.HALF_UP));
@@ -111,14 +94,14 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_shouldThrowAssetNotFoundException_whenAssetNotFound() {
+        String customerId = "customerId";
         String currency = "USD";
         var request = new AssetRequest(
                 "cryptos", "bitcoin", BigDecimal.valueOf(5), BigDecimal.valueOf(50000), currency);
 
-        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(repository.findById(asset.getId())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> assetService.updateAsset(authHeader, request, asset.getId()))
+        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, asset.getId()))
                 .isInstanceOf(AssetNotFoundException.class)
                 .hasMessage("Asset with ID 1 not found");
 
@@ -127,16 +110,16 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_shouldThrowOwnershipException_whenCustomerNotOwner() {
+        String customerId = "customerId";
         String currency = "USD";
 
         var request = new AssetRequest(
                 "cryptos", "bitcoin", BigDecimal.valueOf(5), BigDecimal.valueOf(50000), currency);
         asset.setCustomerId("differentCustomerId");
 
-        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
 
-        assertThatThrownBy(() -> assetService.updateAsset(authHeader, request, asset.getId()))
+        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, asset.getId()))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Asset updating failed:: Customer id mismatch");
 
@@ -145,15 +128,15 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_shouldThrowOwnershipExceptionIfCustomerMismatch() {
+        String customerId = "customerId";
         String currency = "USD";
         var request = new AssetRequest(
                 "cryptos", "bitcoin", BigDecimal.valueOf(3), BigDecimal.valueOf(35000), currency);
         asset.setCustomerId("differentCustomerId");
 
-        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
 
-        assertThatThrownBy(() -> assetService.updateAsset(authHeader, request, asset.getId()))
+        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, asset.getId()))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Asset updating failed:: Customer id mismatch");
     }
@@ -162,7 +145,6 @@ class AssetServiceTest {
     void deleteAsset_shouldThrowEntityNotFoundExceptionIfAssetNotFound() {
         String authHeader = "Bearer token";
 
-        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(repository.findById(asset.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> assetService.deleteAsset(authHeader, asset.getId()))
@@ -172,10 +154,11 @@ class AssetServiceTest {
 
     @Test
     void deleteAsset_shouldDeleteAsset() {
-        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
+        String customerId = "customerId";
+
         when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
 
-        assetService.deleteAsset(authHeader, asset.getId());
+        assetService.deleteAsset(customerId, asset.getId());
 
         verify(repository).delete(asset);
         verify(repository, times(1)).findById(asset.getId());
@@ -183,28 +166,30 @@ class AssetServiceTest {
 
     @Test
     void deleteAsset_shouldThrowOwnershipExceptionIfCustomerMismatch() {
+        String customerId = "customerId";
         asset.setCustomerId("differentCustomerId");
 
-        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
         when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
 
-        assertThatThrownBy(() -> assetService.deleteAsset(authHeader, asset.getId()))
+        assertThatThrownBy(() -> assetService.deleteAsset(customerId, asset.getId()))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Asset deletion failed:: Customer id mismatch");
     }
 
     @Test
     void findAllAssetHistory_shouldReturnEmptyListIfNoHistory() {
-        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
-        when(repository.findAssetHistoryByCustomerId(customer.id())).thenReturn(Collections.emptyList());
+        String customerId = "customerId";
 
-        List<AssetHistoryDTO> history = assetService.findAllAssetHistory(authHeader);
+        when(repository.findAssetHistoryByCustomerId(customerId)).thenReturn(Collections.emptyList());
+
+        List<AssetHistoryDTO> history = assetService.findAllAssetHistory(customerId);
 
         assertThat(history).isEmpty();
     }
 
     @Test
     void findAllCustomerAssets_shouldAggregateAssets() {
+        String customerId = "customerId";
         String uri = "ethereum";
         String currency = "USD";
         var assetGroup = new AssetGroupDTO("Ethereum", "ETH", uri,
@@ -212,13 +197,12 @@ class AssetServiceTest {
                 new BigDecimal("30000.0"), currency, "customerId"
         );
 
-        when(customerClient.fetchCustomerFromHeader(authHeader)).thenReturn(customer);
-        when(repository.findAndAggregateAssetsByCustomerId(customer.id())).thenReturn(Optional.of(List.of(assetGroup)));
+        when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
         when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name().toLowerCase(), uri))
                 .thenReturn(new FinanceResponse("Ethereum", "ETH", BigDecimal.valueOf(35000), currency, AssetType.CRYPTOS.name()));
 
 
-        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(authHeader, currency);
+        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currency);
 
         assertThat(assets).hasSize(1);
         AssetAggregateDTO asset = assets.getFirst();

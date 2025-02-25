@@ -1,6 +1,5 @@
 package pl.muybien.finance;
 
-import com.mongodb.lang.Nullable;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,7 +21,6 @@ public class FinanceDetail {
     private String name;
     private String symbol;
     private String uri;
-    @Nullable
     private BigDecimal price;
     private CurrencyType currency;
     private AssetType assetType;

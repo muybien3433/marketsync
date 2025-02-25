@@ -11,7 +11,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.muybien.exception.FinanceNotFoundException;
-import pl.muybien.finance.FinanceUpdater;
+import pl.muybien.finance.updater.FinanceUpdater;
 import pl.muybien.finance.currency.Currency;
 import pl.muybien.finance.currency.CurrencyRepository;
 import pl.muybien.finance.currency.CurrencyService;
@@ -43,7 +43,7 @@ public class WiseService extends FinanceUpdater implements CurrencyService {
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(fixedRateString = "${wise.currency-updater-frequency-ms}")
     protected void scheduleUpdate() {
-        updateQueue("wise", 1);
+        enqueueUpdate("wise");
     }
 
     @Override
@@ -75,8 +75,6 @@ public class WiseService extends FinanceUpdater implements CurrencyService {
         BigDecimal exchangeRate = fetchExchangeRate(from, to);
         if (exchangeRate != null && exchangeRate.compareTo(BigDecimal.ZERO) > 0) {
             String name = currencyNameResolver(from, to);
-            log.info("Saving {} to database", name);
-
             repository.findCurrencyByName(name)
                     .ifPresentOrElse(
                             currency -> {
@@ -98,7 +96,6 @@ public class WiseService extends FinanceUpdater implements CurrencyService {
 
         for (int attempt = 1; attempt <= maxFetchRetries; attempt++) {
             try {
-                log.info("Attempt {} to fetch exchange rate from {} to {}", attempt, from, to);
                 Document doc = Jsoup.connect(url).get();
                 Element element = doc.select("span.text-success").first();
                 if (element != null) {

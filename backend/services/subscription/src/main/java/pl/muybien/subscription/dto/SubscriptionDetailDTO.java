@@ -1,18 +1,17 @@
 package pl.muybien.subscription.dto;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 
-@Builder
 public record SubscriptionDetailDTO(
 
-        String id,
-        String customerId,
-        String financeName,
-        Double upperBoundPrice,
-        Double lowerBoundPrice,
-        String assetType,
-        LocalDateTime createdDate
+        @JsonProperty("id") String id,
+        @JsonProperty("customerId") String customerId,
+        @JsonProperty("financeName") String financeName,
+        @JsonProperty("upperBoundPrice") Double upperBoundPrice,
+        @JsonProperty("lowerBoundPrice") Double lowerBoundPrice,
+        @JsonProperty("assetType") String assetType,
+        @JsonProperty("createdDate") LocalDateTime createdDate
 ) {
 }

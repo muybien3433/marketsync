@@ -3,14 +3,14 @@ server:
 
 spring:
   kafka:
+    bootstrap-servers: kafka:9092
     consumer:
-      bootstrap-servers: localhost:9092
       group-id: send-email-event
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: subscriptionConfirmation:pl.muybien.notification.kafka.SubscriptionConfirmation
+        spring.json.type.mapping: subscriptionConfirmation:pl.muybien.kafka.SubscriptionEmailConfirmation
       isolation-level: read_committed
 
   mail:

@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.asset.dto.AssetAggregateDTO;
 import pl.muybien.asset.dto.AssetGroupDTO;
 import pl.muybien.asset.dto.AssetHistoryDTO;
-import pl.muybien.customer.CustomerClient;
 import pl.muybien.exception.AssetNotFoundException;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.finance.FinanceClient;
@@ -25,13 +24,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AssetService {
 
-    private final CustomerClient customerClient;
     private final AssetRepository repository;
     private final FinanceClient financeClient;
 
     @Transactional
-    public void createAsset(String authHeader, AssetRequest request) {
-        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+    public void createAsset(String customerId, AssetRequest request) {
         var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
 
         repository.save(Asset.builder()
@@ -48,8 +45,7 @@ public class AssetService {
     }
 
     @Transactional
-    public void updateAsset(String authHeader, AssetRequest request, Long assetId) {
-        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+    public void updateAsset(String customerId, AssetRequest request, Long assetId) {
         var asset = repository.findById(assetId).orElseThrow(() ->
                 new AssetNotFoundException("Asset with ID %s not found".formatted(assetId)));
 
@@ -66,8 +62,7 @@ public class AssetService {
     }
 
     @Transactional
-    public void deleteAsset(String authHeader, Long assetId) {
-        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+    public void deleteAsset(String customerId, Long assetId) {
         var asset = repository.findById(assetId).orElseThrow(() ->
                 new EntityNotFoundException("Asset with ID: %s not found".formatted(assetId)));
 
@@ -80,8 +75,7 @@ public class AssetService {
     }
 
     @Transactional(readOnly = true)
-    public List<AssetHistoryDTO> findAllAssetHistory(String authHeader) {
-        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+    public List<AssetHistoryDTO> findAllAssetHistory(String customerId) {
         var assetHistory = repository.findAssetHistoryByCustomerId(customerId);
 
         return assetHistory.stream()
@@ -90,8 +84,7 @@ public class AssetService {
     }
 
     @Transactional(readOnly = true)
-    public List<AssetAggregateDTO> findAllCustomerAssets(String authHeader, String desiredCurrency) {
-        var customerId = customerClient.fetchCustomerFromHeader(authHeader).id();
+    public List<AssetAggregateDTO> findAllCustomerAssets(String customerId, String desiredCurrency) {
         var groupedAssets = repository.findAndAggregateAssetsByCustomerId(customerId).orElse(Collections.emptyList());
         var aggregatedAssets = new ArrayList<AssetAggregateDTO>();
 
@@ -110,19 +103,20 @@ public class AssetService {
         BigDecimal profitPercentage = resolveProfitInPercentage(totalInvested, profit);
         BigDecimal exchangeRateToDesired = resolveExchangeRateToDesired(asset.currency(), desiredCurrency);
 
-        return AssetAggregateDTO.builder()
-                .name(asset.name())
-                .symbol(asset.symbol())
-                .assetType(type)
-                .count(asset.count())
-                .currentPrice(resolvePriceByCurrency(asset, finance))
-                .currency(asset.currency())
-                .value(value)
-                .averagePurchasePrice(asset.averagePurchasePrice())
-                .profit(profit)
-                .profitInPercentage(profitPercentage)
-                .exchangeRateToDesired(exchangeRateToDesired)
-                .build();
+        return new AssetAggregateDTO(
+                asset.name(),
+                asset.symbol(),
+                type,
+                asset.count(),
+                resolvePriceByCurrency(asset, finance),
+                asset.currency(),
+                value,
+                asset.averagePurchasePrice(),
+                profit,
+                profitPercentage,
+                exchangeRateToDesired
+
+        );
     }
 
     private BigDecimal resolvePriceByCurrency(AssetGroupDTO asset, FinanceResponse finance) {

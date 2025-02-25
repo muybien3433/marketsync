@@ -33,7 +33,7 @@ bases and asset types as market demands evolve.
 - **Backend**: Java 23, SpringBoot 6, Kafka
 - **Database**: PostgreSQL for SQL and MongoDB for NoSQL
 - **Authentication**: OAuth2, Keyclock
-- **Cloud**: Docker, Eureka
+- **Cloud**: Docker
 - **Scrap**: Selenium, JSoup
 - **Testing**: JUnit 5
 - **Build Tool**: Maven, Docker

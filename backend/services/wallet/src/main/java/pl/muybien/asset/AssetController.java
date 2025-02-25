@@ -19,43 +19,43 @@ public class AssetController {
 
     @GetMapping("/{currency}")
     public ResponseEntity<List<AssetAggregateDTO>> findAllCustomerAssets(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader("X-Customer-Id") String customerId,
             @PathVariable("currency") String currency
     ) {
-        return ResponseEntity.ok(service.findAllCustomerAssets(authHeader, currency));
+        return ResponseEntity.ok(service.findAllCustomerAssets(customerId, currency));
     }
 
     @GetMapping("/history")
     public ResponseEntity<List<AssetHistoryDTO>> findAllHistoryAssets(
-            @RequestHeader("Authorization") String authHeader
+            @RequestHeader("X-Customer-Id") String customerId
     ) {
-        return ResponseEntity.ok(service.findAllAssetHistory(authHeader));
+        return ResponseEntity.ok(service.findAllAssetHistory(customerId));
     }
 
     @PostMapping
     public ResponseEntity<String> createAsset(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader("X-Customer-Id") String customerId,
             @RequestBody @Valid AssetRequest request
     ) {
-        service.createAsset(authHeader, request);
+        service.createAsset(customerId, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PatchMapping("/{asset-id}")
     public ResponseEntity<String> updateAsset(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader("X-Customer-Id") String customerId,
             @RequestBody @Valid AssetRequest request,
             @PathVariable("asset-id") Long assetId
     ) {
-        service.updateAsset(authHeader, request, assetId);
+        service.updateAsset(customerId, request, assetId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @DeleteMapping("/{asset-id}")
     public ResponseEntity<String> deleteAsset(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader("X-Customer-Id") String customerId,
             @PathVariable("asset-id") Long assetId) {
-        service.deleteAsset(authHeader, assetId);
+        service.deleteAsset(customerId, assetId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -5,15 +5,15 @@ import pl.muybien.subscription.data.SubscriptionDetail;
 
 @Service
 public class SubscriptionDetailDTOMapper {
-    public SubscriptionDetailDTO mapToDTO(SubscriptionDetail subscriptionDetail) {
-        return SubscriptionDetailDTO.builder()
-                .id(subscriptionDetail.getId())
-                .customerId(subscriptionDetail.getCustomerId())
-                .financeName(subscriptionDetail.getFinanceName())
-                .upperBoundPrice(subscriptionDetail.getUpperBoundPrice())
-                .lowerBoundPrice(subscriptionDetail.getLowerBoundPrice())
-                .assetType(subscriptionDetail.getAssetType())
-                .createdDate(subscriptionDetail.getCreatedDate())
-                .build();
+    public SubscriptionDetailDTO toDTO(SubscriptionDetail subscriptionDetail) {
+        return new SubscriptionDetailDTO(
+                subscriptionDetail.getId(),
+                subscriptionDetail.getCustomerId(),
+                subscriptionDetail.getFinanceName(),
+                subscriptionDetail.getUpperBoundPrice(),
+                subscriptionDetail.getLowerBoundPrice(),
+                subscriptionDetail.getAssetType(),
+                subscriptionDetail.getCreatedDate()
+        );
     }
 }

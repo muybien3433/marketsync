@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.finance.*;
+import pl.muybien.finance.updater.FinanceDatabaseUpdater;
+import pl.muybien.finance.updater.FinanceUpdater;
 
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
@@ -39,12 +41,13 @@ public class NewconnectScraper extends FinanceUpdater {
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(fixedRateString = "${newconnect.update-rate-ms}")
     public void scheduleUpdate() {
-        updateQueue("newconnect", 3);
+        enqueueUpdate("newconnect");
     }
 
     @Override
     @Transactional
     public void updateAssets() {
+        log.info("Starting updating NewConnect assets...");
         LinkedHashSet<FinanceDetail> stocks = new LinkedHashSet<>();
 
         WebDriver driver = null;
@@ -130,7 +133,7 @@ public class NewconnectScraper extends FinanceUpdater {
                 driver.quit();
             }
             System.gc();
-            setUpdate(false);
+            setUpdating(false);
         }
         log.info("Finished updating available new connect list");
     }

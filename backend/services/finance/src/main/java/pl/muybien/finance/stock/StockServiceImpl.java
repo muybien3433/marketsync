@@ -25,12 +25,12 @@ public class StockServiceImpl implements StockService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No finance details available for asset type: " + assetType));
 
-        return FinanceResponse.builder()
-                .name(financeDetail.getName())
-                .symbol(financeDetail.getSymbol())
-                .price(financeDetail.getPrice())
-                .currency(financeDetail.getCurrency())
-                .assetType(financeDetail.getAssetType())
-                .build();
+        return new FinanceResponse(
+                financeDetail.getName(),
+                financeDetail.getSymbol(),
+                financeDetail.getPrice(),
+                financeDetail.getCurrency(),
+                financeDetail.getAssetType());
+
     }
 }
