@@ -19,6 +19,7 @@ import pl.muybien.subscription.request.SubscriptionDeletionRequest;
 import pl.muybien.subscription.request.SubscriptionRequest;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,18 +40,19 @@ public class SubscriptionService {
 
         BigDecimal value = resolveValueByCurrency(request, finance);
 
-        var subscriptionDetail = SubscriptionDetail.builder()
-                .id(UUID.randomUUID().toString())
-                .customerId(customerId)
-                .customerEmail(customerEmail)
-                .financeName(finance.name())
-                .requestedValue(request.value())
-                .requestedCurrency(request.currency())
-                .upperBoundPrice(value.doubleValue())
-                .lowerBoundPrice(null)
-                .assetType(finance.assetType())
-                .notificationType(request.notificationType())
-                .build();
+        var subscriptionDetail = new SubscriptionDetail(
+                UUID.randomUUID().toString(),
+                request.uri(),
+                customerId,
+                customerEmail,
+                finance.name(),
+                request.currency(),
+                value.doubleValue(),
+                null,
+                finance.assetType(),
+                request.notificationType(),
+                LocalDateTime.now()
+        );
 
         subscription.getSubscriptions()
                 .computeIfAbsent(finance.name().trim().toLowerCase(), _ -> new LinkedList<>())
@@ -67,18 +69,19 @@ public class SubscriptionService {
 
         BigDecimal value = resolveValueByCurrency(request, finance);
 
-        var subscriptionDetail = SubscriptionDetail.builder()
-                .id(UUID.randomUUID().toString())
-                .customerId(customerId)
-                .customerEmail(customerEmail)
-                .financeName(finance.name())
-                .requestedValue(request.value())
-                .requestedCurrency(request.currency())
-                .upperBoundPrice(null)
-                .lowerBoundPrice(value.doubleValue())
-                .assetType(finance.assetType())
-                .notificationType(request.notificationType())
-                .build();
+        var subscriptionDetail = new SubscriptionDetail(
+                UUID.randomUUID().toString(),
+                request.uri(),
+                customerId,
+                customerEmail,
+                finance.name(),
+                request.currency(),
+                null,
+                value.doubleValue(),
+                finance.assetType(),
+                request.notificationType(),
+                LocalDateTime.now()
+        );
 
         subscription.getSubscriptions()
                 .computeIfAbsent(finance.name().trim().toLowerCase(), _ -> new LinkedList<>())
@@ -103,14 +106,14 @@ public class SubscriptionService {
                 .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for URI: " + request.uri()));
 
         var subscriptionDetailList = Optional.ofNullable(subscription.getSubscriptions().get(request.uri()))
-                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for URI: " + request.uri()));
+                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription detail list not found for URI: " + request.uri()));
 
         var subscriptionDetail = subscriptionDetailList.stream()
-                .filter(detail -> detail.getId().equals(request.id()))
+                .filter(detail -> detail.id().equals(request.id()))
                 .findFirst()
-                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for ID: " + request.id()));
+                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription detail not found for ID: " + request.id()));
 
-        if (!subscriptionDetail.getCustomerId().equals(customerId)) {
+        if (!subscriptionDetail.customerId().equals(customerId)) {
             throw new OwnershipException("Subscription deletion failed:: Customer id mismatch");
         }
 

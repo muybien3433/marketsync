@@ -7,13 +7,13 @@ import pl.muybien.subscription.data.SubscriptionDetail;
 public class SubscriptionDetailDTOMapper {
     public SubscriptionDetailDTO toDTO(SubscriptionDetail subscriptionDetail) {
         return new SubscriptionDetailDTO(
-                subscriptionDetail.getId(),
-                subscriptionDetail.getCustomerId(),
-                subscriptionDetail.getFinanceName(),
-                subscriptionDetail.getUpperBoundPrice(),
-                subscriptionDetail.getLowerBoundPrice(),
-                subscriptionDetail.getAssetType(),
-                subscriptionDetail.getCreatedDate()
+                subscriptionDetail.id(),
+                subscriptionDetail.customerId(),
+                subscriptionDetail.financeName(),
+                subscriptionDetail.upperBoundPrice(),
+                subscriptionDetail.lowerBoundPrice(),
+                subscriptionDetail.assetType(),
+                subscriptionDetail.createdDate()
         );
     }
 }

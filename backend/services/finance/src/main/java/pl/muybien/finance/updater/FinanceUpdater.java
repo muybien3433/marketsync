@@ -1,7 +1,5 @@
 package pl.muybien.finance.updater;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.muybien.exception.FinanceUpdateException;
@@ -9,40 +7,37 @@ import pl.muybien.exception.FinanceUpdateException;
 import javax.annotation.PreDestroy;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
-@Getter
-@Setter
 public abstract class FinanceUpdater {
+    private static final int MAX_QUEUE_CAPACITY = 100;
+    private static final int maxRetries = 3;
+
+    private static final ExecutorService taskExecutor = Executors.newSingleThreadExecutor();
+    private static final BlockingQueue<FinanceUpdateTask> taskQueue = new LinkedBlockingQueue<>(MAX_QUEUE_CAPACITY);
+    private static final Set<String> pendingTasks = ConcurrentHashMap.newKeySet();
+    private static final AtomicInteger activeTasks = new AtomicInteger(0);
+    private static volatile boolean processingStarted = false;
 
     protected abstract void scheduleUpdate();
     protected abstract void updateAssets();
 
-    private final ExecutorService taskExecutor = Executors.newSingleThreadExecutor();
-    private final BlockingQueue<FinanceUpdateTask> taskQueue = new LinkedBlockingQueue<>();
-    private final Set<String> pendingTasks = ConcurrentHashMap.newKeySet();
-    private volatile boolean isUpdating = false;
-
     protected FinanceUpdater() {
-        startTaskProcessing();
+        startTaskProcessingOnce();
     }
 
-    public void enqueueUpdate(String taskIdentifier) {
-        if (pendingTasks.add(taskIdentifier)) {
-            boolean enqueued = taskQueue.offer(new FinanceUpdateTask(taskIdentifier));
-            if (enqueued) {
-                log.debug("Task {} added to queue", taskIdentifier);
-            } else {
-                log.warn("Failed to add task {} to queue", taskIdentifier);
-                pendingTasks.remove(taskIdentifier);
+    private static void startTaskProcessingOnce() {
+        synchronized (FinanceUpdater.class) {
+            if (!processingStarted) {
+                startTaskProcessing();
+                processingStarted = true;
             }
-        } else {
-            log.info("Task {} already pending execution", taskIdentifier);
         }
     }
 
-    private void startTaskProcessing() {
+    private static void startTaskProcessing() {
         taskExecutor.submit(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
@@ -52,50 +47,83 @@ public abstract class FinanceUpdater {
                     Thread.currentThread().interrupt();
                     log.warn("Task processing interrupted");
                     break;
-                } catch (Exception e) {
-                    log.error("Unexpected error in task processor", e);
                 }
             }
         });
     }
 
-    private synchronized void processTask(FinanceUpdateTask task) {
-        if (!isUpdating) {
+    public void enqueueUpdate(String taskIdentifier) {
+        if (pendingTasks.add(taskIdentifier)) {
             try {
-                isUpdating = true;
-                log.info("Processing task: {}", task.taskKey());
-                updateAssets();
-            } catch (Exception e) {
-                log.error("Failed to process task: {}", task.taskKey(), e);
-                throw new FinanceUpdateException("Asset update failed", e);
-            } finally {
-                isUpdating = false;
-                pendingTasks.remove(task.taskKey());
+                Runnable updater = this::updateAssets;
+                FinanceUpdateTask task = new FinanceUpdateTask(taskIdentifier, updater);
+                boolean enqueued = taskQueue.offer(task, 500, TimeUnit.MILLISECONDS);
+
+                if (enqueued) {
+                    log.debug("Task {} added to queue", taskIdentifier);
+                } else {
+                    log.error("Task queue full, rejecting {}", taskIdentifier);
+                    pendingTasks.remove(taskIdentifier);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.warn("Task enqueue interrupted for {}", taskIdentifier);
+                pendingTasks.remove(taskIdentifier);
             }
         } else {
-            log.info("Update already in progress. Re-queuing task: {}", task.taskKey());
-            boolean requeued = taskQueue.offer(task);
-            if (!requeued) {
-                log.error("Failed to re-queue task: {}", task.taskKey());
-                pendingTasks.remove(task.taskKey());
+            log.debug("Task {} already queued", taskIdentifier);
+        }
+    }
+
+    private static void processTask(FinanceUpdateTask task) {
+        activeTasks.incrementAndGet();
+        try {
+            log.info("Processing task: {}", task.taskKey());
+            executeUpdateWithRetry(task);
+        } finally {
+            activeTasks.decrementAndGet();
+            pendingTasks.remove(task.taskKey());
+        }
+    }
+
+    private static void executeUpdateWithRetry(FinanceUpdateTask task) {
+        int attempts = 1;
+        while (attempts <= maxRetries) {
+            try {
+                task.updater().run();
+                return;
+            } catch (Exception e) {
+                if (attempts == maxRetries) {
+                    log.error("Failed to process task {} after {} attempts", task.taskKey(), maxRetries, e);
+                    throw new FinanceUpdateException("Asset update failed after retries", e);
+                }
+                log.warn("Retrying task {} (attempt {}/{})", task.taskKey(), attempts, maxRetries);
+                attempts++;
             }
         }
     }
 
     @PreDestroy
     public void shutdown() {
-        log.info("Shutting down finance updater");
-        taskExecutor.shutdownNow();
-        try {
-            if (!taskExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                log.warn("Task executor did not terminate gracefully");
+        log.info("Initiating graceful shutdown");
+        if (!taskExecutor.isShutdown()) {
+            taskExecutor.shutdown();
+            try {
+                if (!taskExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    log.warn("Forcing shutdown after timeout");
+                    taskExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.warn("Shutdown interrupted");
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.warn("Shutdown interrupted");
         }
     }
 
-    private record FinanceUpdateTask(String taskKey) {
+    private record FinanceUpdateTask(String taskKey, Runnable updater) {
+        @Override
+        public String toString() {
+            return "Task[" + taskKey + "]";
+        }
     }
 }

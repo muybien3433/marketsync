@@ -1,4 +1,4 @@
-package pl.muybien.finance.currency.scraper;
+package pl.muybien.finance.currency;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +12,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.finance.updater.FinanceUpdater;
-import pl.muybien.finance.currency.Currency;
-import pl.muybien.finance.currency.CurrencyRepository;
-import pl.muybien.finance.currency.CurrencyService;
 import pl.muybien.finance.CurrencyType;
 
 import java.io.IOException;
@@ -24,7 +21,7 @@ import java.util.Arrays;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class WiseService extends FinanceUpdater implements CurrencyService {
+public class WiseScraper extends FinanceUpdater implements CurrencyService {
 
     private final CurrencyRepository repository;
 
@@ -48,6 +45,7 @@ public class WiseService extends FinanceUpdater implements CurrencyService {
 
     @Override
     protected void updateAssets() {
+        log.info("Starting update currency data...");
         var allCurrencies = Arrays.asList(CurrencyType.values());
 
         for (int i = 0; i < allCurrencies.size(); i++) {
@@ -60,6 +58,7 @@ public class WiseService extends FinanceUpdater implements CurrencyService {
                 }
             }
         }
+        log.info("Finished update currency data");
     }
 
     @Override

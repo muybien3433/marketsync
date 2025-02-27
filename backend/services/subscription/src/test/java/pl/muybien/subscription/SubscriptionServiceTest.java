@@ -49,11 +49,13 @@ class SubscriptionServiceTest {
     void createIncreaseSubscription_shouldAddNewSubscription() {
         String customerId = "customerId";
         String customerEmail = "joe.doe@mail.com";
-        var request = new SubscriptionRequest("bitcoin", 3000.0, "cryptos", "USD", "email");
-        var finance = new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100000.0), "USD", "cryptos");
+        var request = new SubscriptionRequest(
+                "bitcoin", 3000.0, AssetType.CRYPTOS.name(), CurrencyType.USD.name(), NotificationType.EMAIL.name());
+        var finance = new FinanceResponse(
+                "Bitcoin", "BTC", "bitcoin", BigDecimal.valueOf(100000.0), CurrencyType.USD.name(), AssetType.CRYPTOS.name());
         var existingSubscription = new Subscription();
 
-        when(financeClient.findFinanceByTypeAndUri("cryptos", "bitcoin")).thenReturn(finance);
+        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name(), "bitcoin")).thenReturn(finance);
         when(subscriptionRepository.findByUri("bitcoin")).thenReturn(Optional.of(existingSubscription));
 
         subscriptionService.createIncreaseSubscription(customerId, customerEmail, request);
@@ -66,11 +68,13 @@ class SubscriptionServiceTest {
     void createDecreaseSubscription_shouldAddNewSubscription() {
         String customerId = "customerId";
         String customerEmail = "joe.doe@mail.com";
-        var request = new SubscriptionRequest("ethereum", 3000.0, "cryptos", "USD", "email");
-        var finance = new FinanceResponse("Ethereum", "BTC", BigDecimal.valueOf(100000.0), "USD", "cryptos");
+        var request = new SubscriptionRequest(
+                "ethereum", 3000.0, AssetType.CRYPTOS.name(), CurrencyType.USD.name(), NotificationType.EMAIL.name());
+        var finance = new FinanceResponse(
+                "Ethereum", "ETH", "ethereum", BigDecimal.valueOf(100000.0), CurrencyType.USD.name(), AssetType.CRYPTOS.name());
         var existingSubscription = new Subscription();
 
-        when(financeClient.findFinanceByTypeAndUri("cryptos", "ethereum")).thenReturn(finance);
+        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name(), "ethereum")).thenReturn(finance);
         when(subscriptionRepository.findByUri("ethereum")).thenReturn(Optional.of(existingSubscription));
 
         subscriptionService.createDecreaseSubscription(customerId, customerEmail, request);
@@ -83,16 +87,19 @@ class SubscriptionServiceTest {
     void deleteSubscription_shouldRemoveSubscriptionDetail() {
         String customerId = "customerId";
         SubscriptionDeletionRequest request = new SubscriptionDeletionRequest("bitcoin", "detail-id-123");
-        var subscriptionDetail = SubscriptionDetail.builder()
-                .id("detail-id-123")
-                .uri("bitcoin")
-                .customerId("customerId")
-                .financeName("Bitcoin")
-                .upperBoundPrice(45000.0)
-                .lowerBoundPrice(null)
-                .assetType("cryptos")
-                .build();
-
+        var subscriptionDetail = new SubscriptionDetail(
+                "detail-id-123",
+                "bitcoin",
+                "customerId",
+                "customerEmail",
+                "Bitcoin",
+                CurrencyType.USD.name(),
+                45000.0,
+                null,
+                AssetType.CRYPTOS.name(),
+                NotificationType.EMAIL.name(),
+                LocalDateTime.now()
+        );
         var existingSubscription = new Subscription();
         existingSubscription.getSubscriptions().put("bitcoin", new ArrayList<>(Collections.singletonList(subscriptionDetail)));
 
@@ -108,15 +115,19 @@ class SubscriptionServiceTest {
     void deleteSubscription_shouldThrowOwnershipException() {
         String customerId = "wrongId";
         SubscriptionDeletionRequest request = new SubscriptionDeletionRequest("bitcoin", "detail-id-123");
-        var subscriptionDetail = SubscriptionDetail.builder()
-                .id("detail-id-123")
-                .uri("bitcoin")
-                .customerId("differentCustomerId")
-                .financeName("Bitcoin")
-                .upperBoundPrice(45000.0)
-                .lowerBoundPrice(null)
-                .assetType("cryptos")
-                .build();
+        var subscriptionDetail = new SubscriptionDetail(
+                "detail-id-123",
+                "bitcoin",
+                "differentCustomerId",
+                "customerEmail",
+                "Bitcoin",
+                CurrencyType.USD.name(),
+                45000.0,
+                null,
+                AssetType.CRYPTOS.name(),
+                NotificationType.EMAIL.name(),
+                LocalDateTime.now()
+        );
 
         var existingSubscription = new Subscription();
         existingSubscription.getSubscriptions().put("bitcoin", new ArrayList<>(Collections.singletonList(subscriptionDetail)));
@@ -129,15 +140,19 @@ class SubscriptionServiceTest {
     @Test
     void findAllCustomerSubscriptions_shouldReturnSubscriptions() {
         String customerId = "customerId";
-        var subscriptionDetail = SubscriptionDetail.builder()
-                .id("detail-id-123")
-                .uri("bitcoin")
-                .customerId("customerId")
-                .financeName("Bitcoin")
-                .upperBoundPrice(45000.0)
-                .lowerBoundPrice(null)
-                .assetType("cryptos")
-                .build();
+        var subscriptionDetail = new SubscriptionDetail(
+                "detail-id-123",
+                "bitcoin",
+                customerId,
+                "customerEmail",
+                "Bitcoin",
+                CurrencyType.USD.name(),
+                45000.0,
+                null,
+                AssetType.CRYPTOS.name(),
+                NotificationType.EMAIL.name(),
+                LocalDateTime.now()
+        );
 
         var subscriptionDetailDTO = new SubscriptionDetailDTO(
                 "detail-id-123",
@@ -145,7 +160,7 @@ class SubscriptionServiceTest {
                 "Bitcoin",
                 45000.0,
                 null,
-                "cryptos",
+                AssetType.CRYPTOS.name(),
                 LocalDateTime.now()
         );
 
@@ -158,11 +173,11 @@ class SubscriptionServiceTest {
         var results = subscriptionService.findAllCustomerSubscriptions(customerId);
 
         assertEquals(1, results.size());
-        assertEquals(subscriptionDetail.getId(), results.getFirst().id());
-        assertEquals(subscriptionDetail.getCustomerId(), results.getFirst().customerId());
-        assertEquals(subscriptionDetail.getFinanceName(), results.getFirst().financeName());
-        assertEquals(subscriptionDetail.getUpperBoundPrice(), results.getFirst().upperBoundPrice());
-        assertEquals(subscriptionDetail.getLowerBoundPrice(), results.getFirst().lowerBoundPrice());
-        assertEquals(subscriptionDetail.getAssetType(), results.getFirst().assetType());
+        assertEquals(subscriptionDetail.id(), results.getFirst().id());
+        assertEquals(subscriptionDetail.customerId(), results.getFirst().customerId());
+        assertEquals(subscriptionDetail.financeName(), results.getFirst().financeName());
+        assertEquals(subscriptionDetail.upperBoundPrice(), results.getFirst().upperBoundPrice());
+        assertEquals(subscriptionDetail.lowerBoundPrice(), results.getFirst().lowerBoundPrice());
+        assertEquals(subscriptionDetail.assetType(), results.getFirst().assetType());
     }
 }

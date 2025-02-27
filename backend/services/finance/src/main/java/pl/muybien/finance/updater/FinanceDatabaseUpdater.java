@@ -7,41 +7,29 @@ import pl.muybien.finance.Finance;
 import pl.muybien.finance.FinanceDetail;
 import pl.muybien.finance.FinanceRepository;
 
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+
 public class FinanceDatabaseUpdater {
 
     private final FinanceRepository repository;
 
     @Transactional
-    public void sortAndSaveFinanceToDatabase(String assetType, LinkedHashSet<FinanceDetail> financeDetails) {
-        var sortedFinances = financeDetails.stream()
-                .sorted(Comparator.comparing(FinanceDetail::getName))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+    public void saveFinanceToDatabase(String assetType, Map<String, FinanceDetail> financeDetails) {
+        String normalizedAssetType = assetType.toLowerCase();
 
-        if (!sortedFinances.isEmpty()) {
-            saveFinanceToDatabase(assetType, sortedFinances);
-        }
-    }
-
-    private void saveFinanceToDatabase(String assetType, LinkedHashSet<FinanceDetail> sortedFinances) {
-        repository.findFinanceByAssetTypeIgnoreCase(assetType.toLowerCase())
-                .ifPresentOrElse(
-                        existingFinance -> {
-                            existingFinance.getFinanceDetails().addAll(sortedFinances);
-
-                            repository.save(existingFinance);
+        repository.findFinanceByAssetType(normalizedAssetType)
+                .ifPresentOrElse(finance -> {
+                            finance.initializeNestedMapIfNeeded(normalizedAssetType);
+                            finance.getFinanceDetails().get(normalizedAssetType).putAll(financeDetails);
+                            repository.save(finance);
                         },
                         () -> {
-                            Finance newFinance = Finance.builder()
-                                    .assetType(assetType.toLowerCase())
-                                    .financeDetails(sortedFinances)
-                                    .build();
-
+                            Finance newFinance = new Finance();
+                            newFinance.initializeNestedMapIfNeeded(normalizedAssetType);
+                            newFinance.getFinanceDetails().get(normalizedAssetType).putAll(financeDetails);
                             repository.save(newFinance);
                         }
                 );

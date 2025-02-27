@@ -11,6 +11,8 @@ import pl.muybien.kafka.SubscriptionEmailConfirmation;
 import pl.muybien.kafka.SubscriptionProducer;
 import pl.muybien.subscription.data.SubscriptionDetail;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,13 +31,19 @@ class SubscriptionComparatorTest {
 
     @Test
     void shouldSendEmailNotificationWhenUpperBoundPriceIsMet() {
-        var subscriptionDetail = SubscriptionDetail.builder()
-                .upperBoundPrice(100.0)
-                .lowerBoundPrice(null)
-                .notificationType("eMaIl")
-                .customerEmail("test@example.com")
-                .financeName("Bitcoin")
-                .build();
+        var subscriptionDetail = new SubscriptionDetail(
+                "id",
+                "uri",
+                "customerId",
+                "test@example.com",
+                "Bitcoin",
+                CurrencyType.USD.name(),
+                100.0,
+                null,
+                AssetType.CRYPTOS.name(),
+                NotificationType.EMAIL.name(),
+                LocalDateTime.now()
+        );
 
         subscriptionComparator.priceMetSubscriptionCondition(120.0, subscriptionDetail);
 
@@ -55,13 +63,19 @@ class SubscriptionComparatorTest {
 
     @Test
     void shouldSendEmailNotificationWhenLowerBoundPriceIsMet() {
-        var subscriptionDetail = SubscriptionDetail.builder()
-                .upperBoundPrice(null)
-                .lowerBoundPrice(50.0)
-                .notificationType("EMAIL")
-                .customerEmail("test@example.com")
-                .financeName("Bitcoin")
-                .build();
+        var subscriptionDetail = new SubscriptionDetail(
+                "id",
+                "uri",
+                "customerId",
+                "test@example.com",
+                "Bitcoin",
+                CurrencyType.USD.name(),
+                null,
+                50.0,
+                AssetType.CRYPTOS.name(),
+                NotificationType.EMAIL.name(),
+                LocalDateTime.now()
+        );
 
         subscriptionComparator.priceMetSubscriptionCondition(40.0, subscriptionDetail);
 
@@ -81,13 +95,19 @@ class SubscriptionComparatorTest {
 
     @Test
     void shouldNotSendNotificationWhenPriceDoesNotMeetBound() {
-        var subscriptionDetail = SubscriptionDetail.builder()
-                .upperBoundPrice(100.0)
-                .lowerBoundPrice(null)
-                .notificationType("email")
-                .customerEmail("test@example.com")
-                .financeName("Bitcoin")
-                .build();
+        var subscriptionDetail = new SubscriptionDetail(
+                "id",
+                "uri",
+                "customerId",
+                "customerEmail",
+                "Bitcoin",
+                CurrencyType.USD.name(),
+                100.0,
+                null,
+                AssetType.CRYPTOS.name(),
+                NotificationType.EMAIL.name(),
+                LocalDateTime.now()
+        );
 
         subscriptionComparator.priceMetSubscriptionCondition(80.0, subscriptionDetail);
 
@@ -96,18 +116,24 @@ class SubscriptionComparatorTest {
 
     @Test
     void shouldThrowExceptionForInvalidNotificationType() {
-        var subscriptionDetail = SubscriptionDetail.builder()
-                .upperBoundPrice(100.0)
-                .lowerBoundPrice(null)
-                .notificationType("INVALID_TYPE")
-                .customerEmail("test@example.com")
-                .financeName("Bitcoin")
-                .build();
+        var subscriptionDetail = new SubscriptionDetail(
+                "id",
+                "uri",
+                "customerId",
+                "customerEmail",
+                "Bitcoin",
+                CurrencyType.USD.name(),
+                100.0,
+                null,
+                AssetType.CRYPTOS.name(),
+                "INVALID_TYPE",
+                LocalDateTime.now()
+        );
 
         InvalidSubscriptionParametersException exception = assertThrows(
                 InvalidSubscriptionParametersException.class,
                 () -> subscriptionComparator.priceMetSubscriptionCondition(120.0, subscriptionDetail)
         );
-        assertEquals("Subscription assetType not recognized: INVALID_TYPE", exception.getMessage());
+        assertEquals("Subscription notification type not supported: INVALID_TYPE", exception.getMessage());
     }
 }

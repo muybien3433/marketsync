@@ -1,15 +1,17 @@
 package pl.muybien.finance;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 
-@Builder
 public record FinanceResponse(
-        String name,
-        String symbol,
-        BigDecimal price,
-        String currency,
-        String assetType
+        @JsonProperty("name") String name,
+        @JsonProperty("symbol") String symbol,
+        @JsonProperty("uri") String uri,
+        @JsonProperty("price") BigDecimal price,
+        @JsonProperty("currency") String currency,
+        @JsonProperty("assetType") String assetType,
+        @JsonProperty("lastUpdated") LocalTime lastUpdated
 ) {
 }

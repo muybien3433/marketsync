@@ -17,6 +17,7 @@ import pl.muybien.finance.FinanceResponse;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +57,9 @@ class AssetServiceTest {
                 "cryptos", "bitcoin", BigDecimal.valueOf(2), BigDecimal.valueOf(30000), currency);
 
         when(financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri()))
-                .thenReturn(new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100_000), "USD", "cryptos"));
+                .thenReturn(new FinanceResponse(
+                        "Bitcoin", "BTC", "bitcoin",
+                        BigDecimal.valueOf(100_000), "USD", "cryptos", LocalTime.now()));
 
         assetService.createAsset(customerId, request);
 
@@ -199,7 +202,8 @@ class AssetServiceTest {
 
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
         when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name().toLowerCase(), uri))
-                .thenReturn(new FinanceResponse("Ethereum", "ETH", BigDecimal.valueOf(35000), currency, AssetType.CRYPTOS.name()));
+                .thenReturn(new FinanceResponse("Ethereum", "ETH", "ethereum",
+                        BigDecimal.valueOf(35000), currency, AssetType.CRYPTOS.name(), LocalTime.now()));
 
 
         List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currency);

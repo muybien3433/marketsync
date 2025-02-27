@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
@@ -37,7 +38,10 @@ class FinanceControllerTest {
         String assetType = "cryptos";
         String uri = "bitcoin";
         String currency = "USD";
-        var response = new FinanceResponse("Bitcoin", "BTC", BigDecimal.valueOf(100000), CurrencyType.USD, AssetType.CRYPTOS);
+        var response = new FinanceResponse(
+                "Bitcoin", "BTC", uri,
+                BigDecimal.valueOf(100000), CurrencyType.USD.name(),
+                AssetType.CRYPTOS.name(), LocalTime.now());
 
         when(financeService.fetchFinance(assetType, uri)).thenReturn(response);
 
@@ -53,7 +57,10 @@ class FinanceControllerTest {
     void testFindFinanceWithDefaultCurrency() throws Exception {
         String assetType = "cryptos";
         String uri = "ethereum";
-        var response = new FinanceResponse("Ethereum", "BTC", BigDecimal.valueOf(3000), CurrencyType.USD, AssetType.CRYPTOS);
+        var response = new FinanceResponse(
+                "Ethereum", "BTC", uri,
+                BigDecimal.valueOf(3000), CurrencyType.USD.name(),
+                AssetType.CRYPTOS.name(), LocalTime.now());
 
         when(financeService.fetchFinance(assetType, uri)).thenReturn(response);
 
@@ -69,8 +76,12 @@ class FinanceControllerTest {
     void testDisplayAvailableFinance() throws Exception {
         String assetType = "cryptos";
         Set<FinanceDetailDTO> details = Set.of(
-                new FinanceDetailDTO("Bitcoin", "BTC", "bitcoin", null, CurrencyType.USD, AssetType.CRYPTOS),
-                new FinanceDetailDTO("Ethereum", "ETH", "Ethereum", null, CurrencyType.USD, AssetType.CRYPTOS));
+                new FinanceDetailDTO(
+                        "Bitcoin", "BTC", "bitcoin",
+                        null, CurrencyType.USD.name(), AssetType.CRYPTOS.name(), LocalTime.now()),
+                new FinanceDetailDTO(
+                        "Ethereum", "ETH", "Ethereum", null,
+                        CurrencyType.USD.name(), AssetType.CRYPTOS.name(), LocalTime.now()));
 
         when(financeService.displayAvailableFinance(assetType)).thenReturn(details);
 

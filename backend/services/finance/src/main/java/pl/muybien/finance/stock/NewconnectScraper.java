@@ -1,4 +1,4 @@
-package pl.muybien.finance.stock.scraper;
+package pl.muybien.finance.stock;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,9 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.LinkedHashSet;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,36 +49,32 @@ public class NewconnectScraper extends FinanceUpdater {
     @Override
     @Transactional
     public void updateAssets() {
-        log.info("Starting updating NewConnect assets...");
-        LinkedHashSet<FinanceDetail> stocks = new LinkedHashSet<>();
+        log.info("Starting updating newconnect stock data...");
+        var stocks = new HashMap<String, FinanceDetail>();
 
         WebDriver driver = null;
         try {
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
-            options.addArguments("--headless");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
+            options.addArguments("--headless=new");
+            options.addArguments("--disable-blink-features=AutomationControlled");
+            options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
+            options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36");
             options.addArguments("--disable-extensions");
+            options.addArguments("--disable-gpu");
             options.addArguments("--disable-logging");
-            options.addArguments("--incognito");
-            options.addArguments("--disable-images");
-            options.addArguments("--disable-css");
 
             driver = new RemoteWebDriver(new URL(REMOTE_WEB_DRIVER), options);
             driver.get(TARGET_URL);
 
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-
             try {
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
                 WebElement acceptCookiesButton = wait.until(ExpectedConditions.elementToBeClickable
                         (By.xpath("//button[contains(text(),'Akceptuję')]")));
                 acceptCookiesButton.click();
-                log.info("Accepted cookie policy");
-            } catch (Exception e) {
-                log.info("Cookie acceptance button not found or already accepted");
-            }
+            } catch (Exception _) {}
 
             WebElement body = driver.findElement(By.tagName("body"));
             String pageContent = body.getText();
@@ -92,49 +90,49 @@ public class NewconnectScraper extends FinanceUpdater {
 
             String regex =
                     "([A-Za-z]+)\\s"
-                    + "([A-Za-z]+)\\s"
-                    + "([0-9]{2}:[0-9]{2}:[0-9]{2}|-)\\s"
-                    + "([0-9,]+|-)\\s"
-                    + "([0-9,]+|-)\\s"
-                    + "([0-9,]+|-)\\s"
-                    + "([0-9,]+|-)\\s"
-                    + "([0-9,]+|-)\\s"
-                    + "([0-9,]+|-)";
+                            + "([A-Za-z]+)\\s"
+                            + "([0-9]{2}:[0-9]{2}:[0-9]{2}|-)\\s"
+                            + "([0-9,]+|-)\\s"
+                            + "([0-9,]+|-)\\s"
+                            + "([0-9,]+|-)\\s"
+                            + "([0-9,]+|-)\\s"
+                            + "([0-9,]+|-)\\s"
+                            + "([0-9,]+|-)";
 
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(pageContent);
 
             while (matcher.find()) {
                 String name = matcher.group(1).trim();
+                String uri = name.toLowerCase();
                 String symbol = matcher.group(2).trim();
                 String renewalRate = matcher.group(4).trim().replace(",", ".");
                 String lastTransactionRate = matcher.group(9).trim().replace(",", ".");
                 BigDecimal price = lastTransactionRate.equals("-") ?
                         new BigDecimal(renewalRate) : new BigDecimal(lastTransactionRate);
 
-                var finance = FinanceDetail.builder()
-                        .name(name)
-                        .symbol(symbol)
-                        .uri(name.toLowerCase())
-                        .price(price)
-                        .currency(CurrencyType.PLN)
-                        .assetType(AssetType.STOCKS)
-                        .build();
-
-                stocks.add(finance);
+                var financeDetail = new FinanceDetail(
+                        name,
+                        symbol,
+                        uri,
+                        price,
+                        CurrencyType.PLN.name(),
+                        AssetType.STOCKS.name(),
+                        LocalTime.now()
+                );
+                stocks.put(uri, financeDetail);
             }
-            databaseUpdater.sortAndSaveFinanceToDatabase(AssetType.STOCKS.name(), stocks);
+            databaseUpdater.saveFinanceToDatabase(AssetType.STOCKS.name(), stocks);
         } catch (MalformedURLException e) {
-            throw new FinanceNotFoundException("New connect data not found");
+            throw new FinanceNotFoundException("Newconnect data not found");
         } catch (Exception e) {
-            throw new FinanceNotFoundException("New connect data: " + e.getMessage());
+            throw new FinanceNotFoundException("Newconnect data: " + e.getMessage());
         } finally {
             if (driver != null) {
                 driver.quit();
             }
             System.gc();
-            setUpdating(false);
         }
-        log.info("Finished updating available new connect list");
+        log.info("Finished updating newconnect stock data");
     }
 }

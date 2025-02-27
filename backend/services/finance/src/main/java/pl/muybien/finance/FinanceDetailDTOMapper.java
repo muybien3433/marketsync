@@ -6,12 +6,13 @@ import org.springframework.stereotype.Service;
 public class FinanceDetailDTOMapper {
     public FinanceDetailDTO toDTO(FinanceDetail financeDetail) {
         return new FinanceDetailDTO(
-                financeDetail.getName(),
-                financeDetail.getSymbol(),
-                financeDetail.getUri(),
-                financeDetail.getPrice(),
-                financeDetail.getCurrency(),
-                financeDetail.getAssetType()
+                financeDetail.name(),
+                financeDetail.symbol(),
+                financeDetail.uri(),
+                financeDetail.price(),
+                financeDetail.currency(),
+                financeDetail.assetType(),
+                financeDetail.lastUpdated()
         );
     }
 }

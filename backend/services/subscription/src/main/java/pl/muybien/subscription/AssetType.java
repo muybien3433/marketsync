@@ -1,4 +1,4 @@
-package pl.muybien.finance;
+package pl.muybien.subscription;
 
 public enum AssetType {
     UNDEFINED,

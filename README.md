@@ -32,7 +32,7 @@ bases and asset types as market demands evolve.
 - **Frontend**: Angular 18
 - **Backend**: Java 23, SpringBoot 6, Kafka
 - **Database**: PostgreSQL for SQL and MongoDB for NoSQL
-- **Authentication**: OAuth2, Keyclock
+- **Authentication**: Keyclock
 - **Cloud**: Docker
 - **Scrap**: Selenium, JSoup
 - **Testing**: JUnit 5
