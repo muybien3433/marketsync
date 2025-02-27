@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
 public class FinanceService {
 
     private final CurrencyService currencyService;

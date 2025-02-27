@@ -11,7 +11,6 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-
 public class FinanceDatabaseUpdater {
 
     private final FinanceRepository repository;
