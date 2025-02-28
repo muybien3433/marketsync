@@ -6,4 +6,3 @@ spring:
     mongodb:
       uri: mongodb://finance:finance@mongodb-finance/finance?authSource=admin&authMechanism=SCRAM-SHA-256&tls=false
       authentication-database: admin
-      database: finance

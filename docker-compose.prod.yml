@@ -1,0 +1,425 @@
+services:
+  ######### [ Reverse proxy ] #########
+  reverse-proxy:
+    image: nginx:1.25-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ${PWD}/nginx/conf.d/gateway.conf:/etc/nginx/conf.d/gateway.conf
+      - ${PWD}/nginx/conf.d/keycloak.conf:/etc/nginx/conf.d/keycloak.conf
+      - /etc/letsencrypt:/etc/letsencrypt
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "nginx", "-t" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - frontend-net
+      - reverse-proxy-net
+    depends_on:
+      - gateway-server
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+
+  ######### [ Config ] #########
+  config-server:
+    build:
+      context: ./backend/services/config-server
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:7777/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 8s
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  ######### [ Gateway ] #########
+  gateway-server:
+    build:
+      context: ./backend/services/gateway
+    depends_on:
+      config-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9999/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 8s
+    networks:
+      - reverse-proxy-net
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1536M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  ######### [ Finance ] #########
+  finance-server:
+    build:
+      context: ./backend/services/finance
+    depends_on:
+      config-server:
+        condition: service_healthy
+      mongodb-finance:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1536M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  mongodb-finance:
+    image: mongo:8.0
+    container_name: ${MONGO_FINANCE_HOST}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_FINANCE_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_FINANCE_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_FINANCE_DB}
+    volumes:
+      - mongodb_finance_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+
+  ######### [ Wallet ] #########
+  wallet-server:
+    build:
+      context: ./backend/services/wallet
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres-wallet:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  postgres-wallet:
+    image: postgres:17.4
+    container_name: ${POSTGRES_WALLET_HOST}
+    environment:
+      POSTGRES_USER: ${POSTGRES_WALLET_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_WALLET_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_WALLET_DB}
+    volumes:
+      - postgres_wallet:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_WALLET_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+
+#  ######### [ Subscription ] #########
+#  subscription-server:
+#    build:
+#      context: ./backend/services/subscription
+#    depends_on:
+#      config-server:
+#        condition: service_healthy
+#      mongodb-subscription:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#    restart: unless-stopped
+#    networks:
+#      - backend-net
+#      - database-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '1'
+#          memory: 1024M
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "5"
+#
+#  mongodb-subscription:
+#    image: mongo:8.0
+#    container_name: ${MONGO_SUBSCRIPTION_HOST}
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: ${MONGO_SUBSCRIPTION_USER}
+#      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_SUBSCRIPTION_PASSWORD}
+#      MONGO_INITDB_DATABASE: ${MONGO_SUBSCRIPTION_DB}
+#    volumes:
+#      - mongodb_subscription_data:/data/db
+#    restart: unless-stopped
+#    healthcheck:
+#      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    networks:
+#      - database-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 768M
+
+
+#  ######### [ Notification ] #########
+#  notification-server:
+#    build:
+#      context: ./backend/services/notification
+#    depends_on:
+#      kafka:
+#        condition: service_healthy
+#      config-server:
+#        condition: service_healthy
+#    restart: unless-stopped
+#    networks:
+#      - backend-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 512M
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "5"
+
+
+  ######### [ Authentication ] #########
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1.3
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-keycloak
+    environment:
+      KC_HTTP_ENABLED: "true"
+      KC_DB: postgres
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB_URL: ${KC_DB_URL}
+      KC_DB_USERNAME: ${KC_DB_USERNAME}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KC_HOSTNAME: ${KEYCLOAK_HOST_NAME}
+      KC_HOSTNAME_URL: ${KEYCLOAK_HOST_NAME_URL}
+      KC_HOSTNAME_STRICT: "true"
+      KC_PROXY: edge # trust reverse proxy
+    volumes:
+      - ./init/marketsync-client-prod.json:/opt/keycloak/data/import/marketsync-client-prod.json
+    command:
+      - "start"
+      - "--import-realm"
+    restart: unless-stopped
+    networks:
+      - reverse-proxy-net
+      - backend-net
+      - keycloak-db-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
+
+
+  postgres-keycloak:
+    image: postgres:17.4
+    container_name: postgres-keycloak
+    environment:
+      POSTGRES_DB: ${POSTGRES_KEYCLOAK_DB}
+      POSTGRES_USER: ${POSTGRES_KEYCLOAK_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_KEYCLOAK_PASSWORD}
+    volumes:
+      - postgres_keycloak:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U keycloak" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - keycloak-db-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+
+  ######### [ Selenium ] #########
+  selenium-chrome:
+    image: selenium/standalone-chrome:4.29.0
+    platform: linux/amd64
+    ports:
+      - "4444:4444"
+    container_name: selenium-chrome
+    environment:
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+    restart: unless-stopped
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+
+
+#  ######### [ Kafka & Zookeeper ] #########
+#  kafka:
+#    image: confluentinc/cp-kafka:7.9.0
+#    container_name: kafka
+#    depends_on:
+#      zookeeper:
+#        condition: service_healthy
+#    environment:
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+#      KAFKA_JMX_PORT: 9991
+#    volumes:
+#      - kafka_data:/var/lib/kafka/data
+#    restart: unless-stopped
+#    healthcheck:
+#      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    networks:
+#      - backend-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 512M
+#
+#  zookeeper:
+#    image: confluentinc/cp-zookeeper:7.9.0
+#    container_name: zookeeper
+#    environment:
+#      ZOOKEEPER_CLIENT_PORT: 2181
+#    restart: unless-stopped
+#    healthcheck:
+#      test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    networks:
+#      - backend-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 512M
+
+
+  ######### [ Frontend ] #########
+  frontend-server:
+    build:
+      context: ./frontend
+      args:
+        BUILD_ENV: production
+    environment:
+      - GENERATE_SOURCEMAP=false
+
+    restart: unless-stopped
+    networks:
+      - frontend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 2048M
+
+
+networks:
+  frontend-net:
+    internal: false
+  backend-net:
+    internal: true
+  database-net:
+    internal: true
+  keycloak-db-net:
+    internal: true
+  reverse-proxy-net:
+    internal: true
+
+volumes:
+  postgres_keycloak:
+  postgres_wallet:
+  mongodb_finance_data:
+  mongodb_subscription_data:
+  kafka_data:

@@ -79,10 +79,11 @@ public class CoinmarketcapScraper extends FinanceUpdater {
                 
                 scrapDataFromFirstSection(doc, cryptos);
                 scrapDataFromSecondSection(doc, cryptos);
-                TimeUnit.MILLISECONDS.sleep(300);
+                TimeUnit.MILLISECONDS.sleep(1000);
 
                 databaseUpdater.saveFinanceToDatabase(AssetType.CRYPTOS.name(), cryptos);
             } catch (IOException e) {
+                log.error(e.getMessage(), e);
                 throw new FinanceNotFoundException("Error fetching finance data");
             } catch (Exception e) {
                 throw new FinanceNotFoundException("Coinmarketcap data: " + e.getMessage());

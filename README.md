@@ -20,7 +20,7 @@ ensuring that users stay informed about market changes in real-time.
 with the ability to store and view assets across multiple types, 
 including real-time values, calculated profit and transaction history.
 - **Live Assets and Currencies Pricing**: Access up-to-the-minute pricing data for 
-various assets (over 10k crypto), stocks coming soon.
+various assets, stocks coming soon.
 - **Multiple Currency Support**: Choose between currencies (USD, EUR, GBP, PLN) 
 for subscription management and wallet display. Users can select their preferred currency for wallet management, 
 asset tracking and subscription pricing.
@@ -78,13 +78,11 @@ Ensure you have the following installed before running the project:
    git clone https://github.com/muybien3433/marketsync.git
    ```
    
-2. Provide environment variables for SMTP in config-server microservice in notification-service.yml:
-    - {EMAIL_USERNAME}
-    - {EMAIL_PASSWORD}
+2. Provide mail variables for SMTP in backend/services/config-server/configurations/notification-service.yml
    
 3. Now everything you need to do is to start docker containers
    ```bash
-   docker-compose up
+   docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
    ```
    
 4. Run tests

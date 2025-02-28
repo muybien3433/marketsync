@@ -23,10 +23,10 @@ spring:
   security:
     oauth2:
       resourceserver:
-        issuer-uri: http://keycloak:8080/realms/marketsync
+        issuer-uri: ${KEYCLOAK_ISSUER_URL}
 
 frontend:
-  url: http://localhost
+  url: ${FRONTEND_URL}
 
 management:
   endpoints:

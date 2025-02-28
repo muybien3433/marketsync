@@ -8,9 +8,8 @@ schedule:
 spring:
   data:
     mongodb:
-      uri: mongodb://subscription:subscription@mongodb-subscription/subscription?authSource=admin&authMechanism=SCRAM-SHA-2566&tls=false
+      uri: mongodb://subscription:subscription@mongodb-subscription/subscription?authSource=admin&authMechanism=SCRAM-SHA-256&tls=false
       authentication-database: admin
-      database: subscription
   kafka:
     bootstrap-servers: kafka:9092
     producer:

@@ -46,5 +46,8 @@ yarn-error.log
 .angular/
 frontend/dist
 
-# Environment files
-frontend/src/environments/environment.ts
+# Production files
+.env
+environment.ts
+marketsync-client-prod.json
+nginx

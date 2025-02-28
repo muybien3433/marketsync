@@ -1,7 +1,7 @@
 coinmarketcap:
 #  base-url-currencies: https://coinmarketcap.com/currencies/
   base-url-page: https://www.coinmarketcap.com/?page=
-  crypto-updater-frequency-ms: 60000 # 60s
+  crypto-updater-frequency-ms: ${UPDATE_FREQUENCY_MS_COINMARKETCAP}
   page-size: 10 # 100 cryptos per page
   jsoup-update-connect-timeout-in-ms: 20000 # 20s
   link-selector: a.cmc-link

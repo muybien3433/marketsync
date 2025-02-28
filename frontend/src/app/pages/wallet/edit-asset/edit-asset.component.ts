@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { WalletFooterNavbarComponent } from '../../navbar/wallet-footer-navbar/wallet-footer-navbar.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgIf } from '@angular/common';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import {NgForOf, NgIf} from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AssetAggregate } from '../../../models/asset-aggregate';
 import {environment} from '../../../../environments/environment.development';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
 import {AssetHistory} from "../../../models/asset-history";
+import {Currency} from "../../../models/currency";
 
 @Component({
   selector: 'app-edit-asset',
@@ -18,7 +18,8 @@ import {AssetHistory} from "../../../models/asset-history";
     FormsModule,
     NgIf,
     ReactiveFormsModule,
-    TranslatePipe
+    TranslatePipe,
+    NgForOf
   ],
   templateUrl: './edit-asset.component.html',
   styleUrls: ['./edit-asset.component.css']
@@ -28,6 +29,7 @@ export class EditAssetComponent {
   isSubmitting = false;
   errorMessage: string = '';
   assetId: number | null = null;
+  currencyOptions = Object.values(Currency);
 
   constructor(
       private fb: FormBuilder,

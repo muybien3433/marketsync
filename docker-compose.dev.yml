@@ -3,8 +3,8 @@ services:
   config-server:
     build:
       context: ./backend/services/config-server
-    networks:
-      - marketsync-microservices-net
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:7777/actuator/health || exit 1" ]
@@ -12,6 +12,14 @@ services:
       timeout: 10s
       retries: 5
       start_period: 8s
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
 
   ######### [ Gateway ] #########
   gateway-server:
@@ -22,9 +30,18 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
-    networks:
-      - marketsync-microservices-net
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     restart: unless-stopped
+    networks:
+      - frontend-net
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+
 
   ######### [ Finance ] #########
   finance-server:
@@ -35,9 +52,17 @@ services:
         condition: service_healthy
       mongodb-finance:
         condition: service_healthy
-    networks:
-      - marketsync-microservices-net
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1536M
 
   mongodb-finance:
     image: mongo:latest
@@ -46,8 +71,6 @@ services:
       MONGO_INITDB_ROOT_USERNAME: finance
       MONGO_INITDB_ROOT_PASSWORD: finance
       MONGO_INITDB_DATABASE: finance
-    networks:
-      - marketsync-microservices-net
     volumes:
       - mongodb_finance_data:/data/db
     restart: unless-stopped
@@ -56,11 +79,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - database-net
     deploy:
       resources:
         limits:
           cpus: '0.5'
           memory: 512M
+
 
   ######### [ Wallet ] #########
   wallet-server:
@@ -71,9 +97,17 @@ services:
         condition: service_healthy
       postgres-wallet:
         condition: service_healthy
-    networks:
-      - marketsync-microservices-net
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
 
   postgres-wallet:
     image: postgres:latest
@@ -82,8 +116,6 @@ services:
       POSTGRES_USER: wallet
       POSTGRES_PASSWORD: wallet
       POSTGRES_DB: wallet
-    networks:
-      - marketsync-microservices-net
     volumes:
       - postgres_wallet:/var/lib/postgresql/data
     restart: unless-stopped
@@ -92,18 +124,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - database-net
     deploy:
       resources:
         limits:
           cpus: '0.5'
-          memory: 256M
+          memory: 512M
+
 
   ######### [ Subscription ] #########
   subscription-server:
     build:
       context: ./backend/services/subscription
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
       config-server:
         condition: service_healthy
@@ -111,9 +144,17 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
-    networks:
-      - marketsync-microservices-net
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
 
   mongodb-subscription:
     image: mongo:latest
@@ -122,37 +163,44 @@ services:
       MONGO_INITDB_ROOT_USERNAME: subscription
       MONGO_INITDB_ROOT_PASSWORD: subscription
       MONGO_INITDB_DATABASE: subscription
-    networks:
-      - marketsync-microservices-net
     volumes:
       - mongodb_subscription_data:/data/db
-      - ./init-files/mongo-subscription.js:/docker-entrypoint-initdb.d/mongo-subscription.js:ro
+      - ./init/mongo-subscription.js:/docker-entrypoint-initdb.d/mongo-subscription.js:ro
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
+
+
+  ######### [ Notification ] #########
+  notification-server:
+    build:
+      context: ./backend/services/notification
+    depends_on:
+      kafka:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    restart: unless-stopped
+    networks:
+      - backend-net
     deploy:
       resources:
         limits:
           cpus: '0.5'
           memory: 512M
 
-  ######### [ Notification ] #########
-  notification-server:
-    build:
-      context: ./backend/services/notification
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    depends_on:
-      kafka:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-    networks:
-      - marketsync-microservices-net
-    restart: unless-stopped
 
   ######### [ Authentication ] #########
   keycloak:
@@ -170,15 +218,17 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HOSTNAME: localhost
-      KC_HOSTNAME_STRICT: "true"
+      KC_HOSTNAME_STRICT: "false"
     volumes:
-      - ./init-files/marketsync-client.json:/opt/keycloak/data/import/marketsync-client.json
+      - ./init/marketsync-client-dev.json:/opt/keycloak/data/import/marketsync-client-dev.json
     command:
       - "start-dev"
       - "--import-realm"
     restart: unless-stopped
     networks:
-      - marketsync-microservices-net
+      - frontend-net
+      - backend-net
+      - database-net
     deploy:
       resources:
         limits:
@@ -194,14 +244,20 @@ services:
       POSTGRES_PASSWORD: keycloak
     volumes:
       - postgres_keycloak:/var/lib/postgresql/data
-    networks:
-      - marketsync-microservices-net
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U keycloak" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
 
   ######### [ Selenium ] #########
   selenium-chrome:
@@ -210,17 +266,18 @@ services:
     ports:
       - "4444:4444"
     container_name: selenium-chrome
-    networks:
-      - marketsync-microservices-net
     environment:
       - SE_NODE_MAX_SESSIONS=5
       - SE_NODE_OVERRIDE_MAX_SESSIONS=true
     restart: unless-stopped
+    networks:
+      - backend-net
     deploy:
       resources:
         limits:
           cpus: '1'
           memory: 1024M
+
 
   ######### [ Kafka ] #########
   kafka:
@@ -237,8 +294,6 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-    networks:
-      - marketsync-microservices-net
     volumes:
       - kafka_data:/var/lib/kafka/data
     entrypoint: [ "/bin/sh", "-c", "rm -rf /var/lib/kafka/data/meta.properties && /etc/confluent/docker/run" ]
@@ -248,6 +303,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - backend-net
     deploy:
       resources:
         limits:
@@ -259,32 +316,45 @@ services:
     container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-    networks:
-      - marketsync-microservices-net
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - backend-net
     deploy:
       resources:
         limits:
           cpus: '0.5'
           memory: 512M
 
+
   ######### [ Frontend ] #########
   frontend-server:
     build:
       context: ./frontend
+      args:
+        BUILD_ENV: development
     ports:
       - "80:80"
-    networks:
-      - marketsync-microservices-net
     restart: unless-stopped
+    networks:
+      - frontend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+
 
 networks:
-  marketsync-microservices-net:
+  frontend-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
+  database-net:
     driver: bridge
 
 volumes:

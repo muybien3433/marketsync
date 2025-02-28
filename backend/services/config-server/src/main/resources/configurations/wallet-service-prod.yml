@@ -1,0 +1,17 @@
+server:
+  port: 8200
+
+spring:
+  datasource:
+    username: ${POSTGRES_WALLET_USER}
+    password: ${POSTGRES_WALLET_PASSWORD}
+    url: jdbc:postgresql://${POSTGRES_WALLET_HOST}/${POSTGRES_WALLET_DB}?sslmode=disable
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+application:
+  config:
+    finance-url: ${FINANCE_API_URL}

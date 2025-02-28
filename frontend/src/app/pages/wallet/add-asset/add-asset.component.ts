@@ -7,7 +7,6 @@ import {NgForOf, NgIf} from '@angular/common';
 import {environment} from '../../../../environments/environment.development';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
 import {Currency} from "../../../models/currency";
-import {AssetType} from "../../../models/asset-type";
 import {AssetSelectionService} from "../../../services/asset-selection-service";
 import {AssetSelectionListComponent} from "../../asset-selection-list/asset-selection-list.component";
 import {Router} from "@angular/router";
@@ -34,7 +33,6 @@ export class AddAssetComponent implements OnInit {
     errorMessage: string = '';
     selectedAssetType: string = '';
     selectedAssetUri: string = '';
-    assetTypesOptions = Object.values(AssetType);
     currencyOptions = Object.values(Currency);
 
     constructor(

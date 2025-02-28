@@ -1,0 +1,8 @@
+server:
+  port: 8800
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_FINANCE_USER}:${MONGO_FINANCE_PASSWORD}@${MONGO_FINANCE_HOST}/${MONGO_FINANCE_DB}?authSource=admin&authMechanism=SCRAM-SHA-256&tls=false
+      authentication-database: admin
