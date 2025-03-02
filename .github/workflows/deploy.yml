@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "$SSH_KEY" > key.pem
           chmod 600 key.pem
-          ssh -i key.pem -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "echo 'Success!'"
+          ssh -i key.pem -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "echo 'SSH Connection Verified!'"
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.10
@@ -35,8 +35,20 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
           script: |
+            # Create directory structure
+            mkdir -p ~/marketsync
             cd ~/marketsync
-            git reset --hard origin/main
+            
+            # Initialize or update repository
+            if [ ! -d .git ]; then
+              git clone https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ github.repository }}.git .
+            else
+              git fetch --all
+              git reset --hard origin/main
+              git clean -fd
+            fi
+            
+            # Build and deploy
             mvn clean package -DskipTests
             docker-compose down
             docker-compose up -d --build
