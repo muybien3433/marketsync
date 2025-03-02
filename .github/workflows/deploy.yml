@@ -15,12 +15,17 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
       - name: Test SSH Connection
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          echo "$SSH_PRIVATE_KEY" > key.pem
+          echo "$SSH_KEY" > key.pem
           chmod 600 key.pem
-          ssh -i key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo 'Success! Deployment ready!'"
+          ssh -i key.pem -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "echo 'Success!'"
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.10
