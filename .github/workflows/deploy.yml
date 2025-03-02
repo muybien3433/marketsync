@@ -11,10 +11,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup SSH Agent
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Add VPS to Known Hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+
+      - name: Test SSH Connection
+        run: |
+          echo "$SSH_PRIVATE_KEY" > key.pem
+          chmod 600 key.pem
+          ssh -i key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo 'Success! Deployment ready!'"
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.10
@@ -25,7 +31,6 @@ jobs:
           script_stop: true
           script: |
             cd ~/marketsync
-            git fetch origin
             git reset --hard origin/main
             mvn clean package -DskipTests
             docker-compose down
