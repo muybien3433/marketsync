@@ -35,11 +35,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
           script: |
-            # Create directory structure
             mkdir -p ~/marketsync
             cd ~/marketsync
             
-            # Initialize or update repository
             if [ ! -d .git ]; then
               git clone https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ github.repository }}.git .
             else
@@ -48,8 +46,7 @@ jobs:
               git clean -fd
             fi
             
-            # Build and deploy
             mvn clean package -DskipTests
-            docker-compose down
+            docker compose -f docker-compose.prod.yml down
             docker-compose -f docker-compose.prod.yml up -d --build
             docker image prune -af

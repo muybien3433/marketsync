@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>backend/services/config-server</module>
         <module>backend/services/finance</module>
         <module>backend/services/gateway</module>
         <module>backend/services/notification</module>
