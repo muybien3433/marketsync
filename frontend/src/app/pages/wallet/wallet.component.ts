@@ -1,12 +1,12 @@
-import {ChangeDetectorRef, Component, OnChanges, SimpleChanges} from '@angular/core';
-import {CurrencyPipe, NgForOf, NgIf, NgStyle, SlicePipe, UpperCasePipe} from '@angular/common';
+import {Component} from '@angular/core';
+import {CurrencyPipe, NgForOf, NgIf, NgStyle} from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import {AssetAggregate} from "../../models/asset-aggregate";
 import {
   WalletFooterNavbarComponent
 } from "../navbar/wallet-footer-navbar/wallet-footer-navbar.component";
-import {environment} from '../../../environments/environment.development';
+import {environment} from '../../../environments/environment';
 import {API_ENDPOINTS} from '../../services/api-endpoints';
 import {PreferenceService} from "../../services/preference-service";
 import {CurrencyComponent} from "../currency/currency.component";
@@ -14,7 +14,7 @@ import {CurrencyComponent} from "../currency/currency.component";
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe, CurrencyComponent, NgIf, SlicePipe, UpperCasePipe],
+  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe, CurrencyComponent, NgIf],
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css'],
 })

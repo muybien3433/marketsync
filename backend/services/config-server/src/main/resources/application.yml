@@ -10,7 +10,8 @@ spring:
     config:
       server:
         native:
-          search-locations: classpath:/configurations
+          search-locations: file:/app/configurations
+      fail-fast: true
 
 management:
   endpoints:

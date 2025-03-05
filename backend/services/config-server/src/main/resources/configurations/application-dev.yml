@@ -1,4 +1,4 @@
 spring:
   cloud:
     config:
-      override-system-properties: false # override only provided properties
+      override-system-properties: true

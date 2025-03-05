@@ -5,7 +5,7 @@ import {NgForOf, NgIf} from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import {environment} from '../../../../environments/environment.development';
+import {environment} from '../../../../environments/environment';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
 import {AssetHistory} from "../../../models/asset-history";
 import {Currency} from "../../../models/currency";

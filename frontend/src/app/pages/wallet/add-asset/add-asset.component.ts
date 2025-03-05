@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {TranslatePipe} from '@ngx-translate/core';
 import {WalletFooterNavbarComponent} from '../../navbar/wallet-footer-navbar/wallet-footer-navbar.component';
 import {NgForOf, NgIf} from '@angular/common';
-import {environment} from '../../../../environments/environment.development';
+import {environment} from '../../../../environments/environment';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
 import {Currency} from "../../../models/currency";
 import {AssetSelectionService} from "../../../services/asset-selection-service";

@@ -336,7 +336,7 @@ services:
     build:
       context: ./frontend
       args:
-        BUILD_ENV: development
+        - ENV_CONFIGURATION=development
     ports:
       - "80:80"
     restart: unless-stopped

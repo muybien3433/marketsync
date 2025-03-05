@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {DatePipe, NgForOf} from '@angular/common';
 import {WalletFooterNavbarComponent} from '../../navbar/wallet-footer-navbar/wallet-footer-navbar.component';
 import {Router} from '@angular/router';
-import {environment} from '../../../../environments/environment.development';
+import {environment} from '../../../../environments/environment';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
 import {AssetHistory} from '../../../models/asset-history';
 

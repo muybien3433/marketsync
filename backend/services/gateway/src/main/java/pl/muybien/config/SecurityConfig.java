@@ -16,13 +16,16 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    @Value("${frontend.url}")
+    @Value("${frontend-url}")
     private String frontendUrl;
+
+    @Value("${jwk-uri}")
+    private String jwkUri;
 
     @Bean
     public ReactiveJwtDecoder reactiveJwtDecoder() {
         return NimbusReactiveJwtDecoder
-                .withJwkSetUri("http://keycloak:8080/realms/marketsync/protocol/openid-connect/certs")
+                .withJwkSetUri(jwkUri)
                 .build();
     }
 
@@ -44,7 +47,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.addAllowedOriginPattern("http://localhost");
+        corsConfig.addAllowedOriginPattern(frontendUrl);
         corsConfig.addAllowedMethod("*");
         corsConfig.addAllowedHeader("*");
         corsConfig.setAllowCredentials(true);

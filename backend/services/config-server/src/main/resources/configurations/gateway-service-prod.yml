@@ -25,8 +25,9 @@ spring:
       resourceserver:
         issuer-uri: ${KEYCLOAK_ISSUER_URL}
 
-frontend:
-  url: ${FRONTEND_URL}
+frontend-url: ${FRONTEND_URL}
+
+jwk-uri: ${JWK_URI}
 
 management:
   endpoints:
