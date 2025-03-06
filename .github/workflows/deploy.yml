@@ -2,7 +2,7 @@ name: Deploy to VPS
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -35,16 +35,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
           script: |
-            mkdir -p ~/marketsync
             cd ~/marketsync
-            
-            if [ ! -d .git ]; then
-              git clone https://${{ secrets.GIT_USERNAME }}:${{ secrets.GIT_TOKEN }}@github.com/${{ github.repository }}.git .
-            else
-              git fetch --all
-              git reset --hard origin/main
-              git clean -fd
-            fi
+
+            git fetch --all
+            git reset --hard origin/main
+            git clean -fd
             
             mvn clean package -DskipTests
             docker compose -f docker-compose.prod.yml down
