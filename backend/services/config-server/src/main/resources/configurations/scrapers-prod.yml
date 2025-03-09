@@ -1,13 +1,11 @@
 coinmarketcap:
-#  base-url-currencies: https://coinmarketcap.com/currencies/
   base-url-page: https://www.coinmarketcap.com/?page=
-  crypto-updater-frequency-ms: ${UPDATE_FREQUENCY_MS_COINMARKETCAP}
+  crypto-updater-frequency-ms: 60000 # 1 minute
   page-size: 10 # 100 cryptos per page
   jsoup-update-connect-timeout-in-ms: 20000 # 20s
   link-selector: a.cmc-link
   link-attribute: href
 
-  #Website uses different section for some date, that's why there are two sections
   first-section-name-selector: .coin-item-name
   first-section-symbol-selector: .coin-item-symbol
   first-section-price-selector: td[style*='text-align:end'] div[class*='sc-'] span
