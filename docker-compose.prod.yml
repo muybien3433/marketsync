@@ -23,7 +23,9 @@ services:
     build:
       context: ./backend/services/config-server
     environment:
-      - SPRING_PROFILES_ACTIVE=native
+      - SPRING_PROFILES_ACTIVE=native,prod
+    env_file:
+      - .env
     volumes:
       - ./backend/services/config-server/src/main/resources/configurations:/app/configurations
     restart: unless-stopped
@@ -31,7 +33,7 @@ services:
       test: [ "CMD-SHELL", "curl -f http://localhost:7777/actuator/health || exit 1" ]
       interval: 5s
       timeout: 5s
-      retries: 20
+      retries: 25
       start_period: 5s
     networks:
       - backend-net
@@ -48,8 +50,8 @@ services:
       context: ./backend/services/gateway
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - FRONTEND_URL=${FRONTEND_URL}
-      - JWK_URI=${JWK_URI}
+    env_file:
+      - .env
     depends_on:
       config-server:
         condition: service_healthy
@@ -61,6 +63,7 @@ services:
       retries: 5
       start_period: 8s
     networks:
+      - reverse-proxy-net
       - gateway-net
       - backend-net
     deploy:
@@ -308,7 +311,7 @@ services:
       timeout: 5s
       retries: 15
     networks:
-      - reverse-proxy-net
+#      - reverse-proxy-net
       - database-net
     deploy:
       resources:
@@ -319,8 +322,8 @@ services:
 
   ######### [ Selenium ] #########
   selenium-chrome:
-    image: seleniarm/standalone-chromium:4.3.0-20220624
-    platform: linux/amd64
+    image: seleniarm/standalone-chromium:4.20.0
+    platform: linux/arm64
     ports:
       - "4444:4444"
     container_name: selenium-chrome

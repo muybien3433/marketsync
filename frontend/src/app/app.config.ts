@@ -36,15 +36,14 @@ function initializeKeycloak(keycloak: KeycloakService): () => Promise<boolean> {
           clientId: environment.keycloakClientId
         },
         initOptions: {
-          onLoad: 'login-required',
+          onLoad: 'check-sso',
           checkLoginIframe: false,
-          enableLogging: true,
+          enableLogging: false,
           pkceMethod: 'S256',
           flow: 'standard',
         },
         bearerExcludedUrls: ['']
       });
-      console.log('Keycloak Initialized');
       return true;
     } catch (error) {
       console.error('Keycloak Initialization Failed:', error);
@@ -85,4 +84,3 @@ export const appConfig: ApplicationConfig = {
     ]), provideAnimationsAsync()
   ],
 };
-

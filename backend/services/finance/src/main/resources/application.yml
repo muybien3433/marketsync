@@ -2,6 +2,5 @@ spring:
   config:
     import:
       - configserver:http://config-server:7777
-      - configserver:http://config-server:7777/scrapers
   application:
     name: finance-service
