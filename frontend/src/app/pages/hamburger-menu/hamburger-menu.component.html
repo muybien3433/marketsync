@@ -1,0 +1,14 @@
+<div class="hamburger-menu">
+    <button class="hamburger" (click)="toggleMenu()">
+        <span class="line" [class.open]="isMenuOpen"></span>
+        <span class="line" [class.open]="isMenuOpen"></span>
+        <span class="line" [class.open]="isMenuOpen"></span>
+    </button>
+
+    <div *ngIf="isMenuOpen" class="menu">
+        <ul>
+            <li><a href="#" (click)="navigateTo('')">{{ 'navbar.settings' | translate }}</a></li>
+            <li><a href="#" (click)="logout()">{{ 'navbar.logout' | translate }}</a></li>
+        </ul>
+    </div>
+</div>

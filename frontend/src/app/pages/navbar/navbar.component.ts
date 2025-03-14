@@ -3,14 +3,16 @@ import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {Router} from '@angular/router';
 import {KeycloakService} from 'keycloak-angular';
 import {NgIf} from '@angular/common';
+import { HamburgerMenuComponent } from '../hamburger-menu/hamburger-menu.component';
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [
-    TranslatePipe,
-    NgIf
-  ],
+    imports: [
+        TranslatePipe,
+        NgIf,
+        HamburgerMenuComponent
+    ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -29,20 +31,12 @@ export class NavbarComponent {
     this.translate.use(language);
   }
 
-  main() {
-    this.router.navigate(['/']);
-  }
-
   async login() {
     await this.keycloakService.login();
   }
 
   async register() {
     await this.keycloakService.register()
-  }
-
-  logout(): void {
-    this.keycloakService.logout();
   }
 
   wallet() {

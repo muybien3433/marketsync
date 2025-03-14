@@ -1,4 +1,6 @@
-/* Global Body */
+/* Add viewport meta in HTML: <meta name="viewport" content="width=device-width, initial-scale=1"> */
+
+/* Global Body - Mobile First */
 body {
   background: radial-gradient(circle, #777777, #0d0d0d);
   color: #f0f0f0;
@@ -7,7 +9,7 @@ body {
   margin: 0;
   overflow-x: hidden;
   position: relative;
-  padding-top: 15px;
+  padding-top: 80px;
   transition: all 0.5s ease-in-out;
 }
 
@@ -32,13 +34,14 @@ body::before {
   }
 }
 
-/* Form Styles */
+/* Form Styles - Responsive */
 form {
-  max-width: 1000px;
-  padding: 35px;
+  max-width: 95%; /* Changed from fixed width */
+  padding: 25px; /* Reduced padding */
   border-radius: 12px;
   background-color: burlywood;
-  margin: 7% auto auto;
+  margin: 20px auto; /* Adjusted margin */
+  box-sizing: border-box;
 }
 
 /* Form Group */
@@ -46,7 +49,7 @@ div {
   margin-bottom: 3px;
 }
 
-/* Heading */
+/* Heading - Mobile Sizes */
 h1, h2, h3 {
   font-family: 'Roboto Slab', serif;
   text-align: center;
@@ -54,18 +57,21 @@ h1, h2, h3 {
   letter-spacing: 2px;
   font-weight: bold;
   color: darkgoldenrod;
-  text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2), 0 0 30px rgba(255, 0, 150, 0.5); /* Glowing text */
+  text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2), 0 0 30px rgba(255, 0, 150, 0.5);
   transition: all 0.3s ease-in-out;
+  font-size: calc(1.5rem + 1vw); /* Fluid typography */
 }
 
-/* Link Hover */
+/* Link Hover - Touch Targets */
 a {
-  color: #00bcd4; /* Light cyan for links */
+  color: #00bcd4;
   text-decoration: none;
   position: relative;
   font-size: 16px;
   font-weight: 500;
   letter-spacing: 1px;
+  padding: 8px 0; /* Added for touch targets */
+  display: inline-block; /* Better for mobile */
 }
 
 a::after {
@@ -88,115 +94,47 @@ a:hover::after {
   width: 100%;
 }
 
-/* Button */
+/* Button - Mobile Friendly */
 button {
   background: linear-gradient(135deg, darkgoldenrod, red);
   color: papayawhip;
   border: none;
-  padding: 12px 25px;
+  padding: 10px 20px;
   border-radius: 50px;
-  font-size: 11px;
-  margin-right: 10px;
+  font-size: 14px; /* Larger text */
+  margin: 5px; /* Changed from right-only */
   cursor: pointer;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease-in-out;
   position: relative;
   overflow: hidden;
   text-transform: uppercase;
+  min-width: 120px; /* Minimum touch target */
 }
 
-button:focus {
-  outline: none;
+/* Table - Mobile Scroll */
+.table-container {
+  overflow-x: auto;
+  margin-top: 7%;
+  -webkit-overflow-scrolling: touch; /* iOS smooth scroll */
 }
 
-button:hover {
-  background: linear-gradient(135deg, #ff7043, gold);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-  transform: scale(1.1);
-}
-
-button:before {
-  content: '';
-  position: absolute;
-  top: -150%;
-  left: -150%;
-  width: 300%;
-  height: 300%;
-  background: rgba(255, 255, 255, 0.2);
-  transition: all 0.5s ease;
-  border-radius: 50%;
-}
-
-button:hover:before {
-  top: -25%;
-  left: -25%;
-  width: 150%;
-  height: 150%;
-}
-
-/* Label Styles */
-label {
-  font-weight: bold;
-  color: black;
-  display: block;
-  margin-bottom: 8px;
-}
-
-/* Input Field Styles */
-input[type="text"],
-input[type="number"],
-select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-/* Table */
 table {
+  min-width: 600px; /* Prevent table collapse */
   width: 100%;
   border-collapse: collapse;
   background: red;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease-in-out;
-  transform: translateY(5px);
-  overflow: hidden;
-  margin-top: 7%;
 }
 
-td {
-  border-bottom: 1px solid black;
-  transition: all 0.2s ease;
-}
-
-td:hover {
-  background-color: lightgray;
-  transform: translateX(2px);
-}
-
-tr {
-  transition: all 0.3s ease;
-}
-
-tbody {
-  font-size: 16px;
-}
-
-tbody td {
-  padding: 8px;
-  border: 1px solid #ddd;
-  text-align: center;
-}
-
-
-/* Header */
+/* Header - Mobile Adjustments */
 header {
   background: #222222;
-  padding: 20px 30px;
+  padding: 15px 20px; /* Reduced padding */
   display: flex;
+  flex-wrap: wrap; /* Allow wrapping */
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -210,50 +148,71 @@ header {
 
 header h1 {
   color: #ffcc00;
-  font-size: 28px;
-  margin: 0;
+  font-size: 1.5rem; /* Smaller base size */
+  margin: 0 10px 10px 0; /* Allow wrapping */
 }
 
 header .actions {
   display: flex;
-  gap: 15px;
+  gap: 10px;
+  flex-wrap: wrap; /* Wrap buttons */
 }
 
-header .actions button {
-  background: linear-gradient(to right, #00bcd4, #1e90ff);
-  padding: 10px 15px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+/* Mobile Breakpoints */
+@media (max-width: 767px) {
+  body {
+    padding-top: 70px;
+    font-size: 14px;
+  }
+
+  form {
+    padding: 15px;
+    margin: 10px auto;
+  }
+
+  header .actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  button {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  table {
+    font-size: 14px;
+  }
 }
 
-header .actions button:hover {
-  background: linear-gradient(to right, #63b8ff, #4682b4);
-  transform: scale(1.05);
+@media (min-width: 768px) {
+  body {
+    padding-top: 100px;
+  }
+
+  header h1 {
+    font-size: 28px;
+  }
+
+  form {
+    padding: 35px;
+    margin: 7% auto;
+  }
 }
 
-/* Footer */
-footer {
-  background: #2d2d2d;
-  color: #777;
-  text-align: center;
-  padding: 20px 0;
-  font-size: 14px;
-  border-top: 1px solid #444444;
-  position: relative;
-  bottom: 0;
-  width: 100%;
+/* Input Field Mobile Fix */
+input[type="text"],
+input[type="number"],
+select {
+  font-size: 16px; /* Prevent iOS zoom */
+  padding: 12px;
+  -webkit-appearance: none;
 }
 
-/* Card Component Styling */
+/* Card Component Mobile */
 .card {
-  background: #333333;
-  padding: 25px;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  margin: 20px 0;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 15px;
+  padding: 20px;
 }
 
 .card:hover {
