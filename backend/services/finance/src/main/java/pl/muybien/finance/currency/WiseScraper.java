@@ -45,7 +45,7 @@ public class WiseScraper extends FinanceUpdater implements CurrencyService {
 
     @Override
     protected void updateAssets() {
-        log.info("Starting update currency data...");
+        log.info("Starting the update of Wise data...");
         var allCurrencies = Arrays.asList(CurrencyType.values());
 
         for (int i = 0; i < allCurrencies.size(); i++) {
@@ -58,7 +58,7 @@ public class WiseScraper extends FinanceUpdater implements CurrencyService {
                 }
             }
         }
-        log.info("Finished update currency data");
+        log.info("Finished update Wise data");
     }
 
     @Override

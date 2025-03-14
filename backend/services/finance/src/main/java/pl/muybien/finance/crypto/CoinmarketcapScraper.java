@@ -2,60 +2,37 @@ package pl.muybien.finance.crypto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Value;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.exception.FinanceNotFoundException;
-import pl.muybien.finance.*;
+import pl.muybien.finance.AssetType;
+import pl.muybien.finance.CurrencyType;
+import pl.muybien.finance.FinanceDetail;
 import pl.muybien.finance.updater.FinanceDatabaseUpdater;
 import pl.muybien.finance.updater.FinanceUpdater;
 
-import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.time.Duration;
 import java.time.LocalTime;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CoinmarketcapScraper extends FinanceUpdater {
 
-    @Value("${coinmarketcap.base-url-page}")
-    private String baseUrlPage;
-    @Value("${coinmarketcap.page-size}")
-    private int pageSize;
-    @Value("${coinmarketcap.jsoup-update-connect-timeout-in-ms}")
-    private int jsoupConnectUpdateTimeoutInMs;
-    @Value("${coinmarketcap.link-selector}")
-    private String linkSelector;
-    @Value("${coinmarketcap.link-attribute}")
-    private String linkAttribute;
-
-    @Value("${coinmarketcap.first-section-name-selector}")
-    private String firstSectionNameSelector;
-    @Value("${coinmarketcap.first-section-symbol-selector}")
-    private String firstSectionSymbolSelector;
-    @Value("${coinmarketcap.first-section-price-selector}")
-    private String firstSectionPriceSelector;
-    @Value("${coinmarketcap.second-section-rows-selector}")
-
-    private String secondSectionRowsSelector;
-    @Value("${coinmarketcap.second-section-name-selector}")
-    private String secondSectionNameSelector;
-    @Value("${coinmarketcap.second-section-span-number}")
-    private int secondSectionSpanNumber;
-    @Value("${coinmarketcap.second-section-symbol-selector}")
-    private String secondSectionSymbolSelector;
-    @Value("${coinmarketcap.second-section-price-selector}")
-    private String secondSectionPriceSelector;
+    private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
 
     private final FinanceDatabaseUpdater databaseUpdater;
 
@@ -69,109 +46,110 @@ public class CoinmarketcapScraper extends FinanceUpdater {
     @Override
     @Transactional
     public void updateAssets() {
-        log.info("Starting updating crypto data...");
-        var cryptos = new HashMap<String, FinanceDetail>();
-        int pageCounter = 1;
-        while (pageCounter++ <= pageSize) {
-            try {
-                Document doc = Jsoup.connect(baseUrlPage + pageCounter)
-                        .timeout(jsoupConnectUpdateTimeoutInMs).get();
-                
-                scrapDataFromFirstSection(doc, cryptos);
-                scrapDataFromSecondSection(doc, cryptos);
-                TimeUnit.MILLISECONDS.sleep(1000);
-
-                databaseUpdater.saveFinanceToDatabase(AssetType.CRYPTOS.name(), cryptos);
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-                throw new FinanceNotFoundException("Error fetching finance data");
-            } catch (Exception e) {
-                throw new FinanceNotFoundException("Coinmarketcap data: " + e.getMessage());
-            }
-        }
-        log.info("Finished updating crypto data");
-    }
-
-    private void scrapDataFromFirstSection(Document doc, Map<String, FinanceDetail> cryptos) {
-        Elements links = doc.select(linkSelector);
-
-        for (Element link : links) {
-            String name = link.select(firstSectionNameSelector).text();
-            String symbol = link.select(firstSectionSymbolSelector).text();
-            String uri = extractUri(link.attr(linkAttribute).toLowerCase());
-            BigDecimal price = null;
-            Element row = link.closest("tr");
-            if (row != null) {
-                Element priceSpan = row.selectFirst(firstSectionPriceSelector);
-                if (priceSpan != null) {
-                    price = parsePrice(priceSpan.text());
-                }
-            }
-
-            if (!name.isBlank() && !symbol.isBlank() && !uri.isBlank() && price != null) {
-                var financeDetail = new FinanceDetail(
-                        name,
-                        symbol,
-                        uri,
-                        price,
-                        CurrencyType.USD.name(),
-                        AssetType.CRYPTOS.name(),
-                        LocalTime.now()
-                );
-                cryptos.put(uri, financeDetail);
-            }
-        }
-    }
-
-    private void scrapDataFromSecondSection(Document doc, Map<String, FinanceDetail> cryptos) {
-        Elements rows = doc.select(secondSectionRowsSelector);
-        for (Element row : rows) {
-            Element link = row.selectFirst(linkSelector);
-            if (link != null) {
-                String name = link.select(secondSectionNameSelector).get(secondSectionSpanNumber).text();
-                String symbol = link.select(secondSectionSymbolSelector).text();
-                String uri = extractUri(link.attr(linkAttribute));
-
-                Element priceElement = row.select(secondSectionPriceSelector).get(3);
-                BigDecimal price = extractPrice(priceElement.text());
-
-                if (!name.isBlank() && !symbol.isBlank() && !uri.isBlank()) {
-                    var financeDetail = new FinanceDetail(
-                            name,
-                            symbol,
-                            uri,
-                            price,
-                            CurrencyType.USD.name(),
-                            AssetType.CRYPTOS.name(),
-                            LocalTime.now()
-                    );
-                    cryptos.put(uri, financeDetail);
-                }
-            }
-        }
-    }
-
-    private String extractUri(String uri) {
-        if (uri != null && uri.startsWith("/currencies")) {
-            return uri.substring("/currencies/".length(),
-                    uri.endsWith("/") ? uri.length() - 1 : uri.length());
-        }
-        return "";
-    }
-
-    private BigDecimal parsePrice(String priceText) {
-        if (priceText == null || priceText.isBlank()) return null;
-
+        log.info("Starting the update of CoinMarketCap data...");
+        WebDriver driver = null;
         try {
-            String numericText = priceText.replaceAll("[^\\d.]", "");
-            return new BigDecimal(numericText);
-        } catch (NumberFormatException e) {
-            return null;
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments(
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--headless=new",
+                    "--window-size=1920,1080",
+                    "--disable-blink-features=AutomationControlled",
+                    "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            );
+            options.setExperimentalOption("excludeSwitches", List.of("enable-automation"));
+            options.setExperimentalOption("useAutomationExtension", false);
+
+            driver = new RemoteWebDriver(new URL(REMOTE_WEB_DRIVER), options);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+            driver.get("https://coinmarketcap.com");
+            handleCookieConsent(wait, driver);
+
+            wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("table.cmc-table")));
+
+            scrapAndSaveDataToDatabase(driver, wait);
+            log.info("Finished updating CoinMarketCap data");
+
+        } catch (Exception e) {
+            log.error("Critical error in coinmarketcap: {}", e.getMessage(), e);
+        } finally {
+            if (driver != null) driver.quit();
         }
     }
 
-    private BigDecimal extractPrice(String priceText) {
-        String cleanPrice = priceText.replace("$", "").replace(",", "").trim();
-        return new BigDecimal(cleanPrice);
+    private void handleCookieConsent(WebDriverWait wait, WebDriver driver) {
+        try {
+            WebElement acceptButton = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//button[contains(text(), 'Accept')] | //button[contains(@class, 'sc-')]")));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", acceptButton);
+        } catch (TimeoutException e) {
+            log.info("No cookie dialog found.");
+        }
+    }
+
+    private void scrapAndSaveDataToDatabase(WebDriver driver, WebDriverWait wait) {
+        try {
+            wait.until(driv -> driv.findElements(By.cssSelector("table[class*='cmc-table'] tbody tr")).size() >= 30);
+            AtomicReference<List<WebElement>> rows = new AtomicReference<>(driver.findElements(By.cssSelector("table[class*='cmc-table'] tbody tr")));
+            var cryptos = new HashMap<String, FinanceDetail>();
+
+            WebElement table = driver.findElement(By.cssSelector("table[class*='cmc-table']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", table);
+
+            new WebDriverWait(driver, Duration.ofSeconds(2))
+                    .until(_ -> !rows.get().isEmpty() && rows.get().getFirst().isDisplayed());
+
+            IntStream.range(0, Math.min(rows.get().size(), 14))
+                    .forEach(i -> {
+                        for (int attempt = 0; attempt < 2; attempt++) {
+                            try {
+                                WebElement row = rows.get().get(i);
+
+                                WebElement nameElement = row.findElement(By.cssSelector("p[class*='coin-item-name']"));
+                                WebElement symbolElement = row.findElement(By.cssSelector("p[class*='coin-item-symbol']"));
+                                WebElement priceElement = row.findElement(By.cssSelector("div[class*='sc-142c02c-0'] > span"));
+
+                                String name = nameElement.getText().trim();
+                                String symbol = symbolElement.getText().replaceAll("[^a-zA-Z0-9]", "").trim();
+                                String priceText = priceElement.getText().replaceAll("[^0-9.]", "");
+
+                                if (!name.isBlank() && !symbol.isBlank() && !priceText.isBlank()) {
+                                    try {
+                                        BigDecimal price = new BigDecimal(priceText);
+                                        String uri = name.replaceAll("[ .()]", "-").toLowerCase();
+
+                                        cryptos.put(uri, new FinanceDetail(
+                                                name,
+                                                symbol,
+                                                uri,
+                                                price,
+                                                CurrencyType.USD.name(),
+                                                AssetType.CRYPTOS.name(),
+                                                LocalTime.now()
+                                        ));
+                                    } catch (NumberFormatException e) {
+                                        log.warn("Skipping invalid price for {}: {}", name, priceText);
+                                    }
+                                }
+                                break;
+                            } catch (StaleElementReferenceException e) {
+                                log.warn("Stale element at index {}, refetching (attempt {}/2)...", i, attempt + 1);
+                                rows.set(driver.findElements(By.cssSelector("table[class*='cmc-table'] tbody tr")));
+                            } catch (Exception e) {
+                                if (attempt == 1) {
+                                    log.error("Error processing row {}: {}", i, e.getMessage());
+                                }
+                            }
+                        }
+                    });
+            if (!cryptos.isEmpty()) {
+                databaseUpdater.saveFinanceToDatabase(AssetType.CRYPTOS.name(), cryptos);
+            }
+        } finally {
+            driver.quit();
+        }
     }
 }
