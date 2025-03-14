@@ -1,7 +1,6 @@
 <div class="navbar">
   <div class="navbar-language">
-    <button (click)="useLanguage('en')">en</button>
-    <button (click)="useLanguage('pl')">pl</button>
+      <app-language-menu></app-language-menu>
   </div>
 
   <div class="navbar-center">
@@ -10,7 +9,6 @@
   </div>
 
   <div class="navbar-auth">
-<!--    <app-hamburger-menu></app-hamburger-menu>-->
     <ng-container *ngIf="isLoggedIn(); else loggedOutTemplate">
       <app-hamburger-menu></app-hamburger-menu>
     </ng-container>

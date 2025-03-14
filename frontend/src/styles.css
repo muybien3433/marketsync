@@ -79,7 +79,7 @@ a::after {
   position: absolute;
   width: 0;
   height: 2px;
-  background: #ff4081;
+  background: linear-gradient(135deg, darkgoldenrod, sienna);
   bottom: -3px;
   left: 0;
   transition: width 0.3s ease-in-out;
@@ -96,20 +96,20 @@ a:hover::after {
 
 /* Button - Mobile Friendly */
 button {
-  background: linear-gradient(135deg, darkgoldenrod, red);
+  background: linear-gradient(135deg, darkgoldenrod, sienna);
   color: papayawhip;
   border: none;
   padding: 10px 20px;
   border-radius: 50px;
-  font-size: 14px; /* Larger text */
-  margin: 5px; /* Changed from right-only */
+  font-size: 14px;
+  margin: 5px;
   cursor: pointer;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease-in-out;
   position: relative;
   overflow: hidden;
   text-transform: uppercase;
-  min-width: 120px; /* Minimum touch target */
+  min-width: 120px;
 }
 
 /* Table - Mobile Scroll */
