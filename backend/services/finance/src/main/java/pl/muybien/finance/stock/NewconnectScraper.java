@@ -49,7 +49,7 @@ public class NewconnectScraper extends FinanceUpdater {
     @Override
     @Transactional
     public void updateAssets() {
-        log.info("Starting updating newconnect stock data...");
+        log.info("Starting the update of NewConnect data...");
         var stocks = new HashMap<String, FinanceDetail>();
 
         WebDriver driver = null;
@@ -133,6 +133,6 @@ public class NewconnectScraper extends FinanceUpdater {
             }
             System.gc();
         }
-        log.info("Finished updating newconnect stock data");
+        log.info("Finished updating NewConnect data");
     }
 }

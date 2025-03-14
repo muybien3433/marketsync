@@ -2,6 +2,7 @@ package pl.muybien.asset;
 
 public enum AssetType {
     UNDEFINED,
+    CUSTOM,
     STOCKS,
     CRYPTOS,
     CURRENCIES,

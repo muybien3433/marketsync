@@ -2,7 +2,6 @@ package pl.muybien.asset;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.asset.dto.AssetAggregateDTO;
@@ -96,21 +95,28 @@ public class AssetService {
 
     private AssetAggregateDTO aggregateAsset(AssetGroupDTO asset, String desiredCurrency) {
         String type = asset.assetType().name().toLowerCase();
-        var finance = financeClient.findFinanceByTypeAndUri(type, asset.uri());
+        BigDecimal currentPrice = BigDecimal.ZERO;
+        BigDecimal value = BigDecimal.ZERO;
+        BigDecimal profit = BigDecimal.ZERO;
+        BigDecimal profitPercentage = BigDecimal.ZERO;
+        BigDecimal exchangeRateToDesired = BigDecimal.ZERO;
 
-        BigDecimal currentPrice = resolvePriceByCurrency(asset, finance);
-        BigDecimal value = asset.count().multiply(currentPrice);
-        BigDecimal totalInvested = asset.averagePurchasePrice().multiply(asset.count());
-        BigDecimal profit = value.subtract(totalInvested);
-        BigDecimal profitPercentage = resolveProfitInPercentage(totalInvested, profit);
-        BigDecimal exchangeRateToDesired = resolveExchangeRateToDesired(asset.currency(), desiredCurrency);
+        if (asset.assetType() != AssetType.CUSTOM) {
+            FinanceResponse finance = financeClient.findFinanceByTypeAndUri(type, asset.uri());
+            currentPrice = resolvePriceByCurrency(asset, finance);
+            value = asset.count().multiply(currentPrice);
+            BigDecimal totalInvested = asset.averagePurchasePrice().multiply(asset.count());
+            profit = value.subtract(totalInvested);
+            profitPercentage = resolveProfitInPercentage(totalInvested, profit);
+            exchangeRateToDesired = resolveExchangeRateToDesired(asset.currency(), desiredCurrency);
+        }
 
         return new AssetAggregateDTO(
                 asset.name(),
                 asset.symbol(),
                 type,
                 asset.count(),
-                resolvePriceByCurrency(asset, finance),
+                currentPrice,
                 asset.currency(),
                 value,
                 asset.averagePurchasePrice(),

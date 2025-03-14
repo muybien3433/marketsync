@@ -49,7 +49,7 @@ public class GpwScraper extends FinanceUpdater {
     @Override
     @Transactional
     public void updateAssets() {
-        log.info("Starting updating gpw assets...");
+        log.info("Starting the update of Gpw data...");
         var stocks = new HashMap<String, FinanceDetail>();
 
         WebDriver driver = null;
@@ -74,9 +74,7 @@ public class GpwScraper extends FinanceUpdater {
                 WebElement acceptCookiesButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Akceptuję')]")));
                 acceptCookiesButton.click();
                 log.info("Accepted cookie policy");
-            } catch (Exception e) {
-                log.info("Cookie acceptance button not found or already accepted");
-            }
+            } catch (Exception _) {}
 
             WebElement body = driver.findElement(By.tagName("body"));
             String pageContent = body.getText();
@@ -132,6 +130,6 @@ public class GpwScraper extends FinanceUpdater {
             }
             System.gc();
         }
-        log.info("Finished updating gpw stock data");
+        log.info("Finished updating Gpw data");
     }
 }
