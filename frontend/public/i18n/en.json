@@ -20,7 +20,8 @@
     "login": "Log In",
     "register": "Sign Up",
     "logout": "Logout",
-    "main": "Main"
+    "main": "Main",
+    "settings": "Settings"
   },
 
   "asset": {

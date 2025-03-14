@@ -20,7 +20,8 @@
     "login": "Zaloguj się",
     "register": "Zarejestruj się",
     "logout": "Wyloguj się",
-    "main": "Menu"
+    "main": "Menu",
+    "settings": "Ustawienia"
   },
 
   "asset": {
