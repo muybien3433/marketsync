@@ -1,0 +1,18 @@
+<div class="navbar-language">
+    <div class="language-picker">
+        <button class="language-current" (click)="toggleLanguageMenu()">
+            <span class="flag-icon">{{ getCurrentFlag() }}</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-menu" [class.active]="menuOpen">
+            <a (click)="useLanguage('en'); menuOpen = false" class="language-option">
+                <span class="flag-icon">🇬🇧</span>
+                English
+            </a>
+            <a (click)="useLanguage('pl'); menuOpen = false" class="language-option">
+                <span class="flag-icon">🇵🇱</span>
+                Polski
+            </a>
+        </div>
+    </div>
+</div>

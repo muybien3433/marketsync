@@ -1,49 +1,44 @@
 import {Component} from '@angular/core';
-import {TranslatePipe, TranslateService} from "@ngx-translate/core";
+import {TranslatePipe} from "@ngx-translate/core";
 import {Router} from '@angular/router';
 import {KeycloakService} from 'keycloak-angular';
-import {NgIf} from '@angular/common';
-import { HamburgerMenuComponent } from '../hamburger-menu/hamburger-menu.component';
+import {HamburgerMenuComponent} from '../hamburger-menu/hamburger-menu.component';
+import {LanguageMenuComponent} from "../language-menu/language-menu.component";
+import {NgIf} from "@angular/common";
 
 @Component({
-  selector: 'app-menu',
-  standalone: true,
+    selector: 'app-menu',
+    standalone: true,
     imports: [
         TranslatePipe,
-        NgIf,
-        HamburgerMenuComponent
+        HamburgerMenuComponent,
+        LanguageMenuComponent,
+        NgIf
     ],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+    templateUrl: './navbar.component.html',
+    styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-  constructor(private router: Router, private translate: TranslateService, private keycloakService: KeycloakService) {
-    this.translate.addLangs(['pl', 'en']);
-    this.translate.setDefaultLang('pl');
-    this.translate.use('pl');
-  }
+    constructor(private router: Router, private keycloakService: KeycloakService) {
+    }
 
-  isLoggedIn() {
-    return this.keycloakService.isLoggedIn();
-  }
+    isLoggedIn() {
+        return this.keycloakService.isLoggedIn();
+    }
 
-  useLanguage(language: string): void {
-    this.translate.use(language);
-  }
+    async login() {
+        await this.keycloakService.login();
+    }
 
-  async login() {
-    await this.keycloakService.login();
-  }
+    async register() {
+        await this.keycloakService.register()
+    }
 
-  async register() {
-    await this.keycloakService.register()
-  }
+    wallet() {
+        this.router.navigate(['wallet']);
+    }
 
-  wallet() {
-    this.router.navigate(['wallet']);
-  }
-
-  subscription() {
-    this.router.navigate(['subscription']);
-  }
+    subscription() {
+        this.router.navigate(['subscription']);
+    }
 }
