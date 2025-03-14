@@ -311,7 +311,6 @@ services:
       timeout: 5s
       retries: 15
     networks:
-#      - reverse-proxy-net
       - database-net
     deploy:
       resources:
