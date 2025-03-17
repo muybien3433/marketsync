@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <div *ngIf="selectedAsset?.currentPrice != null">
+    <div *ngIf="selectedAsset?.price != null">
         <div class="current-price" *ngIf="selectedAsset">
             <span class="price">{{ selectedAsset?.name }}</span> {{ 'subscription.currently' | translate }}
             <span class="price">{{ selectedAsset?.currentPrice }}$</span>
