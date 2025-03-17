@@ -4,7 +4,7 @@ import {BehaviorSubject} from "rxjs";
 @Injectable({
     providedIn: 'root'
 })
-export class AssetSelectionService {
+export class AssetService {
     private selectedAssetType = new BehaviorSubject<string>('');
     selectedAssetType$ = this.selectedAssetType.asObservable();
 

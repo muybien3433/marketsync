@@ -4,7 +4,7 @@ services:
     build:
       context: ./backend/services/config-server
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=native,dev
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:7777/actuator/health || exit 1" ]
@@ -331,22 +331,22 @@ services:
           memory: 512M
 
 
-  ######### [ Frontend ] #########
-  frontend-server:
-    build:
-      context: ./frontend
-      args:
-        - ENV_CONFIGURATION=development
-    ports:
-      - "80:80"
-    restart: unless-stopped
-    networks:
-      - frontend-net
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1024M
+#  ######### [ Frontend ] #########
+#  frontend-server:
+#    build:
+#      context: ./frontend
+#      args:
+#        - ENV_CONFIGURATION=development
+#    ports:
+#      - "80:80"
+#    restart: unless-stopped
+#    networks:
+#      - frontend-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '1'
+#          memory: 1024M
 
 
 networks:

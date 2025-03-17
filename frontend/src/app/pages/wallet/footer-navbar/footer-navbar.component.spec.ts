@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SubscriptionComponent } from './subscription.component';
+import { FooterNavbarComponent } from './footer-navbar.component';
 
-describe('SubscriptionComponent', () => {
-  let component: SubscriptionComponent;
-  let fixture: ComponentFixture<SubscriptionComponent>;
+describe('WalletFooterNavbarComponent', () => {
+  let component: FooterNavbarComponent;
+  let fixture: ComponentFixture<FooterNavbarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SubscriptionComponent]
+      imports: [FooterNavbarComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SubscriptionComponent);
+    fixture = TestBed.createComponent(FooterNavbarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

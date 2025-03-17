@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import {TranslatePipe} from "@ngx-translate/core";
 import {HttpClient} from '@angular/common/http';
-import {DatePipe, NgForOf} from '@angular/common';
-import {WalletFooterNavbarComponent} from '../../navbar/wallet-footer-navbar/wallet-footer-navbar.component';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import {FooterNavbarComponent} from '../footer-navbar/footer-navbar.component';
 import {Router} from '@angular/router';
 import {environment} from '../../../../environments/environment';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
@@ -11,12 +11,13 @@ import {AssetHistory} from '../../../models/asset-history';
 @Component({
   selector: 'app-asset-history',
   standalone: true,
-    imports: [
-        TranslatePipe,
-        NgForOf,
-        WalletFooterNavbarComponent,
-        DatePipe
-    ],
+  imports: [
+    TranslatePipe,
+    NgForOf,
+    FooterNavbarComponent,
+    DatePipe,
+    NgIf,
+  ],
   templateUrl: './asset-history.component.html',
   styleUrl: './asset-history.component.css'
 })
@@ -52,5 +53,9 @@ export class AssetHistoryComponent {
         console.error(err);
       }
     })
+  }
+
+  addAssetButton() {
+    this.router.navigate(['add-asset']);
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, HostListener} from '@angular/core';
 import {Router} from "@angular/router";
 import {NgIf} from "@angular/common";
 import {TranslatePipe} from "@ngx-translate/core";
@@ -31,5 +31,13 @@ export class HamburgerMenuComponent {
 
   logout(): void {
     this.keycloakService.logout();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.hamburger-menu')) {
+      this.isMenuOpen = false;
+    }
   }
 }

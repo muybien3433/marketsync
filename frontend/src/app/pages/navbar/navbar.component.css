@@ -1,33 +1,50 @@
 .navbar {
-  position: fixed;
-  top: 0;
+  position: absolute;
+  display: flex;
+  /*top: 15%;*/
   width: 100%;
-  background-color: #333;
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  padding: 0 20px;
 }
 
+/* Language Selector */
 .navbar-language {
-  flex: 1;
-  display: flex;
-  justify-content: flex-start;
+  position: absolute;
+  left: 20px;
 }
 
-.navbar-center {
-  flex: 2;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
+/* Wallet and Subscription */
+.navbar-wallet-subscription {
+  position: absolute;
+  left: 200px;
 }
 
+/* Main Button Section */
+.navbar-main {
+  position: absolute;
+  left: 50%;
+  top: 15%;
+  transform: translateX(-50%);
+}
+
+.navbar-main button {
+  font-size: 25px;
+}
+
+/* Subscription Button */
+.navbar-subscription button {
+  font-size: 16px;
+  left: 240%;
+}
+
+/* Wallet Button */
+.navbar-wallet button {
+  font-size: 16px;
+  right: 350%;
+}
+
+/* Authentication  */
 .navbar-auth {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.navbar button {
-  min-width: 120px;
+  position: absolute;
+  right: 10px;
 }

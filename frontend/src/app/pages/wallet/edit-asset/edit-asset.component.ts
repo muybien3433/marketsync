@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { WalletFooterNavbarComponent } from '../../navbar/wallet-footer-navbar/wallet-footer-navbar.component';
+import { FooterNavbarComponent } from '../footer-navbar/footer-navbar.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -14,7 +14,7 @@ import {Currency} from "../../../models/currency";
   selector: 'app-edit-asset',
   standalone: true,
   imports: [
-    WalletFooterNavbarComponent,
+    FooterNavbarComponent,
     FormsModule,
     NgIf,
     ReactiveFormsModule,

@@ -4,17 +4,18 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import {AssetAggregate} from "../../models/asset-aggregate";
 import {
-  WalletFooterNavbarComponent
-} from "../navbar/wallet-footer-navbar/wallet-footer-navbar.component";
+  FooterNavbarComponent
+} from "./footer-navbar/footer-navbar.component";
 import {environment} from '../../../environments/environment';
 import {API_ENDPOINTS} from '../../services/api-endpoints';
 import {PreferenceService} from "../../services/preference-service";
 import {CurrencyComponent} from "../currency/currency.component";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe, CurrencyComponent, NgIf],
+  imports: [NgForOf, NgStyle, TranslatePipe, FooterNavbarComponent, CurrencyPipe, CurrencyComponent, NgIf],
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css'],
 })
@@ -28,7 +29,8 @@ export class WalletComponent {
   constructor(
       private translate: TranslateService,
       private http: HttpClient,
-      private preferenceService: PreferenceService
+      private preferenceService: PreferenceService,
+      private router: Router,
   ) {
     this.selectedCurrency = this.preferenceService.getPreferredCurrency() || 'USD';
     this.fetchWalletAssets();
@@ -100,5 +102,9 @@ export class WalletComponent {
     this.preferenceService.setPreferredCurrency(newCurrency);
     this.selectedCurrency = newCurrency;
     this.fetchWalletAssets();
+  }
+
+  addAssetButton() {
+    this.router.navigate(['add-asset']);
   }
 }

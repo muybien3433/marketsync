@@ -19,7 +19,7 @@ import {
 import {KeycloakService} from 'keycloak-angular';
 import {TokenInterceptor} from './services/token-interceptor';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import {environment} from '../environments/environment';
+import {environment} from '../environments/environment.development';
 
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './i18n/', '.json');
