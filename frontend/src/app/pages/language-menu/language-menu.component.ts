@@ -9,7 +9,7 @@ import {TranslateService} from "@ngx-translate/core";
   styleUrl: './language-menu.component.css'
 })
 export class LanguageMenuComponent {
-  menuOpen = false;
+  isMenuOpen = false;
 
   constructor(private translate: TranslateService) {
     this.translate.addLangs(['pl', 'en']);
@@ -22,19 +22,19 @@ export class LanguageMenuComponent {
   }
 
   toggleLanguageMenu() {
-    this.menuOpen = !this.menuOpen;
+    this.isMenuOpen = !this.isMenuOpen;
   }
 
   useLanguage(lang: string) {
     this.translate.use(lang);
-    this.menuOpen = false;
+    this.isMenuOpen = false;
   }
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
     if (!target.closest('.language-picker')) {
-      this.menuOpen = false;
+      this.isMenuOpen = false;
     }
   }
 }

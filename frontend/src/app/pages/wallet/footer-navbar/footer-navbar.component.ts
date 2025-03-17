@@ -8,10 +8,10 @@ import {TranslatePipe} from '@ngx-translate/core';
   imports: [
     TranslatePipe
   ],
-  templateUrl: './wallet-footer-navbar.component.html',
-  styleUrl: './wallet-footer-navbar.component.css'
+  templateUrl: './footer-navbar.component.html',
+  styleUrl: './footer-navbar.component.css'
 })
-export class WalletFooterNavbarComponent {
+export class FooterNavbarComponent {
   constructor(private router: Router) {
   }
 

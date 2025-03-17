@@ -5,7 +5,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatListModule} from '@angular/material/list';
 import {MatCardModule} from '@angular/material/card';
 import {ClipboardModule} from '@angular/cdk/clipboard';
-import {NavbarComponent} from './pages/navbar/navbar.component';
+import {HomeComponent} from "./pages/home/home.component";
 
 
 @Component({
@@ -17,8 +17,7 @@ import {NavbarComponent} from './pages/navbar/navbar.component';
     MatListModule,
     MatCardModule,
     ClipboardModule,
-    RouterModule,
-    NavbarComponent
+    RouterModule, HomeComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

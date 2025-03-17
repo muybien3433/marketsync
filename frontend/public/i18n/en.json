@@ -32,7 +32,7 @@
     "type.crypto": "Crypto",
     "type.stock": "Stock",
     "type.selection": "Select asset type",
-    "search.asset": "Search asset",
+    "search.asset": "Search from: ",
     "purchase.price": "Purchase price",
     "average.purchase.price": "Avg. Purchase Price",
     "investment.start.date": "Creation date",
@@ -40,7 +40,8 @@
     "profit": "Profit",
     "delete.asset": "Delete asset",
     "cryptos": "Cryptos",
-    "stocks": "Stocks"
+    "stocks": "Stocks",
+    "no.assets.message": "Ops... Your wallet is empty! No worries just click the button below."
   },
 
   "asset-type": {
@@ -50,6 +51,19 @@
 
   "wallet": {
     "name": "Your Wallet"
+  },
+
+  "subscription": {
+    "title": "Subscribe assets price",
+    "subtitle": "Stay tuned and get notified when a asset price reach the target.",
+    "add.subscription": "Add subscription",
+    "notify.by": "Notify me by",
+    "as.soon.as": "as soon as",
+    "goes": "goes",
+    "above": "above",
+    "below": "below",
+    "price": "the price of",
+    "currently": "is currently"
   },
 
   "success": {
@@ -62,7 +76,7 @@
     "count.should.be.positive": "Count should be a positive number",
     "asset.is.required": "Asset is required",
     "asset.type.required": "Asset type is required",
-    "purchase.price.should.be.positive": "Purchase price should be a positive number",
+    "price.should.be.positive": "Price should be a positive number",
     "asset.add.fail": "Failed to add asset. Please try again",
     "asset.edit.fail": "Failed to edit asset. Please try again"
   }

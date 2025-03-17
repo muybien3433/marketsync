@@ -1,16 +1,24 @@
 <div class="navbar">
   <div class="navbar-language">
-      <app-language-menu></app-language-menu>
+    <button (click)="useLanguage('en')">en</button>
+    <button (click)="useLanguage('pl')">pl</button>
   </div>
 
-  <div class="navbar-center">
-    <button class="navbar-button" (click)="subscription()">{{ 'common.subscription' | translate }}</button>
-    <button class="navbar-button" (click)="wallet()">{{ 'common.wallet' | translate }}</button>
+  <div class="navbar-main">
+    <button (click)="main()">{{ 'navbar.main' | translate }}</button>
+  </div>
+
+  <div class="navbar-subscription">
+    <button (click)="subscription()">{{ 'common.subscription' | translate }}</button>
+  </div>
+
+  <div class="navbar-wallet">
+    <button (click)="wallet()">{{ 'common.wallet' | translate }}</button>
   </div>
 
   <div class="navbar-auth">
     <ng-container *ngIf="isLoggedIn(); else loggedOutTemplate">
-      <app-hamburger-menu></app-hamburger-menu>
+      <button (click)="logout()">{{ 'navbar.logout' | translate }}</button>
     </ng-container>
     <ng-template #loggedOutTemplate>
       <button (click)="login()">{{ 'navbar.login' | translate }}</button>

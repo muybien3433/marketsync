@@ -1,11 +1,11 @@
-<form [formGroup]="addAssetForm" (ngSubmit)="onSubmit()">
+<form class="add-asset-form" [formGroup]="addAssetForm" (ngSubmit)="onSubmit()">
     <div>
-
-        <div>
+        <div class="form-group">
+            <label>{{ 'common.asset' | translate }}</label>
             <app-asset-selection-list></app-asset-selection-list>
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="count">{{ 'common.count' | translate }}</label>
             <input
                     type="number"
@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="purchasePrice">{{ 'asset.purchase.price' | translate }}</label>
             <input
                     type="number"
@@ -29,11 +29,11 @@
                     required
             />
             <div *ngIf="addAssetForm.get('purchasePrice')?.invalid && addAssetForm.get('purchasePrice')?.touched">
-                <small class="error">{{ 'error.purchase.price.should.be.positive' | translate }}</small>
+                <small class="error">{{ 'error.price.should.be.positive' | translate }}</small>
             </div>
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="currency">{{ 'common.currency' | translate }}</label>
             <select id="currency" formControlName="currency">
                 <option *ngFor="let currency of currencyOptions" [value]="currency">{{ currency }}</option>
@@ -47,7 +47,6 @@
             {{ 'asset.add.asset' | translate }}
         </button>
 
-        <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
         <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
     </div>
 

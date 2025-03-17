@@ -1,44 +1,55 @@
 import {Component} from '@angular/core';
-import {TranslatePipe} from "@ngx-translate/core";
+import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {Router} from '@angular/router';
 import {KeycloakService} from 'keycloak-angular';
-import {HamburgerMenuComponent} from '../hamburger-menu/hamburger-menu.component';
-import {LanguageMenuComponent} from "../language-menu/language-menu.component";
-import {NgIf} from "@angular/common";
+import {NgIf} from '@angular/common';
 
 @Component({
-    selector: 'app-menu',
-    standalone: true,
-    imports: [
-        TranslatePipe,
-        HamburgerMenuComponent,
-        LanguageMenuComponent,
-        NgIf
-    ],
-    templateUrl: './navbar.component.html',
-    styleUrl: './navbar.component.css'
+  selector: 'app-navbar',
+  standalone: true,
+  imports: [
+    TranslatePipe,
+    NgIf
+  ],
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-    constructor(private router: Router, private keycloakService: KeycloakService) {
-    }
+  constructor(private router: Router, private translate: TranslateService, private keycloakService: KeycloakService) {
+    this.translate.addLangs(['pl', 'en']);
+    this.translate.setDefaultLang('pl');
+    this.translate.use('pl');
+  }
 
-    isLoggedIn() {
-        return this.keycloakService.isLoggedIn();
-    }
+  isLoggedIn() {
+    return this.keycloakService.isLoggedIn();
+  }
 
-    async login() {
-        await this.keycloakService.login();
-    }
+  useLanguage(language: string): void {
+    this.translate.use(language);
+  }
 
-    async register() {
-        await this.keycloakService.register()
-    }
+  main() {
+    this.router.navigate(['/']);
+  }
 
-    wallet() {
-        this.router.navigate(['wallet']);
-    }
+  async login() {
+    await this.keycloakService.login();
+  }
 
-    subscription() {
-        this.router.navigate(['subscription']);
-    }
+  async register() {
+    await this.keycloakService.register()
+  }
+
+  logout(): void {
+    this.keycloakService.logout();
+  }
+
+  wallet() {
+    this.router.navigate(['wallet']);
+  }
+
+  subscription() {
+    this.router.navigate(['subscription']);
+  }
 }

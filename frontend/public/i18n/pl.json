@@ -32,7 +32,7 @@
     "type.crypto": "Krypto",
     "type.stock": "Giełda",
     "type.selection": "Wybierz typ aktywa",
-    "search.asset": "Wyszukaj aktywo",
+    "search.asset": "Wyszukaj spośród: ",
     "purchase.price": "Cena zakupu",
     "average.purchase.price": "Śr. Cena zakupu",
     "investment.start.date": "Data utworzenia",
@@ -40,12 +40,26 @@
     "profit": "Zysk",
     "delete.asset": "Usuń aktywo",
     "cryptos": "Kryptowaluty",
-    "stocks": "Akcje"
+    "stocks": "Akcje",
+    "no.assets.message": "Ups... Twój portfel jest pusty! Nic straconego, kliknij przycisk poniżej."
   },
 
   "wallet": {
     "name": "Twój Portfel",
     "change.currency": "Zmień walutę"
+  },
+
+  "subscription": {
+    "title": "Subskrybuj ceny aktywów",
+    "subtitle": "Bądź na bieżaco i otrzymaj powiadomienie, gdy cena aktywa osiągnie wyznaczony cel.",
+    "add.subscription": "Dodaj subskrybcję",
+    "notify.by": "Powiadom mnie poprzez",
+    "as.soon.as": "gdy tylko",
+    "goes": "osiągnie wartość",
+    "above": "powyżej",
+    "below": "poniżej",
+    "price": "ceny",
+    "currently": "kosztuje obecnie"
   },
 
   "success": {
@@ -58,7 +72,7 @@
     "count.should.be.positive": "Ilość powinna być liczbą dodatnią",
     "asset.is.required": "Aktywo jest wymagane",
     "asset.type.required": "Typ aktywa jest wymagany",
-    "purchase.price.should.be.positive": "Cena zakupu powinna być liczbą dodatnią",
+    "price.should.be.positive": "Liczba powinna być dodatnia",
     "asset.add.fail": "Nie udało się dodać aktywa. Spróbuj ponownie",
     "asset.edit.fail": "Nie udało się edytować aktywa. Spróbuj ponownie"
   }

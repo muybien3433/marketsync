@@ -1,26 +1,50 @@
-<div class="price-alert-container">
-  <form class="alert-form">
-    <div class="form-group">
-      <label for="notification-method">Send me an</label>
-      <select id="notification-method">
-        <option>Email</option>
-      </select>
-      <label>as soon as</label>
-      <app-asset-selection></app-asset-selection>
-      <label>goes</label>
-      <select id="condition">
-        <option>above</option>
-        <option>below</option>
-      </select>
-      <input type="number" id="price" placeholder="0.00" />
-      <select id="currency">
-        <option>Dollars (USD)</option>
-      </select>
-    </div>
-    <button type="submit">
-      {{ 'subscription.add.subscription' | translate }}
-    </button>
-  </form>
-
-  <p class="current-price">The price of <span class="crypto">BTC</span> is currently <span class="price">102,485.10 USD</span>.</p>
+<div class="subscription-header">
+    <h2>{{ 'subscription.title' | translate }}</h2>
+    <p class="subheader">{{ 'subscription.subtitle' | translate }}</p>
 </div>
+
+<form class="subscription-form" [formGroup]="addSubscriptionForm" (ngSubmit)="onSubmit()">
+    <div class="form-grid">
+        <label>{{ 'subscription.notify.by' | translate }}</label>
+        <select class="modern-select" formControlName="notificationType">
+            <option value="EMAIL">E-MAIL</option>
+        </select>
+
+        <label>{{ 'subscription.as.soon.as' | translate }}</label>
+        <app-asset-selection-list></app-asset-selection-list>
+
+        <label>{{ 'subscription.goes' | translate }}</label>
+        <select class="modern-select" formControlName="condition">
+            <option value="increase">{{ 'subscription.above' | translate }}</option>
+            <option value="decrease">{{ 'subscription.below' | translate }}</option>
+        </select>
+
+        <div class="form-grid">
+            <label for="value">{{ 'subscription.price' | translate }}</label>
+            <div class="modern-select">
+                <input
+                        type="number"
+                        id="value"
+                        formControlName="value"
+                        required
+                />
+                <select id="currency" formControlName="currency">
+                    <option *ngFor="let currency of currencyOptions" [value]="currency">{{ currency }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="selectedAsset?.currentPrice != null">
+        <div class="current-price" *ngIf="selectedAsset">
+            <span class="price">{{ selectedAsset?.name }}</span> {{ 'subscription.currently' | translate }}
+            <span class="price">{{ selectedAsset?.currentPrice }}$</span>
+        </div>
+    </div>
+
+    <button type="submit" class="primary-btn" (click)="onSubmit()">
+        {{ 'subscription.add.subscription' | translate }}
+    </button>
+
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+</form>

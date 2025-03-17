@@ -18,3 +18,12 @@ th, td {
   text-align: left;
   background: antiquewhite;
 }
+
+.empty-wallet-text {
+  margin-top: 10%;
+  text-align: center;
+}
+
+.add-asset-button {
+  margin-top: 5%;
+}

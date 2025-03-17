@@ -25,8 +25,7 @@ spring:
       resourceserver:
         issuer-uri: http://keycloak:8080/realms/marketsync
 
-frontend:
-  url: localhost
+frontend-url: http://localhost:4200
 
 jwk-uri: http://keycloak/realms/marketsync/protocol/openid-connect/certs
 

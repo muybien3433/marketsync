@@ -2,14 +2,15 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {TranslatePipe} from '@ngx-translate/core';
-import {WalletFooterNavbarComponent} from '../../navbar/wallet-footer-navbar/wallet-footer-navbar.component';
+import {FooterNavbarComponent} from '../footer-navbar/footer-navbar.component';
 import {NgForOf, NgIf} from '@angular/common';
 import {environment} from '../../../../environments/environment';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
 import {Currency} from "../../../models/currency";
-import {AssetSelectionService} from "../../../services/asset-selection-service";
+import {AssetService} from "../../../services/asset.service";
 import {AssetSelectionListComponent} from "../../asset-selection-list/asset-selection-list.component";
 import {Router} from "@angular/router";
+import {PreferenceService} from "../../../services/preference-service";
 
 @Component({
     selector: 'app-add-asset',
@@ -17,7 +18,7 @@ import {Router} from "@angular/router";
     imports: [
         FormsModule,
         TranslatePipe,
-        WalletFooterNavbarComponent,
+        FooterNavbarComponent,
         NgIf,
         ReactiveFormsModule,
         NgForOf,
@@ -29,40 +30,40 @@ import {Router} from "@angular/router";
 export class AddAssetComponent implements OnInit {
     addAssetForm!: FormGroup;
     isSubmitting = false;
-    successMessage: string = '';
-    errorMessage: string = '';
     selectedAssetType: string = '';
-    selectedAssetUri: string = '';
+    selectedAsset: string = '';
     currencyOptions = Object.values(Currency);
+    errorMessage: string = '';
 
     constructor(
         private fb: FormBuilder,
         private http: HttpClient,
         private router: Router,
-        private assetSelection: AssetSelectionService,
+        private assetService: AssetService,
+        private preferenceService: PreferenceService
     ) {
         this.addAssetForm = this.fb.group({
             assetType: ['', Validators.required],
             uri: ['', [Validators.required, Validators.minLength(1)]],
-            count: ['0.0', [Validators.required, Validators.min(0.00000001)]],
-            purchasePrice: ['0.0', [Validators.required, Validators.min(0.01)]],
-            currency: ['', [Validators.required]],
+            count: ['0.01', [Validators.required, Validators.min(0.00000001)]],
+            purchasePrice: ['0.01', [Validators.required, Validators.min(0.0001)]],
+            currency: [this.preferenceService.getPreferredCurrency(), [Validators.required]],
         });
     }
 
     ngOnInit(): void {
-        this.assetSelection.selectedAssetType$.subscribe(assetType => {
+        this.assetService.selectedAssetType$.subscribe(assetType => {
             this.selectedAssetType = assetType;
             this.addAssetForm.get('assetType')?.setValue(assetType);
         })
-        this.assetSelection.selectedAssetUri$.subscribe(uri => {
-            this.selectedAssetUri = uri;
+        this.assetService.selectedAssetUri$.subscribe(uri => {
+            this.selectedAsset = uri;
             this.addAssetForm.get('uri')?.setValue(uri);
         })
     }
 
     onSubmit(): void {
-        if (this.addAssetForm.invalid || !this.selectedAssetUri) {
+        if (this.addAssetForm.invalid || !this.selectedAsset) {
             this.errorMessage = 'Please select an asset.';
             return;
         }
@@ -70,7 +71,7 @@ export class AddAssetComponent implements OnInit {
 
         const asset = {
             assetType: this.selectedAssetType,
-            uri: this.selectedAssetUri,
+            uri: this.selectedAsset,
             count: this.addAssetForm.get('count')?.value,
             purchasePrice: this.addAssetForm.get('purchasePrice')?.value,
             currency: this.addAssetForm.get('currency')?.value,
@@ -88,10 +89,10 @@ export class AddAssetComponent implements OnInit {
         });
     }
 
-    addAsset(assetData: {
+    addAsset(asset: {
         assetType: string; uri: string; count: number;
         purchasePrice: number; currency: string
     }) {
-        return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, assetData);
+        return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, asset);
     }
 }
