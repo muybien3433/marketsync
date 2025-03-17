@@ -88,7 +88,7 @@ export class AddSubscriptionComponent implements OnInit {
             },
             error: () => {
                 this.isSubmitting = false;
-                this.errorMessage = 'Failed to add asset.';
+                this.errorMessage = 'Failed to add subscription.';
             }
         });
     }
