@@ -1,4 +1,4 @@
-package pl.muybien.notification;
+package pl.muybien;
 
 public enum NotificationType {
     EMAIL

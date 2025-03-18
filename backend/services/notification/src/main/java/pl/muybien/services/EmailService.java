@@ -1,4 +1,4 @@
-package pl.muybien.notification.services;
+package pl.muybien.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,7 @@ import org.springframework.mail.MailException;
 
 import org.springframework.stereotype.Service;
 import pl.muybien.exception.MessageNotSendException;
-import pl.muybien.notification.NotificationService;
+import pl.muybien.NotificationService;
 
 @Service("email")
 @RequiredArgsConstructor
