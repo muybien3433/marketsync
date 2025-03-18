@@ -12,6 +12,7 @@ public record SubscriptionDetailDTO(
         @JsonProperty("upperBoundPrice") Double upperBoundPrice,
         @JsonProperty("lowerBoundPrice") Double lowerBoundPrice,
         @JsonProperty("assetType") String assetType,
+        @JsonProperty("notificationType") String notificationType,
         @JsonProperty("createdDate") LocalDateTime createdDate
 ) {
 }

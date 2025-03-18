@@ -12,23 +12,25 @@ public record SubscriptionRequest(
         @NotBlank(message = "Uri is required")
         String uri,
 
-        @NotNull(message = "Value should be present")
         @Positive(message = "Value should be positive")
-        Double value,
+        Double upperBoundPrice,
+
+        @Positive(message = "Value should be positive")
+        Double lowerBoundPrice,
 
         @NotNull(message = "Asset type is required")
         @NotEmpty(message = "Asset type is required")
         @NotBlank(message = "Asset type is required")
         String assetType,
 
-        @NotNull(message = "Currency is required")
-        @NotEmpty(message = "Currency is required")
-        @NotBlank(message = "Currency is required")
-        String currency,
-
         @NotNull(message = "Notification type is required")
         @NotEmpty(message = "Notification type is required")
         @NotBlank(message = "Notification type is required")
-        String notificationType
+        String notificationType,
+
+        @NotNull(message = "Currency type is required")
+        @NotEmpty(message = "Currency type is required")
+        @NotBlank(message = "Currency type is required")
+        String currencyType
 ) {
 }

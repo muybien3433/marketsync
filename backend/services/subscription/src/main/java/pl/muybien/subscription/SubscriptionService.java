@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.exception.InvalidSubscriptionParametersException;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.exception.SubscriptionNotFoundException;
 import pl.muybien.finance.FinanceClient;
@@ -33,71 +34,72 @@ public class SubscriptionService {
     private final MongoTemplate mongoTemplate;
 
     @Transactional
-    public void createIncreaseSubscription(String customerId, String customerEmail, SubscriptionRequest request) {
-        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
-        var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
-                .orElseGet(Subscription::new);
+    public void createSubscription(
+            String customerId, String customerEmail, String phoneNumber, SubscriptionRequest request) {
 
-        BigDecimal value = resolveValueByCurrency(request, finance);
-
-        var subscriptionDetail = new SubscriptionDetail(
-                UUID.randomUUID().toString(),
-                request.uri(),
-                customerId,
-                customerEmail,
-                finance.name(),
-                request.currency(),
-                value.doubleValue(),
-                null,
-                finance.assetType(),
-                request.notificationType(),
-                LocalDateTime.now()
-        );
-
-        subscription.getSubscriptions()
-                .computeIfAbsent(finance.name().trim().toLowerCase(), _ -> new LinkedList<>())
-                .add(subscriptionDetail);
-
-        subscriptionRepository.save(subscription);
-    }
-
-    @Transactional
-    public void createDecreaseSubscription(String customerId, String customerEmail, SubscriptionRequest request) {
-        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
-        var subscription = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
-                .orElseGet(Subscription::new);
-
-        BigDecimal value = resolveValueByCurrency(request, finance);
-
-        var subscriptionDetail = new SubscriptionDetail(
-                UUID.randomUUID().toString(),
-                request.uri(),
-                customerId,
-                customerEmail,
-                finance.name(),
-                request.currency(),
-                null,
-                value.doubleValue(),
-                finance.assetType(),
-                request.notificationType(),
-                LocalDateTime.now()
-        );
-
-        subscription.getSubscriptions()
-                .computeIfAbsent(finance.name().trim().toLowerCase(), _ -> new LinkedList<>())
-                .add(subscriptionDetail);
-
-        subscriptionRepository.save(subscription);
-    }
-
-    private BigDecimal resolveValueByCurrency(SubscriptionRequest request, FinanceResponse finance) {
-        BigDecimal value = BigDecimal.valueOf(request.value());
-
-        if (!request.currency().equals(finance.currency())) {
-            BigDecimal exchange = financeClient.findExchangeRate(request.currency(), finance.currency());
-            value = BigDecimal.valueOf(request.value()).multiply(exchange);
+        if (request.upperBoundPrice() == null && request.lowerBoundPrice() == null) {
+            throw new InvalidSubscriptionParametersException("Upper or lower bound price is mandatory");
         }
-        return value;
+
+        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
+        var existingSubscriptions = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
+                .orElseGet(Subscription::new);
+
+        Double upperBoundPrice = resolveBoundByCurrency(request.upperBoundPrice(), request.currencyType(), finance);
+        Double lowerBoundPrice = resolveBoundByCurrency(request.lowerBoundPrice(), request.currencyType(), finance);
+        String target = resolveTargetByNotificationType(request.notificationType(), customerEmail, phoneNumber);
+
+        var subscriptionDetail = new SubscriptionDetail(
+                UUID.randomUUID().toString(),
+                request.uri(),
+                customerId,
+                target,
+                finance.name(),
+                CurrencyType.valueOf(request.currencyType()),
+                upperBoundPrice,
+                lowerBoundPrice,
+                AssetType.valueOf(finance.assetType()),
+                NotificationType.valueOf(request.notificationType()),
+                LocalDateTime.now()
+        );
+
+        existingSubscriptions.getSubscriptions()
+                .computeIfAbsent(finance.name().trim().toLowerCase(), _ -> new LinkedList<>())
+                .add(subscriptionDetail);
+
+        subscriptionRepository.save(existingSubscriptions);
+    }
+    
+    private Double resolveBoundByCurrency(Double price, String currencyType, FinanceResponse finance) {
+        if (price == null) {
+            return null;
+        }
+
+        if (!currencyType.equals(finance.currency())) {
+            BigDecimal exchange = financeClient.findExchangeRate(currencyType, finance.currency());
+            price = BigDecimal.valueOf(price).multiply(exchange).doubleValue();
+        }
+        return price;
+    }
+
+    private String resolveTargetByNotificationType(String notificationType, String customerEmail, String phoneNumber) {
+        switch (NotificationType.valueOf(notificationType)) {
+            case EMAIL -> {
+                if (customerEmail != null && !customerEmail.isEmpty()) {
+                    return customerEmail;
+                } else {
+                    throw new InvalidSubscriptionParametersException("Email could not be resolved");
+                }
+            }
+            case SMS -> {
+                if (phoneNumber != null && !phoneNumber.isEmpty()) {
+                    return phoneNumber;
+                } else {
+                    throw new InvalidSubscriptionParametersException("Phone number could not be resolved");
+                }
+            }
+            default -> throw new InvalidSubscriptionParametersException("Unknown notification type");
+        }
     }
 
     @Transactional

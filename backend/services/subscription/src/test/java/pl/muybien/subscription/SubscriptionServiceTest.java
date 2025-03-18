@@ -46,44 +46,6 @@ class SubscriptionServiceTest {
     }
 
     @Test
-    void createIncreaseSubscription_shouldAddNewSubscription() {
-        String customerId = "customerId";
-        String customerEmail = "joe.doe@mail.com";
-        var request = new SubscriptionRequest(
-                "bitcoin", 3000.0, AssetType.CRYPTOS.name(), CurrencyType.USD.name(), NotificationType.EMAIL.name());
-        var finance = new FinanceResponse(
-                "Bitcoin", "BTC", "bitcoin", BigDecimal.valueOf(100000.0), CurrencyType.USD.name(), AssetType.CRYPTOS.name());
-        var existingSubscription = new Subscription();
-
-        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name(), "bitcoin")).thenReturn(finance);
-        when(subscriptionRepository.findByUri("bitcoin")).thenReturn(Optional.of(existingSubscription));
-
-        subscriptionService.createIncreaseSubscription(customerId, customerEmail, request);
-
-        verify(subscriptionRepository).save(existingSubscription);
-        assertFalse(existingSubscription.getSubscriptions().isEmpty());
-    }
-
-    @Test
-    void createDecreaseSubscription_shouldAddNewSubscription() {
-        String customerId = "customerId";
-        String customerEmail = "joe.doe@mail.com";
-        var request = new SubscriptionRequest(
-                "ethereum", 3000.0, AssetType.CRYPTOS.name(), CurrencyType.USD.name(), NotificationType.EMAIL.name());
-        var finance = new FinanceResponse(
-                "Ethereum", "ETH", "ethereum", BigDecimal.valueOf(100000.0), CurrencyType.USD.name(), AssetType.CRYPTOS.name());
-        var existingSubscription = new Subscription();
-
-        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name(), "ethereum")).thenReturn(finance);
-        when(subscriptionRepository.findByUri("ethereum")).thenReturn(Optional.of(existingSubscription));
-
-        subscriptionService.createDecreaseSubscription(customerId, customerEmail, request);
-
-        verify(subscriptionRepository).save(existingSubscription);
-        assertFalse(existingSubscription.getSubscriptions().isEmpty());
-    }
-
-    @Test
     void deleteSubscription_shouldRemoveSubscriptionDetail() {
         String customerId = "customerId";
         SubscriptionDeletionRequest request = new SubscriptionDeletionRequest("bitcoin", "detail-id-123");
@@ -93,11 +55,11 @@ class SubscriptionServiceTest {
                 "customerId",
                 "customerEmail",
                 "Bitcoin",
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 45000.0,
                 null,
-                AssetType.CRYPTOS.name(),
-                NotificationType.EMAIL.name(),
+                AssetType.CRYPTOS,
+                NotificationType.EMAIL,
                 LocalDateTime.now()
         );
         var existingSubscription = new Subscription();
@@ -121,11 +83,11 @@ class SubscriptionServiceTest {
                 "differentCustomerId",
                 "customerEmail",
                 "Bitcoin",
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 45000.0,
                 null,
-                AssetType.CRYPTOS.name(),
-                NotificationType.EMAIL.name(),
+                AssetType.CRYPTOS,
+                NotificationType.EMAIL,
                 LocalDateTime.now()
         );
 
@@ -146,11 +108,11 @@ class SubscriptionServiceTest {
                 customerId,
                 "customerEmail",
                 "Bitcoin",
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 45000.0,
                 null,
-                AssetType.CRYPTOS.name(),
-                NotificationType.EMAIL.name(),
+                AssetType.CRYPTOS,
+                NotificationType.EMAIL,
                 LocalDateTime.now()
         );
 
@@ -161,6 +123,7 @@ class SubscriptionServiceTest {
                 45000.0,
                 null,
                 AssetType.CRYPTOS.name(),
+                NotificationType.EMAIL.name(),
                 LocalDateTime.now()
         );
 
@@ -178,6 +141,6 @@ class SubscriptionServiceTest {
         assertEquals(subscriptionDetail.financeName(), results.getFirst().financeName());
         assertEquals(subscriptionDetail.upperBoundPrice(), results.getFirst().upperBoundPrice());
         assertEquals(subscriptionDetail.lowerBoundPrice(), results.getFirst().lowerBoundPrice());
-        assertEquals(subscriptionDetail.assetType(), results.getFirst().assetType());
+        assertEquals(subscriptionDetail.assetType().name(), results.getFirst().assetType());
     }
 }

@@ -13,11 +13,10 @@ public class SubscriptionProducer {
 
     private final KafkaTemplate<String, SubscriptionConfirmation> kafkaTemplate;
 
-    // TODO: create separate topics for email, phone etc.
-    public void sendSubscriptionEmailNotification(SubscriptionConfirmation subscriptionConfirmation) {
+    public void sendSubscriptionNotification(SubscriptionConfirmation subscriptionConfirmation) {
         Message<SubscriptionConfirmation> message = MessageBuilder
                 .withPayload(subscriptionConfirmation)
-                .setHeader(KafkaHeaders.TOPIC, "subscription-email-notification-topic")
+                .setHeader(KafkaHeaders.TOPIC, "subscription-notification-topic")
                 .build();
 
         kafkaTemplate.send(message);

@@ -22,19 +22,10 @@ public class SubscriptionController {
     public ResponseEntity<String> createIncreaseSubscription(
             @RequestHeader("X-Customer-Id") String customerId,
             @RequestHeader("X-Customer-Email") String customerEmail,
+            @RequestHeader("X-Customer-Number") String customerNumber,
             @RequestBody @Valid SubscriptionRequest request
     ) {
-        service.createIncreaseSubscription(customerId, customerEmail, request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @PostMapping("/decrease")
-    public ResponseEntity<String> createDecreaseSubscription(
-            @RequestHeader("X-Customer-Id") String customerId,
-            @RequestHeader("X-Customer-Email") String customerEmail,
-            @RequestBody @Valid SubscriptionRequest request
-    ) {
-        service.createDecreaseSubscription(customerId, customerEmail, request);
+        service.createSubscription(customerId, customerEmail, customerNumber, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

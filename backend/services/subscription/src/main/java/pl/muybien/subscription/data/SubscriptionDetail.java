@@ -1,18 +1,21 @@
 package pl.muybien.subscription.data;
 
+import pl.muybien.subscription.AssetType;
+import pl.muybien.subscription.NotificationType;
+
 import java.time.LocalDateTime;
 
 public record SubscriptionDetail(
         String id,
         String uri,
         String customerId,
-        String customerEmail,
+        String target,
         String financeName,
-        String requestedCurrency,
+        pl.muybien.subscription.CurrencyType requestedCurrency,
         Double upperBoundPrice,
         Double lowerBoundPrice,
-        String assetType,
-        String notificationType,
+        AssetType assetType,
+        NotificationType notificationType,
         LocalDateTime createdDate
 ) {
 }

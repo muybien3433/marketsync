@@ -9,7 +9,7 @@ public record FinanceResponse(
         @JsonProperty("symbol") String symbol,
         @JsonProperty("uri") String uri,
         @JsonProperty("price") BigDecimal price,
-        @JsonProperty("currency") String currency,
+        @JsonProperty("currencyType") String currency,
         @JsonProperty("assetType") String assetType
 ) {
 }

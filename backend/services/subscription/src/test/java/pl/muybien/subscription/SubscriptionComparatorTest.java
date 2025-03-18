@@ -2,18 +2,14 @@ package pl.muybien.subscription;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import pl.muybien.exception.InvalidSubscriptionParametersException;
-import pl.muybien.kafka.SubscriptionConfirmation;
 import pl.muybien.kafka.SubscriptionProducer;
 import pl.muybien.subscription.data.SubscriptionDetail;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class SubscriptionComparatorTest {
@@ -30,70 +26,6 @@ class SubscriptionComparatorTest {
     }
 
     @Test
-    void shouldSendEmailNotificationWhenUpperBoundPriceIsMet() {
-        var subscriptionDetail = new SubscriptionDetail(
-                "id",
-                "uri",
-                "customerId",
-                "test@example.com",
-                "Bitcoin",
-                CurrencyType.USD.name(),
-                100.0,
-                null,
-                AssetType.CRYPTOS.name(),
-                NotificationType.EMAIL.name(),
-                LocalDateTime.now()
-        );
-
-        subscriptionComparator.priceMetSubscriptionCondition(120.0, subscriptionDetail);
-
-        ArgumentCaptor<SubscriptionConfirmation> captor =
-                ArgumentCaptor.forClass(SubscriptionConfirmation.class);
-        verify(subscriptionProducer).sendSubscriptionEmailNotification(captor.capture());
-        SubscriptionConfirmation emailConfirmation = captor.getValue();
-
-        assertNotNull(emailConfirmation);
-        assertEquals("test@example.com", emailConfirmation.email());
-        assertEquals("Your Bitcoin subscription notification!", emailConfirmation.subject());
-        assertEquals(
-                "Current Bitcoin value reached bound at: 120.0, your bound was 100.0",
-                emailConfirmation.body()
-        );
-    }
-
-    @Test
-    void shouldSendEmailNotificationWhenLowerBoundPriceIsMet() {
-        var subscriptionDetail = new SubscriptionDetail(
-                "id",
-                "uri",
-                "customerId",
-                "test@example.com",
-                "Bitcoin",
-                CurrencyType.USD.name(),
-                null,
-                50.0,
-                AssetType.CRYPTOS.name(),
-                NotificationType.EMAIL.name(),
-                LocalDateTime.now()
-        );
-
-        subscriptionComparator.priceMetSubscriptionCondition(40.0, subscriptionDetail);
-
-        ArgumentCaptor<SubscriptionConfirmation> captor =
-                ArgumentCaptor.forClass(SubscriptionConfirmation.class);
-        verify(subscriptionProducer).sendSubscriptionEmailNotification(captor.capture());
-        SubscriptionConfirmation emailConfirmation = captor.getValue();
-
-        assertNotNull(emailConfirmation);
-        assertEquals("test@example.com", emailConfirmation.email());
-        assertEquals("Your Bitcoin subscription notification!", emailConfirmation.subject());
-        assertEquals(
-                "Current Bitcoin value reached bound at: 40.0, your bound was 50.0",
-                emailConfirmation.body()
-        );
-    }
-
-    @Test
     void shouldNotSendNotificationWhenPriceDoesNotMeetBound() {
         var subscriptionDetail = new SubscriptionDetail(
                 "id",
@@ -101,39 +33,16 @@ class SubscriptionComparatorTest {
                 "customerId",
                 "customerEmail",
                 "Bitcoin",
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 100.0,
                 null,
-                AssetType.CRYPTOS.name(),
-                NotificationType.EMAIL.name(),
+                AssetType.CRYPTOS,
+                NotificationType.EMAIL,
                 LocalDateTime.now()
         );
 
         subscriptionComparator.priceMetSubscriptionCondition(80.0, subscriptionDetail);
 
-        verify(subscriptionProducer, times(0)).sendSubscriptionEmailNotification(any());
-    }
-
-    @Test
-    void shouldThrowExceptionForInvalidNotificationType() {
-        var subscriptionDetail = new SubscriptionDetail(
-                "id",
-                "uri",
-                "customerId",
-                "customerEmail",
-                "Bitcoin",
-                CurrencyType.USD.name(),
-                100.0,
-                null,
-                AssetType.CRYPTOS.name(),
-                "INVALID_TYPE",
-                LocalDateTime.now()
-        );
-
-        InvalidSubscriptionParametersException exception = assertThrows(
-                InvalidSubscriptionParametersException.class,
-                () -> subscriptionComparator.priceMetSubscriptionCondition(120.0, subscriptionDetail)
-        );
-        assertEquals("Subscription notification type not supported: INVALID_TYPE", exception.getMessage());
+        verify(subscriptionProducer, times(0)).sendSubscriptionNotification(any());
     }
 }

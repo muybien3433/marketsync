@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.exception.InvalidSubscriptionParametersException;
 import pl.muybien.kafka.SubscriptionConfirmation;
 import pl.muybien.kafka.SubscriptionProducer;
 import pl.muybien.subscription.data.SubscriptionDetail;
@@ -40,24 +39,14 @@ public class SubscriptionComparator {
         }
     }
 
-    private void sendNotificationToSpecifiedTopic(
-            SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
-
-        switch (subscriptionDetail.notificationType().toUpperCase()) {
-            case "EMAIL" -> createEmailConfirmation(subscriptionDetail, price, targetPrice);
-            default -> throw new InvalidSubscriptionParametersException(
-                    "Subscription notification type not supported: " + subscriptionDetail.notificationType());
-        }
-    }
-
-    private void createEmailConfirmation(SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
-        var subscriptionEmailConfirmation = SubscriptionConfirmation.builder()
-                .email(subscriptionDetail.customerEmail())
-                .subject("Your %s subscription notification!".formatted(subscriptionDetail.financeName()))
-                .body("Current %s value reached bound at: %s, your bound was %s"
-                        .formatted(subscriptionDetail.financeName(), price, targetPrice))
-                .build();
-
-        subscriptionProducer.sendSubscriptionEmailNotification(subscriptionEmailConfirmation);
+    private void sendNotificationToSpecifiedTopic(SubscriptionDetail detail, Double price, Double targetPrice) {
+        String message = "Current %s value reached bound at: %s, your bound was %s"
+                .formatted(detail.financeName(), price, targetPrice);
+        var subscriptionConfirmation = new SubscriptionConfirmation(
+                detail.notificationType(),
+                detail.target(),
+                message
+        );
+        subscriptionProducer.sendSubscriptionNotification(subscriptionConfirmation);
     }
 }

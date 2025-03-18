@@ -12,7 +12,8 @@ public class SubscriptionDetailDTOMapper {
                 subscriptionDetail.financeName(),
                 subscriptionDetail.upperBoundPrice(),
                 subscriptionDetail.lowerBoundPrice(),
-                subscriptionDetail.assetType(),
+                subscriptionDetail.assetType().name(),
+                subscriptionDetail.notificationType().name(),
                 subscriptionDetail.createdDate()
         );
     }
