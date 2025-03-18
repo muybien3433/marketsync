@@ -102,7 +102,7 @@ export class AddSubscriptionComponent implements OnInit {
         notificationType: string;
     }) {
         return this.http.post(
-            `${environment.baseUrl}/${API_ENDPOINTS.SUBSCRIPTION}/${subscription.condition}`,
+            `${environment.baseUrl}${API_ENDPOINTS.SUBSCRIPTION}/${subscription.condition}`,
             subscription);
     }
 }

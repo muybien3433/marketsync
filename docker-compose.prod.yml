@@ -171,76 +171,76 @@ services:
           memory: 512M
 
 
-  #  ######### [ Subscription ] #########
-  #  subscription-server:
-  #    build:
-  #      context: ./backend/services/subscription
-  #      args:
-  #        - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-  #    env_file:
-  #      - .env
-  #    depends_on:
-  #      config-server:
-  #        condition: service_healthy
-  #      mongodb-subscription:
-  #        condition: service_healthy
-  #      kafka:
-  #        condition: service_healthy
-  #    restart: unless-stopped
-  #    networks:
-  #      - backend-net
-  #      - database-net
-  #    deploy:
-  #      resources:
-  #        limits:
-  #          cpus: '1'
-  #          memory: 1024M
-  #
-  #  mongodb-subscription:
-  #    image: mongo:8.0
-  #    container_name: ${MONGO_SUBSCRIPTION_HOST}
-  #    environment:
-  #      MONGO_INITDB_ROOT_USERNAME: ${MONGO_SUBSCRIPTION_USER}
-  #      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_SUBSCRIPTION_PASSWORD}
-  #      MONGO_INITDB_DATABASE: ${MONGO_SUBSCRIPTION_DB}
-  #    volumes:
-  #      - mongodb_subscription_data:/data/db
-  #    restart: unless-stopped
-  #    healthcheck:
-  #      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
-  #      interval: 10s
-  #      timeout: 5s
-  #      retries: 5
-  #    networks:
-  #      - database-net
-  #    deploy:
-  #      resources:
-  #        limits:
-  #          cpus: '0.5'
-  #          memory: 768M
+  ######### [ Subscription ] #########
+  subscription-server:
+    build:
+      context: ./backend/services/subscription
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env
+    depends_on:
+      config-server:
+        condition: service_healthy
+      mongodb-subscription:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1536M
+
+  mongodb-subscription:
+    image: mongo:8.0
+    container_name: ${MONGO_SUBSCRIPTION_HOST}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_SUBSCRIPTION_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_SUBSCRIPTION_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_SUBSCRIPTION_DB}
+    volumes:
+      - mongodb_subscription_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
 
 
-  #  ######### [ Notification ] #########
-  #  notification-server:
-  #    build:
-  #      context: ./backend/services/notification
-  #      args:
-  #        - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-  #    env_file:
-  #      - .env
-  #    depends_on:
-  #      kafka:
-  #        condition: service_healthy
-  #      config-server:
-  #        condition: service_healthy
-  #    restart: unless-stopped
-  #    networks:
-  #      - backend-net
-  #    deploy:
-  #      resources:
-  #        limits:
-  #          cpus: '0.5'
-  #          memory: 512M
+  ######### [ Notification ] #########
+  notification-server:
+    build:
+      context: ./backend/services/notification
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
 
   ######### [ Authentication ] #########
@@ -339,55 +339,58 @@ services:
           memory: 1024M
 
 
-  #  ######### [ Kafka & Zookeeper ] #########
-  #  kafka:
-  #    image: confluentinc/cp-kafka:7.9.0
-  #    container_name: kafka
-  #    depends_on:
-  #      zookeeper:
-  #        condition: service_healthy
-  #    environment:
-  #      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-  #      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-  #      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-  #      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-  #      KAFKA_JMX_PORT: 9991
-  #    volumes:
-  #      - kafka_data:/var/lib/kafka/data
-  #    restart: unless-stopped
-  #    healthcheck:
-  #      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092"]
-  #      interval: 10s
-  #      timeout: 5s
-  #      retries: 5
-  #    networks:
-  #      - backend-net
-  #    deploy:
-  #      resources:
-  #        limits:
-  #          cpus: '0.5'
-  #          memory: 512M
-  #
-  #  zookeeper:
-  #    image: confluentinc/cp-zookeeper:7.9.0
-  #    container_name: zookeeper
-  #    environment:
-  #      ZOOKEEPER_CLIENT_PORT: 2181
-  #    restart: unless-stopped
-  #    healthcheck:
-  #      test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
-  #      interval: 10s
-  #      timeout: 5s
-  #      retries: 5
-  #    networks:
-  #      - backend-net
-  #    deploy:
-  #      resources:
-  #        limits:
-  #          cpus: '0.5'
-  #          memory: 512M
+  ######### [ Kafka & Zookeeper ] #########
+  kafka:
+    image: confluentinc/cp-kafka:7.9.0
+    platform: linux/arm64
+    container_name: kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_JMX_PORT: 9991
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.9.0
+    platform: linux/arm64
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
+      start_period: 20s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
 
   ######### [ Frontend ] #########
