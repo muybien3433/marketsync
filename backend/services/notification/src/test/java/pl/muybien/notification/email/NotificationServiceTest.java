@@ -7,15 +7,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import pl.muybien.email.EmailService;
+import pl.muybien.notification.NotificationService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
-public class EmailServiceTest {
+public class NotificationServiceTest {
 
     @InjectMocks
-    private EmailService emailService;
+    private NotificationService notificationService;
 
     @Mock
     private JavaMailSender javaMailSender;
@@ -31,7 +31,7 @@ public class EmailServiceTest {
         String subject = "Test Subject";
         String message = "Test Message";
 
-        emailService.sendNotification(userEmail, subject, message);
+        notificationService.sendNotification(userEmail, subject, message);
 
         verify(javaMailSender).send(any(SimpleMailMessage.class));
     }

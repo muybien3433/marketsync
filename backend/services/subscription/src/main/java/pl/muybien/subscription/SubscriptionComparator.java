@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.exception.InvalidSubscriptionParametersException;
-import pl.muybien.kafka.SubscriptionEmailConfirmation;
+import pl.muybien.kafka.SubscriptionConfirmation;
 import pl.muybien.kafka.SubscriptionProducer;
 import pl.muybien.subscription.data.SubscriptionDetail;
 
@@ -51,7 +51,7 @@ public class SubscriptionComparator {
     }
 
     private void createEmailConfirmation(SubscriptionDetail subscriptionDetail, Double price, Double targetPrice) {
-        var subscriptionEmailConfirmation = SubscriptionEmailConfirmation.builder()
+        var subscriptionEmailConfirmation = SubscriptionConfirmation.builder()
                 .email(subscriptionDetail.customerEmail())
                 .subject("Your %s subscription notification!".formatted(subscriptionDetail.financeName()))
                 .body("Current %s value reached bound at: %s, your bound was %s"

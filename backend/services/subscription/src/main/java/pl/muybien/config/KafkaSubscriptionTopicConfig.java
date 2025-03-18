@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import pl.muybien.kafka.SubscriptionEmailConfirmation;
+import pl.muybien.kafka.SubscriptionConfirmation;
 
 @Configuration
 public class KafkaSubscriptionTopicConfig {
@@ -19,8 +19,8 @@ public class KafkaSubscriptionTopicConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, SubscriptionEmailConfirmation> kafkaTemplate(
-            ProducerFactory<String, SubscriptionEmailConfirmation> producerFactory) {
+    public KafkaTemplate<String, SubscriptionConfirmation> kafkaTemplate(
+            ProducerFactory<String, SubscriptionConfirmation> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 }

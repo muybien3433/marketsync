@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pl.muybien.exception.InvalidSubscriptionParametersException;
-import pl.muybien.kafka.SubscriptionEmailConfirmation;
+import pl.muybien.kafka.SubscriptionConfirmation;
 import pl.muybien.kafka.SubscriptionProducer;
 import pl.muybien.subscription.data.SubscriptionDetail;
 
@@ -47,10 +47,10 @@ class SubscriptionComparatorTest {
 
         subscriptionComparator.priceMetSubscriptionCondition(120.0, subscriptionDetail);
 
-        ArgumentCaptor<SubscriptionEmailConfirmation> captor =
-                ArgumentCaptor.forClass(SubscriptionEmailConfirmation.class);
+        ArgumentCaptor<SubscriptionConfirmation> captor =
+                ArgumentCaptor.forClass(SubscriptionConfirmation.class);
         verify(subscriptionProducer).sendSubscriptionEmailNotification(captor.capture());
-        SubscriptionEmailConfirmation emailConfirmation = captor.getValue();
+        SubscriptionConfirmation emailConfirmation = captor.getValue();
 
         assertNotNull(emailConfirmation);
         assertEquals("test@example.com", emailConfirmation.email());
@@ -79,10 +79,10 @@ class SubscriptionComparatorTest {
 
         subscriptionComparator.priceMetSubscriptionCondition(40.0, subscriptionDetail);
 
-        ArgumentCaptor<SubscriptionEmailConfirmation> captor =
-                ArgumentCaptor.forClass(SubscriptionEmailConfirmation.class);
+        ArgumentCaptor<SubscriptionConfirmation> captor =
+                ArgumentCaptor.forClass(SubscriptionConfirmation.class);
         verify(subscriptionProducer).sendSubscriptionEmailNotification(captor.capture());
-        SubscriptionEmailConfirmation emailConfirmation = captor.getValue();
+        SubscriptionConfirmation emailConfirmation = captor.getValue();
 
         assertNotNull(emailConfirmation);
         assertEquals("test@example.com", emailConfirmation.email());

@@ -4,22 +4,23 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-import pl.muybien.email.EmailService;
+import pl.muybien.notification.NotificationServiceFactory;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationConsumer {
 
-    private final EmailService emailService;
+    private final NotificationServiceFactory notificationService;
 
-    @KafkaListener(topics = "subscription-email-notification-topic")
-    public void consumeSubscriptionSuccessNotification(SubscriptionEmailConfirmation subscriptionEmailConfirmation) {
-        log.info("Consuming message from subscription-topic {}", subscriptionEmailConfirmation);
-        emailService.sendNotification(
-                subscriptionEmailConfirmation.email(),
-                subscriptionEmailConfirmation.subject(),
-                subscriptionEmailConfirmation.body()
+    @KafkaListener(topics = "subscription-notification-topic")
+    public void consumeSubscriptionSuccessNotification(SubscriptionConfirmation subscriptionConfirmation) {
+        log.info("Consuming message from subscription-topic");
+
+        notificationService.sendMessage(
+                subscriptionConfirmation.notificationType(),
+                subscriptionConfirmation.target(),
+                subscriptionConfirmation.message()
         );
     }
 }

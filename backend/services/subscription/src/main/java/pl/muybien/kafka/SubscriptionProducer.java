@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SubscriptionProducer {
 
-    private final KafkaTemplate<String, SubscriptionEmailConfirmation> kafkaTemplate;
+    private final KafkaTemplate<String, SubscriptionConfirmation> kafkaTemplate;
 
     // TODO: create separate topics for email, phone etc.
-    public void sendSubscriptionEmailNotification(SubscriptionEmailConfirmation subscriptionEmailConfirmation) {
-        Message<SubscriptionEmailConfirmation> message = MessageBuilder
-                .withPayload(subscriptionEmailConfirmation)
+    public void sendSubscriptionEmailNotification(SubscriptionConfirmation subscriptionConfirmation) {
+        Message<SubscriptionConfirmation> message = MessageBuilder
+                .withPayload(subscriptionConfirmation)
                 .setHeader(KafkaHeaders.TOPIC, "subscription-email-notification-topic")
                 .build();
 

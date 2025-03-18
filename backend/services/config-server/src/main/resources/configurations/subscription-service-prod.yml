@@ -22,4 +22,4 @@ application:
   config:
     finance-url: ${FINANCE_API_URL}
 
-send-email-topic: send-email-topic
+send-notification-topic: send-notification-topic
