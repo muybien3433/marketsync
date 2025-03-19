@@ -16,21 +16,21 @@ public class SubscriptionComparator {
     private final SubscriptionProducer subscriptionProducer;
 
     @Transactional
-    public void priceMetSubscriptionCondition(Double price, SubscriptionDetail subscriptionDetail) {
+    public void priceMetSubscriptionConditionCheck(Double currentPrice, SubscriptionDetail subscriptionDetail) {
         if (subscriptionDetail != null) {
             Double upperTargetPrice = subscriptionDetail.upperBoundPrice();
             Double lowerTargetPrice = subscriptionDetail.lowerBoundPrice();
 
             if (upperTargetPrice != null) {
-                if (price.compareTo(upperTargetPrice) >= 0) {
-                    sendNotificationToSpecifiedTopic(subscriptionDetail, price, upperTargetPrice);
+                if (currentPrice.compareTo(upperTargetPrice) >= 0) {
+                    sendNotificationToSpecifiedTopic(subscriptionDetail, currentPrice, upperTargetPrice);
                     return;
                 }
             }
 
             if (lowerTargetPrice != null) {
-                if (price.compareTo(lowerTargetPrice) <= 0) {
-                    sendNotificationToSpecifiedTopic(subscriptionDetail, price, lowerTargetPrice);
+                if (currentPrice.compareTo(lowerTargetPrice) <= 0) {
+                    sendNotificationToSpecifiedTopic(subscriptionDetail, currentPrice, lowerTargetPrice);
                     return;
                 }
             }

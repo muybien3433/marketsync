@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.muybien.subscription.dto.SubscriptionDetailDTO;
-import pl.muybien.subscription.request.SubscriptionDeletionRequest;
-import pl.muybien.subscription.request.SubscriptionRequest;
 
 import java.util.List;
 
@@ -32,9 +30,9 @@ public class SubscriptionController {
     @DeleteMapping
     public ResponseEntity<String> deleteSubscription(
             @RequestHeader("X-Customer-Id") String customerId,
-            @RequestBody @Valid SubscriptionDeletionRequest request
+            @RequestParam String id
     ) {
-        service.deleteSubscription(customerId, request);
+        service.deleteSubscription(customerId, id);
         return ResponseEntity.noContent().build();
     }
 

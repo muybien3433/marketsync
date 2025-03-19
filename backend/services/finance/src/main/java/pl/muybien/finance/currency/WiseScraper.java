@@ -38,7 +38,7 @@ public class WiseScraper extends FinanceUpdater implements CurrencyService {
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
-    @Scheduled(fixedRateString = "${wise.currencyType-updater-frequency-ms}")
+    @Scheduled(fixedRateString = "${wise.currency-updater-frequency-ms}")
     protected void scheduleUpdate() {
         enqueueUpdate("wise");
     }
@@ -65,7 +65,7 @@ public class WiseScraper extends FinanceUpdater implements CurrencyService {
     public BigDecimal getCurrencyPairExchange(CurrencyType from, CurrencyType to) {
         var exchange = repository.findCurrencyByName(currencyNameResolver(from, to))
                 .orElseThrow(() -> new FinanceNotFoundException(
-                        "Could not find currencyType pair for " + from + " to " + to));
+                        "Could not find currency pair for " + from + " to " + to));
 
         return exchange.getExchange();
     }

@@ -9,10 +9,11 @@ import java.util.Optional;
 
 public interface SubscriptionRepository extends MongoRepository<Subscription, String> {
 
-    @Query(value = "{ 'subscriptions.?0': { '$exists': true } }", fields = "{ 'subscriptions.$': 1 }")
     Optional<Subscription> findByUri(String uri);
 
-    @Query(value = "{}", fields = "{ 'subscriptions': 1 }")
-    Page<Subscription> findAllSubscriptions(Pageable pageable);
+    @Query(value = "{ 'subscriptionDetails.id': ?0 }", fields = "{ 'subscriptionDetails.$': 1 }")
+    Optional<Subscription> findByDetailId(String detailId);
 
+    @Query(value = "{}", fields = "{ 'subscriptionDetails': 1 }")
+    Page<Subscription> findAllSubscriptions(Pageable pageable);
 }

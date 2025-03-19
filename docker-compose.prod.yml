@@ -352,12 +352,13 @@ services:
     ports:
       - "22181:2181"
     restart: unless-stopped
+
     healthcheck:
       test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
-      start_period: 20s
+      start_period: 5s
       interval: 5s
       timeout: 5s
-      retries: 20
+      retries: 25
     networks:
       - backend-net
     deploy:

@@ -1,4 +1,4 @@
-package pl.muybien.services;
+package pl.muybien.notification.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,8 @@ public class EmailService implements NotificationService {
 
         } catch (MailException | jakarta.mail.MessagingException e) {
             log.error(e.getMessage(), e);
-            throw new MessageNotSendException("Message to %s with body %s could not be send".formatted(target, message));
+            throw new MessageNotSendException(
+                    "Message to %s with body %s could not be send".formatted(target, message));
         }
     }
 }

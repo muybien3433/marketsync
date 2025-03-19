@@ -41,7 +41,7 @@ class SubscriptionComparatorTest {
                 LocalDateTime.now()
         );
 
-        subscriptionComparator.priceMetSubscriptionCondition(80.0, subscriptionDetail);
+        subscriptionComparator.priceMetSubscriptionConditionCheck(80.0, subscriptionDetail);
 
         verify(subscriptionProducer, times(0)).sendSubscriptionNotification(any());
     }

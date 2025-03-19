@@ -1,9 +1,6 @@
 package pl.muybien.subscription;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.exception.InvalidSubscriptionParametersException;
@@ -16,8 +13,6 @@ import pl.muybien.subscription.data.SubscriptionDetail;
 import pl.muybien.subscription.data.SubscriptionRepository;
 import pl.muybien.subscription.dto.SubscriptionDetailDTO;
 import pl.muybien.subscription.dto.SubscriptionDetailDTOMapper;
-import pl.muybien.subscription.request.SubscriptionDeletionRequest;
-import pl.muybien.subscription.request.SubscriptionRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,7 +26,6 @@ public class SubscriptionService {
     private final FinanceClient financeClient;
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionDetailDTOMapper detailDTOMapper;
-    private final MongoTemplate mongoTemplate;
 
     @Transactional
     public void createSubscription(
@@ -41,9 +35,15 @@ public class SubscriptionService {
             throw new InvalidSubscriptionParametersException("Upper or lower bound price is mandatory");
         }
 
-        var finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
-        var existingSubscriptions = subscriptionRepository.findByUri(request.uri().trim().toLowerCase())
-                .orElseGet(Subscription::new);
+        String uri = request.uri().trim().toLowerCase();
+        var finance = financeClient.findFinanceByAssetTypeAndUri(request.assetType(), request.uri());
+        var subscription = subscriptionRepository.findByUri(uri)
+                .orElseGet(() -> {
+                            var newSub = new Subscription();
+                            newSub.setUri(uri);
+                            return newSub;
+                        }
+                );
 
         Double upperBoundPrice = resolveBoundByCurrency(request.upperBoundPrice(), request.currencyType(), finance);
         Double lowerBoundPrice = resolveBoundByCurrency(request.lowerBoundPrice(), request.currencyType(), finance);
@@ -63,13 +63,10 @@ public class SubscriptionService {
                 LocalDateTime.now()
         );
 
-        existingSubscriptions.getSubscriptions()
-                .computeIfAbsent(finance.name().trim().toLowerCase(), _ -> new LinkedList<>())
-                .add(subscriptionDetail);
-
-        subscriptionRepository.save(existingSubscriptions);
+        subscription.getSubscriptionDetails().add(subscriptionDetail);
+        subscriptionRepository.save(subscription);
     }
-    
+
     private Double resolveBoundByCurrency(Double price, String currencyType, FinanceResponse finance) {
         if (price == null) {
             return null;
@@ -103,48 +100,29 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public void deleteSubscription(String customerId, SubscriptionDeletionRequest request) {
-        var subscription = subscriptionRepository.findByUri(request.uri())
-                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for URI: " + request.uri()));
+    public void deleteSubscription(String customerId, String id) {
+        var subscription = subscriptionRepository.findByDetailId(id)
+                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for id: " + id));
 
-        var subscriptionDetailList = Optional.ofNullable(subscription.getSubscriptions().get(request.uri()))
-                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription detail list not found for URI: " + request.uri()));
-
-        var subscriptionDetail = subscriptionDetailList.stream()
-                .filter(detail -> detail.id().equals(request.id()))
+        var subscriptionDetail = subscription.getSubscriptionDetails().stream()
+                .filter(d -> d.id().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new SubscriptionNotFoundException("Subscription detail not found for ID: " + request.id()));
+                .orElseThrow(() -> new SubscriptionNotFoundException(
+                        "Subscription detail not found"));
 
         if (!subscriptionDetail.customerId().equals(customerId)) {
             throw new OwnershipException("Subscription deletion failed:: Customer id mismatch");
         }
 
-        subscriptionDetailList.remove(subscriptionDetail);
+        subscription.getSubscriptionDetails().remove(subscriptionDetail);
         subscriptionRepository.save(subscription);
     }
 
     @Transactional(readOnly = true)
     public List<SubscriptionDetailDTO> findAllCustomerSubscriptions(String customerId) {
-        var aggregation = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("subscriptions").exists(true)),
-                Aggregation.project()
-                        .andExpression("{$objectToArray: '$subscriptions'}").as("subscriptionEntries"),
-                Aggregation.unwind("subscriptionEntries"),
-                Aggregation.unwind("subscriptionEntries.v"),
-                Aggregation.match(Criteria.where("subscriptionEntries.v.customerId").is(customerId)),
-
-                Aggregation.project()
-                        .and("subscriptionEntries.k").as("type")
-                        .and("subscriptionEntries.v.financeName").as("financeName")
-                        .and("subscriptionEntries.v.upperBoundPrice").as("upperBoundPrice")
-                        .and("subscriptionEntries.v.lowerBoundPrice").as("lowerBoundPrice")
-                        .and("subscriptionEntries.v.createdDate").as("createdDate")
-                        .and("subscriptionEntries.v.customerId").as("customerId")
-        );
-
-        var results = mongoTemplate.aggregate(aggregation, Subscription.class, SubscriptionDetail.class);
-
-        return results.getMappedResults().stream()
+        return subscriptionRepository.findAll().stream()
+                .flatMap(s -> s.getSubscriptionDetails().stream()
+                        .filter(d -> d.customerId().equals(customerId)))
                 .map(detailDTOMapper::toDTO)
                 .collect(Collectors.toList());
     }

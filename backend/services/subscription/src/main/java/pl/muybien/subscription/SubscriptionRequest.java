@@ -1,4 +1,4 @@
-package pl.muybien.subscription.request;
+package pl.muybien.subscription;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;

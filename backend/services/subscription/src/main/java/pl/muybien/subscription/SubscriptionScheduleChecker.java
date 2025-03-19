@@ -10,11 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.muybien.finance.FinanceClient;
 import pl.muybien.subscription.data.Subscription;
-import pl.muybien.subscription.data.SubscriptionDetail;
 import pl.muybien.subscription.data.SubscriptionRepository;
-
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -35,24 +31,31 @@ public class SubscriptionScheduleChecker {
 
         do {
             subscriptionPage = subscriptionRepository.findAllSubscriptions(pageable);
-            subscriptionPage.forEach(this::processSubscription);
+            subscriptionPage.forEach(this::processSubscriptions);
 
             pageable = pageable.next();
         } while (!subscriptionPage.isEmpty());
     }
 
-    private void processSubscription(Subscription subscription) {
-        for (Map.Entry<String, List<SubscriptionDetail>> entry : subscription.getSubscriptions().entrySet()) {
-            String uri = entry.getKey();
-            List<SubscriptionDetail> subscriptionDetails = entry.getValue();
+    private void processSubscriptions(Subscription subscription) {
+        String uri = subscription.getUri();
+        var subscriptionDetails = subscription.getSubscriptionDetails();
 
+        if (!subscriptionDetails.isEmpty()) {
             try {
-                var finance = financeClient.findFinanceByTypeAndUri("cryptos", uri);
+                var finance = financeClient.findFinanceByAssetTypeAndUri(
+                        subscriptionDetails.getFirst().assetType().name(), uri);
+
                 double currentPrice = finance.price().doubleValue();
 
-                for (SubscriptionDetail subscriptionDetail : subscriptionDetails) {
-                    subscriptionComparator.priceMetSubscriptionCondition(currentPrice, subscriptionDetail);
-                }
+                subscriptionDetails.forEach(s -> {
+                            try {
+                                subscriptionComparator.priceMetSubscriptionConditionCheck(currentPrice, s);
+                            } catch (Exception e) {
+                                log.error("Error processing subscription detail for URI: {} and ID: {}", uri, s.id(), e);
+                            }
+                        }
+                );
             } catch (Exception e) {
                 log.error("Error processing subscription for URI: {}", uri, e);
             }
