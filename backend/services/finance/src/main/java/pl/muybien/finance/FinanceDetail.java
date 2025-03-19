@@ -8,7 +8,7 @@ public record FinanceDetail(
         String symbol,
         String uri,
         BigDecimal price,
-        String currency,
+        String currencyDetail,
         String assetType,
         LocalTime lastUpdated
 ) {

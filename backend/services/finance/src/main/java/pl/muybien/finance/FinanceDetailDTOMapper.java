@@ -10,7 +10,7 @@ public class FinanceDetailDTOMapper {
                 financeDetail.symbol(),
                 financeDetail.uri(),
                 financeDetail.price(),
-                financeDetail.currency(),
+                financeDetail.currencyDetail(),
                 financeDetail.assetType(),
                 financeDetail.lastUpdated()
         );

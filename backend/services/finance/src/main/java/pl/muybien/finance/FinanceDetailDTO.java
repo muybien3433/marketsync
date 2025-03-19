@@ -10,7 +10,7 @@ public record FinanceDetailDTO(
         @JsonProperty("symbol") String symbol,
         @JsonProperty("uri") String uri,
         @JsonProperty("price") BigDecimal price,
-        @JsonProperty("currency") String currency,
+        @JsonProperty("currencyType") String currencyDetail,
         @JsonProperty("assetType") String assetType,
         @JsonProperty("lastUpdated") LocalTime lastUpdated
 ) {

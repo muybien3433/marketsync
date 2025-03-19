@@ -82,9 +82,9 @@ export class AddSubscriptionComponent implements OnInit {
         const numericValue = parseFloat(formValue.value);
 
         const subscription = {
-            uri: this.uri,
+            uri: this.selectedAsset?.uri,
             assetType: this.selectedAssetType,
-            currencyType: formValue.currency,
+            currencyType: formValue.currencyType,
             notificationType: formValue.notificationType,
             upperBoundPrice: condition === 'increase' ? numericValue : null,
             lowerBoundPrice: condition === 'decrease' ? numericValue : null
