@@ -149,7 +149,7 @@ services:
 
   postgres-wallet:
     image: postgres:17.4
-    container_name: ${POSTGRES_WALLET_HOST}
+    container_name: postgres-wallet
     environment:
       POSTGRES_USER: ${POSTGRES_WALLET_USER}
       POSTGRES_PASSWORD: ${POSTGRES_WALLET_PASSWORD}
@@ -198,7 +198,7 @@ services:
 
   mongodb-subscription:
     image: mongo:8.0
-    container_name: ${MONGO_SUBSCRIPTION_HOST}
+    container_name: mongodb-subscription
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_SUBSCRIPTION_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_SUBSCRIPTION_PASSWORD}
@@ -340,26 +340,21 @@ services:
 
 
   ######### [ Kafka & Zookeeper ] #########
-  kafka:
-    image: confluentinc/cp-kafka:7.9.0
-    platform: linux/arm64
-    container_name: kafka
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    environment:
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_JMX_PORT: 9991
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     volumes:
-      - kafka_data:/var/lib/kafka/data
+      - zookeeper_data:/var/lib/zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092"]
+      test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
+      start_period: 20s
       interval: 5s
       timeout: 5s
       retries: 20
@@ -371,19 +366,29 @@ services:
           cpus: '0.5'
           memory: 512M
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.9.0
+  kafka:
+    image: confluentinc/cp-kafka:7.9.0
+    volumes:
+      - kafka_data:/var/lib/kafka
     platform: linux/arm64
-    container_name: zookeeper
+    container_name: kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-    restart: unless-stopped
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,INTERNAL://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,INTERNAL://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     healthcheck:
-      test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
-      start_period: 20s
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9093" ]
+      start_period: 35s
       interval: 5s
-      timeout: 5s
-      retries: 20
+      timeout: 10s
+      retries: 10
     networks:
       - backend-net
     deploy:
@@ -425,4 +430,5 @@ volumes:
   postgres_wallet:
   mongodb_finance_data:
   mongodb_subscription_data:
+  zookeeper_data:
   kafka_data:

@@ -5,7 +5,7 @@ spring:
   datasource:
     username: ${POSTGRES_WALLET_USER}
     password: ${POSTGRES_WALLET_PASSWORD}
-    url: jdbc:postgresql://${POSTGRES_WALLET_HOST}/${POSTGRES_WALLET_DB}?sslmode=disable
+    url: jdbc:postgresql://postgres-wallet/${POSTGRES_WALLET_DB}?sslmode=disable
   jpa:
     hibernate:
       ddl-auto: update

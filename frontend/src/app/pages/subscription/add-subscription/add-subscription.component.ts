@@ -38,12 +38,12 @@ export class AddSubscriptionComponent implements OnInit {
         private assetService: AssetService,
     ) {
         this.addSubscriptionForm = this.fb.group({
-            notificationType: ['EMAIL', Validators.required],
-            assetType: ['', Validators.required],
             uri: ['', [Validators.required, Validators.minLength(1)]],
+            assetType: ['', Validators.required],
+            notificationType: ['EMAIL', Validators.required],
+            currency: ['USD', [Validators.required]],
             condition: ['increase', Validators.required],
             value: ['0.01', [Validators.required, Validators.min(0)]],
-            currency: ['USD', [Validators.required]],
         });
     }
 
@@ -65,21 +65,20 @@ export class AddSubscriptionComponent implements OnInit {
         }
         this.isSubmitting = true;
 
+        const formValue = this.addSubscriptionForm.value;
+        const condition = formValue.condition;
+        const numericValue = parseFloat(formValue.value);
+
         const subscription = {
             uri: this.selectedAsset,
-            value: this.addSubscriptionForm.get('value')?.value,
             assetType: this.selectedAssetType,
-            currency: this.addSubscriptionForm.get('currency')?.value,
-            notificationType: this.addSubscriptionForm.get('notificationType')?.value,
-            condition: this.addSubscriptionForm.get('condition')?.value,
-        }
+            currency: formValue.currency,
+            notificationType: formValue.notificationType,
+            upperBoundPrice: condition === 'increase' ? numericValue : null,
+            lowerBoundPrice: condition === 'decrease' ? numericValue : null
+        };
 
-        console.log(subscription.notificationType);
-        console.log(subscription.assetType);
-        console.log(subscription.uri);
-        console.log(subscription.value);
-        console.log(subscription.currency);
-        console.log(subscription.condition);
+        console.log('Subscription payload:', subscription);
 
         this.addSubscription(subscription)?.subscribe({
             next: () => {
@@ -95,14 +94,14 @@ export class AddSubscriptionComponent implements OnInit {
 
     private addSubscription(subscription: {
         uri: string;
-        condition: string;
-        value: number;
-        assetType: string
+        assetType: string;
         currency: string;
         notificationType: string;
+        upperBoundPrice: number | null;
+        lowerBoundPrice: number | null;
     }) {
         return this.http.post(
-            `${environment.baseUrl}${API_ENDPOINTS.SUBSCRIPTION}/${subscription.condition}`,
+            `${environment.baseUrl}${API_ENDPOINTS.SUBSCRIPTION}`,
             subscription);
     }
 }
