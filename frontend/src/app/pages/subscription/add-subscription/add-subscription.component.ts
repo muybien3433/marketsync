@@ -9,6 +9,7 @@ import {environment} from "../../../../environments/environment";
 import {API_ENDPOINTS} from "../../../services/api-endpoints";
 import {AssetService} from "../../../services/asset.service";
 import {NgForOf, NgIf} from "@angular/common";
+import {AssetAggregate} from "../../../models/asset-aggregate";
 
 @Component({
     selector: 'app-add-subscription',
@@ -27,9 +28,11 @@ export class AddSubscriptionComponent implements OnInit {
     addSubscriptionForm: FormGroup;
     selectedAssetType: string = '';
     selectedAsset: any = null;
+    uri: string = '';
     currencyOptions = Object.values(Currency);
     isSubmitting = false;
     errorMessage: string = '';
+    assets: AssetAggregate[] = [];
 
     constructor(
         private fb: FormBuilder,
@@ -53,13 +56,22 @@ export class AddSubscriptionComponent implements OnInit {
             this.addSubscriptionForm.get('assetType')?.setValue(assetType);
         })
         this.assetService.selectedAssetUri$.subscribe(uri => {
-            this.selectedAsset = uri;
+            this.uri = uri;
             this.addSubscriptionForm.get('uri')?.setValue(uri);
-        })
+        });
+    }
+
+    onAssetSelected(asset: any) {
+        if (asset && asset.uri) {
+            this.selectedAsset = asset;
+            this.addSubscriptionForm.get('uri')?.setValue(asset.uri);
+        } else {
+            this.errorMessage = 'Please select a valid asset.';
+        }
     }
 
     onSubmit() {
-        if (this.addSubscriptionForm.invalid || !this.selectedAsset) {
+        if (this.addSubscriptionForm.invalid || !this.uri) {
             this.errorMessage = 'Please select an asset.';
             return;
         }
@@ -70,7 +82,7 @@ export class AddSubscriptionComponent implements OnInit {
         const numericValue = parseFloat(formValue.value);
 
         const subscription = {
-            uri: this.selectedAsset,
+            uri: this.uri,
             assetType: this.selectedAssetType,
             currencyType: formValue.currency,
             notificationType: formValue.notificationType,

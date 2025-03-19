@@ -11,7 +11,10 @@
         </select>
 
         <label>{{ 'subscription.as.soon.as' | translate }}</label>
-        <app-asset-selection-list></app-asset-selection-list>
+        <app-asset-selection-list
+                [assets]="assets"
+                (assetSelected)="onAssetSelected($event)"
+        ></app-asset-selection-list>
 
         <label>{{ 'subscription.goes' | translate }}</label>
         <select class="modern-select" formControlName="condition">
@@ -35,10 +38,10 @@
         </div>
     </div>
 
-    <div *ngIf="selectedAsset?.price != null">
-        <div class="current-price" *ngIf="selectedAsset">
-            <span class="price">{{ selectedAsset?.name }}</span> {{ 'subscription.currently' | translate }}
-            <span class="price">{{ selectedAsset?.currentPrice }}$</span>
+    <div *ngIf="selectedAsset">
+        <div class="current-price">
+            <span class="price">{{ selectedAsset.name }}</span> {{ 'subscription.currently' | translate }}
+            <span class="price">{{ selectedAsset.currentPrice }}$</span>
         </div>
     </div>
 

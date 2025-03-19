@@ -1,5 +1,6 @@
 package pl.muybien.subscription.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -10,27 +11,27 @@ public record SubscriptionRequest(
         @NotNull(message = "Uri is required")
         @NotEmpty(message = "Uri is required")
         @NotBlank(message = "Uri is required")
-        String uri,
+        @JsonProperty("uri") String uri,
 
         @Positive(message = "Value should be positive")
-        Double upperBoundPrice,
+        @JsonProperty("upperBoundPrice") Double upperBoundPrice,
 
         @Positive(message = "Value should be positive")
-        Double lowerBoundPrice,
+        @JsonProperty("lowerBoundPrice") Double lowerBoundPrice,
 
         @NotNull(message = "Asset type is required")
         @NotEmpty(message = "Asset type is required")
         @NotBlank(message = "Asset type is required")
-        String assetType,
+        @JsonProperty("assetType") String assetType,
 
         @NotNull(message = "Notification type is required")
         @NotEmpty(message = "Notification type is required")
         @NotBlank(message = "Notification type is required")
-        String notificationType,
+        @JsonProperty("notificationType") String notificationType,
 
         @NotNull(message = "Currency type is required")
         @NotEmpty(message = "Currency type is required")
         @NotBlank(message = "Currency type is required")
-        String currencyType
+        @JsonProperty("currencyType") String currencyType
 ) {
 }

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatOption} from "@angular/material/core";
 import {MatSelect} from "@angular/material/select";
@@ -32,6 +32,7 @@ import {AssetType} from "../../models/asset-type";
 })
 export class AssetSelectionListComponent implements OnInit {
     @Input() assets: any[] = [];
+    @Output() assetSelected = new EventEmitter<any>();
     assetTypeOptions = Object.values(AssetType)
     selectedAsset: any = null;
     addAssetForm: FormGroup;
@@ -62,6 +63,7 @@ export class AssetSelectionListComponent implements OnInit {
     onAssetSelect(uri: string) {
         this.selectedAsset = uri;
         this.assetSelection.setSelectedAssetUri(uri);
+        this.assetSelected.emit(this.selectedAsset);
     }
 
     getListSize() {
