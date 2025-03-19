@@ -1,6 +1,6 @@
 package pl.muybien.kafka;
 
-import pl.muybien.NotificationType;
+import pl.muybien.notification.NotificationType;
 
 public record SubscriptionConfirmation(
         NotificationType notificationType,

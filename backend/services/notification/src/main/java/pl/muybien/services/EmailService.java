@@ -8,7 +8,7 @@ import org.springframework.mail.MailException;
 
 import org.springframework.stereotype.Service;
 import pl.muybien.exception.MessageNotSendException;
-import pl.muybien.NotificationService;
+import pl.muybien.notification.NotificationService;
 
 @Service("email")
 @RequiredArgsConstructor

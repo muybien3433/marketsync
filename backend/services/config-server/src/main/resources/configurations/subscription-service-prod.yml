@@ -4,7 +4,10 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://${MONGO_SUBSCRIPTION_USER}:${MONGO_SUBSCRIPTION_PASSWORD}@${MONGO_SUBSCRIPTION_HOST}/${MONGO_SUBSCRIPTION_DB}?authSource=admin&authMechanism=SCRAM-SHA-256&tls=false
+      host: mongodb-subscription
+      port: 27017
+      username: ${MONGO_SUBSCRIPTION_USER}
+      password: ${MONGO_SUBSCRIPTION_PASSWORD}
       authentication-database: admin
   kafka:
     bootstrap-servers: ${BOOTSTRAP_SERVERS}

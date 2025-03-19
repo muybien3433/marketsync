@@ -1,4 +1,4 @@
-package pl.muybien;
+package pl.muybien.notification;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
