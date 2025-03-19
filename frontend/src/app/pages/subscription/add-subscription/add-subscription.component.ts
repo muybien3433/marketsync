@@ -41,7 +41,7 @@ export class AddSubscriptionComponent implements OnInit {
             uri: ['', [Validators.required, Validators.minLength(1)]],
             assetType: ['', Validators.required],
             notificationType: ['EMAIL', Validators.required],
-            currency: ['USD', [Validators.required]],
+            currencyType: ['USD', [Validators.required]],
             condition: ['increase', Validators.required],
             value: ['0.01', [Validators.required, Validators.min(0)]],
         });
@@ -72,7 +72,7 @@ export class AddSubscriptionComponent implements OnInit {
         const subscription = {
             uri: this.selectedAsset,
             assetType: this.selectedAssetType,
-            currency: formValue.currency,
+            currencyType: formValue.currency,
             notificationType: formValue.notificationType,
             upperBoundPrice: condition === 'increase' ? numericValue : null,
             lowerBoundPrice: condition === 'decrease' ? numericValue : null
@@ -95,7 +95,7 @@ export class AddSubscriptionComponent implements OnInit {
     private addSubscription(subscription: {
         uri: string;
         assetType: string;
-        currency: string;
+        currencyType: string;
         notificationType: string;
         upperBoundPrice: number | null;
         lowerBoundPrice: number | null;
