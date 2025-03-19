@@ -40,6 +40,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                             newHeaders.set(HttpHeaders.AUTHORIZATION, authHeader);
                             newHeaders.add("X-Customer-Id", customer.id());
                             newHeaders.add("X-Customer-Email", customer.email());
+                            newHeaders.add("X-Customer-Number", customer.number());
                             newHeaders.add("X-Customer-FirstName", customer.firstName());
                             newHeaders.add("X-Customer-LastName", customer.lastName());
                             newHeaders.add("X-Customer-Roles", String.join(",", customer.roles()));
@@ -68,6 +69,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                 .handle((decodedToken, sink) -> {
                     String customerId = decodedToken.getSubject();
                     String email = decodedToken.getClaimAsString("email");
+                    String number = decodedToken.getClaimAsString("number");
                     String firstName = decodedToken.getClaimAsString("given_name");
                     String lastName = decodedToken.getClaimAsString("family_name");
                     List<String> roles = extractRoles(decodedToken);
@@ -76,7 +78,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                         sink.error(new CustomerNotFoundException("Customer not found"));
                         return;
                     }
-                    sink.next(new CustomerResponse(customerId, firstName, lastName, email, roles));
+                    sink.next(new CustomerResponse(customerId, firstName, lastName, email, number, roles));
                 });
     }
 

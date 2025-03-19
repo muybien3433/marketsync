@@ -18,11 +18,11 @@ public class SubscriptionController {
 
     private final SubscriptionService service;
 
-    @PostMapping("/increase")
-    public ResponseEntity<String> createIncreaseSubscription(
+    @PostMapping
+    public ResponseEntity<String> createSubscription(
             @RequestHeader("X-Customer-Id") String customerId,
             @RequestHeader("X-Customer-Email") String customerEmail,
-            @RequestHeader("X-Customer-Number") String customerNumber,
+            @RequestHeader(value = "X-Customer-Number", required = false) String customerNumber,
             @RequestBody @Valid SubscriptionRequest request
     ) {
         service.createSubscription(customerId, customerEmail, customerNumber, request);
