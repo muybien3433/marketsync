@@ -1,7 +1,9 @@
 package pl.muybien.subscription;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,11 +29,11 @@ public class SubscriptionController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{uri}/{id}")
     public ResponseEntity<String> deleteSubscription(
             @RequestHeader("X-Customer-Id") String customerId,
-            @RequestParam String uri,
-            @RequestParam String id
+            @PathVariable("uri") @NotBlank String uri,
+            @PathVariable("id") @UUID String id
     ) {
         service.deleteSubscription(customerId, uri, id);
         return ResponseEntity.noContent().build();

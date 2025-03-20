@@ -1,6 +1,7 @@
 package pl.muybien.subscription.data;
 
 import pl.muybien.subscription.AssetType;
+import pl.muybien.subscription.CurrencyType;
 import pl.muybien.subscription.NotificationType;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ public record SubscriptionDetail(
         String customerId,
         String target,
         String financeName,
-        pl.muybien.subscription.CurrencyType requestedCurrency,
+        CurrencyType requestedCurrency,
         Double upperBoundPrice,
         Double lowerBoundPrice,
         AssetType assetType,

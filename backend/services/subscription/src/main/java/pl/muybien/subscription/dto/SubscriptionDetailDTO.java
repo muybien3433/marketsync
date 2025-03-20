@@ -8,6 +8,7 @@ public record SubscriptionDetailDTO(
 
         @JsonProperty("id") String id,
         @JsonProperty("financeName") String financeName,
+        @JsonProperty("uri") String uri,
         @JsonProperty("upperBoundPrice") Double upperBoundPrice,
         @JsonProperty("lowerBoundPrice") Double lowerBoundPrice,
         @JsonProperty("assetType") String assetType,

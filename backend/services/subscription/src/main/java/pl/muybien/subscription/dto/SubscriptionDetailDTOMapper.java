@@ -9,6 +9,7 @@ public class SubscriptionDetailDTOMapper {
         return new SubscriptionDetailDTO(
                 subscriptionDetail.id(),
                 subscriptionDetail.financeName(),
+                subscriptionDetail.uri(),
                 subscriptionDetail.upperBoundPrice(),
                 subscriptionDetail.lowerBoundPrice(),
                 subscriptionDetail.assetType().name(),

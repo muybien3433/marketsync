@@ -1,5 +1,5 @@
 <div class="container">
-    <ng-container *ngIf="Object.keys(_subscriptions).length === 0; else subscriptionsTable">
+    <ng-container *ngIf="Object.keys(_subscriptions).length === 1; else subscriptionsTable">
         <div class="empty-subscriptions-text">
             <h3>{{ 'subscription.no.subscription.message' | translate }}</h3>
             <div class="add-subscription-button">
@@ -15,9 +15,9 @@
                 <th>Aktywo</th>
                 <th>Typ aktywa</th>
                 <th>Typ powiadomienia</th>
-                <th>Górna granica</th>
-                <th>Dolna granica</th>
+                <th>Warunek</th>
                 <th>Data utworzenia</th>
+                <th>{{ 'common.action' | translate }}</th>
             </tr>
             </thead>
 
@@ -27,9 +27,22 @@
                 <td>{{ subscription.financeName }}</td>
                 <td>{{ subscription.assetType }}</td>
                 <td>{{ subscription.notificationType }}</td>
-                <td>{{ subscription.upperBoundPrice }}</td>
-                <td>{{ subscription.lowerBoundPrice }}</td>
-                <td>{{ subscription.createdDate }}</td>
+                <td>
+                    <div *ngIf="subscription?.upperBoundPrice ?? false; else lowerBound">
+                        Price greater than {{ subscription.upperBoundPrice }}
+                    </div>
+                    <ng-template #lowerBound>
+                        <div *ngIf="subscription?.lowerBoundPrice ?? false">
+                            Price lower than {{ subscription.lowerBoundPrice }}
+                        </div>
+                    </ng-template>
+                </td>
+                <td>{{ subscription.createdDate | date:'dd-MM-yyyy | | HH:mm:ss' }}</td>
+                <td class="button-cell">
+                    <button (click)="deleteSubscription(subscription.uri, subscription.id)" class="btn btn-danger btn-sm">
+                        {{ 'common.delete' | translate }}
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>

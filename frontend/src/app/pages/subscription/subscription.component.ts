@@ -3,7 +3,7 @@ import {SubscriptionDetail} from "../../models/subscription-detail";
 import {environment} from "../../../environments/environment";
 import {API_ENDPOINTS} from "../../services/api-endpoints";
 import {HttpClient} from "@angular/common/http";
-import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {TranslatePipe} from "@ngx-translate/core";
 import {Router} from "@angular/router";
 import {FooterNavbarComponent} from "./footer-navbar/footer-navbar.component";
@@ -13,10 +13,10 @@ import {FooterNavbarComponent} from "./footer-navbar/footer-navbar.component";
   standalone: true,
   imports: [
     FooterNavbarComponent,
-    CurrencyPipe,
     NgForOf,
     NgIf,
-    TranslatePipe
+    TranslatePipe,
+    DatePipe
   ],
   templateUrl: './subscription.component.html',
   styleUrl: './subscription.component.css'
@@ -29,6 +29,7 @@ export class SubscriptionComponent {
       private http: HttpClient,
       private router: Router,
   ) {
+    this.fetchSubscriptions();
   }
 
   fetchSubscriptions() {
@@ -50,5 +51,16 @@ export class SubscriptionComponent {
 
   addSubscription() {
     this.router.navigate(['subscriptions']);
+  }
+
+  deleteSubscription(uri: string, id: string) {
+    this.http.delete(`${environment.baseUrl}${API_ENDPOINTS.SUBSCRIPTION}/${uri}/${id}`).subscribe({
+      next: () => {
+        this._subscriptions = this._subscriptions.filter(subscription => subscription.id !== id);
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    })
   }
 }
