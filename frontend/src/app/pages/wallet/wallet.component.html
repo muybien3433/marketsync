@@ -30,12 +30,12 @@
                 <tr class="table" *ngFor="let asset of groupedAssets[assetType]">
                     <td>({{ asset.symbol }}) {{ asset.name }}</td>
                     <td>{{ asset.count }}</td>
-                    <td>{{ asset.currency}}</td>
-                    <td>{{ asset.value | currency: asset.currency}}</td>
-                    <td>{{ asset.averagePurchasePrice | currency: asset.currency}}</td>
-                    <td>{{ asset.currentPrice | currency: asset.currency}}</td>
+                    <td>{{ asset.currencyType}}</td>
+                    <td>{{ asset.value | currency: asset.currencyType}}</td>
+                    <td>{{ asset.averagePurchasePrice | currency: asset.currencyType}}</td>
+                    <td>{{ asset.currentPrice | currency: asset.currencyType}}</td>
                     <td [ngStyle]="{ color: asset.profit >= 0 ? 'green' : 'red' }">
-                        {{ asset.profit | currency: asset.currency}}
+                        {{ asset.profit | currency: asset.currencyType}}
                     </td>
                     <td [ngStyle]="{ color: asset.profitInPercentage >= 0 ? 'green' : 'red' }">
                         {{ asset.profitInPercentage }}%
