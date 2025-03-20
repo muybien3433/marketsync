@@ -54,16 +54,18 @@
   },
 
   "subscription": {
+    "subscriptions": "Subscriptions",
+    "add.subscription": "Add subscription",
     "title": "Subscribe assets price",
     "subtitle": "Stay tuned and get notified when a asset price reach the target.",
-    "add.subscription": "Add subscription",
     "notify.by": "Notify me by",
     "as.soon.as": "as soon as",
     "goes": "goes",
     "above": "above",
     "below": "below",
     "price": "the price of",
-    "currently": "is currently"
+    "currently": "is currently",
+    "no.subscription.message": "Ops... You don't have any subscriptions yet! No worries just click the button below."
   },
 
   "success": {

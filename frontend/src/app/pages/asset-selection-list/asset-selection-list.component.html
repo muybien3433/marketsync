@@ -32,8 +32,7 @@
                 <div *ngIf="!selectedAsset">
                     <div *ngFor="let asset of assets | filterByName: addAssetForm.get('searchTerm')?.value"
                          class="asset-item"
-                         [class.selected]="selectedAsset === asset.uri"
-                         (click)="onAssetSelect(asset)">
+                         (click)="onAssetSelect(asset.uri)">
                         <span class="symbol">({{ asset.symbol }})</span>
                         {{ asset.name }}
                     </div>

@@ -50,16 +50,18 @@
   },
 
   "subscription": {
+    "subscriptions": "Subskrybje",
+    "add.subscription": "Dodaj subskrybcję",
     "title": "Subskrybuj ceny aktywów",
     "subtitle": "Bądź na bieżaco i otrzymaj powiadomienie, gdy cena aktywa osiągnie wyznaczony cel.",
-    "add.subscription": "Dodaj subskrybcję",
     "notify.by": "Powiadom mnie poprzez",
     "as.soon.as": "gdy tylko",
     "goes": "osiągnie wartość",
     "above": "powyżej",
     "below": "poniżej",
     "price": "ceny",
-    "currently": "kosztuje obecnie"
+    "currently": "kosztuje obecnie",
+    "no.subscription.message": "Ups... Nie posiadasz aktualnie żadnych subskrybcji! Nic straconego, kliknij przycisk poniżej."
   },
 
   "success": {

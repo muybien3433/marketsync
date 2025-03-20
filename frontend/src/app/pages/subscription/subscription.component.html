@@ -1,0 +1,39 @@
+<div class="container">
+    <ng-container *ngIf="Object.keys(_subscriptions).length === 0; else subscriptionsTable">
+        <div class="empty-subscriptions-text">
+            <h3>{{ 'subscription.no.subscription.message' | translate }}</h3>
+            <div class="add-subscription-button">
+                <button (click)="addSubscription()">{{ 'subscription.add.subscription' | translate }}</button>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #subscriptionsTable>
+        <table class="table table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th>Aktywo</th>
+                <th>Typ aktywa</th>
+                <th>Typ powiadomienia</th>
+                <th>Górna granica</th>
+                <th>Dolna granica</th>
+                <th>Data utworzenia</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <td class="table-header" colspan="8"></td>
+            <tr class="table" *ngFor="let subscription of _subscriptions">
+                <td>{{ subscription.financeName }}</td>
+                <td>{{ subscription.assetType }}</td>
+                <td>{{ subscription.notificationType }}</td>
+                <td>{{ subscription.upperBoundPrice }}</td>
+                <td>{{ subscription.lowerBoundPrice }}</td>
+                <td>{{ subscription.createdDate }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <app-footer-navbar></app-footer-navbar>
+    </ng-template>
+</div>
+

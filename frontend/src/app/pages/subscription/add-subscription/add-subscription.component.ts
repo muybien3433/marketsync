@@ -8,8 +8,10 @@ import {Router} from "@angular/router";
 import {environment} from "../../../../environments/environment";
 import {API_ENDPOINTS} from "../../../services/api-endpoints";
 import {AssetService} from "../../../services/asset.service";
-import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {AssetDetail} from "../../../models/asset-detail";
+import {PreferenceService} from "../../../services/preference-service";
+import {AssetPriceDisplayComponent} from "../../asset-price-display/asset-price-display.component";
 
 @Component({
     selector: 'app-add-subscription',
@@ -21,14 +23,14 @@ import {AssetDetail} from "../../../models/asset-detail";
         ReactiveFormsModule,
         NgForOf,
         NgIf,
-        CurrencyPipe
+        AssetPriceDisplayComponent
     ],
     styleUrls: ['./add-subscription.component.css']
 })
 export class AddSubscriptionComponent implements OnInit {
     addSubscriptionForm: FormGroup;
     selectedAssetType: string = '';
-    selectedAsset: any = null;
+    selectedAsset: AssetDetail | undefined;
     uri: string = '';
     currencyOptions = Object.values(CurrencyType);
     isSubmitting = false;
@@ -40,12 +42,13 @@ export class AddSubscriptionComponent implements OnInit {
         private http: HttpClient,
         private router: Router,
         private assetService: AssetService,
+        private preferenceService: PreferenceService,
     ) {
         this.addSubscriptionForm = this.fb.group({
             uri: ['', [Validators.required, Validators.minLength(1)]],
             assetType: ['', Validators.required],
             notificationType: ['EMAIL', Validators.required],
-            currencyType: ['USD', [Validators.required]],
+            currencyType: [this.preferenceService.getPreferredCurrency(), [Validators.required]],
             condition: ['increase', Validators.required],
             value: ['0.01', [Validators.required, Validators.min(0)]],
         });
@@ -63,12 +66,18 @@ export class AddSubscriptionComponent implements OnInit {
     }
 
     onAssetSelected(asset: any) {
-        if (asset?.uri) {
+        if (asset) {
             this.selectedAsset = asset;
-            this.addSubscriptionForm.get('uri')?.setValue(asset.uri);
         } else {
-            this.errorMessage = 'Please select a valid asset.';
+            if (this.selectedAsset !== undefined) {
+                this.errorMessage = 'Please select a valid asset.';
+            }
         }
+    }
+
+    onAssetReset() {
+        this.selectedAsset = undefined;
+        this.addSubscriptionForm.get('uri')?.setValue('');
     }
 
     onSubmit() {
@@ -84,35 +93,37 @@ export class AddSubscriptionComponent implements OnInit {
         const condition = formValue.condition;
         const numericValue = parseFloat(formValue.value);
 
+        if (!this.selectedAsset?.price) {
+            this.errorMessage = 'Could not verify current asset price';
+            this.isSubmitting = false;
+            return;
+        }
+
         const subscription = {
-            uri: this.selectedAsset?.uri,
             assetType: this.selectedAssetType,
+            uri: this.selectedAsset?.uri,
             currencyType: formValue.currencyType,
             notificationType: formValue.notificationType,
             upperBoundPrice: condition === 'increase' ? numericValue : null,
             lowerBoundPrice: condition === 'decrease' ? numericValue : null
         };
 
-        const asset = this.assets.find(s => s.uri === this.uri);
-        if (subscription.upperBoundPrice != null && asset?.price !== undefined) {
-            if (subscription.upperBoundPrice <= asset.price) {
-                this.errorMessage = 'Value must be above the current price.';
-                return;
-            }
+        if (condition === 'increase' && numericValue <= this.selectedAsset.price) {
+            this.errorMessage = 'Value must be above current price';
+            this.isSubmitting = false;
+            return;
         }
 
-        if (subscription.lowerBoundPrice != null && asset?.price !== undefined) {
-            if (subscription.lowerBoundPrice >= asset.price) {
-                this.errorMessage = 'Value must be below the current price.';
-                return;
-            }
+        if (condition === 'decrease' && numericValue >= this.selectedAsset.price) {
+            this.errorMessage = 'Value must be below current price';
+            this.isSubmitting = false;
+            return;
         }
-
 
         this.addSubscription(subscription)?.subscribe({
             next: () => {
                 this.isSubmitting = false;
-                this.router.navigate(['subscription']);
+                this.router.navigate(['wallet']);
             },
             error: () => {
                 this.isSubmitting = false;

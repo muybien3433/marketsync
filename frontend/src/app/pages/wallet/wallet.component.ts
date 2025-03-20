@@ -36,22 +36,6 @@ export class WalletComponent {
     this.fetchWalletAssets();
   }
 
-  fetchWalletAssets() {
-    this.isLoading = true;
-    this.http.get<AssetAggregate[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`).subscribe({
-      next: (assets) => {
-        this._assets = Array.isArray(assets) ? assets : [];
-        this.groupAssetsByType();
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this._assets = [];
-        this.isLoading = false;
-      },
-    });
-  }
-
   groupAssetsByType() {
     this.groupedAssets = {};
     this._assets.forEach((asset) => {
@@ -106,5 +90,21 @@ export class WalletComponent {
 
   addAssetButton() {
     this.router.navigate(['add-asset']);
+  }
+
+  fetchWalletAssets() {
+    this.isLoading = true;
+    this.http.get<AssetAggregate[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`).subscribe({
+      next: (assets) => {
+        this._assets = Array.isArray(assets) ? assets : [];
+        this.groupAssetsByType();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this._assets = [];
+        this.isLoading = false;
+      },
+    });
   }
 }

@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 public record SubscriptionDetailDTO(
 
         @JsonProperty("id") String id,
-        @JsonProperty("customerId") String customerId,
         @JsonProperty("financeName") String financeName,
         @JsonProperty("upperBoundPrice") Double upperBoundPrice,
         @JsonProperty("lowerBoundPrice") Double lowerBoundPrice,

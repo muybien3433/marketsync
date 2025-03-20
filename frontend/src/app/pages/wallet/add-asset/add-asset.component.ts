@@ -11,6 +11,8 @@ import {AssetService} from "../../../services/asset.service";
 import {AssetSelectionListComponent} from "../../asset-selection-list/asset-selection-list.component";
 import {Router} from "@angular/router";
 import {PreferenceService} from "../../../services/preference-service";
+import {AssetPriceDisplayComponent} from "../../asset-price-display/asset-price-display.component";
+import {AssetDetail} from "../../../models/asset-detail";
 
 @Component({
     selector: 'app-add-asset',
@@ -22,18 +24,21 @@ import {PreferenceService} from "../../../services/preference-service";
         NgIf,
         ReactiveFormsModule,
         NgForOf,
-        AssetSelectionListComponent
+        AssetSelectionListComponent,
+        AssetPriceDisplayComponent
     ],
     templateUrl: './add-asset.component.html',
     styleUrls: ['./add-asset.component.css'],
 })
 export class AddAssetComponent implements OnInit {
-    addAssetForm!: FormGroup;
+    addAssetForm: FormGroup;
     isSubmitting = false;
     selectedAssetType: string = '';
-    selectedAsset: string = '';
+    selectedAsset: AssetDetail | undefined;
+    uri: string = '';
     currencyOptions = Object.values(CurrencyType);
     errorMessage: string = '';
+    assets: AssetDetail[] = [];
 
     constructor(
         private fb: FormBuilder,
@@ -57,13 +62,28 @@ export class AddAssetComponent implements OnInit {
             this.addAssetForm.get('assetType')?.setValue(assetType);
         })
         this.assetService.selectedAssetUri$.subscribe(uri => {
-            this.selectedAsset = uri;
+            this.uri = uri;
             this.addAssetForm.get('uri')?.setValue(uri);
         })
     }
 
+    onAssetSelected(asset: any) {
+        if (asset) {
+            this.selectedAsset = asset;
+        } else {
+            if (this.selectedAsset !== undefined) {
+                this.errorMessage = 'Please select a valid asset.';
+            }
+        }
+    }
+
+    onAssetReset() {
+        this.selectedAsset = undefined;
+        this.addAssetForm.get('uri')?.setValue('');
+    }
+
     onSubmit(): void {
-        if (this.addAssetForm.invalid || !this.selectedAsset) {
+        if (this.addAssetForm.invalid) {
             this.errorMessage = 'Please select an asset.';
             return;
         }
@@ -71,7 +91,7 @@ export class AddAssetComponent implements OnInit {
 
         const asset = {
             assetType: this.selectedAssetType,
-            uri: this.selectedAsset,
+            uri: this.uri,
             count: this.addAssetForm.get('count')?.value,
             purchasePrice: this.addAssetForm.get('purchasePrice')?.value,
             currency: this.addAssetForm.get('currency')?.value,

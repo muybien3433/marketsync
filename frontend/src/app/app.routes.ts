@@ -6,6 +6,7 @@ import {AssetHistoryComponent} from './pages/wallet/asset-history/asset-history.
 import {EditAssetComponent} from './pages/wallet/edit-asset/edit-asset.component';
 import {HomeComponent} from "./pages/home/home.component";
 import {AddSubscriptionComponent} from "./pages/subscription/add-subscription/add-subscription.component";
+import {SubscriptionComponent} from "./pages/subscription/subscription.component";
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -13,5 +14,6 @@ export const routes: Routes = [
     {path: 'add-asset', component: AddAssetComponent, canActivate: [AuthGuard]},
     {path: 'edit-asset', component: EditAssetComponent, canActivate: [AuthGuard]},
     {path: 'asset-history', component: AssetHistoryComponent, canActivate: [AuthGuard]},
-    {path: 'subscription', component: AddSubscriptionComponent, canActivate: [AuthGuard]},
+    {path: 'subscription', component: SubscriptionComponent, canActivate: [AuthGuard]},
+    {path: 'add-subscription', component: AddSubscriptionComponent, canActivate: [AuthGuard]},
 ];

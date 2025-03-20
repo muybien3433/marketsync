@@ -34,8 +34,9 @@ import {AssetDetail} from "../../models/asset-detail";
 export class AssetSelectionListComponent implements OnInit {
     @Input() assets: AssetDetail[] = [];
     @Output() assetSelected = new EventEmitter<any>();
+    @Output() assetReset = new EventEmitter<any>();
     assetTypeOptions = Object.values(AssetType)
-    selectedAsset: any = null;
+    selectedAsset: AssetDetail | undefined;
     addAssetForm: FormGroup;
 
     @ViewChild('assetSelect') assetSelect!: MatSelect;
@@ -57,7 +58,6 @@ export class AssetSelectionListComponent implements OnInit {
 
     onTypeSelect(assetType: string) {
         this.fetchAssets(assetType);
-        this.selectedAsset = null;
         this.assetSelection.setSelectedAssetType(assetType);
     }
 
@@ -75,7 +75,8 @@ export class AssetSelectionListComponent implements OnInit {
     }
 
     resetPickedAsset() {
-        this.selectedAsset = '';
+        this.selectedAsset = undefined;
+        this.assetReset.emit();
     }
 
     fetchAssets(assetType: string) {
