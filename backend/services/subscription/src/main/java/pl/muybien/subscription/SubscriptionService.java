@@ -100,8 +100,8 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public void deleteSubscription(String customerId, String id) {
-        var subscription = subscriptionRepository.findByDetailId(id)
+    public void deleteSubscription(String customerId, String uri, String id) {
+        var subscription = subscriptionRepository.findByUri(uri)
                 .orElseThrow(() -> new SubscriptionNotFoundException("Subscription not found for id: " + id));
 
         var subscriptionDetail = subscription.getSubscriptionDetails().stream()

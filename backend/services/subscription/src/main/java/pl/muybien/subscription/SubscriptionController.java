@@ -30,9 +30,10 @@ public class SubscriptionController {
     @DeleteMapping
     public ResponseEntity<String> deleteSubscription(
             @RequestHeader("X-Customer-Id") String customerId,
+            @RequestParam String uri,
             @RequestParam String id
     ) {
-        service.deleteSubscription(customerId, id);
+        service.deleteSubscription(customerId, uri, id);
         return ResponseEntity.noContent().build();
     }
 

@@ -14,6 +14,7 @@ import pl.muybien.subscription.data.SubscriptionDetail;
 public class SubscriptionComparator {
 
     private final SubscriptionProducer subscriptionProducer;
+    private final SubscriptionService subscriptionService;
 
     @Transactional
     public void priceMetSubscriptionConditionCheck(Double currentPrice, SubscriptionDetail subscriptionDetail) {
@@ -24,14 +25,12 @@ public class SubscriptionComparator {
             if (upperTargetPrice != null) {
                 if (currentPrice.compareTo(upperTargetPrice) >= 0) {
                     sendNotificationToSpecifiedTopic(subscriptionDetail, currentPrice, upperTargetPrice);
-                    return;
                 }
             }
 
             if (lowerTargetPrice != null) {
                 if (currentPrice.compareTo(lowerTargetPrice) <= 0) {
                     sendNotificationToSpecifiedTopic(subscriptionDetail, currentPrice, lowerTargetPrice);
-                    return;
                 }
             }
         } else {
@@ -39,7 +38,8 @@ public class SubscriptionComparator {
         }
     }
 
-    private void sendNotificationToSpecifiedTopic(SubscriptionDetail detail, Double price, Double targetPrice) {
+    @Transactional
+    public void sendNotificationToSpecifiedTopic(SubscriptionDetail detail, Double price, Double targetPrice) {
         String message = "Current %s value reached bound at: %s, your bound was %s"
                 .formatted(detail.financeName(), price, targetPrice);
         var subscriptionConfirmation = new SubscriptionConfirmation(
@@ -48,5 +48,6 @@ public class SubscriptionComparator {
                 message
         );
         subscriptionProducer.sendSubscriptionNotification(subscriptionConfirmation);
+        subscriptionService.deleteSubscription(detail.customerId(), detail.uri(), detail.id());
     }
 }

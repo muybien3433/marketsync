@@ -12,13 +12,15 @@ spring:
   kafka:
     bootstrap-servers: ${BOOTSTRAP_SERVERS}
     producer:
+      enable-idempotence: true
+      retries: 3
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.type.mapping: subscriptionConfirmation:pl.muybien.kafka.SubscriptionConfirmation
 
 schedule:
-  time-ms: 5000
+  time-ms: 50000 # 50s
   fetch-page-size-per-round: 5
 
 application:

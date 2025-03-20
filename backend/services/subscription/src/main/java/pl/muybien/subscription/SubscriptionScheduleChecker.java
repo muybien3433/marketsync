@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.finance.FinanceClient;
 import pl.muybien.subscription.data.Subscription;
 import pl.muybien.subscription.data.SubscriptionRepository;
@@ -37,28 +38,20 @@ public class SubscriptionScheduleChecker {
         } while (!subscriptionPage.isEmpty());
     }
 
-    private void processSubscriptions(Subscription subscription) {
+    @Transactional
+    public void processSubscriptions(Subscription subscription) {
         String uri = subscription.getUri();
         var subscriptionDetails = subscription.getSubscriptionDetails();
 
         if (!subscriptionDetails.isEmpty()) {
-            try {
-                var finance = financeClient.findFinanceByAssetTypeAndUri(
-                        subscriptionDetails.getFirst().assetType().name(), uri);
+            var finance = financeClient.findFinanceByAssetTypeAndUri(
+                    subscriptionDetails.getFirst().assetType().name(), uri);
 
-                double currentPrice = finance.price().doubleValue();
+            double currentPrice = finance.price().doubleValue();
 
-                subscriptionDetails.forEach(s -> {
-                            try {
-                                subscriptionComparator.priceMetSubscriptionConditionCheck(currentPrice, s);
-                            } catch (Exception e) {
-                                log.error("Error processing subscription detail for URI: {} and ID: {}", uri, s.id(), e);
-                            }
-                        }
-                );
-            } catch (Exception e) {
-                log.error("Error processing subscription for URI: {}", uri, e);
-            }
+            subscriptionDetails.forEach(s ->
+                    subscriptionComparator.priceMetSubscriptionConditionCheck(currentPrice, s)
+            );
         }
     }
 }

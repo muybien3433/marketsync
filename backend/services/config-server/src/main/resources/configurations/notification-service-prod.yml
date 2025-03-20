@@ -23,3 +23,5 @@ spring:
       credentials:
         access-key: ${AWS_SES_ACCESS}
         secret-key: ${AWS_SES_SECRET}
+
+company-email: noreply@muybien.pl
