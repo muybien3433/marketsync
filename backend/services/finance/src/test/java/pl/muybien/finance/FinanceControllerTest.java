@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ class FinanceControllerTest {
         var response = new FinanceResponse(
                 "Bitcoin", "BTC", uri,
                 BigDecimal.valueOf(100000), CurrencyType.USD.name(),
-                AssetType.CRYPTOS.name(), LocalTime.now());
+                AssetType.CRYPTOS.name(), LocalDateTime.now());
 
         when(financeService.fetchFinance(assetType, uri)).thenReturn(response);
 
@@ -60,7 +61,7 @@ class FinanceControllerTest {
         var response = new FinanceResponse(
                 "Ethereum", "BTC", uri,
                 BigDecimal.valueOf(3000), CurrencyType.USD.name(),
-                AssetType.CRYPTOS.name(), LocalTime.now());
+                AssetType.CRYPTOS.name(), LocalDateTime.now());
 
         when(financeService.fetchFinance(assetType, uri)).thenReturn(response);
 
@@ -78,10 +79,10 @@ class FinanceControllerTest {
         Set<FinanceDetailDTO> details = Set.of(
                 new FinanceDetailDTO(
                         "Bitcoin", "BTC", "bitcoin",
-                        null, CurrencyType.USD.name(), AssetType.CRYPTOS.name(), LocalTime.now()),
+                        null, CurrencyType.USD.name(), AssetType.CRYPTOS.name(), LocalDateTime.now()),
                 new FinanceDetailDTO(
                         "Ethereum", "ETH", "Ethereum", null,
-                        CurrencyType.USD.name(), AssetType.CRYPTOS.name(), LocalTime.now()));
+                        CurrencyType.USD.name(), AssetType.CRYPTOS.name(), LocalDateTime.now()));
 
         when(financeService.displayAvailableFinance(assetType)).thenReturn(details);
 

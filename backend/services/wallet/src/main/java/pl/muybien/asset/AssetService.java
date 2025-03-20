@@ -108,7 +108,7 @@ public class AssetService {
             BigDecimal totalInvested = asset.averagePurchasePrice().multiply(asset.count());
             profit = value.subtract(totalInvested);
             profitPercentage = resolveProfitInPercentage(totalInvested, profit);
-            exchangeRateToDesired = resolveExchangeRateToDesired(asset.currency(), desiredCurrency);
+            exchangeRateToDesired = resolveExchangeRateToDesired(asset.currencyType(), desiredCurrency);
         }
 
         return new AssetAggregateDTO(
@@ -117,7 +117,7 @@ public class AssetService {
                 type,
                 asset.count(),
                 currentPrice,
-                asset.currency(),
+                asset.currencyType(),
                 value,
                 asset.averagePurchasePrice(),
                 profit,
@@ -127,9 +127,9 @@ public class AssetService {
     }
 
     private BigDecimal resolvePriceByCurrency(AssetGroupDTO asset, FinanceResponse finance) {
-        boolean currencyIsDifferent = !asset.currency().equalsIgnoreCase(finance.currency());
+        boolean currencyIsDifferent = !asset.currencyType().equalsIgnoreCase(finance.currency());
         if (currencyIsDifferent) {
-            var exchangeRate = financeClient.findExchangeRate(finance.currency(), asset.currency());
+            var exchangeRate = financeClient.findExchangeRate(finance.currency(), asset.currencyType());
             return finance.price().multiply(exchangeRate);
         }
         return finance.price();

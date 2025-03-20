@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import {environment} from '../../../../environments/environment';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
 import {AssetHistory} from "../../../models/asset-history";
-import {Currency} from "../../../models/currency";
+import {CurrencyType} from "../../../models/currency-type";
 
 @Component({
   selector: 'app-edit-asset',
@@ -29,7 +29,7 @@ export class EditAssetComponent {
   isSubmitting = false;
   errorMessage: string = '';
   assetId: number | null = null;
-  currencyOptions = Object.values(Currency);
+  currencyOptions = Object.values(CurrencyType);
 
   constructor(
       private fb: FormBuilder,
@@ -46,7 +46,7 @@ export class EditAssetComponent {
         uri: [{ value: asset.name, disabled: true }],
         count: [asset.count, [Validators.required, Validators.min(0.001)]],
         purchasePrice: [asset.purchasePrice, [Validators.required, Validators.min(0.01)]],
-        currency: [asset.currency, [Validators.required, Validators.minLength(3)]],
+        currency: [asset.currencyType, [Validators.required, Validators.minLength(3)]],
       });
     }
   }

@@ -11,8 +11,7 @@ and calculate real-time profits across various asset types.
 
 ## Features
 
-- **User Authentication**: Secure and robust authentication via Keycloak, 
-enabling OAuth2-based login for seamless user access.
+- **User Authentication**: Secure and robust authentication via Keycloak.
 - **Subscriptions**: Effortlessly add or remove currency subscriptions with custom price and currencies thresholds.
 - **Real-Time Notifications**: Receive timely email notifications when subscribed assets hit user-defined price targets, 
 ensuring that users stay informed about market changes in real-time.
@@ -21,7 +20,7 @@ with the ability to store and view assets across multiple types,
 including real-time values, calculated profit and transaction history.
 - **Live Assets and Currencies Pricing**: Access up-to-the-minute pricing data for 
 various assets, stocks coming soon.
-- **Multiple Currency Support**: Choose between currencies (USD, EUR, GBP, PLN) 
+- **Multiple CurrencyType Support**: Choose between currencies (USD, EUR, GBP, PLN) 
 for subscription management and wallet display. Users can select their preferred currency for wallet management, 
 asset tracking and subscription pricing.
 - **Scalable Architecture**: Designed with scalability in mind, the system can handle growing user 
@@ -32,9 +31,9 @@ bases and asset types as market demands evolve.
 - **Frontend**: Angular 18
 - **Backend**: Java 23, SpringBoot 6, Kafka
 - **Database**: PostgreSQL for SQL and MongoDB for NoSQL
-- **Authentication**: Keyclock
-- **Cloud**: Docker
-- **Scrap**: Selenium, JSoup
+- **Authentication & Security**: Keyclock, Gateway
+- **Cloud**: AWS-SES, Config-server
+- **Scraping**: Selenium, JSoup
 - **Testing**: JUnit 5
 - **Build Tool**: Maven, Docker
 
@@ -57,19 +56,15 @@ Ensure you have the following installed before running the project:
 
 - *Subscription*: `/subscriptions`
     - `GET /` – List all active subscriptions for the customer.
-    - `POST /increase` – Add a new subscription with a condition: actualValue > value.
-    - `POST /decrease` – Add new subscription with condition actualValue < value.
+    - `POST /` – Add a new subscription.
     - `DELETE /` – Delete subscription.
 
 - *Wallet*: `/wallets/assets`
     - `GET /{currency}` – View all assets in the customer’s wallet as list in desired currency.
     - `GET /history` – View all assets addition history.
     - `POST ` – Add a new asset to the wallet.
-    - `PUT ` – Edit asset in the wallet.
+    - `PATCH ` – Edit asset in the wallet.
     - `DELETE /{id}` – Remove an asset from the wallet.
-
-- *Customer*: `/customers`
-    - `GET /` – Find and extract customer data from auth header.
 
 ## Installation
 
@@ -78,11 +73,12 @@ Ensure you have the following installed before running the project:
    git clone https://github.com/muybien3433/marketsync.git
    ```
    
-2. Provide mail variables for SMTP in backend/services/config-server/configurations/notification-service.yml
-   
+2. Provide region, access-key and access-secret for AWS-SES in backend/services/config-server/configurations/notification-service-dev.yml
+
+
 3. Now everything you need to do is to start docker containers
    ```bash
-   docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+   docker compose -f docker-compose.dev.yml up -d
    ```
    
 4. Run tests

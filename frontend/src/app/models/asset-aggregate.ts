@@ -5,11 +5,11 @@ export class AssetAggregate {
         public assetType: string,
         public count: number,
         public currentPrice: number,
-        public currency: string,
+        public currencyType: string,
         public value: number,
         public averagePurchasePrice: number,
-        public profitInPercentage: number,
         public profit: number,
+        public profitInPercentage: number,
         public exchangeRateToDesired: number
     ) {
     }

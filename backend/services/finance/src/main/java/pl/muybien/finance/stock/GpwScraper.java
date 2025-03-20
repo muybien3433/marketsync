@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -115,7 +115,7 @@ public class GpwScraper extends FinanceUpdater {
                         price,
                         CurrencyType.PLN.name(),
                         AssetType.STOCKS.name(),
-                        LocalTime.now()
+                        LocalDateTime.now()
                 );
                 stocks.put(uri, financeDetail);
             }

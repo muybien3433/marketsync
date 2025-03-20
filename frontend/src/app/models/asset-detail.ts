@@ -1,13 +1,12 @@
-export class AssetHistory {
+export class AssetDetail {
     constructor(
-        public id: number,
         public name: string,
         public symbol: string,
-        public count: number,
+        public uri: string,
+        public price: number,
         public currencyType: string,
-        public purchasePrice: number,
-        public createdDate: string,
         public assetType: string,
+        public lastUpdated: string
     ) {
     }
 }

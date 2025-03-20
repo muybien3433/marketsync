@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {Currency} from "../../models/currency";
+import {CurrencyType} from "../../models/currency-type";
 import {PreferenceService} from "../../services/preference-service";
 import {NgForOf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
@@ -24,7 +24,7 @@ export class CurrencyComponent implements OnInit {
   constructor(private preference: PreferenceService) {}
 
   ngOnInit() {
-    this.currencyOptions = Object.values(Currency) as string[];
+    this.currencyOptions = Object.values(CurrencyType) as string[];
     this.selectedCurrency = this.preference.getPreferredCurrency() || this.currencyOptions[0];
   }
 

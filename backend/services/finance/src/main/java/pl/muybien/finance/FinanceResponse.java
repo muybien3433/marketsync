@@ -3,7 +3,7 @@ package pl.muybien.finance;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 public record FinanceResponse(
         @JsonProperty("name") String name,
@@ -12,6 +12,6 @@ public record FinanceResponse(
         @JsonProperty("price") BigDecimal price,
         @JsonProperty("currencyType") String currencyType,
         @JsonProperty("assetType") String assetType,
-        @JsonProperty("lastUpdated") LocalTime lastUpdated
+        @JsonProperty("lastUpdated") LocalDateTime lastUpdated
 ) {
 }

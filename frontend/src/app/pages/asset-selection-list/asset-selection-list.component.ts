@@ -12,6 +12,7 @@ import {environment} from "../../../environments/environment";
 import {API_ENDPOINTS} from "../../services/api-endpoints";
 import {catchError, map, of} from "rxjs";
 import {AssetType} from "../../models/asset-type";
+import {AssetDetail} from "../../models/asset-detail";
 
 @Component({
     selector: 'app-asset-selection-list',
@@ -31,7 +32,7 @@ import {AssetType} from "../../models/asset-type";
     styleUrl: './asset-selection-list.component.css'
 })
 export class AssetSelectionListComponent implements OnInit {
-    @Input() assets: any[] = [];
+    @Input() assets: AssetDetail[] = [];
     @Output() assetSelected = new EventEmitter<any>();
     assetTypeOptions = Object.values(AssetType)
     selectedAsset: any = null;
@@ -61,9 +62,12 @@ export class AssetSelectionListComponent implements OnInit {
     }
 
     onAssetSelect(uri: string) {
-        this.selectedAsset = uri;
-        this.assetSelection.setSelectedAssetUri(uri);
-        this.assetSelected.emit(this.selectedAsset);
+        const selectedAsset = this.assets.find(asset => asset.uri === uri);
+        if (selectedAsset) {
+            this.selectedAsset = selectedAsset;
+            this.assetSelection.setSelectedAssetUri(uri);
+            this.assetSelected.emit(selectedAsset);
+        }
     }
 
     getListSize() {

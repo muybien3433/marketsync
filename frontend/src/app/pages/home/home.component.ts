@@ -5,6 +5,7 @@ import {KeycloakService} from 'keycloak-angular';
 import {HamburgerMenuComponent} from '../hamburger-menu/hamburger-menu.component';
 import {LanguageMenuComponent} from "../language-menu/language-menu.component";
 import {NgIf} from "@angular/common";
+import {AddSubscriptionComponent} from "../subscription/add-subscription/add-subscription.component";
 
 @Component({
     selector: 'app-home',
@@ -14,6 +15,7 @@ import {NgIf} from "@angular/common";
         HamburgerMenuComponent,
         LanguageMenuComponent,
         NgIf,
+        AddSubscriptionComponent,
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'

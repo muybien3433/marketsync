@@ -21,7 +21,7 @@ import pl.muybien.finance.updater.FinanceUpdater;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Duration;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -128,7 +128,7 @@ public class CoinmarketcapScraper extends FinanceUpdater {
                                                 price,
                                                 CurrencyType.USD.name(),
                                                 AssetType.CRYPTOS.name(),
-                                                LocalTime.now()
+                                                LocalDateTime.now()
                                         ));
                                     } catch (NumberFormatException e) {
                                         log.warn("Skipping invalid price for {}: {}", name, priceText);

@@ -2,14 +2,14 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TranslatePipe} from '@ngx-translate/core';
 import {AssetSelectionListComponent} from "../../asset-selection-list/asset-selection-list.component";
-import {Currency} from "../../../models/currency";
+import {CurrencyType} from "../../../models/currency-type";
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {environment} from "../../../../environments/environment";
 import {API_ENDPOINTS} from "../../../services/api-endpoints";
 import {AssetService} from "../../../services/asset.service";
-import {NgForOf, NgIf} from "@angular/common";
-import {AssetAggregate} from "../../../models/asset-aggregate";
+import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
+import {AssetDetail} from "../../../models/asset-detail";
 
 @Component({
     selector: 'app-add-subscription',
@@ -20,7 +20,8 @@ import {AssetAggregate} from "../../../models/asset-aggregate";
         TranslatePipe,
         ReactiveFormsModule,
         NgForOf,
-        NgIf
+        NgIf,
+        CurrencyPipe
     ],
     styleUrls: ['./add-subscription.component.css']
 })
@@ -29,10 +30,10 @@ export class AddSubscriptionComponent implements OnInit {
     selectedAssetType: string = '';
     selectedAsset: any = null;
     uri: string = '';
-    currencyOptions = Object.values(Currency);
+    currencyOptions = Object.values(CurrencyType);
     isSubmitting = false;
     errorMessage: string = '';
-    assets: AssetAggregate[] = [];
+    assets: AssetDetail[] = [];
 
     constructor(
         private fb: FormBuilder,
@@ -62,7 +63,7 @@ export class AddSubscriptionComponent implements OnInit {
     }
 
     onAssetSelected(asset: any) {
-        if (asset && asset.uri) {
+        if (asset?.uri) {
             this.selectedAsset = asset;
             this.addSubscriptionForm.get('uri')?.setValue(asset.uri);
         } else {
@@ -71,11 +72,13 @@ export class AddSubscriptionComponent implements OnInit {
     }
 
     onSubmit() {
-        if (this.addSubscriptionForm.invalid || !this.uri) {
+        if (this.addSubscriptionForm.invalid) {
             this.errorMessage = 'Please select an asset.';
             return;
         }
+
         this.isSubmitting = true;
+        this.errorMessage = '';
 
         const formValue = this.addSubscriptionForm.value;
         const condition = formValue.condition;
@@ -90,7 +93,21 @@ export class AddSubscriptionComponent implements OnInit {
             lowerBoundPrice: condition === 'decrease' ? numericValue : null
         };
 
-        console.log('Subscription payload:', subscription);
+        const asset = this.assets.find(s => s.uri === this.uri);
+        if (subscription.upperBoundPrice != null && asset?.price !== undefined) {
+            if (subscription.upperBoundPrice <= asset.price) {
+                this.errorMessage = 'Value must be above the current price.';
+                return;
+            }
+        }
+
+        if (subscription.lowerBoundPrice != null && asset?.price !== undefined) {
+            if (subscription.lowerBoundPrice >= asset.price) {
+                this.errorMessage = 'Value must be below the current price.';
+                return;
+            }
+        }
+
 
         this.addSubscription(subscription)?.subscribe({
             next: () => {

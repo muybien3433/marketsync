@@ -12,7 +12,7 @@ public record AssetGroupDTO(
         @JsonProperty("assetType") AssetType assetType,
         @JsonProperty("count") BigDecimal count,
         @JsonProperty("averagePurchasePrice") BigDecimal averagePurchasePrice,
-        @JsonProperty("currency") String currency,
+        @JsonProperty("currencyType") String currencyType,
         @JsonProperty("customerId") String customerId
 ) {
 }

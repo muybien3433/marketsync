@@ -1,7 +1,7 @@
 package pl.muybien.finance;
 
 import java.math.BigDecimal;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 public record FinanceDetail(
         String name,
@@ -10,6 +10,6 @@ public record FinanceDetail(
         BigDecimal price,
         String currencyDetail,
         String assetType,
-        LocalTime lastUpdated
+        LocalDateTime lastUpdated
 ) {
 }

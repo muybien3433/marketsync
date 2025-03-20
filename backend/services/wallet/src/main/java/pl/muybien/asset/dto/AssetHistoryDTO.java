@@ -11,7 +11,7 @@ public record AssetHistoryDTO(
         @JsonProperty("name") String name,
         @JsonProperty("symbol") String symbol,
         @JsonProperty("count") BigDecimal count,
-        @JsonProperty("currency") String currency,
+        @JsonProperty("currencyType") String currency,
         @JsonProperty("purchasePrice") BigDecimal purchasePrice,
         @JsonProperty("createdDate") LocalDateTime createdDate,
         @JsonProperty("assetType") AssetType assetType

@@ -6,7 +6,7 @@ import {FooterNavbarComponent} from '../footer-navbar/footer-navbar.component';
 import {NgForOf, NgIf} from '@angular/common';
 import {environment} from '../../../../environments/environment';
 import {API_ENDPOINTS} from '../../../services/api-endpoints';
-import {Currency} from "../../../models/currency";
+import {CurrencyType} from "../../../models/currency-type";
 import {AssetService} from "../../../services/asset.service";
 import {AssetSelectionListComponent} from "../../asset-selection-list/asset-selection-list.component";
 import {Router} from "@angular/router";
@@ -32,7 +32,7 @@ export class AddAssetComponent implements OnInit {
     isSubmitting = false;
     selectedAssetType: string = '';
     selectedAsset: string = '';
-    currencyOptions = Object.values(Currency);
+    currencyOptions = Object.values(CurrencyType);
     errorMessage: string = '';
 
     constructor(
