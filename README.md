@@ -51,19 +51,20 @@ Ensure you have the following installed before running the project:
 
 - *Finance*: `/finances`
     - `GET /{asset-type}/{uri}` – Fetch the current price for specified type and uri with default currency.
-    - `GET /{asset-type}` – Display available uris to assets in specified type as list.
+    - `GET /{asset-type}` – Display available assets and price.
+    - `GET /{asset-type}/currencies/{currency}` – Display available assets and price with desired currency.
     - `GET /currencies/{from}/{to}` – Fetch the current exchange for two currencies.
 
 - *Subscription*: `/subscriptions`
     - `GET /` – List all active subscriptions for the customer.
     - `POST /` – Add a new subscription.
-    - `DELETE /` – Delete subscription.
+    - `DELETE /{uri}/{id}` – Delete subscription.
 
 - *Wallet*: `/wallets/assets`
-    - `GET /{currency}` – View all assets in the customer’s wallet as list in desired currency.
+    - `GET /{currency}` – View all aggregated assets in the customer’s wallet.
     - `GET /history` – View all assets addition history.
     - `POST ` – Add a new asset to the wallet.
-    - `PATCH ` – Edit asset in the wallet.
+    - `PATCH /{id} ` – Edit asset in the wallet.
     - `DELETE /{id}` – Remove an asset from the wallet.
 
 ## Installation

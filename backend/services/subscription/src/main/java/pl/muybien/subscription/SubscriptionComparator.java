@@ -23,13 +23,13 @@ public class SubscriptionComparator {
             Double lowerTargetPrice = subscriptionDetail.lowerBoundPrice();
 
             if (upperTargetPrice != null) {
-                if (currentPrice.compareTo(upperTargetPrice) >= 0) {
+                if (currentPrice.compareTo(upperTargetPrice) > 0) {
                     sendNotificationToSpecifiedTopic(subscriptionDetail, currentPrice, upperTargetPrice);
                 }
             }
 
             if (lowerTargetPrice != null) {
-                if (currentPrice.compareTo(lowerTargetPrice) <= 0) {
+                if (currentPrice.compareTo(lowerTargetPrice) < 0) {
                     sendNotificationToSpecifiedTopic(subscriptionDetail, currentPrice, lowerTargetPrice);
                 }
             }

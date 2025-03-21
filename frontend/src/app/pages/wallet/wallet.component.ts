@@ -3,19 +3,17 @@ import {CurrencyPipe, NgForOf, NgIf, NgStyle} from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import {AssetAggregate} from "../../models/asset-aggregate";
-import {
-  FooterNavbarComponent
-} from "./footer-navbar/footer-navbar.component";
 import {environment} from '../../../environments/environment';
 import {API_ENDPOINTS} from '../../services/api-endpoints';
 import {PreferenceService} from "../../services/preference-service";
-import {CurrencyComponent} from "../currency/currency.component";
 import {Router} from "@angular/router";
+import {WalletFooterNavbarComponent} from "./wallet-footer-navbar/wallet-footer-navbar.component";
+import {CurrencyPreferenceChangeComponent} from "../navbar/hamburger-menu/settings/currency-preference-change/currency-preference-change.component";
 
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [NgForOf, NgStyle, TranslatePipe, FooterNavbarComponent, CurrencyPipe, CurrencyComponent, NgIf],
+  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe, CurrencyPreferenceChangeComponent, NgIf],
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css'],
 })
@@ -89,7 +87,7 @@ export class WalletComponent {
   }
 
   addAssetButton() {
-    this.router.navigate(['add-asset']);
+    this.router.navigate(['wallet-add-asset']);
   }
 
   fetchWalletAssets() {

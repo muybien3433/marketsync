@@ -49,7 +49,7 @@
                 <td colspan="1">{{ 'common.sum' | translate }}</td> <!-- name which in sum should be empty -->
                 <td colspan="1"></td> <!-- count which in sum should be empty -->
                 <td colspan="1">
-                    <app-currency (currencyChange)="onCurrencyChange($event)"></app-currency>
+                    <app-currency-preference-change (currencyChange)="onCurrencyChange($event)"></app-currency-preference-change>
                 </td>
                 <td colspan="1"> {{ getTotalValue() | currency: getCurrencyForSum() }}</td>
                 <td colspan="1"></td> <!-- avg. purchase price which in sum should be empty -->

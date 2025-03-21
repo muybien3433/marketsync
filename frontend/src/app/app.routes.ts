@@ -1,19 +1,20 @@
 import {Routes} from '@angular/router';
-import {WalletComponent} from './pages/wallet/wallet.component';
 import {AuthGuard} from './services/auth.guard';
-import {AddAssetComponent} from './pages/wallet/add-asset/add-asset.component';
-import {AssetHistoryComponent} from './pages/wallet/asset-history/asset-history.component';
-import {EditAssetComponent} from './pages/wallet/edit-asset/edit-asset.component';
 import {HomeComponent} from "./pages/home/home.component";
-import {AddSubscriptionComponent} from "./pages/subscription/add-subscription/add-subscription.component";
+import {WalletComponent} from "./pages/wallet/wallet.component";
+import {WalletAddAssetComponent} from "./pages/wallet/wallet-add-asset/wallet-add-asset.component";
+import {WalletEditAssetComponent} from "./pages/wallet/wallet-edit-asset/wallet-edit-asset.component";
+import {WalletAssetHistoryComponent} from "./pages/wallet/wallet-asset-history/wallet-asset-history.component";
 import {SubscriptionComponent} from "./pages/subscription/subscription.component";
+import {SubscriptionAddComponent} from "./pages/subscription/subscription-add/subscription-add.component";
+
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'wallet', component: WalletComponent, canActivate: [AuthGuard]},
-    {path: 'add-asset', component: AddAssetComponent, canActivate: [AuthGuard]},
-    {path: 'edit-asset', component: EditAssetComponent, canActivate: [AuthGuard]},
-    {path: 'asset-history', component: AssetHistoryComponent, canActivate: [AuthGuard]},
+    {path: 'wallet-add-asset', component: WalletAddAssetComponent, canActivate: [AuthGuard]},
+    {path: 'wallet-edit-asset', component: WalletEditAssetComponent, canActivate: [AuthGuard]},
+    {path: 'wallet-asset-history', component: WalletAssetHistoryComponent, canActivate: [AuthGuard]},
     {path: 'subscription', component: SubscriptionComponent, canActivate: [AuthGuard]},
-    {path: 'add-subscription', component: AddSubscriptionComponent, canActivate: [AuthGuard]},
+    {path: 'subscription-add', component: SubscriptionAddComponent, canActivate: [AuthGuard]},
 ];

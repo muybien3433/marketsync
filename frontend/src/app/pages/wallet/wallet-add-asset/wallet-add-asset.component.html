@@ -1,0 +1,60 @@
+<form class="add-asset-form" [formGroup]="addAssetForm" (ngSubmit)="onSubmit()">
+    <div>
+        <div class="form-group">
+            <label>{{ 'common.asset' | translate }}</label>
+
+            <app-asset-selection-list
+                    [assets]="assets"
+                    (assetSelected)="onAssetSelected($event)"
+                    (assetReset)="onAssetReset()">
+            </app-asset-selection-list>
+        </div>
+
+        <div class="form-group">
+            <label for="count">{{ 'common.count' | translate }}</label>
+            <input
+                    type="number"
+                    id="count"
+                    formControlName="count"
+                    min="0.01"
+                    required
+            />
+            <div *ngIf="addAssetForm.get('count')?.invalid && addAssetForm.get('count')?.touched">
+                <small class="error">{{ 'error.count.should.be.positive' | translate }}</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="purchasePrice">{{ 'asset.purchase.price' | translate }}</label>
+            <input
+                    type="number"
+                    id="purchasePrice"
+                    formControlName="purchasePrice"
+                    min="0.01"
+                    required
+            />
+            <div *ngIf="addAssetForm.get('purchasePrice')?.invalid && addAssetForm.get('purchasePrice')?.touched">
+                <small class="error">{{ 'error.price.should.be.positive' | translate }}</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>{{ 'common.currency' | translate }}</label>
+            <app-currency-change-option (currencySelected)="onCurrencySelected($event)"></app-currency-change-option>
+
+            <div *ngIf="addAssetForm.get('currency')?.invalid && addAssetForm.get('currency')?.touched">
+                <small class="error">{{ 'error.currency.is.required' | translate }}</small>
+            </div>
+        </div>
+
+        <app-asset-price-display [selectedAsset]="selectedAsset"></app-asset-price-display>
+
+        <button type="submit" [disabled]="isSubmitting">
+            {{ 'asset.add.asset' | translate }}
+        </button>
+
+        <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    </div>
+
+    <app-wallet-footer-navbar></app-wallet-footer-navbar>
+</form>

@@ -32,6 +32,14 @@ public class FinanceController {
         return ResponseEntity.ok(service.displayAvailableFinance(assetType));
     }
 
+    @GetMapping("/{asset-type}/currencies/{currency-type}")
+    public ResponseEntity<Set<FinanceDetailDTO>> displayAvailableFinance(
+            @PathVariable("asset-type") String assetType,
+            @PathVariable("currency-type") String currencyType
+    ) {
+        return ResponseEntity.ok(service.displayAvailableFinanceByCurrency(assetType, currencyType));
+    }
+
     @GetMapping("/currencies/{from}/{to}")
     public ResponseEntity<BigDecimal> findExchangeRate(
             @PathVariable("from") CurrencyType from,

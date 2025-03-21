@@ -6,13 +6,13 @@ import {HttpClient} from "@angular/common/http";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {TranslatePipe} from "@ngx-translate/core";
 import {Router} from "@angular/router";
-import {FooterNavbarComponent} from "./footer-navbar/footer-navbar.component";
+import {SubscriptionFooterNavbarComponent} from "./subscription-footer-navbar/subscription-footer-navbar.component";
 
 @Component({
   selector: 'app-subscription',
   standalone: true,
   imports: [
-    FooterNavbarComponent,
+    SubscriptionFooterNavbarComponent,
     NgForOf,
     NgIf,
     TranslatePipe,
@@ -50,7 +50,7 @@ export class SubscriptionComponent {
   protected readonly Object = Object;
 
   addSubscription() {
-    this.router.navigate(['subscriptions']);
+    this.router.navigate(['subscription-add']);
   }
 
   deleteSubscription(uri: string, id: string) {

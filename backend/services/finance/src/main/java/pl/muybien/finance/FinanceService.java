@@ -8,6 +8,7 @@ import pl.muybien.finance.currency.CurrencyService;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,5 +81,50 @@ public class FinanceService {
                 .map(mapper::toDTO)
                 .sorted(Comparator.comparing(FinanceDetailDTO::name))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Transactional(readOnly = true)
+    public Set<FinanceDetailDTO> displayAvailableFinanceByCurrency(String assetType, String currencyType) {
+        String normalizedAssetType = assetType.toLowerCase();
+        var finance = repository.findFinanceByAssetType(normalizedAssetType)
+                .orElseThrow(() -> new FinanceNotFoundException("Finance not found for asset type: " + normalizedAssetType));
+
+        var financeDetails = finance.getFinanceDetails().get(normalizedAssetType);
+        if (financeDetails == null) {
+            return Collections.emptySet();
+        }
+
+        CurrencyType resolvedDesiredCurrency = CurrencyType.valueOf(currencyType.toUpperCase());
+        Map<CurrencyType, BigDecimal> cachedCurrencies = new ConcurrentHashMap<>();
+
+        return financeDetails.values().stream()
+                .map(mapper::toDTO)
+                .sorted(Comparator.comparing(FinanceDetailDTO::name))
+                .map(detail -> convertCurrencyIfNecessary(detail, resolvedDesiredCurrency, cachedCurrencies))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private FinanceDetailDTO convertCurrencyIfNecessary(
+            FinanceDetailDTO detail, CurrencyType desiredCurrency, Map<CurrencyType, BigDecimal> cache) {
+
+        CurrencyType sourceCurrency = CurrencyType.valueOf(detail.currencyType().toUpperCase());
+        if (!sourceCurrency.equals(desiredCurrency)) {
+            BigDecimal rate = cache.computeIfAbsent(
+                    sourceCurrency,
+                    key -> currencyService.getCurrencyPairExchange(key, desiredCurrency)
+            );
+
+            BigDecimal updatedPrice = detail.price().multiply(rate);
+            return new FinanceDetailDTO(
+                    detail.name(),
+                    detail.symbol(),
+                    detail.uri(),
+                    updatedPrice,
+                    desiredCurrency.name(),
+                    detail.assetType(),
+                    detail.lastUpdated()
+            );
+        }
+        return detail;
     }
 }

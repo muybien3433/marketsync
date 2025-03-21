@@ -52,6 +52,9 @@
   "subscription": {
     "subscriptions": "Subskrybje",
     "add.subscription": "Dodaj subskrybcję",
+    "notification.type": "Powiadom poprzez",
+    "condition": "Warunek",
+    "created.date": "Data utworzenia",
     "title": "Subskrybuj ceny aktywów",
     "subtitle": "Bądź na bieżaco i otrzymaj powiadomienie, gdy cena aktywa osiągnie wyznaczony cel.",
     "notify.by": "Powiadom mnie poprzez",

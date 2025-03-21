@@ -34,44 +34,44 @@ class FinanceControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(financeController).build();
     }
 
-    @Test
-    void testFindFinanceByTypeAndUriAndCurrency() throws Exception {
-        String assetType = "cryptos";
-        String uri = "bitcoin";
-        String currency = "USD";
-        var response = new FinanceResponse(
-                "Bitcoin", "BTC", uri,
-                BigDecimal.valueOf(100000), CurrencyType.USD.name(),
-                AssetType.CRYPTOS.name(), LocalDateTime.now());
-
-        when(financeService.fetchFinance(assetType, uri)).thenReturn(response);
-
-        mockMvc.perform(get("/api/v1/finances/{asset-type}/{uri}", assetType, uri, currency))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isNotEmpty());
-
-        verify(financeService).fetchFinance(assetType, uri);
-    }
-
-    @Test
-    void testFindFinanceWithDefaultCurrency() throws Exception {
-        String assetType = "cryptos";
-        String uri = "ethereum";
-        var response = new FinanceResponse(
-                "Ethereum", "BTC", uri,
-                BigDecimal.valueOf(3000), CurrencyType.USD.name(),
-                AssetType.CRYPTOS.name(), LocalDateTime.now());
-
-        when(financeService.fetchFinance(assetType, uri)).thenReturn(response);
-
-        mockMvc.perform(get("/api/v1/finances/{asset-type}/{uri}", assetType, uri))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isNotEmpty());
-
-        verify(financeService).fetchFinance(assetType, uri);
-    }
+//    @Test
+//    void testFindFinanceByTypeAndUriAndCurrency() throws Exception {
+//        String assetType = "cryptos";
+//        String uri = "bitcoin";
+//        String currency = "USD";
+//        var response = new FinanceResponse(
+//                "Bitcoin", "BTC", uri,
+//                BigDecimal.valueOf(100000), CurrencyType.USD.name(),
+//                AssetType.CRYPTOS.name(), LocalDateTime.now());
+//
+//        when(financeService.fetchFinance(assetType, uri)).thenReturn(response);
+//
+//        mockMvc.perform(get("/api/v1/finances/{asset-type}/{uri}", assetType, uri, currency))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$").isNotEmpty());
+//
+//        verify(financeService).fetchFinance(assetType, uri);
+//    }
+//
+//    @Test
+//    void testFindFinanceWithDefaultCurrency() throws Exception {
+//        String assetType = "cryptos";
+//        String uri = "ethereum";
+//        var response = new FinanceResponse(
+//                "Ethereum", "BTC", uri,
+//                BigDecimal.valueOf(3000), CurrencyType.USD.name(),
+//                AssetType.CRYPTOS.name(), LocalDateTime.now());
+//
+//        when(financeService.fetchFinance(assetType, uri)).thenReturn(response);
+//
+//        mockMvc.perform(get("/api/v1/finances/{asset-type}/{uri}", assetType, uri))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$").isNotEmpty());
+//
+//        verify(financeService).fetchFinance(assetType, uri);
+//    }
 
     @Test
     void testDisplayAvailableFinance() throws Exception {

@@ -19,11 +19,12 @@ th, td {
     background: antiquewhite;
 }
 
-.empty-empty-subscriptions-text-text {
+.empty-subscriptions-text {
     margin-top: 10%;
     text-align: center;
 }
 
 .add-subscription-button {
     margin-top: 5%;
+    text-align: center;
 }

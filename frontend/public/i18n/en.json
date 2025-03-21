@@ -56,6 +56,9 @@
   "subscription": {
     "subscriptions": "Subscriptions",
     "add.subscription": "Add subscription",
+    "notification.type": "Notify by",
+    "condition": "Condition",
+    "created.date": "Create date",
     "title": "Subscribe assets price",
     "subtitle": "Stay tuned and get notified when a asset price reach the target.",
     "notify.by": "Notify me by",

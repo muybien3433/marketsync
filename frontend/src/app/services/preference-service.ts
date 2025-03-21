@@ -10,7 +10,7 @@ export class PreferenceService {
         localStorage.setItem(this.storageKey, currency);
     }
 
-    getPreferredCurrency(): string | null {
-        return localStorage.getItem(this.storageKey);
+    getPreferredCurrency(): string  {
+        return localStorage.getItem(this.storageKey) ?? 'PLN';
     }
 }
