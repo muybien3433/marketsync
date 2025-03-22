@@ -1,4 +1,5 @@
 import {Injectable} from "@angular/core";
+import {CurrencyType} from "../models/currency-type";
 
 @Injectable({
     providedIn: 'root',
@@ -6,11 +7,16 @@ import {Injectable} from "@angular/core";
 export class PreferenceService {
     private storageKey = 'preferredCurrency';
 
-    setPreferredCurrency(currency: string): void {
-        localStorage.setItem(this.storageKey, currency);
+    setPreferredCurrency(currencyType: CurrencyType): void {
+        localStorage.setItem(this.storageKey, currencyType);
     }
 
-    getPreferredCurrency(): string  {
-        return localStorage.getItem(this.storageKey) ?? 'PLN';
+    getPreferredCurrency(): CurrencyType  {
+        const storedCurrency = localStorage.getItem(this.storageKey);
+
+        if (storedCurrency && Object.values(CurrencyType).includes(storedCurrency as CurrencyType)) {
+            return storedCurrency as CurrencyType;
+        }
+        return CurrencyType.PLN
     }
 }

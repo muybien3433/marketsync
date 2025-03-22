@@ -1,9 +1,9 @@
-<div class="container" [formGroup]="addAssetForm">
+<div class="container">
     <mat-form-field class="asset-type">
         <mat-label>{{ 'asset.type' | translate }}</mat-label>
         <mat-select
-                formControlName="assetType"
-                (selectionChange)="onTypeSelect($event.value, $event.value)"
+                [(ngModel)]="selectedAssetType"
+                (selectionChange)="onAssetTypeSelect($event.value)"
                 panelClass="custom-select-panel">
             <mat-option *ngFor="let assetType of assetTypeOptions" [value]="assetType">
                 {{ 'asset.' + assetType.toLowerCase() | translate }}
@@ -11,33 +11,31 @@
         </mat-select>
     </mat-form-field>
 
-    <ng-container *ngIf="addAssetForm.get('assetType')?.value">
-        <div class="asset-container">
-            <div class="asset-list">
-                <div class="search-header" *ngIf="!selectedAsset">
-                    <input
-                            formControlName="searchTerm"
-                           placeholder="{{ 'asset.search.asset' | translate }} {{ getListSize() }}"
-                           class="native-input">
-                </div>
+    <div class="asset-container">
+        <div class="asset-list">
+            <div class="search-header" *ngIf="!selectedAsset">
+                <input
+                        [(ngModel)]="searchTerm"
+                        placeholder="{{ 'asset.search.asset' | translate }} {{ _assets.length }}"
+                        class="native-input">
+            </div>
 
-                <div class="search-header" *ngIf="selectedAsset">
-                    <div class="native-input" *ngIf="selectedAsset">
-                        <span class="symbol">({{ selectedAsset.symbol }})</span>
-                        {{ selectedAsset.name }}
-                        <button class="inner-button" (click)="resetPickedAsset()">Zmień</button>
-                    </div>
+            <div class="search-header" *ngIf="selectedAsset">
+                <div class="native-input" *ngIf="selectedAsset">
+                    <span class="symbol">({{ selectedAsset.symbol }})</span>
+                    {{ selectedAsset.name }}
+                    <button class="inner-button" (click)="resetPickedAsset()">{{ 'common.change' | translate }}</button>
                 </div>
+            </div>
 
-                <div *ngIf="!selectedAsset">
-                    <div *ngFor="let asset of assets | filterByName: addAssetForm.get('searchTerm')?.value"
-                         class="asset-item"
-                         (click)="onAssetSelect(asset.uri)">
-                        <span class="symbol">({{ asset.symbol }})</span>
-                        {{ asset.name }}
-                    </div>
+            <div *ngIf="!selectedAsset">
+                <div *ngFor="let asset of _assets | filterByName: searchTerm"
+                     class="asset-item"
+                     (click)="onAssetSelect(asset)">
+                    <span class="symbol">({{ asset.symbol }})</span>
+                    {{ asset.name }}
                 </div>
             </div>
         </div>
-    </ng-container>
+    </div>
 </div>

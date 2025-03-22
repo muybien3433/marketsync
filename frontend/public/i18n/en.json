@@ -13,7 +13,8 @@
     "history": "History",
     "sum": "Sum",
     "currency": "Currency",
-    "type.to.search": "Type to search"
+    "type.to.search": "Type to search",
+    "change": "Change"
   },
 
   "navbar": {

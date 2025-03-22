@@ -1,29 +1,31 @@
 import {Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
+import {AssetType} from "../models/asset-type";
+import {AssetDetail} from "../models/asset-detail";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AssetService {
-    private selectedAssetType = new BehaviorSubject<string>('');
+    private selectedAssetType = new BehaviorSubject<AssetType>(AssetType.CRYPTO);
     selectedAssetType$ = this.selectedAssetType.asObservable();
 
-    private selectedAssetUri = new BehaviorSubject<string>('');
-    selectedAssetUri$ = this.selectedAssetUri.asObservable();
+    private selectedAsset = new BehaviorSubject<AssetDetail | null>(null);
+    selectedAsset$ = this.selectedAsset.asObservable();
 
-    setSelectedAssetType(type: string) {
-        this.selectedAssetType.next(type);
+    setSelectedAssetType(assetType: AssetType) {
+        this.selectedAssetType.next(assetType);
     }
 
-    setSelectedAssetUri(uri: string) {
-        this.selectedAssetUri.next(uri);
+    setSelectedAsset(asset: AssetDetail | null) {
+        this.selectedAsset.next(asset);
     }
 
     getSelectedAssetType() {
         return this.selectedAssetType.getValue();
     }
 
-    getSelectedAssetUri() {
-        return this.selectedAssetUri.getValue();
+    getSelectedAsset() {
+        return this.selectedAsset.getValue();
     }
 }

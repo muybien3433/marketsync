@@ -12,11 +12,7 @@
 
         <label>{{ 'subscription.as.soon.as' | translate }}</label>
 
-        <app-asset-selection-list
-                [assets]="assets"
-                (assetSelected)="onAssetSelected($event)"
-                (assetReset)="onAssetReset()">
-        </app-asset-selection-list>
+        <app-asset-selection-list (assetChanged)="onAssetChange($event)"></app-asset-selection-list>
 
         <label>{{ 'subscription.goes' | translate }}</label>
         <select class="modern-select" formControlName="condition">
@@ -33,12 +29,12 @@
                         formControlName="value"
                         required
                 />
-                <app-currency-change-option (currencySelected)="onCurrencySelected($event)"></app-currency-change-option>
+                <app-currency-change-option></app-currency-change-option>
             </div>
         </div>
     </div>
 
-    <app-asset-price-display [selectedAsset]="selectedAsset"></app-asset-price-display>
+    <app-asset-price-display></app-asset-price-display>
 
     <button type="submit" class="primary-btn" (click)="onSubmit()">
         {{ 'subscription.add.subscription' | translate }}
@@ -46,3 +42,5 @@
 
     <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
 </form>
+
+<app-subscription-footer-navbar></app-subscription-footer-navbar>

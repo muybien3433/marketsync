@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {NgForOf} from "@angular/common";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CurrencyType} from "../../../models/currency-type";
 import {CurrencyService} from "../../../services/currency-service";
 
@@ -10,27 +10,30 @@ import {CurrencyService} from "../../../services/currency-service";
   imports: [
     NgForOf,
     ReactiveFormsModule,
+    FormsModule,
   ],
   templateUrl: './currency-change-option.component.html',
   styleUrl: './currency-change-option.component.css'
 })
 export class CurrencyChangeOptionComponent implements OnInit {
-  @Output() currencySelected: EventEmitter<any> = new EventEmitter();
+  @Output() currencyChanged = new EventEmitter<CurrencyType>();
+
   currencyOptions = Object.values(CurrencyType);
+  selectedCurrency!: CurrencyType;
 
   constructor(private currencyService: CurrencyService) {}
 
   ngOnInit(): void {
-    this.onCurrencySelect(this.currencyService.getSelectedCurrencyType());
+    this.selectedCurrency = this.currencyService.getSelectedCurrencyType();
   }
 
-  onCurrencyChange(event: Event): void {
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    this.onCurrencySelect(selectedValue);
+  onCurrencyChange(currency: CurrencyType): void {
+    this.onCurrencySelect(currency);
   }
 
-  onCurrencySelect(selectedCurrencyType: string) {
+  onCurrencySelect(selectedCurrencyType: CurrencyType) {
     this.currencyService.setSelectedCurrencyType(selectedCurrencyType);
-    this.currencySelected.emit(selectedCurrencyType);
+    this.selectedCurrency = selectedCurrencyType;
+    this.currencyChanged.emit(selectedCurrencyType);
   }
 }

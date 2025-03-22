@@ -1,6 +1,6 @@
-<div *ngIf="selectedAsset">
+<div *ngIf="currentAsset && currentAsset?.name && currentAsset.price">
     <div class="current-price">
-        <span class="price">{{ selectedAsset.name }} </span>{{ 'subscription.currently' | translate }}
-        <span class="price">{{ selectedAsset.price | currency: selectedAsset.currencyType }}</span>
+        <span class="price">{{ currentAsset.name }} </span>{{ 'subscription.currently' | translate }}
+        <span class="price">{{ currentAsset.price | currency: currentAsset.currencyType }}</span>
     </div>
 </div>

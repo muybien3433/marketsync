@@ -8,12 +8,13 @@ import {API_ENDPOINTS} from '../../services/api-endpoints';
 import {PreferenceService} from "../../services/preference-service";
 import {Router} from "@angular/router";
 import {WalletFooterNavbarComponent} from "./wallet-footer-navbar/wallet-footer-navbar.component";
-import {CurrencyPreferenceChangeComponent} from "../navbar/hamburger-menu/settings/currency-preference-change/currency-preference-change.component";
+import {CurrencyType} from "../../models/currency-type";
+import {CurrencyChangeOptionComponent} from "../common/currency-change-option/currency-change-option.component";
 
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe, CurrencyPreferenceChangeComponent, NgIf],
+  imports: [NgForOf, NgStyle, TranslatePipe, WalletFooterNavbarComponent, CurrencyPipe, NgIf, CurrencyChangeOptionComponent],
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css'],
 })
@@ -21,7 +22,7 @@ export class WalletComponent {
   private _assets: AssetAggregate[] = [];
   protected readonly Object = Object;
   groupedAssets: { [key: string]: AssetAggregate[] } = {};
-  selectedCurrency: string;
+  selectedCurrency: CurrencyType;
   isLoading: boolean = false;
 
   constructor(
@@ -80,9 +81,8 @@ export class WalletComponent {
     return this.selectedCurrency;
   }
 
-  onCurrencyChange(newCurrency: string) {
-    this.preferenceService.setPreferredCurrency(newCurrency);
-    this.selectedCurrency = newCurrency;
+  onCurrencyChange(selectedCurrency: CurrencyType) {
+    this.selectedCurrency = selectedCurrency;
     this.fetchWalletAssets();
   }
 
@@ -105,4 +105,6 @@ export class WalletComponent {
       },
     });
   }
+
+  protected readonly CurrencyType = CurrencyType;
 }

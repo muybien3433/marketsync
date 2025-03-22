@@ -1,18 +1,20 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatOption} from "@angular/material/core";
 import {MatSelect} from "@angular/material/select";
 import {NgForOf, NgIf} from "@angular/common";
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslatePipe} from "@ngx-translate/core";
 import {FilterByNamePipe} from "../../../services/filter-by-name-pipe";
 import {HttpClient} from "@angular/common/http";
 import {AssetService} from "../../../services/asset.service";
 import {environment} from "../../../../environments/environment";
 import {API_ENDPOINTS} from "../../../services/api-endpoints";
-import {catchError, map, of} from "rxjs";
+import {catchError, map, of, Subscription} from "rxjs";
 import {AssetType} from "../../../models/asset-type";
 import {AssetDetail} from "../../../models/asset-detail";
+import {CurrencyType} from "../../../models/currency-type";
+import {CurrencyService} from "../../../services/currency-service";
 
 @Component({
     selector: 'app-asset-selection-list',
@@ -27,69 +29,82 @@ import {AssetDetail} from "../../../models/asset-detail";
         ReactiveFormsModule,
         TranslatePipe,
         FilterByNamePipe,
+        FormsModule,
     ],
     templateUrl: './asset-selection-list.component.html',
     styleUrl: './asset-selection-list.component.css'
 })
-export class AssetSelectionListComponent implements OnInit {
-    @Input() assets: AssetDetail[] = [];
-    @Input() selectedCurrency: string = '';
-    @Output() assetSelected = new EventEmitter<any>();
-    @Output() assetReset = new EventEmitter<any>();
-    @ViewChild('assetSelect') assetSelect!: MatSelect;
+export class AssetSelectionListComponent implements OnInit, OnDestroy {
+    @Output() assetChanged: EventEmitter<AssetDetail> = new EventEmitter();
 
-    assetTypeOptions = Object.values(AssetType)
-    selectedAsset: AssetDetail | undefined;
-    addAssetForm: FormGroup;
+    _assets: AssetDetail[] = [];
+    selectedAssetType: AssetType = AssetType.CRYPTO;
+    selectedAsset!: AssetDetail | null;
+    assetTypeOptions: AssetType[] = Object.values(AssetType);
+    searchTerm: string = '';
+
+    private currencySubscription!: Subscription;
+    currentCurrency!: CurrencyType;
 
     constructor(
         private http: HttpClient,
-        private fb: FormBuilder,
         private assetService: AssetService,
+        private currencyService: CurrencyService,
     ) {
-        this.addAssetForm = this.fb.group({
-            assetType: [AssetType.CRYPTO, Validators.required],
-            searchTerm: ['']
-        })
     }
 
     ngOnInit(): void {
-        this.onTypeSelect(AssetType.CRYPTO, this.selectedCurrency);
+        this.currencySubscription = this.currencyService.selectedCurrencyType$.subscribe(currency => {
+            this.currentCurrency = currency;
+            this.fetchAssets(AssetType.CRYPTO, currency);
+        })
     }
 
-    onTypeSelect(assetType: string, currencyType: string): void {
+    ngOnDestroy(): void {
+        this.currencySubscription.unsubscribe();
+    }
+
+    onAssetTypeSelect(assetType: AssetType): void {
         this.assetService.setSelectedAssetType(assetType);
-        this.fetchAssets(assetType, currencyType);
+        this.resetPickedAsset();
+        this.fetchAssets(assetType, this.currentCurrency);
     }
 
-    onAssetSelect(uri: string) {
-        const selectedAsset = this.assets.find(asset => asset.uri === uri);
-        if (selectedAsset) {
-            this.selectedAsset = selectedAsset;
-            this.assetService.setSelectedAssetUri(uri);
-            this.assetSelected.emit(selectedAsset);
-        }
-    }
-
-    getListSize() {
-        return this.assets.length;
+    onAssetSelect(asset: AssetDetail) {
+        this.selectedAsset = asset;
+        this.assetService.setSelectedAsset(asset);
+        this.assetChanged.emit(asset);
     }
 
     resetPickedAsset() {
-        this.selectedAsset = undefined;
-        this.assetReset.emit();
+        this.searchTerm = '';
+        this.selectedAsset = null;
+        this.assetService.setSelectedAsset(null);
+        this.assetChanged.emit(undefined);
     }
 
-    fetchAssets(assetType: string, currencyType: string) {
+    fetchAssets(assetType: AssetType, currencyType: CurrencyType): void {
         this.http
             .get<any[]>(`${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${assetType}/currencies/${currencyType}`)
             .pipe(
                 map((data) => {
-                    this.assets = Object.values(data);
+                    this._assets = Object.values(data);
+
+                    const currentAsset = this.assetService.getSelectedAsset();
+                    if (currentAsset) {
+                        const updatedAsset =
+                            this._assets.find(a => a.uri === currentAsset.uri);
+                        if (updatedAsset) {
+                            this.assetService.setSelectedAsset(updatedAsset);
+                        } else {
+                            this.resetPickedAsset();
+                        }
+                    }
                 }),
                 catchError((error) => {
                     console.error('Error fetching assets: ', error);
-                    this.assets = [];
+                    this._assets = [];
+                    this.resetPickedAsset();
                     return of([]);
                 })
             )

@@ -33,7 +33,7 @@ public class FinanceController {
     }
 
     @GetMapping("/{asset-type}/currencies/{currency-type}")
-    public ResponseEntity<Set<FinanceDetailDTO>> displayAvailableFinance(
+    public ResponseEntity<Set<FinanceDetailDTO>> displayAvailableFinanceByCurrency(
             @PathVariable("asset-type") String assetType,
             @PathVariable("currency-type") String currencyType
     ) {

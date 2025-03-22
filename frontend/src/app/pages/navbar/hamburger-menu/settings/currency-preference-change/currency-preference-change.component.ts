@@ -28,7 +28,7 @@ export class CurrencyPreferenceChangeComponent implements OnInit {
     this.selectedCurrency = this.preference.getPreferredCurrency() || this.currencyOptions[0];
   }
 
-  onCurrencyChange(newCurrency: string) {
+  onCurrencyChange(newCurrency: CurrencyType) {
     this.currencyChange.emit(newCurrency);
     this.preference.setPreferredCurrency(newCurrency);
   }
