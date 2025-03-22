@@ -2,7 +2,7 @@ name: Deploy to VPS
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, new-frontend]e
 
 jobs:
   deploy:

@@ -1,0 +1,60 @@
+<div class="row">
+    <div class="col-xl-12 col-md-6">
+        <div class="row">
+            <div class="col-xl-12">
+                <app-card cardTitle="Basic Table" [options]="false" blockClass="table-border-style">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>{{ 'common.name' | translate }}</th>
+                                <th>{{ 'common.count' | translate }}</th>
+                                <th>{{ 'common.currency' | translate }}</th>
+                                <th>{{ 'common.value' | translate }}</th>
+                                <th>{{ 'asset.average.purchase.price' | translate }}</th>
+                                <th>{{ 'common.current.price' | translate }}</th>
+                                <th>{{ 'asset.profit' | translate }}</th>
+                                <th>{{ 'asset.profit.in.percentage' | translate }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <ng-container *ngFor="let assetType of Object.keys(groupedAssets)">
+                                <td class="table-header" colspan="8"></td>
+
+                                <tr class="table" *ngFor="let asset of groupedAssets[assetType]">
+                                    <td>({{ asset.symbol }}) {{ asset.name }}</td>
+                                    <td>{{ asset.count }}</td>
+                                    <td>{{ asset.currencyType}}</td>
+                                    <td>{{ asset.value | currency: asset.currencyType}}</td>
+                                    <td>{{ asset.averagePurchasePrice | currency: asset.currencyType}}</td>
+                                    <td>{{ asset.currentPrice | currency: asset.currencyType}}</td>
+                                    <td [ngStyle]="{ color: asset.profit >= 0 ? 'green' : 'red' }">
+                                        {{ asset.profit | currency: asset.currencyType}}
+                                    </td>
+                                    <td [ngStyle]="{ color: asset.profitInPercentage >= 0 ? 'green' : 'red' }">
+                                        {{ asset.profitInPercentage }}%
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </app-card>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <app-card cardTitle="Asset Division Chart" [options]="false">
+            <apx-chart
+                    [series]="donutChart.series"
+                    [chart]="donutChart.chart"
+                    [labels]="donutChart.labels"
+                    [colors]="donutChart.colors"
+                    [legend]="donutChart.legend"
+                    [dataLabels]="donutChart.dataLabels"
+                    [plotOptions]="donutChart.plotOptions"
+            ></apx-chart>
+        </app-card>
+    </div>
+</div>

@@ -1,0 +1,89 @@
+{
+  "common": {
+    "wallet": "Wallet",
+    "subscription": "Subscription",
+    "action": "Action",
+    "edit": "Edit",
+    "delete": "Delete",
+    "count": "Count",
+    "asset": "Asset",
+    "name": "Name",
+    "value": "Value",
+    "current.price": "Unit Price",
+    "history": "History",
+    "sum": "Sum",
+    "currency": "Currency",
+    "type.to.search": "Type to search",
+    "change": "Change"
+  },
+
+  "navbar": {
+    "login": "Log In",
+    "register": "Sign Up",
+    "logout": "Logout",
+    "main": "Main",
+    "settings": "Settings"
+  },
+
+  "asset": {
+    "type": "Asset type",
+    "name": "Asset name",
+    "add.asset": "Add asset",
+    "edit.asset": "Edit asset",
+    "type.cryptos": "Crypto",
+    "type.stocks": "Stock",
+    "type.selection": "Select asset type",
+    "search.asset": "Search from: ",
+    "purchase.price": "Purchase price",
+    "average.purchase.price": "Avg. Purchase Price",
+    "investment.start.date": "Creation date",
+    "profit.in.percentage": "Profit %",
+    "profit": "Profit",
+    "delete.asset": "Delete asset",
+    "cryptos": "Cryptos",
+    "stocks": "Stocks",
+    "no.assets.message": "Ops... Your wallet is empty! No worries just click the button below."
+  },
+
+  "asset-type": {
+    "crypto": "Crypto",
+    "stock": "Stock"
+  },
+
+  "wallet": {
+    "name": "Your Wallet"
+  },
+
+  "subscription": {
+    "subscriptions": "Subscriptions",
+    "add.subscription": "Add subscription",
+    "notification.type": "Notify by",
+    "condition": "Condition",
+    "created.date": "Create date",
+    "title": "Subscribe assets price",
+    "subtitle": "Stay tuned and get notified when a asset price reach the target.",
+    "notify.by": "Notify me by",
+    "as.soon.as": "as soon as",
+    "goes": "goes",
+    "above": "above",
+    "below": "below",
+    "price": "the price of",
+    "currently": "is currently",
+    "no.subscription.message": "Ops... You don't have any subscriptions yet! No worries just click the button below."
+  },
+
+  "success": {
+    "asset.add.success": "Asset added successfully!",
+    "asset.edit.success": "Asset edited successfully!"
+  },
+
+  "error": {
+    "currency.is.required": "Currency is required",
+    "count.should.be.positive": "Count should be a positive number",
+    "asset.is.required": "Asset is required",
+    "asset.type.required": "Asset type is required",
+    "price.should.be.positive": "Price should be a positive number",
+    "asset.add.fail": "Failed to add asset. Please try again",
+    "asset.edit.fail": "Failed to edit asset. Please try again"
+  }
+}

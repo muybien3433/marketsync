@@ -32,6 +32,9 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - FRONTEND_URL=http://localhost:4200
+      - KEYCLOAK_ISSUER_URL=http://keycloak:8080/realms/marketsync
+      - JWK_URI=http://keycloak/realms/marketsync/protocol/openid-connect/certs
     restart: unless-stopped
     networks:
       - frontend-net
@@ -97,8 +100,6 @@ services:
         condition: service_healthy
       postgres-wallet:
         condition: service_healthy
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
     restart: unless-stopped
     networks:
       - backend-net
