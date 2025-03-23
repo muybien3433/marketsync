@@ -1,6 +1,6 @@
 {
-  "id": "marketsync",
-  "realm": "marketsync",
+  "id": "master",
+  "realm": "master",
   "clients": [
     {
       "clientId": "marketsync-client",

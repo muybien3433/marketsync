@@ -4,16 +4,16 @@ import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {AssetAggregate} from "../../common/model/asset-aggregate";
 import {HttpClient} from "@angular/common/http";
 import {CurrencyType} from "../../common/model/currency-type";
-import {environment} from "../../../environments/environment";
+import {environmentProd} from "../../../environments/environment.prod";
 import {API_ENDPOINTS} from "../../common/service/api-endpoints";
 import {PreferenceService} from "../../common/service/preference-service";
 import {Router} from "@angular/router";
-import {CardComponent} from "../../common/components/card/card.component";
 import {ApexOptions, ChartComponent} from "ng-apexcharts";
+import {CardComponent} from "../../common/components/card/card.component";
 
 @Component({
     selector: 'app-wallet',
-    imports: [CommonModule, TranslatePipe, CardComponent, ChartComponent],
+    imports: [CommonModule, CardComponent, ChartComponent, TranslatePipe],
     templateUrl: './wallet.component.html',
     styleUrls: ['./wallet.component.scss']
 })
@@ -140,7 +140,7 @@ export class WalletComponent implements OnInit {
     }
 
     fetchWalletAssets() {
-        this.http.get<AssetAggregate[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`)
+        this.http.get<AssetAggregate[]>(`${environmentProd.baseUrl}${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`)
             .subscribe({
                     next: (assets) => {
                         this._assets = Array.isArray(assets) ? assets : [];

@@ -48,6 +48,6 @@ frontend/dist
 
 # Production files
 .env
-environment.ts
+environment.prod.ts
 marketsync-client-prod.json
 nginx

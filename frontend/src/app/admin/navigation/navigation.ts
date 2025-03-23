@@ -15,70 +15,59 @@ export interface NavigationItem {
   children?: NavigationItem[];
 }
 export const NavigationItems: NavigationItem[] = [
-  // {
-  //   id: 'navigation',
-  //   title: 'Home',
-  //   type: 'group',
-  //   icon: 'icon-navigation',
-  //   children: [
-  //     {
-  //       id: 'wallet',
-  //       title: 'Wallet',
-  //       type: 'item',
-  //       url: '/wallet',
-  //       icon: 'feather icon-home',
-  //       classes: 'nav-item'
-  //     }
-  //   ]
-  // },
   {
-    id: 'navigation',
-    title: 'Navigation',
+    id: 'wallet',
+    title: 'Wallet',
     type: 'group',
     icon: 'icon-ui',
     children: [
       {
         id: 'wallet',
         title: 'Wallet',
-        type: 'collapse',
-        icon: 'feather icon-box',
-        children: [
-          {
-            id: 'wallet-asset-add',
-            title: 'Add asset',
-            type: 'item',
-            url: '/assets/add'
-          },
-          {
-            id: 'wallet-asset-history',
-            title: 'History',
-            type: 'item',
-            url: '/assets/history'
-          }
-        ]
+        type: 'item',
+        url: '/wallet/assets',
+        classes: 'nav-item',
+        icon: 'icon-trending-up'
       },
+      {
+        id: 'wallet-asset-add',
+        title: 'Add asset',
+        type: 'item',
+        url: '/wallet/asset/add',
+        classes: 'nav-item',
+        icon: 'icon-plus-circle'
+      },
+      {
+        id: 'wallet-asset-history',
+        title: 'History',
+        type: 'item',
+        url: '/wallet/assets/history',
+        classes: 'nav-item',
+        icon: 'icon-book'
+      },
+    ]
+  },
+  {
+    id: 'subscription',
+    title: 'Subscriptions',
+    type: 'group',
+    icon: 'icon-ui',
+    children: [
       {
         id: 'subscription',
-        title: 'Subscription',
-        type: 'collapse',
-        icon: 'feather icon-box',
-        children: [
-          {
-            id: 'subscription-add',
-            title: 'Add subscription',
-            type: 'item',
-            url: '/subscriptions/add'
-          },
-        ]
+        title: 'Subscriptions',
+        type: 'item',
+        url: '/subscriptions',
+        classes: 'nav-item',
+        icon: 'icon-bell'
       },
       {
-        id: 'api',
-        title: 'API',
+        id: 'subscription-add',
+        title: 'Create subscription',
         type: 'item',
-        url: 'javascript:',
-        classes: 'nav-item disabled',
-        icon: 'feather icon-power',
-        external: true
+        url: '/subscription/add',
+        classes: 'nav-item',
+        icon: 'icon-plus-circle'
       },
     ]
   },
@@ -94,7 +83,7 @@ export const NavigationItems: NavigationItem[] = [
         type: 'item',
         url: '/forms/basic',
         classes: 'nav-item',
-        icon: 'feather icon-file-text'
+        icon: 'icon-file-text'
       },
       {
         id: 'tables',
@@ -102,7 +91,7 @@ export const NavigationItems: NavigationItem[] = [
         type: 'item',
         url: '/tables/bootstrap',
         classes: 'nav-item',
-        icon: 'feather icon-server'
+        icon: 'icon-server'
       }
     ]
   },
@@ -118,7 +107,7 @@ export const NavigationItems: NavigationItem[] = [
         type: 'item',
         url: 'apexchart',
         classes: 'nav-item',
-        icon: 'feather icon-pie-chart'
+        icon: 'icon-pie-chart'
       }
     ]
   }

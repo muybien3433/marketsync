@@ -2,6 +2,7 @@ import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {NgbDropdown, NgbDropdownConfig, NgbDropdownMenu, NgbDropdownToggle} from '@ng-bootstrap/ng-bootstrap';
 import {NgClass} from "@angular/common";
 import screenfull from "screenfull";
+import {KeycloakService} from "keycloak-angular";
 
 @Component({
   selector: 'app-nav-right',
@@ -18,7 +19,7 @@ import screenfull from "screenfull";
 export class NavRightComponent implements OnInit, OnDestroy {
   screenFull = true;
 
-  constructor() {
+  constructor(private keycloakService: KeycloakService) {
     const config = inject(NgbDropdownConfig);
 
     config.placement = 'bottom-right';
@@ -47,5 +48,9 @@ export class NavRightComponent implements OnInit, OnDestroy {
         this.screenFull = screenfull.isFullscreen;
       });
     }
+  }
+
+  logout() {
+    this.keycloakService.logout();
   }
 }
