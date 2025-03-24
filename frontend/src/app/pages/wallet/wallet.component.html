@@ -1,49 +1,47 @@
 <div class="row">
     <div class="col-xl-12 col-md-6">
-        <div class="row">
-            <div class="col-xl-12">
-                <app-card cardTitle="Basic Table" [options]="false" blockClass="table-border-style">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>{{ 'common.name' | translate }}</th>
-                                <th>{{ 'common.count' | translate }}</th>
-                                <th>{{ 'common.currency' | translate }}</th>
-                                <th>{{ 'common.value' | translate }}</th>
-                                <th>{{ 'asset.average.purchase.price' | translate }}</th>
-                                <th>{{ 'common.current.price' | translate }}</th>
-                                <th>{{ 'asset.profit' | translate }}</th>
-                                <th>{{ 'asset.profit.in.percentage' | translate }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <ng-container *ngFor="let assetType of Object.keys(groupedAssets)">
-                                <td class="table-header" colspan="8"></td>
+        <div class="col-xl-12">
+            <app-card cardTitle="Wallet Table" [options]="false" blockClass="table-border-style">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>{{ 'common.name' | translate }}</th>
+                            <th>{{ 'common.count' | translate }}</th>
+                            <th>{{ 'common.value' | translate }}</th>
+                            <th>{{ 'asset.average.purchase.price' | translate }}</th>
+                            <th>{{ 'common.current.price' | translate }}</th>
+                            <th>{{ 'asset.profit' | translate }}</th>
+                            <th>{{ 'asset.profit.in.percentage' | translate }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-container *ngFor="let assetType of Object.keys(groupedAssets)">
+                            <td class="table-header" colspan="8"></td>
 
-                                <tr class="table" *ngFor="let asset of groupedAssets[assetType]">
-                                    <td>({{ asset.symbol }}) {{ asset.name }}</td>
-                                    <td>{{ asset.count }}</td>
-                                    <td>{{ asset.currencyType}}</td>
-                                    <td>{{ asset.value | currency: asset.currencyType}}</td>
-                                    <td>{{ asset.averagePurchasePrice | currency: asset.currencyType}}</td>
-                                    <td>{{ asset.currentPrice | currency: asset.currencyType}}</td>
-                                    <td [ngStyle]="{ color: asset.profit >= 0 ? 'green' : 'red' }">
-                                        {{ asset.profit | currency: asset.currencyType}}
-                                    </td>
-                                    <td [ngStyle]="{ color: asset.profitInPercentage >= 0 ? 'green' : 'red' }">
-                                        {{ asset.profitInPercentage }}%
-                                    </td>
-                                </tr>
-                            </ng-container>
-                            </tbody>
-                        </table>
-                    </div>
-                </app-card>
-            </div>
+                            <tr class="table" *ngFor="let asset of groupedAssets[assetType]">
+                                <td>({{ asset.symbol }}) {{ asset.name }}</td>
+                                <td>{{ asset.count }}</td>
+                                <td>{{ asset.value | currency: asset.currencyType }}</td>
+                                <td>{{ asset.averagePurchasePrice | currency: asset.currencyType }}</td>
+                                <td>{{ asset.currentPrice | currency: asset.currencyType }}</td>
+                                <td [ngStyle]="{ color: asset.profit >= 0 ? 'green' : 'red' }">
+                                    {{ asset.profit | currency: asset.currencyType }}
+                                </td>
+                                <td [ngStyle]="{ color: asset.profitInPercentage >= 0 ? 'green' : 'red' }">
+                                    {{ asset.profitInPercentage }}%
+                                </td>
+                            </tr>
+                        </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </app-card>
         </div>
     </div>
+</div>
 
+<div class="row">
     <div class="col-md-6">
         <app-card cardTitle="Asset Division Chart" [options]="false">
             <apx-chart
@@ -56,5 +54,33 @@
                     [plotOptions]="donutChart.plotOptions"
             ></apx-chart>
         </app-card>
+    </div>
+
+    <div class="col-md-6 h-100">
+        <div class="row g-3 h-100">
+            @for (profit of profits; track profit) {
+                <div class="col-12 h-50">
+                    <app-card [hidHeader]="true" class="h-100">
+                        <h6 class="mb-4">{{ profit.title }}</h6>
+                        <div class="row d-flex align-items-center">
+                            <div class="col-10">
+                                <h3 class="f-w-300 d-flex align-items-center m-b-0">
+                                    <i class="feather {{ profit.icon }} f-30 m-r-10"></i>
+                                    {{ profit.amount | currency:selectedCurrency }}
+                                    {{ profit.percent }}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="m-t-30">
+                            <ngb-progressbar
+                                    type="progress-bar {{ profit.progress_bg }}"
+                                    height="5px"
+                                    [value]="profit.progress">
+                            </ngb-progressbar>
+                        </div>
+                    </app-card>
+                </div>
+            }
+        </div>
     </div>
 </div>

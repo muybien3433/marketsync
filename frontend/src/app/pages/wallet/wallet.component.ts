@@ -10,19 +10,21 @@ import {PreferenceService} from "../../common/service/preference-service";
 import {Router} from "@angular/router";
 import {ApexOptions, ChartComponent} from "ng-apexcharts";
 import {CardComponent} from "../../common/components/card/card.component";
+import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
     selector: 'app-wallet',
-    imports: [CommonModule, CardComponent, ChartComponent, TranslatePipe],
+    imports: [CommonModule, CardComponent, ChartComponent, TranslatePipe, NgbProgressbar, CardComponent],
     templateUrl: './wallet.component.html',
     styleUrls: ['./wallet.component.scss']
 })
-export class WalletComponent implements OnInit {
+export default class WalletComponent implements OnInit {
     protected readonly Object = Object;
     private _assets: AssetAggregate[] = [];
     groupedAssets: { [key: string]: AssetAggregate[] } = {};
     selectedCurrency: CurrencyType;
     donutChart: Partial<ApexOptions>;
+    profits: any[] = [];
 
     constructor(
         private http: HttpClient,
@@ -82,18 +84,7 @@ export class WalletComponent implements OnInit {
                 });
         });
 
-        this.updateChart(totalValues);
-    }
-
-    updateChart(totalValues: { [key: string]: number }) {
-        const labels = Object.keys(this.groupedAssets);
-        const series = labels.map(label => totalValues[label]);
-
-        this.donutChart = {
-            ...this.donutChart,
-            labels,
-            series
-        };
+        this.updateAssetDivisionChart(totalValues);
     }
 
     getTotalValue(): number {
@@ -105,8 +96,7 @@ export class WalletComponent implements OnInit {
 
     getTotalProfit(): number {
         return this._assets.reduce((total, asset) => {
-            const profitInSelectedCurrency = asset.profit * asset.exchangeRateToDesired;
-            return total + profitInSelectedCurrency;
+            return total + (asset.profit * asset.exchangeRateToDesired);
         }, 0);
     }
 
@@ -136,7 +126,45 @@ export class WalletComponent implements OnInit {
     }
 
     addAssetButton() {
-        this.router.navigate(['wallet-add-asset']);
+        this.router.navigate(['wallet/asset/add']);
+    }
+
+    private updateProfitCharts() {
+        this.profits = [
+            {
+                title: 'Profit',
+                icon: this.resolveProfitIcon(),
+                amount: this.getTotalProfit(),
+                progress: 50,
+                design: 'col-md-6',
+                progress_bg: 'progress-c-theme'
+            },
+            {
+                title: 'Profit in %',
+                icon: this.resolveProfitIcon(),
+                percent: this.getTotalProfitInPercentage() + '%',
+                progress: 35,
+                design: 'col-md-6',
+                progress_bg: 'progress-c-theme2'
+            }
+        ];
+    }
+
+    private resolveProfitIcon() {
+        return this.getTotalProfit() > 0 ? 'icon-arrow-up text-c-green' : 'icon-arrow-down text-c-red';
+    }
+
+
+
+    private updateAssetDivisionChart(totalValues: { [key: string]: number }) {
+        const labels = Object.keys(this.groupedAssets);
+        const series = labels.map(label => totalValues[label]);
+
+        this.donutChart = {
+            ...this.donutChart,
+            labels,
+            series
+        };
     }
 
     fetchWalletAssets() {
@@ -145,6 +173,7 @@ export class WalletComponent implements OnInit {
                     next: (assets) => {
                         this._assets = Array.isArray(assets) ? assets : [];
                         this.groupAssetsByType();
+                        this.updateProfitCharts();
                     },
                     error: (err) => {
                         console.error(err);

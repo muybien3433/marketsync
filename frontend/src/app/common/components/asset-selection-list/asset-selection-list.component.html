@@ -1,0 +1,44 @@
+<div class="form-group">
+    <label>{{ 'asset.type' | translate }}</label>
+    <select class="form-control"
+            [(ngModel)]="selectedAssetType"
+            (change)="onAssetTypeSelect($any($event.target).value)">
+        <option *ngFor="let assetType of assetTypeOptions"
+                [value]="assetType">
+            {{ 'asset.' + assetType.toLowerCase() | translate }}
+        </option>
+    </select>
+</div>
+
+<div class="form-control">
+    <div class="asset-list">
+        <div class="search-header" *ngIf="!selectedAsset">
+            <input
+                    [(ngModel)]="searchTerm"
+                    placeholder="{{ 'asset.search.asset' | translate }} {{ _assets.length }}"
+                    class="native-input">
+        </div>
+
+        <div class="search-header" *ngIf="selectedAsset">
+            <div class="native-input d-flex align-items-center gap-3" *ngIf="selectedAsset">
+                <span class="symbol">({{ selectedAsset.symbol }})</span>
+                <span>{{ selectedAsset.name }}</span>
+                <div class="ms-auto">
+                    <button class="btn btn-outline-warning"
+                            (click)="resetPickedAsset()">
+                        {{ 'common.change' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!selectedAsset">
+            <div *ngFor="let asset of _assets | filterByName: searchTerm"
+                 class="asset-item"
+                 (click)="onAssetSelect(asset)">
+                <span class="symbol">({{ asset.symbol }})</span>
+                {{ asset.name }}
+            </div>
+        </div>
+    </div>
+</div>

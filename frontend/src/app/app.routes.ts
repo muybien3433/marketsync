@@ -1,19 +1,26 @@
 import { Routes } from '@angular/router';
 import { AdminComponent } from "./admin/admin.component";
 import { AuthGuard } from "./common/service/auth.guard";
-import { WalletComponent } from "./pages/wallet/wallet.component";
 
 export const routes: Routes = [
     {
-        path: '',
-        pathMatch: 'full',
+        path: 'wallet',
         component: AdminComponent,
         children: [
             {
-                path: '',
+                path: 'assets',
                 canActivate: [AuthGuard],
-                component: WalletComponent
-                // loadComponent: () => import('./pages/wallet/wallet.component').then((c) => c.WalletComponent)
+                loadComponent: () => import('./pages/wallet/wallet.component')
+            },
+            {
+                path: 'asset/add',
+                canActivate: [AuthGuard],
+                loadComponent: () => import('./pages/wallet/wallet-add-asset/wallet-add-asset.component')
+            },
+            {
+                path: 'assets/history',
+                canActivate: [AuthGuard],
+                loadComponent: () => import('./pages/wallet/wallet-asset-history/wallet-asset-history.component')
             },
             {
                 path: 'apexchart',

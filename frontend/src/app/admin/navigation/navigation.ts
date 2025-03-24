@@ -33,7 +33,7 @@ export const NavigationItems: NavigationItem[] = [
         id: 'wallet-asset-add',
         title: 'Add asset',
         type: 'item',
-        url: '/wallet/asset/add',
+          url: '/wallet/asset/add',
         classes: 'nav-item',
         icon: 'icon-plus-circle'
       },

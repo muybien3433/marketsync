@@ -1,0 +1,34 @@
+.native-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  background: #f8f9fa;
+  border-bottom: 3px solid #e9ecef;
+}
+
+.search-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8f9fa;
+  padding: 0;
+  margin-bottom: 5px;
+}
+
+.asset-list {
+  max-height: 180px;
+  overflow-y: auto;
+  background: #f8f9fa;
+  color: black;
+}
+
+.asset-item {
+  font-size: 16px;
+  padding: 2px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.symbol {
+  color: #6c757d;
+}
