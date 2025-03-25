@@ -21,4 +21,13 @@ export class CurrencyService {
     getSelectedCurrencyType() {
         return this.selectedCurrencyType.getValue();
     }
+
+    setGlobalCurrencyType(currencyType: CurrencyType): void {
+        this.preferenceService.setPreferredCurrency(currencyType);
+        this.setSelectedCurrencyType(currencyType);
+        }
+
+    getGlobalCurrencyType() {
+        return this.preferenceService.getPreferredCurrency();
+    }
 }

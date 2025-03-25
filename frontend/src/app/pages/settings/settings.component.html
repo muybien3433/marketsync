@@ -1,1 +1,30 @@
-<p>settings works!</p>
+<div class="row">
+    <div class="col-sm-12">
+        <app-card cardTitle="Settings Component" [options]="false">
+            <h4>
+                {{ 'common.currency' | translate }}
+                <hr/>
+            </h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <form action="javascript:">
+                        <div class="form-group">
+                            <h5>{{ 'settings.currency.header' | translate }}</h5>
+                            <h6>{{ 'settings.currency.subheader' | translate }}</h6>
+                            <app-currency-change-option></app-currency-change-option>
+                        </div>
+
+                        <div *ngIf="showSuccessMessage" class="alert alert-success mt-1">
+                            {{ 'settings.save.success' | translate }}
+                        </div>
+                        <button
+                                type="submit"
+                                (click)="saveCurrencySettings()"
+                                class="btn btn-primary">{{ 'common.save' | translate }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </app-card>
+    </div>
+</div>

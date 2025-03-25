@@ -119,17 +119,19 @@ public class CoinmarketcapScraper extends FinanceUpdater {
                                 if (!name.isBlank() && !symbol.isBlank() && !priceText.isBlank()) {
                                     try {
                                         BigDecimal price = new BigDecimal(priceText);
-                                        String uri = name.replaceAll("[ .()]", "-").toLowerCase();
+                                        if (price.compareTo(BigDecimal.ZERO) > 0) {
+                                            String uri = name.replaceAll("[ .()]", "-").toLowerCase();
 
-                                        cryptos.put(uri, new FinanceDetail(
-                                                name,
-                                                symbol,
-                                                uri,
-                                                price,
-                                                CurrencyType.USD.name(),
-                                                AssetType.CRYPTOS.name(),
-                                                LocalDateTime.now()
-                                        ));
+                                            cryptos.put(uri, new FinanceDetail(
+                                                    name,
+                                                    symbol,
+                                                    uri,
+                                                    price,
+                                                    CurrencyType.USD.name(),
+                                                    AssetType.CRYPTOS.name(),
+                                                    LocalDateTime.now()
+                                            ));
+                                        }
                                     } catch (NumberFormatException e) {
                                         log.warn("Skipping invalid price for {}: {}", name, priceText);
                                     }

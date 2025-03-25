@@ -16,6 +16,7 @@
     "currency": "Currency",
     "type.to.search": "Type to search",
     "change": "Change",
+    "save": "Save",
     "enter.price": "Enter price"
   },
 
@@ -24,7 +25,8 @@
     "register": "Sign Up",
     "logout": "Logout",
     "main": "Main",
-    "settings": "Settings"
+    "settings": "Settings",
+    "preferences": "Preferences"
   },
 
   "asset": {
@@ -73,6 +75,12 @@
     "price": "The price of",
     "currently": "is currently",
     "no.subscription.message": "Ops... You don't have any subscriptions yet! No worries just click the button below."
+  },
+
+  "settings": {
+    "save.success": "Saved successfully",
+    "currency.header": "This option set global preferred currency",
+    "currency.subheader": "This affects wallet's profit calculation and default currency when you add asset/subscription"
   },
 
   "success": {

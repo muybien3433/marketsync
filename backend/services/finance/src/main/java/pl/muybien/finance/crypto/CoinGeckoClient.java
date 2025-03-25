@@ -2,7 +2,9 @@ package pl.muybien.finance.crypto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,11 +78,23 @@ public class CoinGeckoClient extends FinanceUpdater {
 
             List<CoinGeckoDetail> details = objectMapper.readValue(response.body(), new TypeReference<>() {});
             details.forEach(geckoDetail -> {
+                String name = geckoDetail.name();
+                String symbol = geckoDetail.symbol();
+                String id = geckoDetail.id();
+                BigDecimal currentPrice = geckoDetail.currentPrice();
+
+                if (name == null || name.isBlank() ||
+                        symbol == null || symbol.isBlank() ||
+                        id == null || id.isBlank() ||
+                        currentPrice == null || currentPrice.compareTo(BigDecimal.ZERO) <= 0) {
+                    return;
+                }
+
                 FinanceDetail financeDetail = new FinanceDetail(
-                        geckoDetail.name(),
-                        geckoDetail.symbol().toUpperCase(),
-                        geckoDetail.id(),
-                        geckoDetail.currentPrice(),
+                        name,
+                        symbol.toUpperCase(),
+                        id,
+                        currentPrice,
                         CurrencyType.USD.name(),
                         AssetType.CRYPTOS.name(),
                         LocalDateTime.now()

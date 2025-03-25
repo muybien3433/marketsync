@@ -3,10 +3,11 @@ import { Location } from '@angular/common';
 import { NavigationItem } from '../../navigation';
 import { NavItemComponent } from '../nav-item/nav-item.component';
 import { NavCollapseComponent } from '../nav-collapse/nav-collapse.component';
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-nav-group',
-  imports: [NavItemComponent, NavCollapseComponent],
+  imports: [NavItemComponent, NavCollapseComponent, TranslatePipe],
   templateUrl: './nav-group.component.html',
   styleUrls: ['./nav-group.component.scss']
 })

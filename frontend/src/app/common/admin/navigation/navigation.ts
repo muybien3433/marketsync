@@ -17,13 +17,13 @@ export interface NavigationItem {
 export const NavigationItems: NavigationItem[] = [
   {
     id: 'wallet',
-    title: 'Wallet',
+    title: 'common.wallet',
     type: 'group',
     icon: 'icon-ui',
     children: [
       {
         id: 'wallet',
-        title: 'Wallet',
+        title: 'common.wallet',
         type: 'item',
         url: '/wallet/assets',
         classes: 'nav-item',
@@ -31,7 +31,7 @@ export const NavigationItems: NavigationItem[] = [
       },
       {
         id: 'wallet-asset-add',
-        title: 'Add asset',
+        title: 'asset.add.asset',
         type: 'item',
           url: '/wallet/asset/add',
         classes: 'nav-item',
@@ -39,7 +39,7 @@ export const NavigationItems: NavigationItem[] = [
       },
       {
         id: 'wallet-asset-history',
-        title: 'History',
+        title: 'common.history',
         type: 'item',
         url: '/wallet/assets/history',
         classes: 'nav-item',
@@ -49,13 +49,13 @@ export const NavigationItems: NavigationItem[] = [
   },
   {
     id: 'subscription',
-    title: 'Subscriptions',
+    title: 'subscription.subscriptions',
     type: 'group',
     icon: 'icon-ui',
     children: [
       {
         id: 'subscription',
-        title: 'Subscriptions',
+        title: 'subscription.subscriptions',
         type: 'item',
         url: '/subscription/subscriptions',
         classes: 'nav-item',
@@ -63,7 +63,7 @@ export const NavigationItems: NavigationItem[] = [
       },
       {
         id: 'subscription-add',
-        title: 'Add subscription',
+        title: 'subscription.add.subscription',
         type: 'item',
         url: '/subscription/add',
         classes: 'nav-item',
@@ -73,13 +73,13 @@ export const NavigationItems: NavigationItem[] = [
   },
   {
     id: 'settings',
-    title: 'Preferences',
+    title: 'navbar.preferences',
     type: 'group',
     icon: 'icon-ui',
     children: [
       {
         id: 'currency-preferences',
-        title: 'Currency',
+        title: 'common.currency',
         type: 'item',
         url: '/settings/currency',
         classes: 'nav-item',

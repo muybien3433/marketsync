@@ -46,8 +46,8 @@ export default class WalletEditAssetComponent {
       this.editAssetForm = this.fb.group({
         assetType: [{ value: asset.assetType, disabled: true }],
         uri: [{ value: asset.name, disabled: true }],
-        count: [asset.count, [Validators.required, Validators.min(0.001)]],
-        purchasePrice: [asset.purchasePrice, [Validators.required, Validators.min(0.01)]],
+        count: [asset.count, [Validators.required, Validators.min(0.0000000000001)]],
+        purchasePrice: [asset.purchasePrice, [Validators.required, Validators.min(0.0000000000001)]],
         currency: [asset.currencyType, [Validators.required]]
       });
     } else {

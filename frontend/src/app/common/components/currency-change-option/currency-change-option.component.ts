@@ -24,7 +24,7 @@ export class CurrencyChangeOptionComponent implements OnInit {
   constructor(private currencyService: CurrencyService) {}
 
   ngOnInit(): void {
-    this.selectedCurrency = this.currencyService.getSelectedCurrencyType();
+      this.selectedCurrency = this.currencyService.getGlobalCurrencyType();
   }
 
   onCurrencyChange(currency: CurrencyType): void {

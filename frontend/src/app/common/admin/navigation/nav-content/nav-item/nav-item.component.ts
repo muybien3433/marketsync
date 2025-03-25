@@ -2,10 +2,11 @@ import { Component, inject, input } from '@angular/core';
 import {Location, NgClass, NgTemplateOutlet} from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NavigationItem } from '../../navigation';
+import {TranslatePipe} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-nav-item',
-  imports: [RouterModule, NgClass, NgTemplateOutlet],
+  imports: [RouterModule, NgClass, NgTemplateOutlet, TranslatePipe],
   templateUrl: './nav-item.component.html',
   styleUrls: ['./nav-item.component.scss']
 })

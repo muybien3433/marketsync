@@ -9,7 +9,7 @@ public class FinanceDetailDTOMapper {
                 financeDetail.name(),
                 financeDetail.symbol(),
                 financeDetail.uri(),
-                financeDetail.price(),
+                financeDetail.price().toPlainString(),
                 financeDetail.currencyDetail(),
                 financeDetail.assetType(),
                 financeDetail.lastUpdated()

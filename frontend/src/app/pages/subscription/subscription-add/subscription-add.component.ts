@@ -63,9 +63,9 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
             uri: ['', [Validators.required, Validators.minLength(1)]],
             assetType: ['', Validators.required],
             notificationType: ['EMAIL', Validators.required],
-            currencyType: [currencyService.getSelectedCurrencyType(), [Validators.required]],
+            currencyType: [currencyService.getGlobalCurrencyType(), [Validators.required]],
             condition: ['increase', Validators.required],
-            value: ['0.01', [Validators.required, Validators.min(0)]],
+            value: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
         });
     }
 

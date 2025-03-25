@@ -52,7 +52,7 @@ export const routes: Routes = [
     },
     {
         path: 'settings',
-        canActivate: [AuthGuard],
+        component: AdminComponent,
         children: [
             {
                 path: 'currency',

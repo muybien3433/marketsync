@@ -34,7 +34,7 @@ public class FinanceService {
                 financeDetail.name(),
                 financeDetail.symbol(),
                 financeDetail.uri(),
-                financeDetail.price(),
+                financeDetail.price().toPlainString(),
                 financeDetail.currencyDetail(),
                 financeDetail.assetType(),
                 financeDetail.lastUpdated()
@@ -114,12 +114,12 @@ public class FinanceService {
                     key -> currencyService.getCurrencyPairExchange(key, desiredCurrency)
             );
 
-            BigDecimal updatedPrice = detail.price().multiply(rate);
+            BigDecimal updatedPrice = new BigDecimal(detail.price()).multiply(rate);
             return new FinanceDetailDTO(
                     detail.name(),
                     detail.symbol(),
                     detail.uri(),
-                    updatedPrice,
+                    updatedPrice.toPlainString(),
                     desiredCurrency.name(),
                     detail.assetType(),
                     detail.lastUpdated()

@@ -16,6 +16,7 @@
     "currency": "Waluta",
     "type.to.search": "Wpisz by wyszukać",
     "change": "Zmień",
+    "save": "Zapisz",
     "enter.price": "Wpisz cenę"
   },
 
@@ -24,7 +25,8 @@
     "register": "Zarejestruj się",
     "logout": "Wyloguj się",
     "main": "Menu",
-    "settings": "Ustawienia"
+    "settings": "Ustawienia",
+    "preferences": "Preferencje"
   },
 
   "asset": {
@@ -53,7 +55,7 @@
   },
 
   "subscription": {
-    "subscriptions": "Subskrybje",
+    "subscriptions": "Subskrybcje",
     "add.subscription": "Dodaj subskrybcję",
     "notification.type": "Powiadom poprzez",
     "condition": "Warunek",
@@ -69,6 +71,12 @@
     "price": "Ceny",
     "currently": "kosztuje obecnie",
     "no.subscription.message": "Ups... Nie posiadasz aktualnie żadnych subskrybcji! Nic straconego, kliknij przycisk poniżej."
+  },
+
+  "settings": {
+    "save.success": "Zapisano pomyślnie",
+    "currency.header": "Ta opcja zmieni preferowaną walutę",
+    "currency.subheader": "Obliczenia profitu w portfelu, domyślna przy dodawaniu aktywów/subskrybcji."
   },
 
   "success": {

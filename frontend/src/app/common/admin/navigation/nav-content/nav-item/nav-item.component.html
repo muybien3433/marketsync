@@ -5,12 +5,12 @@
         <ng-container *ngTemplateOutlet="itemIcon"></ng-container>
 
         @if (item().icon) {
-          <span class="pcoded-mtext">{{ item().title }}</span>
+          <span class="pcoded-mtext">{{ item().title | translate }}</span>
         } @else {
-          {{ item().title }}
+          {{ item().title | translate }}
         }
         <ng-template #directTitle>
-          {{ item().title }}
+          {{ item().title | translate }}
         </ng-template>
       </a>
     </li>
@@ -20,12 +20,12 @@
       <a [target]="item().target ? '_blank' : '_self'" [href]="item().url">
         <ng-container *ngTemplateOutlet="itemIcon"></ng-container>
         @if (item().icon) {
-          <span class="pcoded-mtext">{{ item().title }}</span>
+          <span class="pcoded-mtext">{{ item().title | translate }}</span>
         } @else {
-          {{ item().title }}
+          {{ item().title | translate }}
         }
         <ng-template #directTitle>
-          {{ item().title }}
+          {{ item().title | translate }}
         </ng-template>
       </a>
     </li>
