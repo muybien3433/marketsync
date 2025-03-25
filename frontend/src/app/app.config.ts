@@ -2,10 +2,10 @@ import {
     APP_INITIALIZER,
     ApplicationConfig,
     importProvidersFrom,
-    provideZoneChangeDetection, Provider
+    provideZoneChangeDetection,
+    Provider
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
@@ -13,34 +13,34 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import {
     HTTP_INTERCEPTORS,
     HttpClient,
-    provideHttpClient, withFetch,
+    provideHttpClient,
+    withFetch,
     withInterceptorsFromDi
 } from '@angular/common/http';
 import {KeycloakService } from 'keycloak-angular';
 import { provideAnimations } from "@angular/platform-browser/animations";
-import { environmentProd } from "../environments/environment.prod";
 import { TokenInterceptor } from "./common/service/token-interceptor";
+import {environment} from "../environments/environment";
 
-const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
-    new TranslateHttpLoader(http, '../assets/i18n/', '.json');
+const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
+    new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
 function initializeKeycloak(keycloak: KeycloakService): () => Promise<boolean> {
     return async () => {
         if (typeof window === 'undefined') return true;
-
         try {
             await keycloak.init({
                 config: {
-                    url: environmentProd.keycloakUrl,
-                    realm: environmentProd.keycloakRealm,
-                    clientId: environmentProd.keycloakClientId
+                    url: environment.keycloakUrl,
+                    realm: environment.keycloakRealm,
+                    clientId: environment.keycloakClientId
                 },
                 initOptions: {
                     onLoad: 'check-sso',
                     checkLoginIframe: false,
                     flow: 'standard',
                 },
-                bearerExcludedUrls: ['']
+                // bearerExcludedUrls: ['/assets/i18n/']
             });
             return true;
         } catch (error) {
@@ -55,7 +55,7 @@ const KeycloakInitializerProvider: Provider = {
     useFactory: initializeKeycloak,
     multi: true,
     deps: [KeycloakService]
-}
+};
 
 const KeycloakBearerInterceptorProvider: Provider = {
     provide: HTTP_INTERCEPTORS,
@@ -68,18 +68,25 @@ export const appConfig: ApplicationConfig = {
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(routes),
         provideClientHydration(),
-        provideHttpClient(withInterceptorsFromDi(), withFetch()),
+        provideHttpClient(
+            withInterceptorsFromDi(),
+            withFetch()
+        ),
         KeycloakService,
+        TranslateService,
         KeycloakInitializerProvider,
         KeycloakBearerInterceptorProvider,
-        importProvidersFrom(BrowserModule, [TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: httpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
-        ]),
+        importProvidersFrom(
+            BrowserModule,
+            TranslateModule.forRoot({
+                loader: {
+                    provide: TranslateLoader,
+                    useFactory: httpLoaderFactory,
+                    deps: [HttpClient]
+                },
+                isolate: false
+            })
+        ),
         provideAnimations()
     ],
 };

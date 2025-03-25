@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TranslatePipe} from "@ngx-translate/core";
 import {HttpClient} from '@angular/common/http';
 import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
@@ -22,27 +22,39 @@ import {CardComponent} from "../../../common/components/card/card.component";
   templateUrl: './wallet-asset-history.component.html',
   styleUrl: './wallet-asset-history.component.scss'
 })
-export default class WalletAssetHistoryComponent {
+export default class WalletAssetHistoryComponent implements OnInit {
   protected _assets: AssetHistory[] = [];
+  isLoading: boolean = true;
 
-  constructor(private http: HttpClient, private router: Router) {
-    this.fetchWalletAssetsHistory();
+  constructor(private http: HttpClient, private router: Router) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.fetchWalletAssetsHistory();
+
+    }, 200)
+  }
+
+  editAsset(asset: AssetHistory) {
+    this.router.navigate(['wallet/asset/edit'], { state: {asset} });
+  }
+
+  addAssetButton() {
+    this.router.navigate(['wallet/asset/add']);
   }
 
   fetchWalletAssetsHistory() {
     this.http.get<AssetHistory[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET_HISTORY}`).subscribe({
       next: (assets) => {
         this._assets = Array.isArray(assets) ? assets : [];
+        this.isLoading = false;
       },
       error: (err) => {
         console.error(err);
         this._assets = [];
+        this.isLoading = false;
       },
     });
-  }
-
-  editAsset(asset: AssetHistory) {
-    this.router.navigate(['wallet-edit-asset'], { state: {asset} });
   }
 
   deleteAsset(assetId: number) {
@@ -54,9 +66,5 @@ export default class WalletAssetHistoryComponent {
         console.error(err);
       }
     })
-  }
-
-  addAssetButton() {
-    this.router.navigate(['wallet-add-asset']);
   }
 }

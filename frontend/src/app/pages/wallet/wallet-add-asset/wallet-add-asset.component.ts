@@ -16,10 +16,11 @@ import {
 import {CurrencyType} from "../../../common/model/currency-type";
 import {AssetType} from "../../../common/model/asset-type";
 import {AssetDetail} from "../../../common/model/asset-detail";
-import {AssetService} from "../../../common/service/asset.service";
+import {AssetService} from "../../../common/service/asset-service";
 import {CurrencyService} from "../../../common/service/currency-service";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
+import {NumberInputDirective} from "../../../common/service/number-input.directive";
 
 @Component({
     selector: 'app-wallet-add-asset',
@@ -32,7 +33,8 @@ import {CardComponent} from "../../../common/components/card/card.component";
         AssetSelectionListComponent,
         AssetPriceDisplayComponent,
         CurrencyChangeOptionComponent,
-        CardComponent
+        CardComponent,
+        NumberInputDirective
     ],
     templateUrl: './wallet-add-asset.component.html',
     styleUrls: ['./wallet-add-asset.component.scss'],

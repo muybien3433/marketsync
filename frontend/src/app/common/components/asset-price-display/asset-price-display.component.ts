@@ -4,7 +4,7 @@ import {TranslatePipe} from "@ngx-translate/core";
 import {combineLatest, Subscription} from "rxjs";
 import {AssetDetail} from "../../model/asset-detail";
 import {CurrencyType} from "../../model/currency-type";
-import {AssetService} from "../../service/asset.service";
+import {AssetService} from "../../service/asset-service";
 import {CurrencyService} from "../../service/currency-service";
 
 @Component({

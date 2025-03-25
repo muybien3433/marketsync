@@ -1,11 +1,15 @@
+<div *ngIf="isLoading" class="loading-state">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
 <div class="row">
-    <app-card cardTitle="Wallet Table" [options]="false" blockClass="table-border-style">
-        <ng-container *ngIf="_assets.length === 0; else assetTable">
+    <app-card cardTitle="Wallet History Table" [options]="false" blockClass="table-border-style">
+        <ng-container *ngIf="!_assets.length && !isLoading; else assetTable">
             <div class="empty-wallet-history-text">
                 <h3>{{ 'asset.no.assets.message' | translate }}</h3>
-                <div class="add-asset-button">
-                    <button (click)="addAssetButton()">{{ 'asset.add.asset' | translate }}</button>
-                </div>
+                <button class="btn btn-primary" (click)="addAssetButton()">{{ 'asset.add.asset' | translate }}</button>
             </div>
         </ng-container>
 

@@ -9,7 +9,7 @@ import {FilterByNamePipe} from "../../service/filter-by-name-pipe";
 import {AssetDetail} from "../../model/asset-detail";
 import {AssetType} from "../../model/asset-type";
 import {CurrencyType} from "../../model/currency-type";
-import {AssetService} from "../../service/asset.service";
+import {AssetService} from "../../service/asset-service";
 import {CurrencyService} from "../../service/currency-service";
 import {API_ENDPOINTS} from "../../service/api-endpoints";
 
@@ -49,7 +49,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.currencySubscription = this.currencyService.selectedCurrencyType$.subscribe(currency => {
             this.currentCurrency = currency;
-            this.fetchAssets(AssetType.CRYPTO, currency);
+            this.fetchAssets(this.selectedAssetType, currency);
         })
     }
 

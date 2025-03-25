@@ -7,7 +7,6 @@ import pl.muybien.exception.InvalidSubscriptionParametersException;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.exception.SubscriptionNotFoundException;
 import pl.muybien.finance.FinanceClient;
-import pl.muybien.finance.FinanceResponse;
 import pl.muybien.subscription.data.Subscription;
 import pl.muybien.subscription.data.SubscriptionDetail;
 import pl.muybien.subscription.data.SubscriptionRepository;
@@ -33,6 +32,8 @@ public class SubscriptionService {
 
         if (request.upperBoundPrice() == null && request.lowerBoundPrice() == null) {
             throw new InvalidSubscriptionParametersException("Upper or lower bound price is mandatory");
+        } else if (request.upperBoundPrice() != null && request.lowerBoundPrice() != null) {
+            throw new InvalidSubscriptionParametersException("Only one, upper or lower bound price can be specified");
         }
 
         String uri = request.uri().trim().toLowerCase();
@@ -45,8 +46,6 @@ public class SubscriptionService {
                         }
                 );
 
-        Double upperBoundPrice = resolveBoundByCurrency(request.upperBoundPrice(), request.currencyType(), finance);
-        Double lowerBoundPrice = resolveBoundByCurrency(request.lowerBoundPrice(), request.currencyType(), finance);
         String target = resolveTargetByNotificationType(request.notificationType(), customerEmail, phoneNumber);
 
         var subscriptionDetail = new SubscriptionDetail(
@@ -56,8 +55,8 @@ public class SubscriptionService {
                 target,
                 finance.name(),
                 CurrencyType.valueOf(request.currencyType()),
-                upperBoundPrice,
-                lowerBoundPrice,
+                request.upperBoundPrice(),
+                request.lowerBoundPrice(),
                 AssetType.valueOf(finance.assetType()),
                 NotificationType.valueOf(request.notificationType()),
                 LocalDateTime.now()
@@ -65,18 +64,6 @@ public class SubscriptionService {
 
         subscription.getSubscriptionDetails().add(subscriptionDetail);
         subscriptionRepository.save(subscription);
-    }
-
-    private Double resolveBoundByCurrency(Double price, String currencyType, FinanceResponse finance) {
-        if (price == null) {
-            return null;
-        }
-
-        if (!currencyType.equals(finance.currency())) {
-            BigDecimal exchange = financeClient.findExchangeRate(currencyType, finance.currency());
-            price = BigDecimal.valueOf(price).multiply(exchange).doubleValue();
-        }
-        return price;
     }
 
     private String resolveTargetByNotificationType(String notificationType, String customerEmail, String phoneNumber) {
@@ -123,7 +110,21 @@ public class SubscriptionService {
         return subscriptionRepository.findAll().stream()
                 .flatMap(s -> s.getSubscriptionDetails().stream()
                         .filter(d -> d.customerId().equals(customerId)))
-                .map(detailDTOMapper::toDTO)
+                .map(sDetail -> detailDTOMapper.toDTO(sDetail, resolveCurrentPrice(sDetail)))
                 .collect(Collectors.toList());
+    }
+
+    private BigDecimal resolveCurrentPrice(SubscriptionDetail subscriptionDetail) {
+        var finance = financeClient
+                .findFinanceByAssetTypeAndUri(subscriptionDetail.assetType().name(), subscriptionDetail.uri());
+
+        BigDecimal currentPrice = finance.price();
+        if (!finance.currency().equalsIgnoreCase(subscriptionDetail.requestedCurrency().name())) {
+            var exchange = financeClient
+                    .findExchangeRate(finance.currency(), subscriptionDetail.requestedCurrency().name());
+
+            currentPrice = currentPrice.multiply(exchange);
+        }
+        return currentPrice;
     }
 }

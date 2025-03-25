@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { WalletFooterNavbarComponent } from '../wallet-footer-navbar/wallet-footer-navbar.component';
+import {Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -9,22 +8,25 @@ import {environment} from '../../../../environments/environment';
 import {CurrencyType} from "../../../common/model/currency-type";
 import {AssetHistory} from "../../../common/model/asset-history";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
+import {CardComponent} from "../../../common/components/card/card.component";
+import {NumberInputDirective} from "../../../common/service/number-input.directive";
 
 @Component({
   selector: 'app-wallet-edit-asset',
   standalone: true,
-  imports: [
-    WalletFooterNavbarComponent,
-    FormsModule,
-    NgIf,
-    ReactiveFormsModule,
-    TranslatePipe,
-    NgForOf
-  ],
+    imports: [
+        FormsModule,
+        NgIf,
+        ReactiveFormsModule,
+        TranslatePipe,
+        CardComponent,
+        NgForOf,
+        NumberInputDirective
+    ],
   templateUrl: './wallet-edit-asset.component.html',
-  styleUrls: ['./wallet-edit-asset.component.css']
+  styleUrls: ['./wallet-edit-asset.component.scss']
 })
-export class WalletEditAssetComponent {
+export default class WalletEditAssetComponent {
   editAssetForm!: FormGroup;
   isSubmitting = false;
   errorMessage: string = '';
@@ -46,7 +48,16 @@ export class WalletEditAssetComponent {
         uri: [{ value: asset.name, disabled: true }],
         count: [asset.count, [Validators.required, Validators.min(0.001)]],
         purchasePrice: [asset.purchasePrice, [Validators.required, Validators.min(0.01)]],
-        currency: [asset.currencyType, [Validators.required, Validators.minLength(3)]],
+        currency: [asset.currencyType, [Validators.required]]
+      });
+    } else {
+      this.router.navigate(['wallet/assets/history'], { state: {asset} });
+      this.editAssetForm = this.fb.group({
+        assetType: [{ value: '', disabled: true }],
+        uri: [{ value: '', disabled: true }],
+        count: [0, [Validators.required, Validators.min(0.001)]],
+        purchasePrice: [0, [Validators.required, Validators.min(0.01)]],
+        currency: ['', [Validators.required]]
       });
     }
   }
@@ -58,17 +69,18 @@ export class WalletEditAssetComponent {
 
     this.isSubmitting = true;
 
+    const formValue = this.editAssetForm.getRawValue();
     const assetData = {
-      assetType: this.editAssetForm.get('assetType')?.value,
-      uri: this.editAssetForm.get('uri')?.value,
-      count: this.editAssetForm.get('count')?.value,
-      purchasePrice: this.editAssetForm.get('purchasePrice')?.value,
-      currency: this.editAssetForm.get('currency')?.value,
+      assetType: formValue.assetType,
+      uri: formValue.uri,
+      count: formValue.count,
+      purchasePrice: formValue.purchasePrice,
+      currency: formValue.currency,
     };
 
     this.editAsset(assetData)?.subscribe({
       next: () => {
-        this.router.navigate(['wallet-asset-history']);
+        this.router.navigate(['wallet/assets/history']);
         this.isSubmitting = false;
       },
       error: () => {

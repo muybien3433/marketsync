@@ -1,10 +1,10 @@
 import { bootstrapApplication } from "@angular/platform-browser";
 import { enableProdMode } from "@angular/core";
 import { AppComponent } from "./app/app.component";
-import { environmentProd } from "./environments/environment.prod";
 import { appConfig } from './app/app.config';
+import {environment} from "./environments/environment";
 
-if (environmentProd) {
+if (environment.production == true) {
     enableProdMode();
 }
 

@@ -47,10 +47,8 @@ public class SubscriptionScheduleChecker {
             var finance = financeClient.findFinanceByAssetTypeAndUri(
                     subscriptionDetails.getFirst().assetType().name(), uri);
 
-            double currentPrice = finance.price().doubleValue();
-
             subscriptionDetails.forEach(s ->
-                    subscriptionComparator.priceMetSubscriptionConditionCheck(currentPrice, s)
+                    subscriptionComparator.priceMetSubscriptionConditionCheck(finance, s)
             );
         }
     }

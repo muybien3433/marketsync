@@ -5,19 +5,19 @@
             <form [formGroup]="addAssetForm" (ngSubmit)="onSubmit()">
                 <div>
                     <div class="form-group">
-                        <label>{{ 'common.asset' | translate }}</label>
                         <app-asset-selection-list (assetChanged)="onAssetChange($event)"></app-asset-selection-list>
                     </div>
 
                     <div class="form-group">
                         <label for="count">{{ 'common.count' | translate }}</label>
                         <input
-                                type="number"
+                                type="text"
                                 class="form-control"
                                 id="count"
                                 formControlName="count"
                                 placeholder="Enter count"
                                 required
+                                appNumberInput
                         />
                     </div>
                     <div *ngIf="addAssetForm.get('count')?.invalid">
@@ -27,12 +27,13 @@
                     <div class="form-group">
                         <label for="purchasePrice">{{ 'asset.purchase.price' | translate }}</label>
                         <input
-                                type="number"
+                                type="text"
                                 class="form-control"
                                 id="purchasePrice"
                                 formControlName="purchasePrice"
                                 placeholder="Enter purchase price"
                                 required
+                                appNumberInput
                         />
                         <div *ngIf="addAssetForm.get('purchasePrice')?.invalid">
                             <small class="error">{{ 'error.price.should.be.positive' | translate }}</small>

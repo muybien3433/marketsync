@@ -1,0 +1,67 @@
+<div class="row justify-content-center">
+    <div class="col-sm-5">
+        <app-card cardTitle="Subscription Add Subscription">
+            <h5>{{ 'subscription.title' | translate }}</h5>
+            <h6 class="subheader">{{ 'subscription.subtitle' | translate }}</h6>
+            <form [formGroup]="addSubscriptionForm" (ngSubmit)="onSubmit()">
+
+                <div class="form-group">
+                    <label>{{ 'subscription.notification.type' | translate }}</label>
+                    <select class="form-control" formControlName="notificationType">
+                        <option value="EMAIL">E-MAIL</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <app-asset-selection-list (assetChanged)="onAssetChange($event)"></app-asset-selection-list>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>{{ 'subscription.goes' | translate }}</label>
+                    <select class="form-control" formControlName="condition">
+                        <option value="increase">{{ 'subscription.above' | translate }}</option>
+                        <option value="decrease">{{ 'subscription.below' | translate }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="value">{{ 'subscription.price' | translate }}</label>
+                    <div class="value">
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="value"
+                                formControlName="value"
+                                placeholder="{{ 'common.enter.price' | translate }}"
+                                required
+                                appNumberInput
+                        >
+                    </div>
+                    <div *ngIf="addSubscriptionForm.get('price')?.invalid">
+                        <small class="error">{{ 'error.price.should.be.positive' | translate }}</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>{{ 'common.currency' | translate }}</label>
+                    <app-currency-change-option></app-currency-change-option>
+
+                    <div *ngIf="addSubscriptionForm.get('currencyType')?.invalid">
+                        <small class="error">{{ 'error.currency.is.required' | translate }}</small>
+                    </div>
+                </div>
+
+                <app-asset-price-display></app-asset-price-display>
+
+                <button type="submit" class="btn btn-primary" (click)="onSubmit()">
+                    {{ 'subscription.add.subscription' | translate }}
+                </button>
+
+                <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+            </form>
+        </app-card>
+    </div>
+</div>

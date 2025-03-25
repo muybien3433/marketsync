@@ -1,39 +1,71 @@
-<form class="edit-asset-form" [formGroup]="editAssetForm" (ngSubmit)="onSubmit()">
-    <div>
-        <div>
-            <label for="uri">{{ 'asset.name' | translate }}</label>
-            <input type="text" id="uri" formControlName="uri" readonly/>
-        </div>
+<div class="row justify-content-center">
+    <div class="col-sm-5">
+        <app-card cardTitle="Wallet Edit Asset">
+            <h5>{{ 'asset.edit.asset' | translate }}</h5>
+            <form [formGroup]="editAssetForm" (ngSubmit)="onSubmit()">
+                <div>
+                    <div class="form-group">
+                        <label for="uri">{{ 'asset.name' | translate }}</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="uri"
+                                formControlName="uri"
+                                readonly
+                        />
+                    </div>
 
-        <div>
-            <label for="count">{{ 'common.count' | translate }}</label>
-            <input type="number" id="count" formControlName="count" min="0.01" required/>
-            <div *ngIf="editAssetForm.get('count')?.invalid && editAssetForm.get('count')?.touched">
-                <small class="error">{{ 'common.count.error' | translate }}</small>
-            </div>
-        </div>
+                    <div class="form-group">
+                        <label for="count">{{ 'common.count' | translate }}</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="count"
+                                formControlName="count"
+                                required
+                                appNumberInput
+                        />
+                    </div>
+                    <div *ngIf="editAssetForm.get('count')?.invalid">
+                        <small class="error">{{ 'error.count.should.be.positive' | translate }}</small>
+                    </div>
 
-        <div>
-            <label for="purchasePrice">{{ 'asset.purchase.price' | translate }}</label>
-            <input type="number" id="purchasePrice" formControlName="purchasePrice" min="0.01" required/>
-            <div *ngIf="editAssetForm.get('purchasePrice')?.invalid && editAssetForm.get('purchasePrice')?.touched">
-                <small class="error">{{ 'wallet.asset.purchase.price.error' | translate }}</small>
-            </div>
-        </div>
+                    <div class="form-group">
+                        <label for="purchasePrice">{{ 'asset.purchase.price' | translate }}</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="purchasePrice"
+                                formControlName="purchasePrice"
+                                required
+                                appNumberInput
+                        />
+                        <div *ngIf="editAssetForm.get('purchasePrice')?.invalid">
+                            <small class="error">{{ 'error.price.should.be.positive' | translate }}</small>
+                        </div>
+                    </div>
 
-        <div>
-            <label for="currency">{{ 'common.currency' | translate }}</label>
-            <select id="currency" formControlName="currency">
-                <option *ngFor="let currency of currencyOptions" [value]="currency">{{ currency }}</option>
-            </select>
-            <div *ngIf="editAssetForm.get('currency')?.invalid && editAssetForm.get('currency')?.touched">
-                <small class="error">{{ 'error.currency.is.required' | translate }}</small>
-            </div>
-        </div>
+                    <div class="form-group">
+                        <label for="currency">{{ 'common.currency' | translate }}</label>
+                        <select
+                                id="currency"
+                                class="form-control"
+                                formControlName="currency"
+                        >
+                            <option *ngFor="let currency of currencyOptions" [value]="currency">{{ currency }}</option>
+                        </select>
+                        <div *ngIf="editAssetForm.get('currency')?.invalid">
+                            <small class="error">{{ 'error.currency.is.required' | translate }}</small>
+                        </div>
+                    </div>
 
-        <button type="submit" [disabled]="isSubmitting">{{ 'asset.edit.asset' | translate }}</button>
+                    <button type="submit" class="btn btn-primary"
+                            [disabled]="isSubmitting">{{ 'asset.edit.asset' | translate }}
+                    </button>
 
-        <div *ngIf="errorMessage" class="error">{{ 'error.asset.edit.fail' | translate }}</div>
+                    <div *ngIf="errorMessage" class="error">{{ 'error.asset.edit.fail' | translate }}</div>
+                </div>
+            </form>
+        </app-card>
     </div>
-    <app-wallet-footer-navbar></app-wallet-footer-navbar>
-</form>
+</div>

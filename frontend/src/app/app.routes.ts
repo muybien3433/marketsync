@@ -1,8 +1,13 @@
 import { Routes } from '@angular/router';
-import { AdminComponent } from "./admin/admin.component";
-import { AuthGuard } from "./common/service/auth.guard";
+import { AdminComponent } from "./common/admin/admin.component";
+import { AuthGuard } from "./common/service/auth-guard";
 
 export const routes: Routes = [
+    {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'wallet/assets'
+    },
     {
         path: 'wallet',
         component: AdminComponent,
@@ -18,14 +23,46 @@ export const routes: Routes = [
                 loadComponent: () => import('./pages/wallet/wallet-add-asset/wallet-add-asset.component')
             },
             {
+                path: 'asset/edit',
+                canActivate: [AuthGuard],
+                loadComponent: () => import('./pages/wallet/wallet-edit-asset/wallet-edit-asset.component')
+            },
+            {
                 path: 'assets/history',
                 canActivate: [AuthGuard],
                 loadComponent: () => import('./pages/wallet/wallet-asset-history/wallet-asset-history.component')
             },
+        ]
+    },
+    {
+        path: 'subscription',
+        component: AdminComponent,
+        children: [
             {
-                path: 'apexchart',
-                loadComponent: () => import('./pages/core-chart/apex-chart/apex-chart.component')
+                path: 'subscriptions',
+                canActivate: [AuthGuard],
+                loadComponent: () => import('./pages/subscription/subscription.component')
+            },
+            {
+                path: 'add',
+                canActivate: [AuthGuard],
+                loadComponent:() => import('./pages/subscription/subscription-add/subscription-add.component')
             }
         ]
     },
+    {
+        path: 'settings',
+        canActivate: [AuthGuard],
+        children: [
+            {
+                path: 'currency',
+                canActivate: [AuthGuard],
+                loadComponent:() => import('./pages/settings/settings.component')
+            }
+        ]
+    },
+    {
+        path: '**',
+        redirectTo: 'wallet/assets'
+    }
 ];

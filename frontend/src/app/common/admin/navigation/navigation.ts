@@ -57,13 +57,13 @@ export const NavigationItems: NavigationItem[] = [
         id: 'subscription',
         title: 'Subscriptions',
         type: 'item',
-        url: '/subscriptions',
+        url: '/subscription/subscriptions',
         classes: 'nav-item',
         icon: 'icon-bell'
       },
       {
         id: 'subscription-add',
-        title: 'Create subscription',
+        title: 'Add subscription',
         type: 'item',
         url: '/subscription/add',
         classes: 'nav-item',
@@ -72,43 +72,19 @@ export const NavigationItems: NavigationItem[] = [
     ]
   },
   {
-    id: 'forms',
-    title: 'Forms & Tables',
+    id: 'settings',
+    title: 'Preferences',
     type: 'group',
-    icon: 'icon-group',
+    icon: 'icon-ui',
     children: [
       {
-        id: 'forms-element',
-        title: 'Form Elements',
+        id: 'currency-preferences',
+        title: 'Currency',
         type: 'item',
-        url: '/forms/basic',
+        url: '/settings/currency',
         classes: 'nav-item',
-        icon: 'icon-file-text'
+        icon: 'icon-settings',
       },
-      {
-        id: 'tables',
-        title: 'Tables',
-        type: 'item',
-        url: '/tables/bootstrap',
-        classes: 'nav-item',
-        icon: 'icon-server'
-      }
     ]
   },
-  {
-    id: 'chart-maps',
-    title: 'Chart',
-    type: 'group',
-    icon: 'icon-charts',
-    children: [
-      {
-        id: 'apexChart',
-        title: 'ApexChart',
-        type: 'item',
-        url: 'apexchart',
-        classes: 'nav-item',
-        icon: 'icon-pie-chart'
-      }
-    ]
-  }
 ];

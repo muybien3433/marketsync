@@ -1,7 +1,7 @@
 # MarketSync
 
 MarketSync is a solution that delivers real-time market insights, enabling personalized notifications and wallet 
-management. It helps users track assets and receive timely updates on their subscriptions based on market changes.
+management. It helps users track their assets and receive timely updates on their subscriptions based on price changes.
 
 The platform fetches and compares targeted assets in real time, providing dynamic insights to keep users 
 informed about market fluctuations. It simplifies the management of cryptocurrency and stocks interests and subscriptions, 
@@ -11,24 +11,15 @@ and calculate real-time profits across various asset types.
 
 ## Features
 
-- **User Authentication**: Secure and robust authentication via Keycloak.
-- **Subscriptions**: Effortlessly add or remove currency subscriptions with custom price and currencies thresholds.
-- **Real-Time Notifications**: Receive timely email notifications when subscribed assets hit user-defined price targets, 
+- **Wallet Management**: Manage personal customer wallet with various assets and real time profit calculation.
+- **Subscriptions**: Effortlessly add or remove assets subscriptions with custom price and currencies thresholds.
+- **Real-Time Notifications**: Receive email notifications when subscribed assets hit user-defined price targets,
 ensuring that users stay informed about market changes in real-time.
-- **Wallet Management**: Manage and track personal customer wallets, 
-with the ability to store and view assets across multiple types, 
-including real-time values, calculated profit and transaction history.
-- **Live Assets and Currencies Pricing**: Access up-to-the-minute pricing data for 
-various assets, stocks coming soon.
-- **Multiple CurrencyType Support**: Choose between currencies (USD, EUR, GBP, PLN) 
-for subscription management and wallet display. Users can select their preferred currency for wallet management, 
-asset tracking and subscription pricing.
-- **Scalable Architecture**: Designed with scalability in mind, the system can handle growing user 
-bases and asset types as market demands evolve.
+- **Multiple CurrencyType Support**: Choose between currencies multiple currencies (USD, EUR, GBP, PLN).
 
 ## Tech Stack
 
-- **Frontend**: Angular 18
+- **Frontend**: Angular 19
 - **Backend**: Java 23, SpringBoot 6, Kafka
 - **Database**: PostgreSQL for SQL and MongoDB for NoSQL
 - **Authentication & Security**: Keyclock, Gateway
@@ -76,7 +67,6 @@ Ensure you have the following installed before running the project:
    
 2. Provide region, access-key and access-secret for AWS-SES in backend/services/config-server/configurations/notification-service-dev.yml
 
-
 3. Now everything you need to do is to start docker containers
    ```bash
    docker compose -f docker-compose.dev.yml up -d
@@ -88,7 +78,4 @@ Ensure you have the following installed before running the project:
    ```
    
 ## Contributing
-Contributions are welcome! Feel free to submit issues and pull requests.
-
-## License
-This project is licensed under the MIT License.
+Feel free to submit issues and pull requests.
