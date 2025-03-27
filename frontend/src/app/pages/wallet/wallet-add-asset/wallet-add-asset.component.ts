@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -93,6 +93,9 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
     onAssetChange(asset: AssetDetail) {
         this.asset = asset;
         this.addAssetForm.get('uri')?.setValue(asset ? asset.uri : '');
+        if (asset) {
+            this.addAssetForm.get('assetType')?.setValue(asset.assetType);
+        }
     }
 
     onSubmit(): void {

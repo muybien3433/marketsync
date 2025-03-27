@@ -114,7 +114,7 @@ public class SubscriptionService {
                 .collect(Collectors.toList());
     }
 
-    private BigDecimal resolveCurrentPrice(SubscriptionDetail subscriptionDetail) {
+    BigDecimal resolveCurrentPrice(SubscriptionDetail subscriptionDetail) {
         var finance = financeClient
                 .findFinanceByAssetTypeAndUri(subscriptionDetail.assetType().name(), subscriptionDetail.uri());
 
