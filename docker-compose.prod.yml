@@ -279,8 +279,9 @@ services:
     command:
       - start
       - --import-realm
-      - --force-bootstrap
     volumes:
+      - keycloak_data:/opt/keycloak/data
+      - keycloak_data:/opt/keycloak/themes
       - ./init/marketsync-client-prod.json:/opt/keycloak/data/import/marketsync-client-prod.json
     depends_on:
       postgres-keycloak:
@@ -511,6 +512,7 @@ networks:
     driver: bridge
 
 volumes:
+  keycloak_data:
   postgres_keycloak:
   postgres_wallet:
   mongodb_finance_data:
