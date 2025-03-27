@@ -184,7 +184,9 @@ services:
         condition: service_healthy
       mongodb-subscription:
         condition: service_healthy
-      kafka:
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
         condition: service_healthy
     restart: unless-stopped
     networks:
@@ -229,7 +231,9 @@ services:
     env_file:
       - .env
     depends_on:
-      kafka:
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
         condition: service_healthy
       config-server:
         condition: service_healthy
@@ -339,26 +343,17 @@ services:
           memory: 1024M
 
 
-  ######### [ Kafka & Zookeeper ] #########
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
+  ######### [ Zookeeper ] #########
+  zookeeper-1:
+    image: confluentinc/cp-zookeeper:7.9.0
+    container_name: zookeeper-1
+    restart: unless-stopped
     volumes:
-      - zookeeper_data:/var/lib/zookeeper
+      - zookeeper_data_1:/var/lib/zookeeper
     environment:
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "22181:2181"
-    restart: unless-stopped
-
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
-      start_period: 5s
-      interval: 5s
-      timeout: 5s
-      retries: 25
+      ZOOKEEPER_SERVERS: zookeeper-1:2888:3888;zookeeper-2:2888:3888;zookeeper-3:2888:3888
     networks:
       - backend-net
     deploy:
@@ -366,30 +361,81 @@ services:
         limits:
           cpus: '0.5'
           memory: 512M
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "2181" ]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-  kafka:
-    image: confluentinc/cp-kafka:7.9.0
+  zookeeper-2:
+    image: confluentinc/cp-zookeeper:7.9.0
+    container_name: zookeeper-2
+    restart: unless-stopped
     volumes:
-      - kafka_data:/var/lib/kafka
-    platform: linux/arm64
-    container_name: kafka
+      - zookeeper_data_2:/var/lib/zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVERS: zookeeper-1:2888:3888;zookeeper-2:2888:3888;zookeeper-3:2888:3888
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "2181" ]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  zookeeper-3:
+    image: confluentinc/cp-zookeeper:7.9.0
+    container_name: zookeeper-3
+    restart: unless-stopped
+    volumes:
+      - zookeeper_data_3:/var/lib/zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVERS: zookeeper-1:2888:3888;zookeeper-2:2888:3888;zookeeper-3:2888:3888
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "2181" ]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ######### [ Kafka Brokers ] #########
+  kafka-1:
+    image: confluentinc/cp-kafka:7.9.0
+    container_name: kafka-1
+    restart: unless-stopped
+    volumes:
+      - kafka_data_1:/var/lib/kafka
     depends_on:
-      zookeeper:
+      zookeeper-1:
+        condition: service_healthy
+      zookeeper-2:
+        condition: service_healthy
+      zookeeper-3:
         condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,INTERNAL://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,INTERNAL://localhost:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    healthcheck:
-      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9093" ]
-      start_period: 35s
-      interval: 5s
-      timeout: 10s
-      retries: 10
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
     networks:
       - backend-net
     deploy:
@@ -397,7 +443,45 @@ services:
         limits:
           cpus: '0.5'
           memory: 512M
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092" ]
+      start_period: 40s
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
+  kafka-2:
+    image: confluentinc/cp-kafka:7.9.0
+    container_name: kafka-2
+    restart: unless-stopped
+    volumes:
+      - kafka_data_2:/var/lib/kafka
+    depends_on:
+      zookeeper-1:
+        condition: service_healthy
+      zookeeper-2:
+        condition: service_healthy
+      zookeeper-3:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9094" ]
+      start_period: 40s
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   ######### [ Frontend ] #########
   frontend-server:
@@ -431,5 +515,8 @@ volumes:
   postgres_wallet:
   mongodb_finance_data:
   mongodb_subscription_data:
-  zookeeper_data:
-  kafka_data:
+  zookeeper_data_1:
+  zookeeper_data_2:
+  zookeeper_data_3:
+  kafka_data_1:
+  kafka_data_2:
