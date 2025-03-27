@@ -9,6 +9,15 @@ while also offering the ability to create and manage personal wallets that calcu
 based on the user's preferred currency. Users can track assets, view detailed information, 
 and calculate real-time profits across various asset types.
 
+## Test credentials
+If you want to test the application without creating an account, 
+you can use the credentials provided below. 
+However, please note that if you set up a subscription, you will not receive 
+email notifications for known reasons.
+
+email: test@muybien.pl
+password: test
+
 ## Features
 
 - **Wallet Management**: Manage personal customer wallet with various assets and real time profit calculation.
