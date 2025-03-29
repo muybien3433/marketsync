@@ -1,12 +1,12 @@
 package pl.muybien.asset;
 
 public enum AssetType {
-    UNDEFINED,
     CUSTOM,
-    STOCKS,
-    CRYPTOS,
-    CURRENCIES,
-    BONDS;
+    STOCK,
+    CRYPTO,
+    CURRENCY,
+    COMMODITY,
+    BOND;
 
     public static AssetType fromString(String type) {
         if (type != null) {

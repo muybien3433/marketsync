@@ -54,12 +54,12 @@ class AssetServiceTest {
         String customerId = "customerId";
         String currency = "USD";
         AssetRequest request = new AssetRequest(
-                "cryptos", "bitcoin", BigDecimal.valueOf(2), BigDecimal.valueOf(30000), currency);
+                AssetType.CRYPTO.name(), "bitcoin", BigDecimal.valueOf(2), BigDecimal.valueOf(30000), currency);
 
         when(financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri()))
                 .thenReturn(new FinanceResponse(
                         "Bitcoin", "BTC", "bitcoin",
-                        BigDecimal.valueOf(100_000), "USD", "cryptos", LocalTime.now()));
+                        BigDecimal.valueOf(100_000), "USD", "CRYPTO", LocalTime.now()));
 
         assetService.createAsset(customerId, request);
 
@@ -67,7 +67,7 @@ class AssetServiceTest {
         verify(repository).save(assetCaptor.capture());
         Asset capturedAsset = assetCaptor.getValue();
 
-        assertThat(capturedAsset.getAssetType()).isEqualTo(AssetType.CRYPTOS);
+        assertThat(capturedAsset.getAssetType()).isEqualTo(AssetType.CRYPTO);
         assertThat(capturedAsset.getName()).isEqualTo("Bitcoin");
         assertThat(capturedAsset.getCount()).isEqualTo(BigDecimal.valueOf(2).setScale(12, RoundingMode.HALF_UP));
         assertThat(capturedAsset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(30000).setScale(12, RoundingMode.HALF_UP));
@@ -78,7 +78,7 @@ class AssetServiceTest {
         String customerId = "customerId";
         String currency = "USD";
         AssetRequest request = new AssetRequest(
-                "cryptos", "bitcoin", BigDecimal.valueOf(5), BigDecimal.valueOf(50000), currency);
+                AssetType.CRYPTO.name(), "bitcoin", BigDecimal.valueOf(5), BigDecimal.valueOf(50000), currency);
 
         when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
 
@@ -100,7 +100,7 @@ class AssetServiceTest {
         String customerId = "customerId";
         String currency = "USD";
         var request = new AssetRequest(
-                "cryptos", "bitcoin", BigDecimal.valueOf(5), BigDecimal.valueOf(50000), currency);
+                AssetType.CRYPTO.name(), "bitcoin", BigDecimal.valueOf(5), BigDecimal.valueOf(50000), currency);
 
         when(repository.findById(asset.getId())).thenReturn(Optional.empty());
 
@@ -117,7 +117,7 @@ class AssetServiceTest {
         String currency = "USD";
 
         var request = new AssetRequest(
-                "cryptos", "bitcoin", BigDecimal.valueOf(5), BigDecimal.valueOf(50000), currency);
+                AssetType.CRYPTO.name(), "bitcoin", BigDecimal.valueOf(5), BigDecimal.valueOf(50000), currency);
         asset.setCustomerId("differentCustomerId");
 
         when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
@@ -134,7 +134,7 @@ class AssetServiceTest {
         String customerId = "customerId";
         String currency = "USD";
         var request = new AssetRequest(
-                "cryptos", "bitcoin", BigDecimal.valueOf(3), BigDecimal.valueOf(35000), currency);
+                AssetType.CRYPTO.name(), "bitcoin", BigDecimal.valueOf(3), BigDecimal.valueOf(35000), currency);
         asset.setCustomerId("differentCustomerId");
 
         when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
@@ -196,14 +196,14 @@ class AssetServiceTest {
         String uri = "ethereum";
         CurrencyType currencyType = CurrencyType.USD;
         var assetGroup = new AssetGroupDTO("Ethereum", "ETH", uri,
-                AssetType.CRYPTOS, BigDecimal.valueOf(2),
+                AssetType.CRYPTO, BigDecimal.valueOf(2),
                 new BigDecimal("30000.0"), currencyType, "customerId"
         );
 
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
-        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name(), uri))
+        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTO.name(), uri))
                 .thenReturn(new FinanceResponse("Ethereum", "ETH", "ethereum",
-                        BigDecimal.valueOf(35000), currencyType.name(), AssetType.CRYPTOS.name(), LocalTime.now()));
+                        BigDecimal.valueOf(35000), currencyType.name(), AssetType.CRYPTO.name(), LocalTime.now()));
 
         List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currencyType.name());
 

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -78,7 +78,8 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
             this.asset = asset;
             this.addAssetForm.get('uri')?.setValue(asset?.uri);
         })
-        this.currencyTypeSubscription = this.currencyService.selectedCurrencyType$.subscribe(currencyType => {
+        this.currencyTypeSubscription = this.currencyService.selectedCurrencyType$
+            .subscribe(currencyType => {
             this.currencyType = currencyType;
             this.addAssetForm.get('currencyType')?.setValue(currencyType);
         })

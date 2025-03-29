@@ -23,11 +23,20 @@ export class CurrencyService {
     }
 
     setGlobalCurrencyType(currencyType: CurrencyType): void {
-        this.preferenceService.setPreferredCurrency(currencyType);
-        this.setSelectedCurrencyType(currencyType);
+        try {
+            this.preferenceService.setPreferredCurrency(currencyType);
+            this.setSelectedCurrencyType(currencyType);
+        } catch (error) {
+            console.error('Failed to set global currency type', error);
         }
+    }
 
-    getGlobalCurrencyType() {
-        return this.preferenceService.getPreferredCurrency();
+    getGlobalCurrencyType(): CurrencyType {
+        try {
+            return this.preferenceService.getPreferredCurrency();
+        } catch (error) {
+            console.error('Failed to get global currency type', error);
+            return CurrencyType.PLN;
+        }
     }
 }

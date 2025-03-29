@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {NgForOf} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CurrencyType} from "../../model/currency-type";
@@ -15,7 +15,7 @@ import {CurrencyService} from "../../service/currency-service";
   templateUrl: './currency-change-option.component.html',
   styleUrl: './currency-change-option.component.scss'
 })
-export class CurrencyChangeOptionComponent implements OnInit {
+export class CurrencyChangeOptionComponent implements OnInit, OnDestroy {
   @Output() currencyChanged = new EventEmitter<CurrencyType>();
 
   currencyOptions = Object.values(CurrencyType);
@@ -24,7 +24,14 @@ export class CurrencyChangeOptionComponent implements OnInit {
   constructor(private currencyService: CurrencyService) {}
 
   ngOnInit(): void {
-      this.selectedCurrency = this.currencyService.getGlobalCurrencyType();
+    this.selectedCurrency = this.currencyService.getGlobalCurrencyType();
+  }
+
+  ngOnDestroy(): void {
+    const currentGlobal = this.currencyService.getGlobalCurrencyType();
+    if (this.currencyService.getSelectedCurrencyType() !== currentGlobal) {
+      this.currencyService.setSelectedCurrencyType(currentGlobal);
+    }
   }
 
   onCurrencyChange(currencyType: CurrencyType): void {

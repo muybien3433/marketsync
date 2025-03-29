@@ -54,7 +54,7 @@ public class CoinGeckoClient extends FinanceUpdater {
         log.info("Starting the update of CoinGecko data...");
         var cryptos = fetchDataFromApi();
         if (cryptos != null && !cryptos.isEmpty()) {
-            financeDatabaseUpdater.saveFinanceToDatabase(AssetType.CRYPTOS.name(), cryptos);
+            financeDatabaseUpdater.saveFinanceToDatabase(AssetType.CRYPTO.name(), cryptos);
             log.info("Finished updating CoinGecko data");
         }
     }
@@ -96,7 +96,7 @@ public class CoinGeckoClient extends FinanceUpdater {
                         id,
                         currentPrice,
                         CurrencyType.USD.name(),
-                        AssetType.CRYPTOS.name(),
+                        AssetType.CRYPTO.name(),
                         LocalDateTime.now()
                 );
                 cryptos.put(financeDetail.uri(), financeDetail);

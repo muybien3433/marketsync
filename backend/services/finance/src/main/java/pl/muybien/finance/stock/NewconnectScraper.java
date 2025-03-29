@@ -117,12 +117,12 @@ public class NewconnectScraper extends FinanceUpdater {
                         uri,
                         price,
                         CurrencyType.PLN.name(),
-                        AssetType.STOCKS.name(),
+                        AssetType.STOCK.name(),
                         LocalDateTime.now()
                 );
                 stocks.put(uri, financeDetail);
             }
-            databaseUpdater.saveFinanceToDatabase(AssetType.STOCKS.name(), stocks);
+            databaseUpdater.saveFinanceToDatabase(AssetType.STOCK.name(), stocks);
         } catch (MalformedURLException e) {
             throw new FinanceNotFoundException("Newconnect data not found");
         } catch (Exception e) {

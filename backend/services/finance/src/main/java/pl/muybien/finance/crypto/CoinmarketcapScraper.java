@@ -128,7 +128,7 @@ public class CoinmarketcapScraper extends FinanceUpdater {
                                                     uri,
                                                     price,
                                                     CurrencyType.USD.name(),
-                                                    AssetType.CRYPTOS.name(),
+                                                    AssetType.CRYPTO.name(),
                                                     LocalDateTime.now()
                                             ));
                                         }
@@ -148,7 +148,7 @@ public class CoinmarketcapScraper extends FinanceUpdater {
                         }
                     });
             if (!cryptos.isEmpty()) {
-                databaseUpdater.saveFinanceToDatabase(AssetType.CRYPTOS.name(), cryptos);
+                databaseUpdater.saveFinanceToDatabase(AssetType.CRYPTO.name(), cryptos);
             }
         } finally {
             driver.quit();

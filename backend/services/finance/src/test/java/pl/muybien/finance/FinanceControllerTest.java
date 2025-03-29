@@ -75,14 +75,14 @@ class FinanceControllerTest {
 
     @Test
     void testDisplayAvailableFinance() throws Exception {
-        String assetType = "cryptos";
+        String assetType = AssetType.CRYPTO.name();
         Set<FinanceDetailDTO> details = Set.of(
                 new FinanceDetailDTO(
                         "Bitcoin", "BTC", "bitcoin",
-                        null, CurrencyType.USD.name(), AssetType.CRYPTOS.name(), LocalDateTime.now()),
+                        null, CurrencyType.USD.name(), AssetType.CRYPTO.name(), LocalDateTime.now()),
                 new FinanceDetailDTO(
                         "Ethereum", "ETH", "Ethereum", null,
-                        CurrencyType.USD.name(), AssetType.CRYPTOS.name(), LocalDateTime.now()));
+                        CurrencyType.USD.name(), AssetType.CRYPTO.name(), LocalDateTime.now()));
 
         when(financeService.displayAvailableFinance(assetType)).thenReturn(details);
 

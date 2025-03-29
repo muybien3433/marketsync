@@ -42,7 +42,7 @@ class SubscriptionServiceTest {
     private final String customerEmail = "test@example.com";
     private final String phoneNumber = "+1234567890";
     private final String uri = "http://example.com/asset";
-    private final String assetType = "STOCKS";
+    private final String assetType = "STOCK";
     private final String financeName = "Example Corp";
     private final BigDecimal price = BigDecimal.valueOf(100.50);
 
@@ -136,7 +136,7 @@ class SubscriptionServiceTest {
         SubscriptionDetail detail = new SubscriptionDetail(
                 "detail-123", uri, "other-customer", "target",
                 financeName, CurrencyType.USD, 10.0, null,
-                AssetType.STOCKS, NotificationType.EMAIL, LocalDateTime.now()
+                AssetType.STOCK, NotificationType.EMAIL, LocalDateTime.now()
         );
         subscription.getSubscriptionDetails().add(detail);
         when(subscriptionRepository.findByUri(uri)).thenReturn(Optional.of(subscription));
@@ -152,7 +152,7 @@ class SubscriptionServiceTest {
         SubscriptionDetail detail = new SubscriptionDetail(
                 "detail-123", uri, customerId, "target",
                 financeName, CurrencyType.USD, 10.0, null,
-                AssetType.STOCKS, NotificationType.EMAIL, LocalDateTime.now()
+                AssetType.STOCK, NotificationType.EMAIL, LocalDateTime.now()
         );
         subscription.getSubscriptionDetails().add(detail);
         when(subscriptionRepository.findByUri(uri)).thenReturn(Optional.of(subscription));
@@ -186,7 +186,7 @@ class SubscriptionServiceTest {
                 CurrencyType.USD,
                 10.0,
                 null,
-                AssetType.STOCKS,
+                AssetType.STOCK,
                 NotificationType.EMAIL,
                 LocalDateTime.now()
         );
@@ -200,7 +200,7 @@ class SubscriptionServiceTest {
                 CurrencyType.EUR,
                 1.0,
                 null,
-                AssetType.BONDS,
+                AssetType.BOND,
                 NotificationType.SMS,
                 LocalDateTime.now()
         );
@@ -216,7 +216,7 @@ class SubscriptionServiceTest {
                         price,
                         10.0,
                         null,
-                        "STOCKS",
+                        "STOCK",
                         "EMAIL",
                         "USD",
                         detail1.createdDate()
@@ -247,7 +247,7 @@ class SubscriptionServiceTest {
         SubscriptionDetail detail = new SubscriptionDetail(
                 "detail-1", uri, customerId, "target",
                 financeName, CurrencyType.EUR, 10.0, null,
-                AssetType.STOCKS, NotificationType.EMAIL, LocalDateTime.now()
+                AssetType.STOCK, NotificationType.EMAIL, LocalDateTime.now()
         );
 
         BigDecimal exchangeRate = BigDecimal.valueOf(0.85);

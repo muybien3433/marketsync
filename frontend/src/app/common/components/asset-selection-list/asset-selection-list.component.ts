@@ -56,6 +56,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.currencySubscription.unsubscribe();
+        this.resetPickedAsset();
     }
 
     onAssetTypeSelect(assetType: AssetType): void {
