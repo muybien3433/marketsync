@@ -25,6 +25,11 @@ coinmarketcap:
   second-section-symbol-selector: .crypto-symbol
   second-section-price-selector: td
 
+coingecko:
+  api-key: ${COINGECKO_API}
+  url: https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1
+  crypto-updater-frequency-ms: 300000 # 5 minutes
+
 wise:
   currency-updater-frequency-ms: 60000 # 60s
   max-fetch-retries: 3

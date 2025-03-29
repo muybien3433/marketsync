@@ -36,6 +36,7 @@
     "edit.asset": "Edit asset",
     "type.cryptos": "Crypto",
     "type.stocks": "Stock",
+    "type.custom": "Custom",
     "type.selection": "Select asset type",
     "search.asset": "Type to search from: ",
     "purchase.price": "Purchase price",
@@ -46,12 +47,9 @@
     "delete.asset": "Delete asset",
     "cryptos": "Cryptos",
     "stocks": "Stocks",
+    "custom": "Custom",
+    "custom.placeholder": "Type name",
     "no.assets.message": "Ops... Your wallet is empty! No worries just click the button below."
-  },
-
-  "asset-type": {
-    "crypto": "Crypto",
-    "stock": "Stock"
   },
 
   "wallet": {

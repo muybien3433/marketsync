@@ -46,15 +46,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="currency">{{ 'common.currency' | translate }}</label>
+                        <label for="currencyType">{{ 'common.currency' | translate }}</label>
                         <select
-                                id="currency"
+                                id="currencyType"
                                 class="form-control"
-                                formControlName="currency"
+                                formControlName="currencyType"
                         >
-                            <option *ngFor="let currency of currencyOptions" [value]="currency">{{ currency }}</option>
+                            <option *ngFor="let currencyType of currencyOptions" [value]="currencyType">{{ currencyType }}</option>
                         </select>
-                        <div *ngIf="editAssetForm.get('currency')?.invalid">
+                        <div *ngIf="editAssetForm.get('currencyType')?.invalid">
                             <small class="error">{{ 'error.currency.is.required' | translate }}</small>
                         </div>
                     </div>

@@ -13,32 +13,46 @@
 <label>{{ 'common.asset' | translate }}</label>
 <div class="form-control">
     <div class="asset-list">
-        <div class="search-header" *ngIf="!selectedAsset">
-            <input
-                    [(ngModel)]="searchTerm"
-                    placeholder="{{ 'asset.search.asset' | translate }} {{ _assets.length }}"
-                    class="native-input">
-        </div>
-
-        <div class="search-header" *ngIf="selectedAsset">
-            <div class="native-input d-flex align-items-center gap-3" *ngIf="selectedAsset">
-                <span class="symbol">({{ selectedAsset.symbol }})</span>
-                <span>{{ selectedAsset.name }}</span>
-                <div class="ms-auto">
-                    <button class="btn btn-outline-warning"
-                            (click)="resetPickedAsset()">
-                        {{ 'common.change' | translate }}
-                    </button>
-                </div>
+        <div *ngIf="selectedAssetType === AssetType.CUSTOM">
+            <div class="search-header">
+                <input
+                        [(ngModel)]="customAssetName"
+                        (input)="onCustomAssetInput()"
+                        placeholder="{{ 'asset.custom.placeholder' | translate }}"
+                        class="native-input"
+                />
             </div>
         </div>
 
-        <div *ngIf="!selectedAsset">
-            <div *ngFor="let asset of _assets | filterByName: searchTerm"
-                 class="asset-item"
-                 (click)="onAssetSelect(asset)">
-                <span class="symbol">({{ asset.symbol }})</span>
-                {{ asset.name }}
+        <div *ngIf="selectedAssetType !== AssetType.CUSTOM">
+            <div class="search-header" *ngIf="!selectedAsset">
+                <input
+                        [(ngModel)]="searchTerm"
+                        placeholder="{{ 'asset.search.asset' | translate }} {{ _assets.length }}"
+                        class="native-input"
+                />
+            </div>
+
+            <div *ngIf="!selectedAsset">
+                <div *ngFor="let asset of _assets | filterByName: searchTerm"
+                     class="asset-item"
+                     (click)="onAssetSelect(asset)">
+                    <span class="symbol">({{ asset.symbol }})</span>
+                    {{ asset.name }}
+                </div>
+            </div>
+
+            <div *ngIf="selectedAsset" class="selected-asset">
+                <div class="native-input d-flex align-items-center gap-3">
+                    <span class="symbol">({{ selectedAsset.symbol }})</span>
+                    <span>{{ selectedAsset.name }}</span>
+                    <div class="ms-auto">
+                        <button class="btn btn-outline-warning"
+                                (click)="resetPickedAsset()">
+                            {{ 'common.change' | translate }}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

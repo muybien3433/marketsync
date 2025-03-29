@@ -44,7 +44,7 @@
                         <label>{{ 'common.currency' | translate }}</label>
                         <app-currency-change-option></app-currency-change-option>
 
-                        <div *ngIf="addAssetForm.get('currency')?.invalid">
+                        <div *ngIf="addAssetForm.get('currencyType')?.invalid">
                             <small class="error">{{ 'error.currency.is.required' | translate }}</small>
                         </div>
                     </div>

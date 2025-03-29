@@ -55,7 +55,7 @@ export default class WalletComponent implements OnInit {
                     offsetY: 20
                 }
             },
-            colors: ['#775DD0', '#008FFB'],
+            colors: ['#775DD0', '#777777', '#008FFB'],
             series: [],
             labels: [],
             legend: {
@@ -78,7 +78,7 @@ export default class WalletComponent implements OnInit {
 
         this._assets.forEach((asset) => {
             this.translate
-                .get(`asset.type.${asset.assetType}`)
+                .get(`asset.type.${asset.assetType}`.toLowerCase())
                 .subscribe((translatedType) => {
                     if (!this.groupedAssets[translatedType]) {
                         this.groupedAssets[translatedType] = [];

@@ -2,6 +2,7 @@ package pl.muybien.asset.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pl.muybien.asset.AssetType;
+import pl.muybien.asset.CurrencyType;
 
 import java.math.BigDecimal;
 
@@ -12,7 +13,7 @@ public record AssetGroupDTO(
         @JsonProperty("assetType") AssetType assetType,
         @JsonProperty("count") BigDecimal count,
         @JsonProperty("averagePurchasePrice") BigDecimal averagePurchasePrice,
-        @JsonProperty("currencyType") String currencyType,
+        @JsonProperty("currencyType") CurrencyType currencyType,
         @JsonProperty("customerId") String customerId
 ) {
 }

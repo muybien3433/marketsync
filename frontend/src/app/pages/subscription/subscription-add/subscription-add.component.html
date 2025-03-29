@@ -14,8 +14,10 @@
 
                 <div>
                     <div class="form-group">
-                        <app-asset-selection-list (assetChanged)="onAssetChange($event)"></app-asset-selection-list>
-                    </div>
+                        <app-asset-selection-list
+                                [assetTypeOptions]="filteredAssetTypes"
+                                (assetChanged)="onAssetChange($event)">
+                        </app-asset-selection-list>                    </div>
                 </div>
 
                 <div class="form-group">

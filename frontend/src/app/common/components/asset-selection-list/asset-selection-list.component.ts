@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output,} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output,} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslatePipe} from "@ngx-translate/core";
@@ -28,13 +28,14 @@ import {API_ENDPOINTS} from "../../service/api-endpoints";
     styleUrl: './asset-selection-list.component.scss'
 })
 export class AssetSelectionListComponent implements OnInit, OnDestroy {
+    @Input() assetTypeOptions: AssetType[] = Object.values(AssetType);
     @Output() assetChanged: EventEmitter<AssetDetail> = new EventEmitter();
 
     _assets: AssetDetail[] = [];
     selectedAssetType: AssetType = AssetType.CRYPTO;
     selectedAsset!: AssetDetail | null;
-    assetTypeOptions: AssetType[] = Object.values(AssetType);
     searchTerm: string = '';
+    customAssetName: string = '';
 
     private currencySubscription!: Subscription;
     currentCurrency!: CurrencyType;
@@ -60,7 +61,31 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     onAssetTypeSelect(assetType: AssetType): void {
         this.assetService.setSelectedAssetType(assetType);
         this.resetPickedAsset();
-        this.fetchAssets(assetType, this.currentCurrency);
+
+        this._assets = [];
+        if (assetType !== AssetType.CUSTOM) {
+            this.fetchAssets(assetType, this.currentCurrency);
+        }
+    }
+
+    onCustomAssetInput(): void {
+        if (this.customAssetName.trim()) {
+            const customAsset: AssetDetail = new AssetDetail(
+                this.customAssetName,
+                null,
+                this.customAssetName,
+                null,
+                this.currentCurrency,
+                AssetType.CUSTOM,
+                null
+            );
+
+            this.selectedAsset = customAsset;
+            this.assetService.setSelectedAsset(customAsset);
+            this.assetChanged.emit(customAsset);
+        } else {
+            this.resetPickedAsset();
+        }
     }
 
     onAssetSelect(asset: AssetDetail) {
@@ -71,6 +96,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
 
     resetPickedAsset() {
         this.searchTerm = '';
+        this.customAssetName = '';
         this.selectedAsset = null;
         this.assetService.setSelectedAsset(null);
         this.assetChanged.emit(undefined);
@@ -103,4 +129,6 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
             )
             .subscribe();
     }
+
+    protected readonly AssetType = AssetType;
 }

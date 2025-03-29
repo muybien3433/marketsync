@@ -27,9 +27,9 @@ public record AssetRequest(
         @Positive(message = "Purchase price should be positive")
         BigDecimal purchasePrice,
 
-        @NotNull(message = "Currency is required")
-        @NotEmpty(message = "Currency is required")
-        @NotBlank(message = "Currency is required")
-        String currency
+        @NotNull(message = "Currency type is required")
+        @NotEmpty(message = "Currency type is required")
+        @NotBlank(message = "Currency type is required")
+        String currencyType
 ) {
 }

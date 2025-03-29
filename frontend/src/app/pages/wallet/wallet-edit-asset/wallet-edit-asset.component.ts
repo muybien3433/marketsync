@@ -48,7 +48,7 @@ export default class WalletEditAssetComponent {
         uri: [{ value: asset.name, disabled: true }],
         count: [asset.count, [Validators.required, Validators.min(0.0000000000001)]],
         purchasePrice: [asset.purchasePrice, [Validators.required, Validators.min(0.0000000000001)]],
-        currency: [asset.currencyType, [Validators.required]]
+        currencyType: [asset.currencyType, [Validators.required]]
       });
     } else {
       this.router.navigate(['wallet/assets/history'], { state: {asset} });
@@ -57,7 +57,7 @@ export default class WalletEditAssetComponent {
         uri: [{ value: '', disabled: true }],
         count: [0, [Validators.required, Validators.min(0.001)]],
         purchasePrice: [0, [Validators.required, Validators.min(0.01)]],
-        currency: ['', [Validators.required]]
+        currencyType: ['', [Validators.required]]
       });
     }
   }
@@ -75,7 +75,7 @@ export default class WalletEditAssetComponent {
       uri: formValue.uri,
       count: formValue.count,
       purchasePrice: formValue.purchasePrice,
-      currency: formValue.currency,
+      currencyType: formValue.currencyType,
     };
 
     this.editAsset(assetData)?.subscribe({
@@ -90,7 +90,7 @@ export default class WalletEditAssetComponent {
     });
   }
 
-  editAsset(assetData: { assetType: string; uri: string; count: number; purchasePrice: number; currency: string }) {
+  editAsset(assetData: { assetType: string; uri: string; count: number; purchasePrice: number; currencyType: string }) {
     if (this.assetId === null) {
       this.errorMessage = 'Invalid asset ID.';
     }

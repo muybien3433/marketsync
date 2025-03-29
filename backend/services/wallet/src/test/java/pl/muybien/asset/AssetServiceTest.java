@@ -69,8 +69,8 @@ class AssetServiceTest {
 
         assertThat(capturedAsset.getAssetType()).isEqualTo(AssetType.CRYPTOS);
         assertThat(capturedAsset.getName()).isEqualTo("Bitcoin");
-        assertThat(capturedAsset.getCount()).isEqualTo(BigDecimal.valueOf(2).setScale(2, RoundingMode.HALF_UP));
-        assertThat(capturedAsset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(30000).setScale(2, RoundingMode.HALF_UP));
+        assertThat(capturedAsset.getCount()).isEqualTo(BigDecimal.valueOf(2).setScale(12, RoundingMode.HALF_UP));
+        assertThat(capturedAsset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(30000).setScale(12, RoundingMode.HALF_UP));
     }
 
     @Test
@@ -84,15 +84,15 @@ class AssetServiceTest {
 
         assetService.updateAsset(customerId, request, asset.getId());
 
-        assertThat(asset.getCount()).isEqualTo(BigDecimal.valueOf(5).setScale(2, RoundingMode.HALF_UP));
-        assertThat(asset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(50000).setScale(2, RoundingMode.HALF_UP));
+        assertThat(asset.getCount()).isEqualTo(BigDecimal.valueOf(5).setScale(12, RoundingMode.HALF_UP));
+        assertThat(asset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(50000).setScale(12, RoundingMode.HALF_UP));
 
         ArgumentCaptor<Asset> assetCaptor = ArgumentCaptor.forClass(Asset.class);
         verify(repository).save(assetCaptor.capture());
         Asset savedAsset = assetCaptor.getValue();
 
-        assertThat(savedAsset.getCount()).isEqualTo(BigDecimal.valueOf(5).setScale(2, RoundingMode.HALF_UP));
-        assertThat(savedAsset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(50000).setScale(2, RoundingMode.HALF_UP));
+        assertThat(savedAsset.getCount()).isEqualTo(BigDecimal.valueOf(5).setScale(12, RoundingMode.HALF_UP));
+        assertThat(savedAsset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(50000).setScale(12, RoundingMode.HALF_UP));
     }
 
     @Test
@@ -194,19 +194,18 @@ class AssetServiceTest {
     void findAllCustomerAssets_shouldAggregateAssets() {
         String customerId = "customerId";
         String uri = "ethereum";
-        String currency = "USD";
+        CurrencyType currencyType = CurrencyType.USD;
         var assetGroup = new AssetGroupDTO("Ethereum", "ETH", uri,
                 AssetType.CRYPTOS, BigDecimal.valueOf(2),
-                new BigDecimal("30000.0"), currency, "customerId"
+                new BigDecimal("30000.0"), currencyType, "customerId"
         );
 
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
-        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name().toLowerCase(), uri))
+        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTOS.name(), uri))
                 .thenReturn(new FinanceResponse("Ethereum", "ETH", "ethereum",
-                        BigDecimal.valueOf(35000), currency, AssetType.CRYPTOS.name(), LocalTime.now()));
+                        BigDecimal.valueOf(35000), currencyType.name(), AssetType.CRYPTOS.name(), LocalTime.now()));
 
-
-        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currency);
+        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currencyType.name());
 
         assertThat(assets).hasSize(1);
         AssetAggregateDTO asset = assets.getFirst();

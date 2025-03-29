@@ -36,6 +36,7 @@
     "edit.asset": "Edytuj aktywo",
     "type.cryptos": "Kryptowaluty",
     "type.stocks": "Giełda",
+    "type.custom": "Niestandardowe",
     "type.selection": "Wybierz typ aktywa",
     "search.asset": "Wpisz by wyszukać spośród: ",
     "purchase.price": "Cena zakupu",
@@ -46,6 +47,8 @@
     "delete.asset": "Usuń aktywo",
     "cryptos": "Kryptowaluty",
     "stocks": "Akcje",
+    "custom": "Niestandardowe",
+    "custom.placeholder": "Wpisz nazwę",
     "no.assets.message": "Ups... Twój portfel jest pusty! Nic straconego, kliknij przycisk poniżej."
   },
 

@@ -1,5 +1,5 @@
 <select id="currencyType" class="form-control" [(ngModel)]="selectedCurrency" (ngModelChange)="onCurrencyChange($event)">
-    <option *ngFor="let currency of currencyOptions" [ngValue]="currency">
-        {{ currency }}
+    <option *ngFor="let currencyType of currencyOptions" [ngValue]="currencyType">
+        {{ currencyType }}
     </option>
 </select>

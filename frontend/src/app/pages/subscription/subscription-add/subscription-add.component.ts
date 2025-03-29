@@ -43,6 +43,8 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
     isSubmitting = false;
     errorMessage: string = '';
 
+    filteredAssetTypes: AssetType[] = Object.values(AssetType).filter(t => t !== AssetType.CUSTOM);
+
     private assetTypeSubscription!: Subscription;
     assetType!: AssetType;
 
@@ -80,7 +82,7 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
         })
         this.currencyTypeSubscription = this.currencyService.selectedCurrencyType$.subscribe(currencyType => {
             this.currencyType = currencyType;
-            this.addSubscriptionForm.get('currency')?.setValue(currencyType);
+            this.addSubscriptionForm.get('currencyType')?.setValue(currencyType);
         })
     }
 
@@ -156,7 +158,4 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
             `${environment.baseUrl}${API_ENDPOINTS.SUBSCRIPTION}`,
             subscription);
     }
-
-    protected readonly Event = Event;
-    protected readonly event = event;
 }

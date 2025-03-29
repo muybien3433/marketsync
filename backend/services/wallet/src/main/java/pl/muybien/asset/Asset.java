@@ -29,8 +29,10 @@ public class Asset {
     private String uri;
     private BigDecimal count;
     private BigDecimal purchasePrice;
-    private String currency;
     private String customerId;
+
+    @Enumerated(EnumType.STRING)
+    private CurrencyType currencyType;
 
     @Enumerated(EnumType.STRING)
     private AssetType assetType;

@@ -65,7 +65,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
             uri: ['', [Validators.required, Validators.minLength(1)]],
             count: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
             purchasePrice: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
-            currency: [currencyService.getGlobalCurrencyType(), [Validators.required]]
+            currencyType: [currencyService.getGlobalCurrencyType(), [Validators.required]]
         });
     }
 
@@ -80,7 +80,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         })
         this.currencyTypeSubscription = this.currencyService.selectedCurrencyType$.subscribe(currencyType => {
             this.currencyType = currencyType;
-            this.addAssetForm.get('currency')?.setValue(currencyType);
+            this.addAssetForm.get('currencyType')?.setValue(currencyType);
         })
     }
 
@@ -111,7 +111,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
             uri: formValue.uri,
             count: formValue.count,
             purchasePrice: formValue.purchasePrice,
-            currency: formValue.currency,
+            currencyType: formValue.currencyType,
         };
 
         this.addAsset(asset)?.subscribe({
@@ -128,7 +128,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
 
     addAsset(asset: {
         assetType: string; uri: string; count: number;
-        purchasePrice: number; currency: string
+        purchasePrice: number; currencyType: string
     }) {
         return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, asset);
     }

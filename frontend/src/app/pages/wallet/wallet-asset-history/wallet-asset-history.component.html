@@ -26,7 +26,7 @@
                 </thead>
                 <tbody>
                 <tr class="table" *ngFor="let asset of _assets">
-                    <td>({{ asset.symbol }}) {{ asset.name }}</td>
+                    <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.name }}</td>
                     <td>{{ asset.count }}</td>
                     <td>{{ asset.purchasePrice | currency: asset.currencyType }}</td>
                     <td>{{ asset.createdDate | date:'dd-MM-yyyy | | HH:mm:ss' }}</td>

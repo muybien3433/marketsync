@@ -27,8 +27,8 @@ export class CurrencyChangeOptionComponent implements OnInit {
       this.selectedCurrency = this.currencyService.getGlobalCurrencyType();
   }
 
-  onCurrencyChange(currency: CurrencyType): void {
-    this.onCurrencySelect(currency);
+  onCurrencyChange(currencyType: CurrencyType): void {
+    this.onCurrencySelect(currencyType);
   }
 
   onCurrencySelect(selectedCurrencyType: CurrencyType) {

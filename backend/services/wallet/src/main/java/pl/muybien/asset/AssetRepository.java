@@ -18,7 +18,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
                             a.name,
                             a.symbol,
                             a.count,
-                            a.currency,
+                            a.currencyType,
                             a.purchasePrice,
                             a.createdDate,
                             a.assetType
@@ -34,12 +34,12 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
                         a.symbol,
                         a.uri,
                         a.assetType,
-                        SUM(a.count),
+                        CAST(SUM(a.count) AS BIGDECIMAL),
                         CAST(SUM(a.purchasePrice * a.count) / SUM(a.count) AS BIGDECIMAL),
-                        a.currency,
+                        a.currencyType,
                         a.customerId)
                     FROM Asset a
                     WHERE a.customerId = :customerId
-                    GROUP BY a.name, a.symbol, a.uri, a.assetType, a.currency, a.customerId""")
+                    GROUP BY a.name, a.symbol, a.uri, a.assetType, a.currencyType, a.customerId""")
     Optional<List<AssetGroupDTO>> findAndAggregateAssetsByCustomerId(@Param("customerId") String customerId);
 }

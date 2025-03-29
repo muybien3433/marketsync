@@ -35,16 +35,16 @@
                                 <td class="table-header" colspan="8"></td>
 
                                 <tr class="table" *ngFor="let asset of groupedAssets[assetType]">
-                                    <td>({{ asset.symbol }}) {{ asset.name }}</td>
+                                    <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.name }}</td>
                                     <td>{{ asset.count }}</td>
                                     <td>{{ asset.value | currency: asset.currencyType }}</td>
                                     <td>{{ asset.averagePurchasePrice | currency: asset.currencyType }}</td>
-                                    <td>{{ asset.currentPrice | currency: asset.currencyType }}</td>
-                                    <td [ngStyle]="{ color: asset.profit >= 0 ? 'green' : 'red' }">
-                                        {{ asset.profit | currency: asset.currencyType }}
+                                    <td>{{ asset.currentPrice == 0 ? '-' : asset.currentPrice | currency: asset.currencyType }}</td>
+                                    <td [ngStyle]="{ color: asset.profit == 0 ? 'black' : ( asset.profit > 0 ? 'green' : 'red') }">
+                                        {{ asset.profit == 0 ? '-' : asset.profit | currency: asset.currencyType }}
                                     </td>
-                                    <td [ngStyle]="{ color: asset.profitInPercentage >= 0 ? 'green' : 'red' }">
-                                        {{ asset.profitInPercentage }}%
+                                    <td [ngStyle]="{ color: asset.profitInPercentage == 0 ? 'black' : (asset.profitInPercentage >= 0 ? 'green' : 'red') }">
+                                        {{ asset.profitInPercentage == 0 ? '-' : asset.profitInPercentage + '%'}}
                                     </td>
                                 </tr>
                             </ng-container>

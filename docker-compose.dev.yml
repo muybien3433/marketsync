@@ -5,7 +5,11 @@ services:
       context: ./backend/services/config-server
     environment:
       - SPRING_PROFILES_ACTIVE=native,dev
+    ports:
+      - "7777:7777"
     restart: unless-stopped
+    volumes:
+      - ./backend/services/config-server/src/main/resources/configurations:/app/configurations
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:7777/actuator/health || exit 1" ]
       interval: 10s
@@ -32,9 +36,9 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - FRONTEND_URL=http://localhost:4200
-      - KEYCLOAK_ISSUER_URL=http://keycloak:8080/realms/marketsync
-      - JWK_URI=http://keycloak/realms/marketsync/protocol/openid-connect/certs
+#      - FRONTEND_URL=http://localhost:4200
+#      - KEYCLOAK_ISSUER_URL=http://keycloak:8080/realms/marketsync
+#      - JWK_URI=http://keycloak/realms/marketsync/protocol/openid-connect/certs
     restart: unless-stopped
     networks:
       - frontend-net
@@ -50,6 +54,8 @@ services:
   finance-server:
     build:
       context: ./backend/services/finance
+    env_file:
+      - .env
     depends_on:
       config-server:
         condition: service_healthy
@@ -95,6 +101,8 @@ services:
   wallet-server:
     build:
       context: ./backend/services/wallet
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     depends_on:
       config-server:
         condition: service_healthy
@@ -134,73 +142,73 @@ services:
           memory: 512M
 
 
-  ######### [ Subscription ] #########
-  subscription-server:
-    build:
-      context: ./backend/services/subscription
-    depends_on:
-      config-server:
-        condition: service_healthy
-      mongodb-subscription:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    restart: unless-stopped
-    networks:
-      - backend-net
-      - database-net
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1024M
-
-  mongodb-subscription:
-    image: mongo:latest
-    container_name: mongodb-subscription
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: subscription
-      MONGO_INITDB_ROOT_PASSWORD: subscription
-      MONGO_INITDB_DATABASE: subscription
-    volumes:
-      - mongodb_subscription_data:/data/db
-      - ./init/mongo-subscription.js:/docker-entrypoint-initdb.d/mongo-subscription.js:ro
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - database-net
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 768M
-
-
-  ######### [ Notification ] #########
-  notification-server:
-    build:
-      context: ./backend/services/notification
-    depends_on:
-      kafka:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    restart: unless-stopped
-    networks:
-      - backend-net
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
+#  ######### [ Subscription ] #########
+#  subscription-server:
+#    build:
+#      context: ./backend/services/subscription
+#    depends_on:
+#      config-server:
+#        condition: service_healthy
+#      mongodb-subscription:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=dev
+#    restart: unless-stopped
+#    networks:
+#      - backend-net
+#      - database-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '1'
+#          memory: 1024M
+#
+#  mongodb-subscription:
+#    image: mongo:latest
+#    container_name: mongodb-subscription
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: subscription
+#      MONGO_INITDB_ROOT_PASSWORD: subscription
+#      MONGO_INITDB_DATABASE: subscription
+#    volumes:
+#      - mongodb_subscription_data:/data/db
+#      - ./init/mongo-subscription.js:/docker-entrypoint-initdb.d/mongo-subscription.js:ro
+#    restart: unless-stopped
+#    healthcheck:
+#      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    networks:
+#      - database-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 768M
+#
+#
+#  ######### [ Notification ] #########
+#  notification-server:
+#    build:
+#      context: ./backend/services/notification
+#    depends_on:
+#      kafka:
+#        condition: service_healthy
+#      config-server:
+#        condition: service_healthy
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=dev
+#    restart: unless-stopped
+#    networks:
+#      - backend-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 512M
 
 
   ######### [ Authentication ] #########
@@ -220,8 +228,8 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HOSTNAME: localhost
       KC_HOSTNAME_STRICT: "false"
-    volumes:
-      - ./init/marketsync-client-dev.json:/opt/keycloak/data/import/marketsync-client-dev.json
+#    volumes:
+#      - ./init/marketsync-client-dev.json:/opt/keycloak/data/import/marketsync-client-dev.json
     command:
       - "start-dev"
       - "--import-realm"
@@ -262,8 +270,7 @@ services:
 
   ######### [ Selenium ] #########
   selenium-chrome:
-    image: selenium/standalone-chrome:latest
-    platform: linux/amd64
+    image: selenium/standalone-chromium
     ports:
       - "4444:4444"
     container_name: selenium-chrome
@@ -280,56 +287,56 @@ services:
           memory: 1024M
 
 
-  ######### [ Kafka ] #########
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    environment:
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-    volumes:
-      - kafka_data:/var/lib/kafka/data
-    entrypoint: [ "/bin/sh", "-c", "rm -rf /var/lib/kafka/data/meta.properties && /etc/confluent/docker/run" ]
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "kafka", "9092" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - backend-net
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - backend-net
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
+#  ######### [ Kafka ] #########
+#  kafka:
+#    image: confluentinc/cp-kafka:latest
+#    container_name: kafka
+#    depends_on:
+#      zookeeper:
+#        condition: service_healthy
+#    environment:
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+#    volumes:
+#      - kafka_data:/var/lib/kafka/data
+#    entrypoint: [ "/bin/sh", "-c", "rm -rf /var/lib/kafka/data/meta.properties && /etc/confluent/docker/run" ]
+#    restart: unless-stopped
+#    healthcheck:
+#      test: [ "CMD", "nc", "-z", "kafka", "9092" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    networks:
+#      - backend-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 512M
+#
+#  zookeeper:
+#    image: confluentinc/cp-zookeeper:latest
+#    container_name: zookeeper
+#    environment:
+#      ZOOKEEPER_CLIENT_PORT: 2181
+#    restart: unless-stopped
+#    healthcheck:
+#      test: [ "CMD", "nc", "-z", "zookeeper", "2181" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    networks:
+#      - backend-net
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 512M
 
 
 #  ######### [ Frontend ] #########
