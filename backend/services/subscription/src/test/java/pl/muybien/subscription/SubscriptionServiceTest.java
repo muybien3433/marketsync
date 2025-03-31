@@ -15,7 +15,6 @@ import pl.muybien.subscription.dto.SubscriptionDetailDTO;
 import pl.muybien.subscription.dto.SubscriptionDetailDTOMapper;
 
 import java.math.BigDecimal;
-import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -44,7 +43,7 @@ class SubscriptionServiceTest {
     private final String uri = "http://example.com/asset";
     private final String assetType = "STOCK";
     private final String financeName = "Example Corp";
-    private final BigDecimal price = BigDecimal.valueOf(100.50);
+    private final String price = "100.50";
 
     @Test
     void createSubscription_ThrowsWhenBothBoundsNull() {
@@ -75,7 +74,7 @@ class SubscriptionServiceTest {
         );
 
         FinanceResponse financeResponse = new FinanceResponse(
-                financeName, "SYM", uri, price, "USD", assetType, LocalTime.now()
+                financeName, "SYM", uri, UnitType.UNIT.name(), price, "USD", assetType, LocalDateTime.now()
         );
 
         when(financeClient.findFinanceByAssetTypeAndUri(assetType, uri))
@@ -208,7 +207,7 @@ class SubscriptionServiceTest {
         subscription.getSubscriptionDetails().addAll(List.of(detail1, detail2));
 
         when(subscriptionRepository.findAll()).thenReturn(List.of(subscription));
-        when(detailDTOMapper.toDTO(eq(detail1), any(BigDecimal.class)))
+        when(detailDTOMapper.toDTO(eq(detail1), any(String.class)))
                 .thenReturn(new SubscriptionDetailDTO(
                         "detail-1",
                         financeName,
@@ -226,10 +225,11 @@ class SubscriptionServiceTest {
                 financeName,
                 "SYM",
                 uri,
+                UnitType.UNIT.name(),
                 price,
                 "USD",
                 assetType,
-                LocalTime.now()
+                LocalDateTime.now()
         );
 
         when(financeClient.findFinanceByAssetTypeAndUri(any(), any()))
@@ -252,15 +252,15 @@ class SubscriptionServiceTest {
 
         BigDecimal exchangeRate = BigDecimal.valueOf(0.85);
         FinanceResponse financeResponse = new FinanceResponse(
-                financeName, "SYM", uri, BigDecimal.valueOf(100), "USD", assetType, LocalTime.now()
+                financeName, "SYM", uri, UnitType.UNIT.name(), "100", "USD", assetType, LocalDateTime.now()
         );
         when(financeClient.findFinanceByAssetTypeAndUri(any(), any()))
                 .thenReturn(financeResponse);
         when(financeClient.findExchangeRate("USD", "EUR"))
                 .thenReturn(exchangeRate);
 
-        BigDecimal result = subscriptionService.resolveCurrentPrice(detail);
+        String result = subscriptionService.resolveCurrentPrice(detail);
 
-        assertEquals(BigDecimal.valueOf(100).multiply(exchangeRate), result);
+        assertEquals(BigDecimal.valueOf(100).multiply(exchangeRate), new BigDecimal(result));
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
@@ -78,11 +77,23 @@ class FinanceControllerTest {
         String assetType = AssetType.CRYPTO.name();
         Set<FinanceDetailDTO> details = Set.of(
                 new FinanceDetailDTO(
-                        "Bitcoin", "BTC", "bitcoin",
-                        null, CurrencyType.USD.name(), AssetType.CRYPTO.name(), LocalDateTime.now()),
+                        "Bitcoin",
+                        "BTC",
+                        "bitcoin",
+                        UnitType.UNIT.name(),
+                        "100000",
+                        CurrencyType.USD.name(),
+                        AssetType.CRYPTO.name(),
+                        LocalDateTime.now()),
                 new FinanceDetailDTO(
-                        "Ethereum", "ETH", "Ethereum", null,
-                        CurrencyType.USD.name(), AssetType.CRYPTO.name(), LocalDateTime.now()));
+                        "Ethereum",
+                        "ETH",
+                        "Ethereum",
+                        UnitType.UNIT.name(),
+                        "3600",
+                        CurrencyType.USD.name(),
+                        AssetType.CRYPTO.name(),
+                        LocalDateTime.now()));
 
         when(financeService.displayAvailableFinance(assetType)).thenReturn(details);
 

@@ -11,12 +11,22 @@
                                 class="form-control"
                                 id="uri"
                                 formControlName="uri"
-                                readonly
                         />
                     </div>
 
                     <div class="form-group">
-                        <label for="count">{{ 'common.count' | translate }}</label>
+                        <label for="count">
+                            {{ 'common.count' | translate }}
+                            <span *ngIf="editAssetForm.get('assetType')?.value === 'CUSTOM' && editAssetForm.get('unitType')?.value?.trim(); else countTranslate">
+                                ({{ editAssetForm.get('unitType')?.value }})
+                            </span>
+                            <ng-template #countTranslate>
+                                <span *ngIf="editAssetForm.get('unitType')?.value?.trim()">
+                                    ({{ 'unit.' + editAssetForm.get('unitType').value | translate }})
+                                </span>
+                            </ng-template>
+                        </label>
+
                         <input
                                 type="text"
                                 class="form-control"
@@ -25,9 +35,9 @@
                                 required
                                 appNumberInput
                         />
-                    </div>
-                    <div *ngIf="editAssetForm.get('count')?.invalid">
-                        <small class="error">{{ 'error.count.should.be.positive' | translate }}</small>
+                        <div *ngIf="editAssetForm.get('count')?.invalid">
+                            <small class="error">{{ 'error.digit.should.be.positive' | translate }}</small>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -41,7 +51,23 @@
                                 appNumberInput
                         />
                         <div *ngIf="editAssetForm.get('purchasePrice')?.invalid">
-                            <small class="error">{{ 'error.price.should.be.positive' | translate }}</small>
+                            <small class="error">{{ 'error.digit.should.be.positive' | translate }}</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group" *ngIf="editAssetForm.get('assetType')?.value === 'CUSTOM'">
+                        <label for="currentPrice">{{ 'asset.current.price' | translate }}</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="currentPrice"
+                                formControlName="currentPrice"
+                                placeholder="{{ 'enter.current.price' | translate }}"
+                                required
+                                appNumberInput
+                        />
+                        <div *ngIf="editAssetForm.get('currentPrice')?.invalid">
+                            <small class="error">{{ 'error.digit.should.be.positive' | translate }}</small>
                         </div>
                     </div>
 
@@ -52,15 +78,48 @@
                                 class="form-control"
                                 formControlName="currencyType"
                         >
-                            <option *ngFor="let currencyType of currencyOptions" [value]="currencyType">{{ currencyType }}</option>
+                            <option *ngFor="let currencyType of currencyOptions"
+                                    [value]="currencyType">{{ currencyType }}
+                            </option>
                         </select>
                         <div *ngIf="editAssetForm.get('currencyType')?.invalid">
                             <small class="error">{{ 'error.currency.is.required' | translate }}</small>
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <div *ngIf="editAssetForm.get('assetType')?.value === 'CUSTOM'">
+                            <label for="unitType">{{ 'common.unit' | translate }}</label>
+                            <textarea
+                                    class="form-control"
+                                    id="unitType"
+                                    rows="1"
+                                    formControlName="unitType"
+                                    placeholder="{{ 'asset.optional.unit' | translate }}"
+                            ></textarea>
+                            <small class="text-muted">
+                                {{ remainingUnitChars }} {{ 'common.remaining' | translate }}
+                            </small>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="comment">{{ 'asset.comment' | translate }}</label>
+                        <textarea
+                                class="form-control"
+                                id="comment"
+                                rows="3"
+                                formControlName="comment"
+                                [placeholder]="editAssetForm.get('comment')?.value || ('asset.optional.comment' | translate)">
+                        </textarea>
+                        <small class="text-muted">
+                            {{ remainingCommentChars }} {{ 'common.remaining' | translate }}
+                        </small>
+                    </div>
+
                     <button type="submit" class="btn btn-primary"
-                            [disabled]="isSubmitting">{{ 'asset.edit.asset' | translate }}
+                            [disabled]="isSubmitting">{{ 'common.save' | translate }}
                     </button>
 
                     <div *ngIf="errorMessage" class="error">{{ 'error.asset.edit.fail' | translate }}</div>

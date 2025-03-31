@@ -42,13 +42,12 @@ public class AssetController {
     }
 
     @PatchMapping("/{asset-id}")
-    public ResponseEntity<String> updateAsset(
+    public ResponseEntity<AssetHistoryDTO> updateAsset(
             @RequestHeader("X-Customer-Id") String customerId,
             @RequestBody @Valid AssetRequest request,
             @PathVariable("asset-id") Long assetId
     ) {
-        service.updateAsset(customerId, request, assetId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok(service.updateAsset(customerId, request, assetId));
     }
 
     @DeleteMapping("/{asset-id}")

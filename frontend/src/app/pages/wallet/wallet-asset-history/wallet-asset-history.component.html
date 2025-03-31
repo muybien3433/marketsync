@@ -18,18 +18,45 @@
                 <thead class="table">
                 <tr>
                     <th>{{ 'asset.name' | translate }}</th>
-                    <th>{{ 'common.count' | translate }}</th>
+                    <th>{{ 'common.count' | translate }} ({{ 'unit.UNIT' | translate }})</th>
                     <th>{{ 'asset.purchase.price' | translate }}</th>
+                    <th>{{ 'asset.current.price' | translate }}</th>
                     <th>{{ 'asset.investment.start.date' | translate }}</th>
+                    <th>{{ 'asset.comment' | translate }}</th>
                     <th>{{ 'common.action' | translate }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr class="table" *ngFor="let asset of _assets">
-                    <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.name }}</td>
-                    <td>{{ asset.count }}</td>
+                    <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.uri }}</td>
+
+                    <td *ngIf="asset.unitType === 'UNIT'">
+                        {{ asset.count }}
+                    </td>
+
+                    <td *ngIf="asset.unitType !== 'UNIT' && asset.assetType !== 'CUSTOM'">
+                        {{ asset.count }} {{ asset.unitType ? '(' + ('unit.' + asset.unitType | translate) + ')' : '' }}
+                    </td>
+
+                    <td *ngIf="asset.assetType === 'CUSTOM'">
+                        {{ asset.count }} {{ asset.unitType ? '(' +  asset.unitType + ')' : '' }}
+                    </td>
+
                     <td>{{ asset.purchasePrice | currency: asset.currencyType }}</td>
+                    <td>{{ asset.currentPrice ? (asset.currentPrice | currency: asset.currencyType) : "-" }}</td>
                     <td>{{ asset.createdDate | date:'dd-MM-yyyy | | HH:mm:ss' }}</td>
+                    <td>
+                        <div class="form-group">
+                            <textarea
+                                    class="form-control"
+                                    id="comment"
+                                    rows="1"
+                                    [ngModel]="asset.comment"
+                                    readonly
+                            >
+                            </textarea>
+                        </div>
+                    </td>
                     <td class="button-cell">
                         <button (click)="editAsset(asset)"
                                 class="btn btn-primary btn-sm">{{ 'common.edit' | translate }}
@@ -41,6 +68,9 @@
                 </tr>
                 </tbody>
             </table>
+            <div *ngIf="showSuccessMessage" class="alert alert-danger mt-1">
+                {{ 'success.asset.delete.success' | translate }}
+            </div>
         </ng-template>
     </app-card>
 </div>

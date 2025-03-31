@@ -19,6 +19,7 @@ public class Currency {
     @Id
     private String name;
     private BigDecimal exchange;
+    private String unitType;
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;

@@ -31,11 +31,14 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     @Input() assetTypeOptions: AssetType[] = Object.values(AssetType);
     @Output() assetChanged: EventEmitter<AssetDetail> = new EventEmitter();
 
+    protected readonly AssetType = AssetType;
+
     _assets: AssetDetail[] = [];
     selectedAssetType: AssetType = AssetType.CRYPTO;
     selectedAsset!: AssetDetail | null;
     searchTerm: string = '';
     customAssetName: string = '';
+    _currencies: CurrencyType[] = Object.values(CurrencyType);
 
     private currencySubscription!: Subscription;
     currentCurrency!: CurrencyType;
@@ -64,7 +67,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         this.resetPickedAsset();
 
         this._assets = [];
-        if (assetType !== AssetType.CUSTOM) {
+        if (assetType !== AssetType.CUSTOM && assetType !== AssetType.CURRENCY) {
             this.fetchAssets(assetType, this.currentCurrency);
         }
     }
@@ -78,6 +81,8 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
                 null,
                 this.currentCurrency,
                 AssetType.CUSTOM,
+                null,
+                null,
                 null
             );
 
@@ -130,6 +135,4 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
             )
             .subscribe();
     }
-
-    protected readonly AssetType = AssetType;
 }

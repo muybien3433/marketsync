@@ -2,9 +2,7 @@ package pl.muybien.finance.crypto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +12,7 @@ import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.finance.AssetType;
 import pl.muybien.finance.CurrencyType;
 import pl.muybien.finance.FinanceDetail;
+import pl.muybien.finance.UnitType;
 import pl.muybien.finance.updater.FinanceDatabaseUpdater;
 import pl.muybien.finance.updater.FinanceUpdater;
 
@@ -76,17 +75,19 @@ public class CoinGeckoClient extends FinanceUpdater {
                         "Error fetch CoinGecko data, status code: %s".formatted(response.statusCode()));
             }
 
-            List<CoinGeckoDetail> details = objectMapper.readValue(response.body(), new TypeReference<>() {});
+            List<CoinGeckoDetail> details = objectMapper.readValue(response.body(), new TypeReference<>() {
+            });
             details.forEach(geckoDetail -> {
                 String name = geckoDetail.name();
                 String symbol = geckoDetail.symbol();
                 String id = geckoDetail.id();
-                BigDecimal currentPrice = geckoDetail.currentPrice();
+                String currentPrice = geckoDetail.currentPrice();
 
                 if (name == null || name.isBlank() ||
                         symbol == null || symbol.isBlank() ||
                         id == null || id.isBlank() ||
-                        currentPrice == null || currentPrice.compareTo(BigDecimal.ZERO) <= 0) {
+                        currentPrice == null ||
+                        new BigDecimal(currentPrice).compareTo(BigDecimal.ZERO) <= 0) {
                     return;
                 }
 
@@ -94,6 +95,7 @@ public class CoinGeckoClient extends FinanceUpdater {
                         name,
                         symbol.toUpperCase(),
                         id,
+                        UnitType.UNIT.name(),
                         currentPrice,
                         CurrencyType.USD.name(),
                         AssetType.CRYPTO.name(),
@@ -116,7 +118,7 @@ public class CoinGeckoClient extends FinanceUpdater {
             @JsonProperty("id") String id,
             @JsonProperty("symbol") String symbol,
             @JsonProperty("name") String name,
-            @JsonProperty("current_price") BigDecimal currentPrice,
+            @JsonProperty("current_price") String currentPrice,
             @JsonProperty("market_cap") long marketCap,
             @JsonProperty("market_cap_rank") int marketCapRank,
             @JsonProperty("fully_diluted_valuation") long fullyDilutedValuation,

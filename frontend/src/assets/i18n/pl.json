@@ -11,13 +11,14 @@
     "value": "Wartość",
     "total.value": "Wartość całkowita",
     "current.price": "Aktualna cena",
-    "history": "Historia",
+    "history": "Historia | Edycja",
     "sum": "Suma",
     "currency": "Waluta",
     "type.to.search": "Wpisz by wyszukać",
     "change": "Zmień",
     "save": "Zapisz",
-    "enter.price": "Wpisz cenę"
+    "unit": "Jednostka",
+    "remaining": "znaków pozostało"
   },
 
   "navbar": {
@@ -40,15 +41,21 @@
     "type.selection": "Wybierz typ aktywa",
     "search.asset": "Wpisz by wyszukać spośród: ",
     "purchase.price": "Cena zakupu",
+    "current.price": "Aktualna cena",
     "average.purchase.price": "Śr. Cena zakupu",
     "investment.start.date": "Data utworzenia",
-    "profit.in.percentage": "Zysk w %",
+    "profit.in.percentage": "Zysk (%)",
     "profit": "Zysk",
     "delete.asset": "Usuń aktywo",
+    "custom": "Niestandardowe",
     "crypto": "Kryptowaluty",
     "stock": "Akcje",
-    "custom": "Niestandardowe",
+    "currency": "Waluty",
+    "weight": "Waga (%)",
+    "comment": "Komentarz",
     "custom.placeholder": "Wpisz nazwę",
+    "optional.comment": "Opcjonalny komentarz",
+    "optional.unit": "Opcjonalna jednostka",
     "no.assets.message": "Ups... Twój portfel jest pusty! Nic straconego, kliknij przycisk poniżej."
   },
 
@@ -76,6 +83,17 @@
     "no.subscription.message": "Ups... Nie posiadasz aktualnie żadnych subskrybcji! Nic straconego, kliknij przycisk poniżej."
   },
 
+  "enter": {
+    "price": "Wpisz cenę",
+    "purchase.price": "Wpisz cenę zakupu",
+    "current.price": "Wpisz aktualną cenę",
+    "count": "Wpisz ilość"
+  },
+
+  "unit": {
+    "UNIT": "j"
+  },
+
   "settings": {
     "save.success": "Zapisano pomyślnie",
     "currency.header": "Ta opcja zmieni preferowaną walutę",
@@ -83,8 +101,9 @@
   },
 
   "success": {
-    "asset.add.success": "Aktywo dodane pomyślnie!",
-    "asset.edit.success": "Aktywo edytowane pomyślnie!"
+    "asset.add.success": "Aktywo dodane pomyślnie",
+    "asset.edit.success": "Aktywo edytowane pomyślnie",
+    "asset.delete.success": "Aktywo usunięte pomyślnie"
   },
 
   "error": {
@@ -92,7 +111,7 @@
     "count.should.be.positive": "Ilość powinna być liczbą dodatnią",
     "asset.is.required": "Aktywo jest wymagane",
     "asset.type.required": "Typ aktywa jest wymagany",
-    "price.should.be.positive": "Liczba powinna być dodatnia",
+    "digit.should.be.positive": "Liczba powinna być dodatnia",
     "asset.add.fail": "Nie udało się dodać aktywa. Spróbuj ponownie",
     "asset.edit.fail": "Nie udało się edytować aktywa. Spróbuj ponownie"
   }

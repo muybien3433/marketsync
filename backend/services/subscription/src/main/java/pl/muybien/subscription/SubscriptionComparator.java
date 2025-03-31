@@ -28,12 +28,13 @@ public class SubscriptionComparator {
             Double lowerTargetPrice = subscriptionDetail.lowerBoundPrice();
 
             boolean financeCurrencyDifferentThanSubscription =
-                    !finance.currency().equalsIgnoreCase(subscriptionDetail.requestedCurrency().name());
+                    !finance.currencyType().equalsIgnoreCase(subscriptionDetail.requestedCurrency().name());
 
-            BigDecimal currentPrice = finance.price();
+            BigDecimal currentPrice = new BigDecimal(finance.price());
             if (financeCurrencyDifferentThanSubscription) {
                 var rate = financeClient
-                        .findExchangeRate(finance.currency(), subscriptionDetail.requestedCurrency().name());
+                        .findExchangeRate(finance.currencyType(), subscriptionDetail.requestedCurrency().name());
+
                 currentPrice = currentPrice.multiply(rate);
             }
 
@@ -56,7 +57,7 @@ public class SubscriptionComparator {
     @Transactional
     public void sendNotificationToSpecifiedTopic(SubscriptionDetail detail, BigDecimal price, Double targetPrice) {
         String message = "Current %s value reached bound at: %s, your bound was %s"
-                .formatted(detail.financeName(), price, targetPrice);
+                .formatted(detail.financeName(), price.toPlainString(), targetPrice);
         var subscriptionConfirmation = new SubscriptionConfirmation(
                 detail.notificationType(),
                 detail.target(),

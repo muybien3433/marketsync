@@ -11,13 +11,14 @@
     "value": "Value",
     "total.value": "Total value",
     "current.price": "Current price",
-    "history": "History",
+    "history": "History | Edition",
     "sum": "Sum",
     "currency": "Currency",
     "type.to.search": "Type to search",
     "change": "Change",
     "save": "Save",
-    "enter.price": "Enter price"
+    "unit": "Unit",
+    "remaining": "chars remaining"
   },
 
   "navbar": {
@@ -40,15 +41,21 @@
     "type.selection": "Select asset type",
     "search.asset": "Type to search from: ",
     "purchase.price": "Purchase price",
+    "current.price": "Current price",
     "average.purchase.price": "Avg. Purchase Price",
     "investment.start.date": "Creation date",
-    "profit.in.percentage": "Profit %",
+    "profit.in.percentage": "Profit (%)",
     "profit": "Profit",
     "delete.asset": "Delete asset",
+    "custom": "Custom",
     "crypto": "Crypto",
     "stock": "Stock",
-    "custom": "Custom",
+    "currency": "Currency",
+    "weight": "Weight (%)",
+    "comment": "Comment",
     "custom.placeholder": "Type name",
+    "optional.comment": "Optional comment",
+    "optional.unit": "Optional unit",
     "no.assets.message": "Ops... Your wallet is empty! No worries just click the button below."
   },
 
@@ -75,6 +82,17 @@
     "no.subscription.message": "Ops... You don't have any subscriptions yet! No worries just click the button below."
   },
 
+  "enter": {
+    "price": "Enter price",
+    "purchase.price": "Enter purchase price",
+    "current.price": "Enter current price",
+    "count": "Enter count"
+  },
+
+  "unit": {
+    "UNIT": "u"
+  },
+
   "settings": {
     "save.success": "Saved successfully",
     "currency.header": "This option set global preferred currency",
@@ -82,8 +100,9 @@
   },
 
   "success": {
-    "asset.add.success": "Asset added successfully!",
-    "asset.edit.success": "Asset edited successfully!"
+    "asset.add.success": "Asset added successfully",
+    "asset.edit.success": "Asset edited successfully",
+    "asset.delete.success": "Asset deleted successfully"
   },
 
   "error": {
@@ -91,7 +110,7 @@
     "count.should.be.positive": "Count should be a positive number",
     "asset.is.required": "Asset is required",
     "asset.type.required": "Asset type is required",
-    "price.should.be.positive": "Price should be a positive number",
+    "digit.should.be.positive": "Price should be a positive number",
     "asset.add.fail": "Failed to add asset. Please try again",
     "asset.edit.fail": "Failed to edit asset. Please try again"
   }

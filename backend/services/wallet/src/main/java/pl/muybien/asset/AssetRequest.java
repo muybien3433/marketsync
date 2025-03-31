@@ -30,6 +30,10 @@ public record AssetRequest(
         @NotNull(message = "Currency type is required")
         @NotEmpty(message = "Currency type is required")
         @NotBlank(message = "Currency type is required")
-        String currencyType
+        String currencyType,
+
+        String unitType,
+        BigDecimal currentPrice,
+        String comment
 ) {
 }

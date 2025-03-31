@@ -6,6 +6,8 @@ export class AssetDetail {
         public price: number,
         public currencyType: string,
         public assetType: string,
+        public unitType: string,
+        public comment: string,
         public lastUpdated: string
     ) {
     }

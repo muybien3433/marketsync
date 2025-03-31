@@ -3,11 +3,9 @@ package pl.muybien.subscription.dto;
 import org.springframework.stereotype.Service;
 import pl.muybien.subscription.data.SubscriptionDetail;
 
-import java.math.BigDecimal;
-
 @Service
 public class SubscriptionDetailDTOMapper {
-    public SubscriptionDetailDTO toDTO(SubscriptionDetail subscriptionDetail, BigDecimal currentPrice) {
+    public SubscriptionDetailDTO toDTO(SubscriptionDetail subscriptionDetail, String currentPrice) {
         return new SubscriptionDetailDTO(
                 subscriptionDetail.id(),
                 subscriptionDetail.financeName(),

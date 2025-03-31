@@ -32,6 +32,10 @@ export default class WalletEditAssetComponent {
   errorMessage: string = '';
   assetId: number | null = null;
   currencyOptions = Object.values(CurrencyType);
+  maxCommentLength: number = 200;
+  remainingCommentChars: number = this.maxCommentLength;
+  maxUnitLength: number = 6;
+  remainingUnitChars: number = this.maxUnitLength;
 
   constructor(
       private fb: FormBuilder,
@@ -45,19 +49,57 @@ export default class WalletEditAssetComponent {
       this.assetId = asset.id;
       this.editAssetForm = this.fb.group({
         assetType: [{ value: asset.assetType, disabled: true }],
-        uri: [{ value: asset.name, disabled: true }],
+        unitType: [ asset.unitType || '', [Validators.maxLength(this.maxUnitLength)]],
+        uri: [{ value: asset.uri, disabled: asset.assetType !== 'CUSTOM' }],
         count: [asset.count, [Validators.required, Validators.min(0.0000000000001)]],
         purchasePrice: [asset.purchasePrice, [Validators.required, Validators.min(0.0000000000001)]],
-        currencyType: [asset.currencyType, [Validators.required]]
+        currentPrice: [asset.currentPrice, [Validators.min(0.0000000000001)]],
+        currencyType: [asset.currencyType, [Validators.required]],
+        comment: [asset.comment || '', [Validators.maxLength(this.maxCommentLength)]],
+      });
+
+      this.editAssetForm.get('assetType')?.valueChanges.subscribe(value => {
+        if (value === 'CUSTOM') {
+          this.editAssetForm.get('uri')?.enable();
+        } else {
+          this.editAssetForm.get('uri')?.disable();
+        }
+      });
+
+      this.remainingCommentChars = this.maxCommentLength - (asset.comment?.length || 0);
+      this.editAssetForm.get('comment')?.valueChanges.subscribe(value => {
+        const length = value?.length || 0;
+        this.remainingCommentChars = this.maxCommentLength - length;
+
+        if (this.remainingCommentChars < 0) {
+          const truncatedValue = value.substring(0, this.maxCommentLength);
+          this.editAssetForm.get('comment')?.setValue(truncatedValue, { emitEvent: false });
+          this.remainingCommentChars = 0;
+        }
+      });
+
+      this.remainingUnitChars = this.maxUnitLength - (asset.unitType?.length || 0);
+      this.editAssetForm.get('unitType')?.valueChanges.subscribe(value => {
+        const length = value?.length || 0;
+        this.remainingUnitChars = this.maxUnitLength - length;
+
+        if (this.remainingUnitChars < 0) {
+          const truncatedValue = value.substring(0, this.maxUnitLength);
+          this.editAssetForm.get('unitType')?.setValue(truncatedValue, {emitEvent: false});
+          this.remainingUnitChars = 0;
+        }
       });
     } else {
-      this.router.navigate(['wallet/assets/history'], { state: {asset} });
+      this.router.navigate(['wallet/assets/history'], { state: { asset } });
       this.editAssetForm = this.fb.group({
         assetType: [{ value: '', disabled: true }],
+        unitType: [{ value: '', disabled: true }],
         uri: [{ value: '', disabled: true }],
         count: [0, [Validators.required, Validators.min(0.001)]],
         purchasePrice: [0, [Validators.required, Validators.min(0.01)]],
-        currencyType: ['', [Validators.required]]
+        currentPrice: [0, [Validators.required, Validators.min(0.01)]],
+        currencyType: ['', [Validators.required]],
+        comment: ['', [Validators.maxLength(this.maxCommentLength)]],
       });
     }
   }
@@ -72,16 +114,18 @@ export default class WalletEditAssetComponent {
     const formValue = this.editAssetForm.getRawValue();
     const assetData = {
       assetType: formValue.assetType,
+      unitType: formValue.unitType,
       uri: formValue.uri,
       count: formValue.count,
       purchasePrice: formValue.purchasePrice,
+      currentPrice: formValue.currentPrice,
       currencyType: formValue.currencyType,
+      comment: formValue.comment,
     };
 
     this.editAsset(assetData)?.subscribe({
       next: () => {
-        this.router.navigate(['wallet/assets/history']);
-        this.isSubmitting = false;
+m        this.router.navigate(['wallet/assets/history']);
       },
       error: () => {
         this.errorMessage = 'Failed to update asset.';
@@ -90,7 +134,8 @@ export default class WalletEditAssetComponent {
     });
   }
 
-  editAsset(assetData: { assetType: string; uri: string; count: number; purchasePrice: number; currencyType: string }) {
+  editAsset(assetData: { assetType: string; unitType: string; uri: string;
+    count: number; purchasePrice: number; currentPrice: number, currencyType: string; comment: string }) {
     if (this.assetId === null) {
       this.errorMessage = 'Invalid asset ID.';
     }

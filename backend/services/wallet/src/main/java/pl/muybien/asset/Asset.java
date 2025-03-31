@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,6 +31,15 @@ public class Asset {
     private BigDecimal count;
     private BigDecimal purchasePrice;
     private String customerId;
+
+    @Nullable
+    private String unitType;
+
+    @Nullable
+    private BigDecimal currentPrice;
+
+    @Nullable
+    private String comment;
 
     @Enumerated(EnumType.STRING)
     private CurrencyType currencyType;

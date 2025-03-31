@@ -10,6 +10,7 @@ public record AssetAggregateDTO(
         @JsonProperty("name") String name,
         @JsonProperty("symbol") String symbol,
         @JsonProperty("assetType") AssetType assetType,
+        @JsonProperty("unitType") String unitType,
         @JsonProperty("count") BigDecimal count,
         @JsonProperty("currentPrice") BigDecimal currentPrice,
         @JsonProperty("currencyType") CurrencyType currencyType,

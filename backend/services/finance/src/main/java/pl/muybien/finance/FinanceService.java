@@ -34,8 +34,9 @@ public class FinanceService {
                 financeDetail.name(),
                 financeDetail.symbol(),
                 financeDetail.uri(),
-                financeDetail.price().toPlainString(),
-                financeDetail.currencyDetail(),
+                financeDetail.unitType(),
+                financeDetail.price(),
+                financeDetail.currencyType(),
                 financeDetail.assetType(),
                 financeDetail.lastUpdated()
         );
@@ -119,6 +120,7 @@ public class FinanceService {
                     detail.name(),
                     detail.symbol(),
                     detail.uri(),
+                    detail.unitType(),
                     updatedPrice.toPlainString(),
                     desiredCurrency.name(),
                     detail.assetType(),

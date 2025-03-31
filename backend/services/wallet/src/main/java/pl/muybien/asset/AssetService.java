@@ -1,7 +1,9 @@
 package pl.muybien.asset;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.asset.dto.AssetAggregateDTO;
@@ -14,12 +16,15 @@ import pl.muybien.finance.FinanceResponse;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+
+@Slf4j
 
 @Service
 @RequiredArgsConstructor
@@ -31,37 +36,42 @@ public class AssetService {
     @Transactional
     public void createAsset(String customerId, AssetRequest request) {
         AssetType assetType = AssetType.fromString(request.assetType());
-        FinanceResponse finance;
 
+        FinanceResponse finance;
         if (assetType != AssetType.CUSTOM) {
             finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
         } else {
             finance = new FinanceResponse(
-                    request.uri(),
+                    request.uri().substring(0, 1).toUpperCase() + request.uri().substring(1),
                     "",
                     request.uri(),
-                    request.purchasePrice(),
+                    request.unitType(),
+                    request.purchasePrice().toPlainString(),
                     request.currencyType(),
                     assetType.name(),
-                    LocalTime.now()
+                    LocalDateTime.now()
             );
         }
 
-        repository.save(Asset.builder()
-                .assetType(assetType)
-                .name(finance.name().substring(0, 1).toUpperCase() + finance.name().substring(1))
-                .symbol(finance.symbol())
-                .uri(request.uri())
-                .count(request.count().setScale(12, RoundingMode.HALF_UP))
-                .purchasePrice(request.purchasePrice().setScale(12, RoundingMode.HALF_UP))
-                .currencyType(CurrencyType.valueOf(request.currencyType()))
-                .customerId(customerId)
-                .build()
+        repository.save(
+                Asset.builder()
+                        .assetType(assetType)
+                        .unitType(request.unitType())
+                        .name(finance.name().substring(0, 1).toUpperCase() + finance.name().substring(1))
+                        .symbol(finance.symbol())
+                        .uri(request.uri())
+                        .count(request.count().setScale(12, RoundingMode.HALF_UP))
+                        .purchasePrice(request.purchasePrice().setScale(12, RoundingMode.HALF_UP))
+                        .currentPrice(assetType == AssetType.CUSTOM ? request.purchasePrice() : null)
+                        .currencyType(CurrencyType.valueOf(request.currencyType()))
+                        .customerId(customerId)
+                        .comment(request.comment())
+                        .build()
         );
     }
 
     @Transactional
-    public void updateAsset(String customerId, AssetRequest request, Long assetId) {
+    public AssetHistoryDTO updateAsset(String customerId, AssetRequest request, Long assetId) {
         var asset = repository.findById(assetId).orElseThrow(() ->
                 new AssetNotFoundException("Asset with ID %s not found".formatted(assetId)));
 
@@ -74,7 +84,38 @@ public class AssetService {
         asset.setPurchasePrice(request.purchasePrice().setScale(12, RoundingMode.HALF_UP));
         asset.setCurrencyType(CurrencyType.valueOf(request.currencyType()));
 
+        if (request.comment() != null) {
+            asset.setComment(request.comment());
+        }
+
+        boolean isCustomUnitType = asset.getAssetType() == AssetType.CUSTOM;
+        if (isCustomUnitType) {
+            if (request.uri() != null) {
+                asset.setUri(request.uri().trim());
+            }
+            if (request.unitType() != null) {
+                asset.setUnitType(request.unitType().trim());
+            }
+            if (request.currentPrice() != null) {
+                asset.setCurrentPrice(request.currentPrice());
+            }
+        }
+
         repository.save(asset);
+        return new AssetHistoryDTO(
+                asset.getId(),
+                asset.getName(),
+                asset.getUri(),
+                asset.getSymbol(),
+                asset.getCount(),
+                asset.getCurrencyType(),
+                asset.getPurchasePrice(),
+                asset.getCurrentPrice(),
+                asset.getCreatedDate(),
+                asset.getAssetType(),
+                asset.getUnitType(),
+                asset.getComment()
+        );
     }
 
     @Transactional
@@ -104,18 +145,20 @@ public class AssetService {
         var groupedAssets = repository.findAndAggregateAssetsByCustomerId(customerId).orElse(Collections.emptyList());
         var aggregatedAssets = new ArrayList<AssetAggregateDTO>();
 
-        groupedAssets.forEach(asset -> aggregatedAssets.add(
-                asset.assetType() == AssetType.CUSTOM
-                        ? createCustomAsset(asset)
-                        : aggregateAsset(asset, desiredCurrency)
-        ));
+        groupedAssets.forEach(asset -> aggregatedAssets.add(aggregateAsset(asset, desiredCurrency)));
 
         return aggregatedAssets;
     }
 
     private AssetAggregateDTO aggregateAsset(AssetGroupDTO asset, String desiredCurrency) {
-        var finance = financeClient.findFinanceByTypeAndUri(asset.assetType().name(), asset.uri());
-        BigDecimal currentPrice = resolvePriceByCurrency(asset, finance);
+        BigDecimal currentPrice;
+        if (asset.assetType() == AssetType.CUSTOM) {
+            currentPrice = asset.currentPrice(); // in CUSTOM currentPrice is updated by user
+        } else {
+            var finance = financeClient.findFinanceByTypeAndUri(asset.assetType().name(), asset.uri());
+            currentPrice = resolvePriceByCurrency(asset, finance);
+        }
+
         BigDecimal value = asset.count().multiply(currentPrice);
         BigDecimal totalInvested = asset.averagePurchasePrice().multiply(asset.count());
         BigDecimal profit = value.subtract(totalInvested);
@@ -126,6 +169,7 @@ public class AssetService {
                 asset.name(),
                 asset.symbol(),
                 asset.assetType(),
+                asset.unitType(),
                 asset.count(),
                 currentPrice,
                 asset.currencyType(),
@@ -139,11 +183,12 @@ public class AssetService {
 
     private BigDecimal resolvePriceByCurrency(AssetGroupDTO asset, FinanceResponse finance) {
         boolean currencyIsDifferent = asset.currencyType() != CurrencyType.valueOf(finance.currencyType());
+        BigDecimal price = new BigDecimal(finance.price());
         if (currencyIsDifferent) {
             var exchangeRate = financeClient.findExchangeRate(finance.currencyType(), asset.currencyType().name());
-            return finance.price().multiply(exchangeRate);
+            return price.multiply(exchangeRate);
         }
-        return finance.price();
+        return price;
     }
 
     private BigDecimal resolveProfitInPercentage(BigDecimal totalInvested, BigDecimal profit) {
@@ -156,22 +201,5 @@ public class AssetService {
         return currency.equalsIgnoreCase(desiredCurrency) ?
                 BigDecimal.ONE :
                 financeClient.findExchangeRate(currency, desiredCurrency);
-    }
-
-
-    private AssetAggregateDTO createCustomAsset(AssetGroupDTO asset) {
-        return new AssetAggregateDTO(
-                asset.name(),
-                asset.symbol(),
-                asset.assetType(),
-                asset.count(),
-                BigDecimal.ZERO,
-                asset.currencyType(),
-                asset.averagePurchasePrice().multiply(asset.count()),
-                asset.averagePurchasePrice(),
-                BigDecimal.ZERO,
-                BigDecimal.ZERO,
-                BigDecimal.ONE
-        );
     }
 }

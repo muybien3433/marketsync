@@ -24,6 +24,15 @@
             </div>
         </div>
 
+        <div *ngIf="selectedAssetType === AssetType.CURRENCY">
+            <div *ngFor="let currencyType of _currencies | filterByName: searchTerm"
+                 class="asset-item"
+                 (click)="onAssetSelect(currencyType)">
+<!--                <span class="symbol">({{ currencyType.symbol }})</span>-->
+                {{ currencyType }}
+            </div>
+        </div>
+
         <div *ngIf="selectedAssetType !== AssetType.CUSTOM">
             <div class="search-header" *ngIf="!selectedAsset">
                 <input

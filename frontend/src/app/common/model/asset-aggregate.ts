@@ -3,6 +3,7 @@ export class AssetAggregate {
         public name: string,
         public symbol: string,
         public assetType: string,
+        public unitType: string,
         public count: number,
         public currentPrice: number,
         public currencyType: string,

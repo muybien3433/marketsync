@@ -120,6 +120,16 @@ export default class WalletComponent implements OnInit {
         }, 0);
     }
 
+    calculateWeight(asset: AssetAggregate): number {
+        const totalValue = this.getTotalValue();
+        if (totalValue === 0) return 0;
+
+        const valueInSelectedCurrency = asset.value * asset.exchangeRateToDesired;
+        const weight = (valueInSelectedCurrency / totalValue) * 100;
+
+        return parseFloat(weight.toFixed(2));
+    }
+
     addAssetButton() {
         this.router.navigate(['wallet/asset/add']);
     }

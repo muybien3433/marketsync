@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.finance.AssetType;
 import pl.muybien.finance.CurrencyType;
 import pl.muybien.finance.FinanceDetail;
+import pl.muybien.finance.UnitType;
 import pl.muybien.finance.updater.FinanceDatabaseUpdater;
 import pl.muybien.finance.updater.FinanceUpdater;
 
@@ -118,14 +119,15 @@ public class CoinmarketcapScraper extends FinanceUpdater {
 
                                 if (!name.isBlank() && !symbol.isBlank() && !priceText.isBlank()) {
                                     try {
-                                        BigDecimal price = new BigDecimal(priceText);
-                                        if (price.compareTo(BigDecimal.ZERO) > 0) {
+                                        String price = priceText;
+                                        if (new BigDecimal(price).compareTo(BigDecimal.ZERO) > 0) {
                                             String uri = name.replaceAll("[ .()]", "-").toLowerCase();
 
                                             cryptos.put(uri, new FinanceDetail(
                                                     name,
                                                     symbol,
                                                     uri,
+                                                    UnitType.UNIT.name(),
                                                     price,
                                                     CurrencyType.USD.name(),
                                                     AssetType.CRYPTO.name(),

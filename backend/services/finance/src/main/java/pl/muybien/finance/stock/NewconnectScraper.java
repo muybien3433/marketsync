@@ -19,7 +19,6 @@ import pl.muybien.finance.*;
 import pl.muybien.finance.updater.FinanceDatabaseUpdater;
 import pl.muybien.finance.updater.FinanceUpdater;
 
-import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
@@ -108,13 +107,14 @@ public class NewconnectScraper extends FinanceUpdater {
                 String symbol = matcher.group(2).trim();
                 String renewalRate = matcher.group(4).trim().replace(",", ".");
                 String lastTransactionRate = matcher.group(9).trim().replace(",", ".");
-                BigDecimal price = lastTransactionRate.equals("-") ?
-                        new BigDecimal(renewalRate) : new BigDecimal(lastTransactionRate);
+                String price = lastTransactionRate.equals("-") ?
+                        renewalRate : lastTransactionRate;
 
                 var financeDetail = new FinanceDetail(
                         name,
                         symbol,
                         uri,
+                        UnitType.UNIT.name(),
                         price,
                         CurrencyType.PLN.name(),
                         AssetType.STOCK.name(),

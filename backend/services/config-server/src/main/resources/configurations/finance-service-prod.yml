@@ -46,3 +46,6 @@ newconnect:
 
 gpw:
   update-rate-ms: 600000 # 10 minutes
+
+bankier:
+  update-rate-ms: 600000 # 10 minutes

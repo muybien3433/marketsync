@@ -114,16 +114,16 @@ public class SubscriptionService {
                 .collect(Collectors.toList());
     }
 
-    BigDecimal resolveCurrentPrice(SubscriptionDetail subscriptionDetail) {
+    String resolveCurrentPrice(SubscriptionDetail subscriptionDetail) {
         var finance = financeClient
                 .findFinanceByAssetTypeAndUri(subscriptionDetail.assetType().name(), subscriptionDetail.uri());
 
-        BigDecimal currentPrice = finance.price();
-        if (!finance.currency().equalsIgnoreCase(subscriptionDetail.requestedCurrency().name())) {
+        String currentPrice = finance.price();
+        if (!finance.currencyType().equalsIgnoreCase(subscriptionDetail.requestedCurrency().name())) {
             var exchange = financeClient
-                    .findExchangeRate(finance.currency(), subscriptionDetail.requestedCurrency().name());
+                    .findExchangeRate(finance.currencyType(), subscriptionDetail.requestedCurrency().name());
 
-            currentPrice = currentPrice.multiply(exchange);
+            currentPrice = new BigDecimal(currentPrice).multiply(exchange).toPlainString();
         }
         return currentPrice;
     }

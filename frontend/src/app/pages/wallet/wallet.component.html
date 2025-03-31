@@ -25,7 +25,8 @@
                                 <th>{{ 'common.count' | translate }}</th>
                                 <th>{{ 'common.value' | translate }}</th>
                                 <th>{{ 'asset.average.purchase.price' | translate }}</th>
-                                <th>{{ 'common.current.price' | translate }}</th>
+                                <th>{{ 'common.current.price' | translate }} ({{ 'unit.UNIT' | translate }})</th>
+                                <th>{{ 'asset.weight' | translate }}</th>
                                 <th>{{ 'asset.profit' | translate }}</th>
                                 <th>{{ 'asset.profit.in.percentage' | translate }}</th>
                             </tr>
@@ -39,12 +40,23 @@
                                     <td>{{ asset.count }}</td>
                                     <td>{{ asset.value | currency: asset.currencyType }}</td>
                                     <td>{{ asset.averagePurchasePrice | currency: asset.currencyType }}</td>
-                                    <td>{{ asset.currentPrice == 0 ? '-' : asset.currentPrice | currency: asset.currencyType }}</td>
-                                    <td [ngStyle]="{ color: asset.profit == 0 ? 'black' : ( asset.profit > 0 ? 'green' : 'red') }">
-                                        {{ asset.profit == 0 ? '-' : asset.profit | currency: asset.currencyType }}
+                                    <td *ngIf="asset.assetType !== 'CUSTOM'; else customUnit">
+                                        {{ asset.currentPrice | currency: asset.currencyType }}
+                                        {{ asset.unitType === 'UNIT' ? '' : '(' + ('unit.' + asset.unitType | translate) + ')' }}
                                     </td>
-                                    <td [ngStyle]="{ color: asset.profitInPercentage == 0 ? 'black' : (asset.profitInPercentage >= 0 ? 'green' : 'red') }">
-                                        {{ asset.profitInPercentage == 0 ? '-' : asset.profitInPercentage + '%'}}
+                                    <ng-template #customUnit>
+                                        <td>
+                                            {{ asset.currentPrice | currency: asset.currencyType }}
+                                            {{ asset.unitType ?  '(' + asset.unitType + ')' : "" }}
+                                        </td>
+                                    </ng-template>
+
+                                    <td>{{ calculateWeight(asset) }}%</td>
+                                    <td [ngStyle]="{ color: asset.profit === 0 ? 'black' : ( asset.profit > 0 ? 'green' : 'red') }">
+                                        {{ asset.profit | currency: asset.currencyType }}
+                                    </td>
+                                    <td [ngStyle]="{ color: asset.profitInPercentage === 0 ? 'black' : (asset.profitInPercentage >= 0 ? 'green' : 'red') }">
+                                        {{ asset.profitInPercentage + '%'}}
                                     </td>
                                 </tr>
                             </ng-container>

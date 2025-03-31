@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgIf} from '@angular/common';
 import {environment} from '../../../../environments/environment';
 import {Router} from "@angular/router";
@@ -41,8 +41,12 @@ import {NumberInputDirective} from "../../../common/service/number-input.directi
 })
 export default class WalletAddAssetComponent implements OnInit, OnDestroy {
     public addAssetForm: FormGroup;
-    isSubmitting = false;
+    isSubmitting: boolean = false;
     errorMessage: string = '';
+    maxCommentLength: number = 200;
+    remainingCommentChars: number = this.maxCommentLength;
+    maxUnitLength: number = 6;
+    remainingUnitChars: number = this.maxUnitLength;
 
     private currencyTypeSubscription!: Subscription;
     currencyType!: CurrencyType;
@@ -59,13 +63,17 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         private router: Router,
         private assetService: AssetService,
         private currencyService: CurrencyService,
+        private translate: TranslateService,
     ) {
         this.addAssetForm = this.fb.group({
             assetType: ['', Validators.required],
+            unitType: ['', Validators.maxLength(6)],
             uri: ['', [Validators.required, Validators.minLength(1)]],
             count: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
             purchasePrice: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
-            currencyType: [currencyService.getGlobalCurrencyType(), [Validators.required]]
+            currentPrice: ['0.01', [Validators.min(0.0000000000001)]],
+            currencyType: [currencyService.getGlobalCurrencyType(), [Validators.required]],
+            comment: ['', [Validators.maxLength(this.maxCommentLength)]],
         });
     }
 
@@ -77,12 +85,34 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         this.assetSubscription = this.assetService.selectedAsset$.subscribe(asset => {
             this.asset = asset;
             this.addAssetForm.get('uri')?.setValue(asset?.uri);
+            this.addAssetForm.get('unitType')?.setValue(asset?.unitType);
         })
         this.currencyTypeSubscription = this.currencyService.selectedCurrencyType$
             .subscribe(currencyType => {
-            this.currencyType = currencyType;
-            this.addAssetForm.get('currencyType')?.setValue(currencyType);
-        })
+                this.currencyType = currencyType;
+                this.addAssetForm.get('currencyType')?.setValue(currencyType);
+            })
+        this.addAssetForm.get('comment')?.valueChanges.subscribe(value => {
+            const length = value?.length || 0;
+            this.remainingCommentChars = this.maxCommentLength - length;
+
+            if (this.remainingCommentChars < 0) {
+                const truncatedValue = value.substring(0, this.maxCommentLength + Math.abs(0));
+                this.addAssetForm.get('comment')?.setValue(truncatedValue, { emitEvent: false });
+                this.remainingCommentChars = 0;
+            }
+        });
+        this.remainingUnitChars = this.maxUnitLength - (this.asset?.unitType?.length || 0);
+        this.addAssetForm.get('unitType')?.valueChanges.subscribe(value => {
+            const length = value?.length || 0;
+            this.remainingUnitChars = this.maxUnitLength - length;
+
+            if (this.remainingUnitChars < 0) {
+                const truncatedValue = value.substring(0, this.maxUnitLength);
+                this.addAssetForm.get('unitType')?.setValue(truncatedValue, {emitEvent: false});
+                this.remainingUnitChars = 0;
+            }
+        });
     }
 
     ngOnDestroy(): void {
@@ -101,7 +131,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
 
     onSubmit(): void {
         if (this.addAssetForm.invalid) {
-            this.errorMessage = 'Please select an asset.';
+            this.errorMessage = this.translate.instant('error.asset.is.required');
             return;
         }
         this.isSubmitting = true;
@@ -109,10 +139,13 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         const formValue = this.addAssetForm.value;
         const asset = {
             assetType: formValue.assetType,
+            unitType: formValue.unitType,
             uri: formValue.uri,
             count: formValue.count,
             purchasePrice: formValue.purchasePrice,
+            currentPrice: formValue.currentPrice,
             currencyType: formValue.currencyType,
+            comment: formValue.comment,
         };
 
         this.addAsset(asset)?.subscribe({
@@ -121,15 +154,15 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
                 this.router.navigate(['wallet/assets']);
             },
             error: () => {
-                this.errorMessage = 'Failed to add asset.';
+                this.errorMessage = this.translate.instant('error.asset.add.fail');
                 this.isSubmitting = false;
             }
         });
     }
 
     addAsset(asset: {
-        assetType: string; uri: string; count: number;
-        purchasePrice: number; currencyType: string
+        assetType: string; uri: string; count: number; unitType: string;
+        purchasePrice: number; currencyType: string; comment: string;
     }) {
         return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, asset);
     }

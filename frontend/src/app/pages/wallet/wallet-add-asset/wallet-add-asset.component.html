@@ -9,19 +9,20 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="count">{{ 'common.count' | translate }}</label>
-                        <input
-                                type="text"
-                                class="form-control"
-                                id="count"
-                                formControlName="count"
-                                placeholder="Enter count"
-                                required
-                                appNumberInput
-                        />
-                    </div>
-                    <div *ngIf="addAssetForm.get('count')?.invalid">
-                        <small class="error">{{ 'error.count.should.be.positive' | translate }}</small>
+                        <label for="count">{{ 'common.count' | translate }}
+                            <span *ngIf="asset?.unitType">({{ 'unit.' + asset.unitType | translate }})</span>
+                        </label> <input
+                            type="text"
+                            class="form-control"
+                            id="count"
+                            formControlName="count"
+                            placeholder="{{ 'enter.count' | translate }}"
+                            required
+                            appNumberInput
+                    />
+                        <div *ngIf="addAssetForm.get('count')?.invalid">
+                            <small class="error">{{ 'error.digit.should.be.positive' | translate }}</small>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -31,12 +32,28 @@
                                 class="form-control"
                                 id="purchasePrice"
                                 formControlName="purchasePrice"
-                                placeholder="Enter purchase price"
+                                placeholder="{{ 'enter.purchase.price' | translate }}"
                                 required
                                 appNumberInput
                         />
                         <div *ngIf="addAssetForm.get('purchasePrice')?.invalid">
-                            <small class="error">{{ 'error.price.should.be.positive' | translate }}</small>
+                            <small class="error">{{ 'error.digit.should.be.positive' | translate }}</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group" *ngIf="assetType === 'CUSTOM'">
+                        <label for="currentPrice">{{ 'asset.current.price' | translate }}</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="currentPrice"
+                                formControlName="currentPrice"
+                                placeholder="{{ 'enter.current.price' | translate }}"
+                                required
+                                appNumberInput
+                        />
+                        <div *ngIf="addAssetForm.get('currentPrice')?.invalid">
+                            <small class="error">{{ 'error.digit.should.be.positive' | translate }}</small>
                         </div>
                     </div>
 
@@ -49,11 +66,43 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <div *ngIf="assetType === 'CUSTOM'">
+                            <label for="unitType">{{ 'common.unit' | translate }}</label>
+                            <textarea
+                                    class="form-control"
+                                    id="unitType"
+                                    rows="1"
+                                    formControlName="unitType"
+                                    placeholder="{{ 'asset.optional.unit' | translate }}"
+                            ></textarea>
+                            <small class="text-muted">
+                                {{ remainingUnitChars }} {{ 'common.remaining' | translate }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comment">{{ 'asset.comment' | translate }}</label>
+                        <textarea
+                                class="form-control"
+                                id="comment"
+                                rows="3"
+                                formControlName="comment"
+                                placeholder="{{ 'asset.optional.comment' | translate }}">
+                        </textarea>
+                        <small class="text-muted">
+                            {{ remainingCommentChars }} {{ 'common.remaining' | translate }}
+                        </small>
+                    </div>
+
                     <app-asset-price-display></app-asset-price-display>
 
-                    <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
-                        {{ 'asset.add.asset' | translate }}
-                    </button>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+                            {{ 'asset.add.asset' | translate }}
+                        </button>
+                    </div>
 
                     <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
                 </div>

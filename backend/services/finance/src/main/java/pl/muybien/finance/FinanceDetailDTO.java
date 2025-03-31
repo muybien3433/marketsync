@@ -8,6 +8,7 @@ public record FinanceDetailDTO(
         @JsonProperty("name") String name,
         @JsonProperty("symbol") String symbol,
         @JsonProperty("uri") String uri,
+        @JsonProperty("unitType") String unitType,
         @JsonProperty("price") String price,
         @JsonProperty("currencyType") String currencyType,
         @JsonProperty("assetType") String assetType,

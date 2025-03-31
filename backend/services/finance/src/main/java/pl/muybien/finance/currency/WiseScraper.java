@@ -11,6 +11,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.muybien.exception.FinanceNotFoundException;
+import pl.muybien.finance.UnitType;
 import pl.muybien.finance.updater.FinanceUpdater;
 import pl.muybien.finance.CurrencyType;
 
@@ -84,6 +85,7 @@ public class WiseScraper extends FinanceUpdater implements CurrencyService {
                                     Currency.builder()
                                             .name(name)
                                             .exchange(exchangeRate)
+                                            .unitType(UnitType.UNIT.name())
                                             .build()
                             )
                     );

@@ -7,36 +7,39 @@ import {environment} from '../../../../environments/environment';
 import {AssetHistory} from "../../../common/model/asset-history";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-wallet-asset-history',
   standalone: true,
-  imports: [
-    TranslatePipe,
-    NgForOf,
-    DatePipe,
-    NgIf,
-    CardComponent,
-    CurrencyPipe,
-  ],
+    imports: [
+        TranslatePipe,
+        NgForOf,
+        DatePipe,
+        NgIf,
+        CardComponent,
+        CurrencyPipe,
+        FormsModule,
+    ],
   templateUrl: './wallet-asset-history.component.html',
   styleUrl: './wallet-asset-history.component.scss'
 })
 export default class WalletAssetHistoryComponent implements OnInit {
   protected _assets: AssetHistory[] = [];
   isLoading: boolean = true;
+  showSuccessMessage: boolean = false;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     setTimeout(() => {
+      this.showSuccessMessage = false;
       this.fetchWalletAssetsHistory();
-
     }, 200)
   }
 
   editAsset(asset: AssetHistory) {
-    this.router.navigate(['wallet/asset/edit'], { state: {asset} });
+    this.router.navigate(['wallet/asset/edit'], { state: { asset } });
   }
 
   addAssetButton() {
@@ -61,6 +64,7 @@ export default class WalletAssetHistoryComponent implements OnInit {
     this.http.delete(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${assetId}`).subscribe({
       next: () => {
         this._assets = this._assets.filter(asset => asset.id !== assetId);
+        this.showSuccessMessage = true;
       },
       error: (err) => {
         console.error(err);
