@@ -125,7 +125,7 @@ export default class WalletEditAssetComponent {
 
     this.editAsset(assetData)?.subscribe({
       next: () => {
-m        this.router.navigate(['wallet/assets/history']);
+        this.router.navigate(['wallet/assets/history']);
       },
       error: () => {
         this.errorMessage = 'Failed to update asset.';
