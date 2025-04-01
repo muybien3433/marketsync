@@ -270,7 +270,7 @@ services:
 
   ######### [ Selenium ] #########
   selenium-chrome:
-    image: selenium/standalone-chromium
+    image: selenium/standalone-chromium:latest
     ports:
       - "4444:4444"
     container_name: selenium-chrome
@@ -283,8 +283,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
-          memory: 1024M
+          cpus: '2'
+          memory: 2048M
 
 
 #  ######### [ Kafka ] #########

@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GpwScraper extends FinanceUpdater {
+public class GpwGlobalConnect extends FinanceUpdater {
 
     private final static String TARGET_URL = "https://gpwglobalconnect.pl/notowania";
     private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
@@ -42,13 +42,13 @@ public class GpwScraper extends FinanceUpdater {
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(fixedRateString = "${gpw.update-rate-ms}")
     public void scheduleUpdate() {
-        enqueueUpdate("gpw");
+        enqueueUpdate("gpw-global-connect");
     }
 
     @Override
     @Transactional
     public void updateAssets() {
-        log.info("Starting the update of Gpw data...");
+        log.info("Starting the update of GpwGlobalConnect data...");
         var stocks = new HashMap<String, FinanceDetail>();
 
         WebDriver driver = null;
@@ -121,15 +121,15 @@ public class GpwScraper extends FinanceUpdater {
             }
             databaseUpdater.saveFinanceToDatabase(AssetType.STOCK.name(), stocks);
         } catch (MalformedURLException e) {
-            throw new FinanceNotFoundException("Gpw data not found");
+            throw new FinanceNotFoundException("GpwGlobalConnect data not found");
         } catch (Exception e) {
-            throw new FinanceNotFoundException("Gpw data: " + e.getMessage());
+            throw new FinanceNotFoundException("GpwGlobalConnect data: " + e.getMessage());
         } finally {
             if (driver != null) {
                 driver.quit();
             }
             System.gc();
         }
-        log.info("Finished updating Gpw data");
+        log.info("Finished updating GpwGlobalConnect data");
     }
 }

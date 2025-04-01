@@ -161,8 +161,14 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
     }
 
     addAsset(asset: {
-        assetType: string; uri: string; count: number; unitType: string;
-        purchasePrice: number; currencyType: string; comment: string;
+        assetType: string;
+        uri: string;
+        count: number;
+        unitType: string;
+        purchasePrice: number;
+        currentPrice: number;
+        currencyType: string;
+        comment: string;
     }) {
         return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, asset);
     }

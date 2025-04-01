@@ -42,7 +42,7 @@ public class NewconnectScraper extends FinanceUpdater {
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(fixedRateString = "${newconnect.update-rate-ms}")
     public void scheduleUpdate() {
-        enqueueUpdate("newconnect");
+        enqueueUpdate("new-connect");
     }
 
     @Override
@@ -124,9 +124,9 @@ public class NewconnectScraper extends FinanceUpdater {
             }
             databaseUpdater.saveFinanceToDatabase(AssetType.STOCK.name(), stocks);
         } catch (MalformedURLException e) {
-            throw new FinanceNotFoundException("Newconnect data not found");
+            throw new FinanceNotFoundException("NewConnect data not found");
         } catch (Exception e) {
-            throw new FinanceNotFoundException("Newconnect data: " + e.getMessage());
+            throw new FinanceNotFoundException("NewConnect data: " + e.getMessage());
         } finally {
             if (driver != null) {
                 driver.quit();
