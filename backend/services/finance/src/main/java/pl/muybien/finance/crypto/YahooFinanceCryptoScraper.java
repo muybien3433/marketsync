@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class YahooFinanceScraper extends FinanceUpdater {
+public class YahooFinanceCryptoScraper extends FinanceUpdater {
 
     private static final String TARGET_URL = "https://finance.yahoo.com/markets/crypto/all/?start=";
     private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
@@ -59,6 +59,8 @@ public class YahooFinanceScraper extends FinanceUpdater {
     @Override
     @Transactional
     public void updateAssets() {
+        log.info("Starting the update of YahooFinanceCrypto data...");
+
         long startTime = System.currentTimeMillis();
         int invCounter = invocationCount.get();
         int totalPages;
@@ -105,6 +107,8 @@ public class YahooFinanceScraper extends FinanceUpdater {
 
         long durationDataPersisting = (System.currentTimeMillis() - persistStartTime) / 1000;
         log.debug("Data saved in {} seconds", durationDataPersisting);
+
+        log.info("Finished updating YahooFinanceCrypto data");
     }
 
     private Runnable createScrapingTask(int startPage, int endPage, Map<String, FinanceDetail> cryptos) {
@@ -192,10 +196,11 @@ public class YahooFinanceScraper extends FinanceUpdater {
                 String price = cells.get(3);
 
                 if(!symbol.isEmpty() && !name.isEmpty() && !price.isEmpty()) {
-                    String uri = name.trim().toLowerCase()
-                            .replaceAll("\\.", "").replaceAll(" ", "-");
+                    String uri = name.replaceAll("[ .()]", "-").toLowerCase();
                     cryptos.put(uri, new FinanceDetail(
-                            name, symbol, uri,
+                            name,
+                            symbol,
+                            uri,
                             UnitType.UNIT.name(),
                             price,
                             CurrencyType.USD.name(),

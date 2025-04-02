@@ -341,7 +341,7 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 2048M
+          memory: 3072M
 
 
   ######### [ Zookeeper ] #########
