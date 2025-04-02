@@ -191,9 +191,9 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
         log.debug("Found {} rows starting processing", allData.size());
         for(List<String> cells : allData) {
             if(cells.size() >=4) {
-                String symbol = cells.get(0);
-                String name = cells.get(1);
-                String price = cells.get(3);
+                String symbol = cells.get(0).substring(0, cells.get(0).length() - 4);
+                String name = cells.get(1).substring(0, cells.get(1).length() - 4);
+                String price = cells.get(3).replaceAll(",", "");
 
                 if(!symbol.isEmpty() && !name.isEmpty() && !price.isEmpty()) {
                     String uri = name.replaceAll("[ .()]", "-").toLowerCase();
