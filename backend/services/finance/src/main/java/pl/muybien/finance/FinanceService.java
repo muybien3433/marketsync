@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 public class FinanceService {
 
     private final CurrencyService currencyService;
@@ -70,7 +71,8 @@ public class FinanceService {
     public Set<FinanceDetailDTO> displayAvailableFinance(String assetType) {
         String normalizedAssetType = assetType.toLowerCase();
         var finance = repository.findFinanceByAssetType(normalizedAssetType)
-                .orElseThrow(() -> new FinanceNotFoundException("Finance not found for asset type: " + normalizedAssetType));
+                .orElseThrow(() -> new FinanceNotFoundException(
+                        "Finance not found for asset type: " + normalizedAssetType));
 
         var financeDetails = finance.getFinanceDetails().get(normalizedAssetType);
 
@@ -85,10 +87,11 @@ public class FinanceService {
     }
 
     @Transactional(readOnly = true)
-    public Set<FinanceDetailDTO> displayAvailableFinanceByCurrency(String assetType, String currencyType) {
+    public Set<FinanceDetailDTO> displayAvailableFinance(String assetType, String currencyType) {
         String normalizedAssetType = assetType.toLowerCase();
         var finance = repository.findFinanceByAssetType(normalizedAssetType)
-                .orElseThrow(() -> new FinanceNotFoundException("Finance not found for asset type: " + normalizedAssetType));
+                .orElseThrow(() -> new FinanceNotFoundException(
+                        "Finance not found for asset type: " + normalizedAssetType));
 
         var financeDetails = finance.getFinanceDetails().get(normalizedAssetType);
         if (financeDetails == null) {
@@ -109,7 +112,8 @@ public class FinanceService {
             FinanceDetailDTO detail, CurrencyType desiredCurrency, Map<CurrencyType, BigDecimal> cache) {
 
         CurrencyType sourceCurrency = CurrencyType.valueOf(detail.currencyType().toUpperCase());
-        if (!sourceCurrency.equals(desiredCurrency)) {
+        boolean isExchangeNeeded = !Objects.equals(sourceCurrency, desiredCurrency);
+        if (isExchangeNeeded) {
             BigDecimal rate = cache.computeIfAbsent(
                     sourceCurrency,
                     key -> currencyService.getCurrencyPairExchange(key, desiredCurrency)

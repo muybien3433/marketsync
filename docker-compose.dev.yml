@@ -54,8 +54,6 @@ services:
   finance-server:
     build:
       context: ./backend/services/finance
-    env_file:
-      - .env
     depends_on:
       config-server:
         condition: service_healthy

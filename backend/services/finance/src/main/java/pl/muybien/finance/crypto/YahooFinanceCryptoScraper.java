@@ -41,7 +41,7 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
     private static final int THREAD_POOL_SIZE = 2;
     private static final int RETRY_ATTEMPTS = 4;
     private static final int PAGE_DELAY_MS = 200;
-    private static final int RETRY_DELAY_MS = 2000;
+    private static final int RETRY_DELAY_MS = 5000;
     private static final int REGULAR_PAGES = 6;  // Pages 0-5 (6 pages)
     private static final int SECOND_SECTION_PAGES = 25;  // Pages 6-30 (25 pages)
     private static final int THIRD_SECTION_PAGES = 21;   // Pages 30-50 (21 pages)
@@ -51,7 +51,7 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 65000)
     public void scheduleUpdate() {
         enqueueUpdate("yahoo-finance-crypto");
     }
@@ -62,7 +62,7 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
         log.info("Starting the update of YahooFinanceCrypto data...");
 
         long startTime = System.currentTimeMillis();
-        int invCounter = invocationCount.get();
+        int invCounter = invocationCount.getAndIncrement();
         int totalPages;
         int startPageOffset;
 
@@ -80,7 +80,7 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
             log.debug("Starting regular scrape (pages 0-5)");
         }
 
-        Map<String, FinanceDetail> cryptos = new ConcurrentHashMap<>(12000);
+        Map<String, FinanceDetail> cryptos = new ConcurrentHashMap<>(14000);
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
         List<Future<?>> futures = new ArrayList<>();
 
@@ -103,7 +103,9 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
         log.debug("Total operation completed in {} seconds", durationSeconds);
 
         long persistStartTime = System.currentTimeMillis();
-        databaseUpdater.saveFinanceToDatabase(AssetType.CRYPTO.name(), cryptos);
+        if (!cryptos.isEmpty()) {
+            databaseUpdater.saveFinanceToDatabase(AssetType.CRYPTO.name(), cryptos);
+        }
 
         long durationDataPersisting = (System.currentTimeMillis() - persistStartTime) / 1000;
         log.debug("Data saved in {} seconds", durationDataPersisting);
@@ -162,7 +164,7 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
                         if ((Boolean) ((JavascriptExecutor) driver).executeScript(rowCheckScript)) {
                             break;
                         }
-                        Thread.sleep(50);
+//                        Thread.sleep(50);
                     }
 
                     extractData(driver, cryptos);
@@ -180,6 +182,7 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
             }
         }
     }
+
     @SuppressWarnings("unchecked")
     private void extractData(WebDriver driver, Map<String, FinanceDetail> cryptos) {
         log.debug("Finding element by css");
@@ -193,20 +196,22 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
             if(cells.size() >=4) {
                 String symbol = cells.get(0).substring(0, cells.get(0).length() - 4);
                 String name = cells.get(1).substring(0, cells.get(1).length() - 4);
-                String price = cells.get(3).replaceAll(",", "");
+                String price = cells.get(3);
+                String cleanedPrice = price.replace(",", "").replaceAll("[^\\d.\\-]", "");
 
-                if(!symbol.isEmpty() && !name.isEmpty() && !price.isEmpty()) {
+                if(!symbol.isEmpty() && !name.isEmpty() && !cleanedPrice.isEmpty()) {
                     String uri = name.replaceAll("[ .()]", "-").toLowerCase();
-                    cryptos.put(uri, new FinanceDetail(
+                    var detail = new FinanceDetail(
                             name,
                             symbol,
                             uri,
                             UnitType.UNIT.name(),
-                            price,
+                            cleanedPrice,
                             CurrencyType.USD.name(),
                             AssetType.CRYPTO.name(),
                             LocalDateTime.now()
-                    ));
+                    );
+                    cryptos.put(uri, detail);
                 }
             }
         }

@@ -23,11 +23,11 @@ spring:
   security:
     oauth2:
       resourceserver:
-        issuer-uri: http://keycloak:8080/realms/master
+        issuer-uri: http://keycloak:8080/realms/marketsync-client
 
 frontend-url: http://localhost:4200
 
-jwk-uri: http://keycloak:8080/realms/master/protocol/openid-connect/certs
+jwk-uri: http://keycloak:8080/realms/marketsync-client/protocol/openid-connect/certs
 
 management:
   endpoints:

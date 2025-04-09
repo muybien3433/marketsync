@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Document(collection = "finances")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,7 +16,6 @@ import java.util.Map;
 public class Finance {
 
     @Id
-    @EqualsAndHashCode.Include
     private String id;
     private Map<String, Map<String, FinanceDetail>> financeDetails = new HashMap<>();
 

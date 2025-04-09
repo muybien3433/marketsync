@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,22 +23,17 @@ import java.util.Arrays;
 @Slf4j
 public class WiseScraper extends FinanceUpdater implements CurrencyService {
 
-    private final CurrencyRepository repository;
+    private static final String TARGET_URL = "https://wise.com/gb/currency-converter/";
+    private static final String URL_SEPARATOR_ONE = "-to-";
+    private static final String URL_SEPARATOR_TWO = "-rate?amount=1";
+    private static final int RETRY_ATTEMPTS = 3;
+    private static final int RETRY_DELAY_MS = 5000;
 
-    @Value("${wise.max-fetch-retries}")
-    private Integer maxFetchRetries;
-    @Value("${wise.retry-delay-ms}")
-    private Integer retryDelayMs;
-    @Value("${wise.base-url}")
-    private String baseUrl;
-    @Value("${wise.url-separator}")
-    private String urlSeparator;
-    @Value("${wise.rate-amount}")
-    private String rateAmount;
+    private final CurrencyRepository repository;
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
-    @Scheduled(fixedRateString = "${wise.currency-updater-frequency-ms}")
+    @Scheduled(fixedDelay = 45000)
     protected void scheduleUpdate() {
         enqueueUpdate("wise");
     }
@@ -93,9 +87,9 @@ public class WiseScraper extends FinanceUpdater implements CurrencyService {
     }
 
     private BigDecimal fetchExchangeRate(CurrencyType from, CurrencyType to) {
-        String url = baseUrl + from + urlSeparator + to + rateAmount;
+        String url = TARGET_URL + from + URL_SEPARATOR_ONE + to + URL_SEPARATOR_TWO;
 
-        for (int attempt = 1; attempt <= maxFetchRetries; attempt++) {
+        for (int attempt = 1; attempt <= RETRY_ATTEMPTS; attempt++) {
             try {
                 Document doc = Jsoup.connect(url).get();
                 Element element = doc.select("span.text-success").first();
@@ -105,10 +99,10 @@ public class WiseScraper extends FinanceUpdater implements CurrencyService {
                 }
                 log.warn("No exchange rate found for {} to {} on attempt {}", from, to, attempt);
             } catch (IOException e) {
-                log.error("Failed to fetch exchange rate from {} to {} on attempt {}", from, to, attempt, e);
-                if (attempt < maxFetchRetries) {
+                log.warn("Failed to fetch exchange rate from {} to {} on attempt {}", from, to, attempt);
+                if (attempt < RETRY_ATTEMPTS) {
                     try {
-                        Thread.sleep(retryDelayMs);
+                        Thread.sleep(RETRY_DELAY_MS);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         log.error("Retry interrupted for {} to {}", from, to, ie);
