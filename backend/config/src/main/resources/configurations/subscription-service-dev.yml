@@ -1,0 +1,25 @@
+server:
+  port: 8900
+
+schedule:
+  time-ms: 5000
+  fetch-page-size-per-round: 5
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://subscription:subscription@mongodb-subscription/subscription?authSource=admin&authMechanism=SCRAM-SHA-256&tls=false
+      authentication-database: admin
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: subscriptionConfirmation:pl.muybien.kafka.SubscriptionConfirmation
+
+application:
+  config:
+    finance-url: http://finance-server:8800/api/v1/finances
+
+send-email-topic: send-email-topic

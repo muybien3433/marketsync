@@ -21,13 +21,13 @@ services:
   ######### [ Config ] #########
   config-server:
     build:
-      context: ./backend/services/config-server
+      context: ./backend/config
     environment:
       - SPRING_PROFILES_ACTIVE=native,prod
     env_file:
       - .env
     volumes:
-      - ./backend/services/config-server/src/main/resources/configurations:/app/configurations
+      - ./backend/config/src/main/resources/configurations:/app/configurations
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:7777/actuator/health || exit 1" ]
@@ -47,7 +47,7 @@ services:
   ######### [ Gateway ] #########
   gateway-server:
     build:
-      context: ./backend/services/gateway
+      context: ./backend/gateway
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     env_file:
@@ -76,7 +76,7 @@ services:
   ######### [ Finance ] #########
   finance-server:
     build:
-      context: ./backend/services/finance
+      context: ./backend/finance
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     env_file:
@@ -127,7 +127,7 @@ services:
   ######### [ Wallet ] #########
   wallet-server:
     build:
-      context: ./backend/services/wallet
+      context: ./backend/wallet
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     env_file:
@@ -174,7 +174,7 @@ services:
   ######### [ Subscription ] #########
   subscription-server:
     build:
-      context: ./backend/services/subscription
+      context: ./backend/subscription
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     env_file:
@@ -225,7 +225,7 @@ services:
   ######### [ Notification ] #########
   notification-server:
     build:
-      context: ./backend/services/notification
+      context: ./backend/notification
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     env_file:

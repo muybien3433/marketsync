@@ -10,12 +10,13 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>backend/services/config-server</module>
-        <module>backend/services/finance</module>
-        <module>backend/services/gateway</module>
-        <module>backend/services/notification</module>
-        <module>backend/services/subscription</module>
-        <module>backend/services/wallet</module>
+        <module>backend/common</module>
+        <module>backend/config</module>
+        <module>backend/finance</module>
+        <module>backend/gateway</module>
+        <module>backend/notification</module>
+        <module>backend/subscription</module>
+        <module>backend/wallet</module>
     </modules>
 
     <properties>

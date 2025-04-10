@@ -2,14 +2,14 @@ services:
   ######### [ Config ] #########
   config-server:
     build:
-      context: ./backend/services/config-server
+      context: ./backend/config
     environment:
       - SPRING_PROFILES_ACTIVE=native,dev
     ports:
       - "7777:7777"
     restart: unless-stopped
     volumes:
-      - ./backend/services/config-server/src/main/resources/configurations:/app/configurations
+      - ./backend/config/src/main/resources/configurations:/app/configurations
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:7777/actuator/health || exit 1" ]
       interval: 10s
@@ -28,7 +28,7 @@ services:
   ######### [ Gateway ] #########
   gateway-server:
     build:
-      context: ./backend/services/gateway
+      context: ./backend/gateway
     ports:
       - "9999:9999"
     depends_on:
@@ -53,7 +53,7 @@ services:
   ######### [ Finance ] #########
   finance-server:
     build:
-      context: ./backend/services/finance
+      context: ./backend/finance
     depends_on:
       config-server:
         condition: service_healthy
@@ -98,7 +98,7 @@ services:
   ######### [ Wallet ] #########
   wallet-server:
     build:
-      context: ./backend/services/wallet
+      context: ./backend/wallet
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     depends_on:
