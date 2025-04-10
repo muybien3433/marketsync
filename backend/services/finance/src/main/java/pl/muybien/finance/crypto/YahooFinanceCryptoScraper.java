@@ -164,7 +164,6 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
                         if ((Boolean) ((JavascriptExecutor) driver).executeScript(rowCheckScript)) {
                             break;
                         }
-//                        Thread.sleep(50);
                     }
 
                     extractData(driver, cryptos);

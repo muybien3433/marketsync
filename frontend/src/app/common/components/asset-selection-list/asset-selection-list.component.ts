@@ -34,11 +34,11 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     protected readonly AssetType = AssetType;
 
     _assets: AssetDetail[] = [];
+    selectedAsset: AssetDetail | null = null;
     selectedAssetType: AssetType = AssetType.CRYPTO;
-    selectedAsset!: AssetDetail | null;
     searchTerm: string = '';
     customAssetName: string = '';
-    _currencies: CurrencyType[] = Object.values(CurrencyType);
+    // _currencies: CurrencyType[] = Object.values(CurrencyType);
 
     private currencySubscription!: Subscription;
     currentCurrency!: CurrencyType;
@@ -67,7 +67,10 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         this.resetPickedAsset();
 
         this._assets = [];
-        if (assetType !== AssetType.CUSTOM && assetType !== AssetType.CURRENCY) {
+        // if (assetType !== AssetType.CUSTOM && assetType !== AssetType.CURRENCY) {
+        //     this.fetchAssets(assetType, this.currentCurrency);
+        // }
+        if (assetType !== AssetType.CUSTOM) {
             this.fetchAssets(assetType, this.currentCurrency);
         }
     }
@@ -96,8 +99,8 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
 
     onAssetSelect(asset: AssetDetail) {
         this.selectedAsset = asset;
-        this.assetService.setSelectedAsset(asset);
-        this.assetChanged.emit(asset);
+        this.assetService.setSelectedAsset(this.selectedAsset);
+        this.assetChanged.emit(this.selectedAsset);
     }
 
     resetPickedAsset() {
@@ -105,34 +108,37 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         this.customAssetName = '';
         this.selectedAsset = null;
         this.assetService.setSelectedAsset(null);
-        this.assetChanged.emit(undefined);
+        this.assetChanged.emit(null);
     }
 
     fetchAssets(assetType: AssetType, currencyType: CurrencyType): void {
-        this.http
-            .get<any[]>(`${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${assetType}/currencies/${currencyType}`)
-            .pipe(
-                map((data) => {
-                    this._assets = Object.values(data);
+        // if (assetType !== AssetType.CURRENCY && assetType !== AssetType.CUSTOM) {
+        if (assetType !== AssetType.CUSTOM) {
+            this.http
+                .get<any[]>(`${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${assetType}/currencies/${currencyType}`)
+                .pipe(
+                    map((data) => {
+                        this._assets = Object.values(data);
 
-                    const currentAsset = this.assetService.getSelectedAsset();
-                    if (currentAsset) {
-                        const updatedAsset =
-                            this._assets.find(a => a.uri === currentAsset.uri);
-                        if (updatedAsset) {
-                            this.assetService.setSelectedAsset(updatedAsset);
-                        } else {
-                            this.resetPickedAsset();
+                        const currentAsset = this.assetService.getSelectedAsset();
+                        if (currentAsset) {
+                            const updatedAsset =
+                                this._assets.find(a => a.uri === currentAsset.uri);
+                            if (updatedAsset) {
+                                this.assetService.setSelectedAsset(updatedAsset);
+                            } else {
+                                this.resetPickedAsset();
+                            }
                         }
-                    }
-                }),
-                catchError((error) => {
-                    console.error('Error fetching assets: ', error);
-                    this._assets = [];
-                    this.resetPickedAsset();
-                    return of([]);
-                })
-            )
-            .subscribe();
+                    }),
+                    catchError((error) => {
+                        console.error('Error fetching assets: ', error);
+                        this._assets = [];
+                        this.resetPickedAsset();
+                        return of([]);
+                    })
+                )
+                .subscribe();
+        }
     }
 }

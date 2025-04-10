@@ -91,6 +91,10 @@ export default class WalletComponent implements OnInit {
         this.updateAssetDivisionChart(totalValues);
     }
 
+    trackProfit(index: number, profit: any): any {
+        return profit.title;
+    }
+
     getTotalValue(): number {
         return this._assets.reduce((total, asset) => {
             const valueInSelectedCurrency = asset.value * asset.exchangeRateToDesired;
@@ -184,7 +188,10 @@ export default class WalletComponent implements OnInit {
         this.http.get<AssetAggregate[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`)
             .subscribe({
                     next: (assets) => {
-                        this._assets = Array.isArray(assets) ? assets : [];
+                        this._assets = Array.isArray(assets) ? assets.map(asset => {
+                            asset.currentPrice = parseFloat(asset.currentPrice).toFixed(6);
+                            return asset;
+                        }) : [];
                         this.groupAssetsByType();
                         this.updateProfitCharts();
                         this.isLoading = false;

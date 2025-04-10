@@ -3,7 +3,7 @@
 MarketSync is a solution that delivers real-time market insights, enabling personalized notifications and wallet 
 management. It helps users track their assets and receive timely updates on their subscriptions based on price changes.
 
-The platform fetches and compares targeted assets in real time with over 4k cryptocurrencies and 1k stocks, 
+The platform fetches and compares targeted assets in real time with over 4.9k cryptocurrencies and 1.2k stocks, 
 providing dynamic insights to keep users informed about market fluctuations. It simplifies 
 the management of cryptocurrency and stocks interests and subscriptions, 
 while also offering the ability to create and manage personal wallets that calculate profits in real time, 

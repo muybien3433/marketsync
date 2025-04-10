@@ -5,7 +5,7 @@ export class AssetAggregate {
         public assetType: string,
         public unitType: string,
         public count: number,
-        public currentPrice: number,
+        public currentPrice: string,
         public currencyType: string,
         public value: number,
         public averagePurchasePrice: number,

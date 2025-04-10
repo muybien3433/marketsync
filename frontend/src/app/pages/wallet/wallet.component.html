@@ -8,8 +8,7 @@
     <ng-container *ngIf="!_assets.length && !isLoading; else assetTable">
         <div class="empty-wallet-history-text">
             <h3>{{ 'asset.no.assets.message' | translate }}</h3>
-            <button class="btn btn-primary" (click)="addAssetButton()">{{ 'asset.add.asset' | translate }}
-            </button>
+            <button class="btn btn-primary" (click)="addAssetButton()">{{ 'asset.add.asset' | translate }}</button>
         </div>
     </ng-container>
 
@@ -33,30 +32,32 @@
                             </thead>
                             <tbody>
                             <ng-container *ngFor="let assetType of Object.keys(groupedAssets)">
-                                <td class="table-header" colspan="8"></td>
+                                <tr class="table-header">
+                                    <td colspan="8"><strong>{{ assetType | translate }}</strong></td>
+                                </tr>
 
-                                <tr class="table" *ngFor="let asset of groupedAssets[assetType]">
+                                <tr *ngFor="let asset of groupedAssets[assetType]">
                                     <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.name }}</td>
                                     <td>{{ asset.count }}</td>
-                                    <td>{{ asset.value | currency: asset.currencyType }}</td>
+                                    <td>{{ asset.value | currency: asset.currencyType : 'symbol' : '1.0-6' }}</td>
                                     <td>{{ asset.averagePurchasePrice | currency: asset.currencyType }}</td>
                                     <td *ngIf="asset.assetType !== 'CUSTOM'; else customUnit">
-                                        {{ asset.currentPrice | currency: asset.currencyType }}
+                                        {{ asset.currentPrice | currency: asset.currencyType : 'symbol' : '1.0-6' }}
                                         {{ asset.unitType === 'UNIT' ? '' : '(' + ('unit.' + asset.unitType | translate) + ')' }}
                                     </td>
                                     <ng-template #customUnit>
                                         <td>
                                             {{ asset.currentPrice | currency: asset.currencyType }}
-                                            {{ asset.unitType ?  '(' + asset.unitType + ')' : "" }}
+                                            {{ asset.unitType ? '(' + asset.unitType + ')' : '' }}
                                         </td>
                                     </ng-template>
 
                                     <td>{{ calculateWeight(asset) }}%</td>
                                     <td [ngStyle]="{ color: asset.profit === 0 ? 'black' : ( asset.profit > 0 ? 'green' : 'red') }">
-                                        {{ asset.profit | currency: asset.currencyType }}
+                                        {{ asset.profit | currency: asset.currencyType : 'symbol' : '1.0-6' }}
                                     </td>
                                     <td [ngStyle]="{ color: asset.profitInPercentage === 0 ? 'black' : (asset.profitInPercentage >= 0 ? 'green' : 'red') }">
-                                        {{ asset.profitInPercentage + '%'}}
+                                        {{ asset.profitInPercentage + '%' }}
                                     </td>
                                 </tr>
                             </ng-container>
@@ -83,7 +84,7 @@
 
         <div class="col-md-6 h-100">
             <div class="row g-3 h-100">
-                @for (profit of profits; track profit) {
+                <ng-container *ngFor="let profit of profits; trackBy: trackProfit">
                     <div class="col-12 h-50">
                         <app-card [hidHeader]="true" class="h-100">
                             <h6 class="mb-4">{{ profit.title }}</h6>
@@ -91,7 +92,7 @@
                                 <div class="col-10">
                                     <h3 class="f-w-300 d-flex align-items-center m-b-0">
                                         <i class="feather {{ profit.icon }} f-30 m-r-10"></i>
-                                        {{ profit.amount | currency:selectedCurrency }}
+                                        {{ profit.amount | currency:selectedCurrency : 'symbol' : '1.0-6' }}
                                         {{ profit.percent }}
                                     </h3>
                                 </div>
@@ -105,7 +106,7 @@
                             </div>
                         </app-card>
                     </div>
-                }
+                </ng-container>
             </div>
         </div>
     </ng-template>
