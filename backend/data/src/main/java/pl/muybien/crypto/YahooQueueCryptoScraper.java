@@ -1,4 +1,4 @@
-package pl.muybien.finance.crypto;
+package pl.muybien.crypto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,8 @@ import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
 import pl.muybien.finance.FinanceDetail;
 import pl.muybien.enums.UnitType;
-import pl.muybien.finance.updater.FinanceDatabaseUpdater;
-import pl.muybien.finance.updater.FinanceUpdater;
+import pl.muybien.updater.DatabaseUpdater;
+import pl.muybien.updater.QueueUpdater;
 
 import java.net.URL;
 import java.time.Duration;
@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class YahooFinanceCryptoScraper extends FinanceUpdater {
+public class YahooQueueCryptoScraper extends QueueUpdater {
 
     private static final String TARGET_URL = "https://finance.yahoo.com/markets/crypto/all/?start=";
     private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
@@ -47,7 +47,7 @@ public class YahooFinanceCryptoScraper extends FinanceUpdater {
     private static final int THIRD_SECTION_PAGES = 21;   // Pages 30-50 (21 pages)
     private final AtomicInteger invocationCount = new AtomicInteger(1);
 
-    private final FinanceDatabaseUpdater databaseUpdater;
+    private final DatabaseUpdater databaseUpdater;
 
     @Override
     @EventListener(ApplicationReadyEvent.class)

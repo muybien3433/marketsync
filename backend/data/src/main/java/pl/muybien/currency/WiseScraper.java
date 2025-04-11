@@ -1,4 +1,4 @@
-package pl.muybien.finance.currency;
+package pl.muybien.currency;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,19 +9,19 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.enums.UnitType;
-import pl.muybien.finance.updater.FinanceUpdater;
 import pl.muybien.enums.CurrencyType;
+import pl.muybien.updater.QueueUpdater;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class WiseScraper extends FinanceUpdater implements CurrencyService {
+public class WiseScraper extends QueueUpdater {
 
     private static final String TARGET_URL = "https://wise.com/gb/currency-converter/";
     private static final String URL_SEPARATOR_ONE = "-to-";
@@ -56,15 +56,6 @@ public class WiseScraper extends FinanceUpdater implements CurrencyService {
         log.info("Finished update Wise data");
     }
 
-    @Override
-    public BigDecimal getCurrencyPairExchange(CurrencyType from, CurrencyType to) {
-        var exchange = repository.findCurrencyByName(currencyNameResolver(from, to))
-                .orElseThrow(() -> new FinanceNotFoundException(
-                        "Could not find currency pair for " + from + " to " + to));
-
-        return exchange.getExchange();
-    }
-
     private void calculateAndSaveNewExchangeRate(CurrencyType from, CurrencyType to) {
         BigDecimal exchangeRate = fetchExchangeRate(from, to);
         if (exchangeRate != null && exchangeRate.compareTo(BigDecimal.ZERO) > 0) {
@@ -76,11 +67,12 @@ public class WiseScraper extends FinanceUpdater implements CurrencyService {
                                 repository.save(currency);
                             },
                             () -> repository.save(
-                                    Currency.builder()
-                                            .name(name)
-                                            .exchange(exchangeRate)
-                                            .unitType(UnitType.UNIT.name())
-                                            .build()
+                                    new Currency(
+                                            name,
+                                            exchangeRate,
+                                            UnitType.UNIT.name(),
+                                            LocalDateTime.now()
+                                    )
                             )
                     );
         }

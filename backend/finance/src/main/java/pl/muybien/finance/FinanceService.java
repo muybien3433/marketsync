@@ -3,9 +3,9 @@ package pl.muybien.finance;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.currency.CurrencyRepository;
 import pl.muybien.enums.CurrencyType;
-import pl.muybien.exception.FinanceNotFoundException;
-import pl.muybien.finance.currency.CurrencyService;
+import pl.muybien.finance.exception.FinanceNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -14,11 +14,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
 public class FinanceService {
 
-    private final CurrencyService currencyService;
-    private final FinanceRepository repository;
+    private final FinanceRepository financeRepository;
+    private final CurrencyRepository currencyRepository;
     private final FinanceDetailDTOMapper mapper;
 
     @Transactional(readOnly = true)
@@ -45,7 +44,7 @@ public class FinanceService {
     }
 
     private FinanceDetail resolveFinanceDetail(String normalizedAssetType, String normalizedUri) {
-        var finance = repository.findFinanceByAssetType(normalizedAssetType)
+        var finance = financeRepository.findFinanceByAssetType(normalizedAssetType)
                 .orElseThrow(() ->
                         new FinanceNotFoundException("Finance not found for asset type: " + normalizedAssetType)
                 );
@@ -64,14 +63,9 @@ public class FinanceService {
     }
 
     @Transactional(readOnly = true)
-    public BigDecimal findExchangeRate(CurrencyType from, CurrencyType to) {
-        return currencyService.getCurrencyPairExchange(from, to);
-    }
-
-    @Transactional(readOnly = true)
     public Set<FinanceDetailDTO> displayAvailableFinance(String assetType) {
         String normalizedAssetType = assetType.toLowerCase();
-        var finance = repository.findFinanceByAssetType(normalizedAssetType)
+        var finance = financeRepository.findFinanceByAssetType(normalizedAssetType)
                 .orElseThrow(() -> new FinanceNotFoundException(
                         "Finance not found for asset type: " + normalizedAssetType));
 
@@ -90,7 +84,7 @@ public class FinanceService {
     @Transactional(readOnly = true)
     public Set<FinanceDetailDTO> displayAvailableFinance(String assetType, String currencyType) {
         String normalizedAssetType = assetType.toLowerCase();
-        var finance = repository.findFinanceByAssetType(normalizedAssetType)
+        var finance = financeRepository.findFinanceByAssetType(normalizedAssetType)
                 .orElseThrow(() -> new FinanceNotFoundException(
                         "Finance not found for asset type: " + normalizedAssetType));
 
@@ -117,7 +111,7 @@ public class FinanceService {
         if (isExchangeNeeded) {
             BigDecimal rate = cache.computeIfAbsent(
                     sourceCurrency,
-                    key -> currencyService.getCurrencyPairExchange(key, desiredCurrency)
+                    key -> findExchangeRate(key, desiredCurrency)
             );
 
             BigDecimal updatedPrice = new BigDecimal(detail.price()).multiply(rate);
@@ -133,5 +127,18 @@ public class FinanceService {
             );
         }
         return detail;
+    }
+
+    @Transactional(readOnly = true)
+    public BigDecimal findExchangeRate(CurrencyType from, CurrencyType to) {
+        var exchange = currencyRepository.findCurrencyByName(currencyNameResolver(from, to))
+                .orElseThrow(() -> new FinanceNotFoundException(
+                        "Could not find currency pair for " + from + " to " + to));
+
+        return exchange.getExchange();
+    }
+
+    private String currencyNameResolver(CurrencyType from, CurrencyType to) {
+        return from.name().toLowerCase() + "-" + to.name().toLowerCase();
     }
 }

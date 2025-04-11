@@ -1,8 +1,8 @@
-package pl.muybien.finance.updater;
+package pl.muybien.updater;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.muybien.exception.FinanceUpdateException;
+import pl.muybien.finance.exception.FinanceUpdateException;
 
 import javax.annotation.PreDestroy;
 import java.util.Set;
@@ -11,7 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
-public abstract class FinanceUpdater {
+public abstract class QueueUpdater {
+
     private static final int MAX_QUEUE_CAPACITY = 100;
     private static final int maxRetries = 3;
 
@@ -24,12 +25,12 @@ public abstract class FinanceUpdater {
     protected abstract void scheduleUpdate();
     protected abstract void updateAssets();
 
-    protected FinanceUpdater() {
+    protected QueueUpdater() {
         startTaskProcessingOnce();
     }
 
     private static void startTaskProcessingOnce() {
-        synchronized (FinanceUpdater.class) {
+        synchronized (QueueUpdater.class) {
             if (!processingStarted) {
                 startTaskProcessing();
                 processingStarted = true;

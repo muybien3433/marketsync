@@ -49,8 +49,27 @@ services:
           cpus: '1'
           memory: 1024M
 
+  ######### [ Data & Finance ] #########
+  data-server:
+    build:
+      context: ./backend/data
+    depends_on:
+      config-server:
+        condition: service_healthy
+      mongodb-finance:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1536M
 
-  ######### [ Finance ] #########
   finance-server:
     build:
       context: ./backend/finance

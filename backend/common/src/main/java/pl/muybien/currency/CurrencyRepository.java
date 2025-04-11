@@ -1,4 +1,4 @@
-package pl.muybien.finance.currency;
+package pl.muybien.currency;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

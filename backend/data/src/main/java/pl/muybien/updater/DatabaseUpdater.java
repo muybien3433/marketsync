@@ -1,7 +1,6 @@
-package pl.muybien.finance.updater;
+package pl.muybien.updater;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.finance.Finance;
@@ -12,9 +11,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-
-@Slf4j
-public class FinanceDatabaseUpdater {
+public class DatabaseUpdater {
 
     private final FinanceRepository repository;
 

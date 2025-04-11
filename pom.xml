@@ -12,6 +12,7 @@
     <modules>
         <module>backend/common</module>
         <module>backend/config</module>
+        <module>backend/data</module>
         <module>backend/finance</module>
         <module>backend/gateway</module>
         <module>backend/notification</module>

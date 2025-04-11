@@ -1,4 +1,4 @@
-package pl.muybien.finance.stock;
+package pl.muybien.stock;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,8 @@ import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
 import pl.muybien.finance.FinanceDetail;
 import pl.muybien.enums.UnitType;
-import pl.muybien.finance.updater.FinanceDatabaseUpdater;
-import pl.muybien.finance.updater.FinanceUpdater;
+import pl.muybien.updater.DatabaseUpdater;
+import pl.muybien.updater.QueueUpdater;
 
 import java.net.URL;
 import java.time.Duration;
@@ -33,7 +33,7 @@ import java.util.concurrent.Future;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class YahooFinanceStockScraper extends FinanceUpdater {
+public class YahooQueueStockScraper extends QueueUpdater {
 
     private static final String TARGET_URL = "https://finance.yahoo.com/markets/stocks/most-active/?start=";
     private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
@@ -43,7 +43,7 @@ public class YahooFinanceStockScraper extends FinanceUpdater {
     private static final int RETRY_DELAY_MS = 2000;
     private static final int REGULAR_PAGES = 6;  // Pages 0-5 (6 pages)
 
-    private final FinanceDatabaseUpdater databaseUpdater;
+    private final DatabaseUpdater databaseUpdater;
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
