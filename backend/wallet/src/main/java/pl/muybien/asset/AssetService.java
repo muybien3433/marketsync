@@ -2,7 +2,6 @@ package pl.muybien.asset;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.asset.dto.AssetAggregateDTO;
@@ -18,14 +17,8 @@ import pl.muybien.finance.FinanceResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-
-
-@Slf4j
 
 @Service
 @RequiredArgsConstructor
@@ -37,34 +30,35 @@ public class AssetService {
     @Transactional
     public void createAsset(String customerId, AssetRequest request) {
         AssetType assetType = AssetType.fromString(request.assetType());
+        String normalizedUri = request.uri().trim().toLowerCase().replaceAll(" ", "-");
 
         FinanceResponse finance;
-        if (assetType != AssetType.CUSTOM) {
-            finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
-        } else {
+        if (assetType == AssetType.CUSTOM || assetType == AssetType.CURRENCY) {
             finance = new FinanceResponse(
                     request.uri().substring(0, 1).toUpperCase() + request.uri().substring(1),
-                    "",
-                    request.uri(),
+                    assetType == AssetType.CUSTOM ? "" : CurrencyType.valueOf(request.uri()).getSymbol(),
+                    normalizedUri,
                     request.unitType(),
                     request.purchasePrice().toPlainString(),
                     request.currencyType(),
                     assetType.name(),
                     LocalDateTime.now()
             );
+        } else {
+            finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
         }
 
         repository.save(
                 Asset.builder()
                         .assetType(assetType)
                         .unitType(request.unitType())
-                        .name(finance.name().substring(0, 1).toUpperCase() + finance.name().substring(1))
+                        .name(finance.name())
                         .symbol(finance.symbol())
-                        .uri(request.uri())
+                        .uri(normalizedUri)
                         .count(request.count().setScale(12, RoundingMode.HALF_UP))
                         .purchasePrice(request.purchasePrice().setScale(12, RoundingMode.HALF_UP))
-                        .currentPrice(assetType == AssetType.CUSTOM ? request.purchasePrice() : null)
-                        .currencyType(CurrencyType.valueOf(request.currencyType()))
+                        .currentPrice(assetType == AssetType.CUSTOM ? request.currentPrice() : null)
+                        .currencyType(CurrencyType.valueOf(finance.currencyType()))
                         .customerId(customerId)
                         .comment(request.comment())
                         .build()
@@ -153,15 +147,22 @@ public class AssetService {
 
     private AssetAggregateDTO aggregateAsset(AssetGroupDTO asset, String desiredCurrency) {
         BigDecimal currentPrice;
-        if (asset.assetType() == AssetType.CUSTOM) {
-            currentPrice = asset.currentPrice(); // in CUSTOM currentPrice is updated by user
-        } else {
-            var finance = financeClient.findFinanceByTypeAndUri(asset.assetType().name(), asset.uri());
-            currentPrice = resolvePriceByCurrency(asset, finance);
+        switch (asset.assetType()) {
+            case CUSTOM -> currentPrice = asset.currentPrice();
+            case CURRENCY -> currentPrice = resolveCurrencyPrice(asset.currencyType(), desiredCurrency);
+            default -> {
+                try {
+                    var finance = financeClient.findFinanceByTypeAndUri(asset.assetType().name(), asset.uri());
+                    currentPrice = resolvePriceByCurrency(
+                            asset.currencyType(), finance.currencyType(), new BigDecimal(finance.price()));
+                } catch (Exception e) {
+                    currentPrice = BigDecimal.ZERO;
+                }
+            }
         }
 
         BigDecimal value = asset.count().multiply(currentPrice);
-        BigDecimal totalInvested = asset.averagePurchasePrice().multiply(asset.count());
+        BigDecimal totalInvested = resolveTotalInvested(asset, desiredCurrency);
         BigDecimal profit = value.subtract(totalInvested);
         BigDecimal profitPercentage = resolveProfitInPercentage(totalInvested, profit);
         BigDecimal exchangeRateToDesired = resolveExchangeRateToDesired(asset.currencyType().name(), desiredCurrency);
@@ -182,11 +183,18 @@ public class AssetService {
         );
     }
 
-    private BigDecimal resolvePriceByCurrency(AssetGroupDTO asset, FinanceResponse finance) {
-        boolean currencyIsDifferent = asset.currencyType() != CurrencyType.valueOf(finance.currencyType());
-        BigDecimal price = new BigDecimal(finance.price());
+    private BigDecimal resolveCurrencyPrice(CurrencyType assetCurrency, String desiredCurrency) {
+        boolean currencyIsDifferent = assetCurrency != CurrencyType.valueOf(desiredCurrency);
         if (currencyIsDifferent) {
-            var exchangeRate = financeClient.findExchangeRate(finance.currencyType(), asset.currencyType().name());
+            return financeClient.findExchangeRate(desiredCurrency, assetCurrency.name());
+        }
+        return BigDecimal.ONE;
+    }
+
+    private BigDecimal resolvePriceByCurrency(CurrencyType assetCurrency, String desiredCurrency, BigDecimal price) {
+        boolean currencyIsDifferent = assetCurrency != CurrencyType.valueOf(desiredCurrency);
+        if (currencyIsDifferent) {
+            var exchangeRate = financeClient.findExchangeRate(assetCurrency.name(), desiredCurrency);
             return price.multiply(exchangeRate);
         }
         return price;
@@ -196,6 +204,23 @@ public class AssetService {
         return totalInvested.compareTo(BigDecimal.ZERO) > 0
                 ? profit.divide(totalInvested, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))
                 : BigDecimal.ZERO;
+    }
+
+//    // TODO: This is new method, test it out
+//    private BigDecimal resolveValue(AssetGroupDTO asset, String desiredCurrency, BigDecimal currentPrice) {
+//        boolean currencyIsSame = asset.currencyType() == CurrencyType.valueOf(desiredCurrency);
+//        if (asset.assetType() == AssetType.CURRENCY && currencyIsSame) {
+//            return asset.count();
+//        }
+//        return asset.count().multiply(currentPrice);
+//    }
+
+    private BigDecimal resolveTotalInvested(AssetGroupDTO asset, String desiredCurrency) {
+        boolean currencyIsSame = asset.currencyType() == CurrencyType.valueOf(desiredCurrency);
+        if (asset.assetType() == AssetType.CURRENCY && currencyIsSame) {
+            return asset.count();
+        }
+        return asset.averagePurchasePrice().multiply(asset.count());
     }
 
     private BigDecimal resolveExchangeRateToDesired(String currency, String desiredCurrency) {

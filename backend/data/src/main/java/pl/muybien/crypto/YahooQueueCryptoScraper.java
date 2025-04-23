@@ -185,10 +185,15 @@ public class YahooQueueCryptoScraper extends QueueUpdater {
     @SuppressWarnings("unchecked")
     private void extractData(WebDriver driver, Map<String, FinanceDetail> cryptos) {
         log.debug("Finding element by css");
-        List<List<String>> allData = (List<List<String>>) ((JavascriptExecutor) driver).executeScript(
-                "return Array.from(document.querySelectorAll('table.markets-table tbody tr')).map(row => " +
-                        "Array.from(row.querySelectorAll('td:not(.hidden)')).slice(0,4).map(cell => cell.innerText))"
-        );
+        String xpath = "//div[contains(@class, 'tableContainer')]//table[contains(@class, 'bd')]";
+        WebElement table = driver.findElement(By.xpath(xpath));
+
+        String script =
+                "return Array.from(arguments[0].querySelectorAll('tbody tr')).map(row => " +
+                        "Array.from(row.querySelectorAll('td:not(.hidden)')).slice(0,4).map(cell => cell.innerText.trim()))";
+
+        List<List<String>> allData = (List<List<String>>) ((JavascriptExecutor) driver)
+                .executeScript(script, table);
 
         log.debug("Found {} rows starting processing", allData.size());
         for(List<String> cells : allData) {
@@ -197,6 +202,8 @@ public class YahooQueueCryptoScraper extends QueueUpdater {
                 String name = cells.get(1).substring(0, cells.get(1).length() - 4);
                 String price = cells.get(3);
                 String cleanedPrice = price.replace(",", "").replaceAll("[^\\d.\\-]", "");
+
+                log.debug("Symbol: {}, Name: {}, Price: {}", symbol, name, cleanedPrice);
 
                 if(!symbol.isEmpty() && !name.isEmpty() && !cleanedPrice.isEmpty()) {
                     String uri = name.replaceAll("[ .()]", "-").toLowerCase();

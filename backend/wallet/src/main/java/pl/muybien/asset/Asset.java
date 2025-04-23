@@ -43,7 +43,6 @@ public class Asset {
     @Nullable
     private String comment;
 
-    @Enumerated(EnumType.STRING)
     private CurrencyType currencyType;
 
     @Enumerated(EnumType.STRING)

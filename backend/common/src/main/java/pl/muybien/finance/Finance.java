@@ -23,11 +23,6 @@ public class Finance {
     public Finance() {
     }
 
-    public Finance(String id, Map<String, Map<String, FinanceDetail>> financeDetails) {
-        this.id = id;
-        this.financeDetails = financeDetails;
-    }
-
     public String getId() {
         return id;
     }

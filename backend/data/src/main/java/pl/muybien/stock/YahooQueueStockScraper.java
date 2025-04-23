@@ -170,10 +170,15 @@ public class YahooQueueStockScraper extends QueueUpdater {
     @SuppressWarnings("unchecked")
     private void extractData(WebDriver driver, Map<String, FinanceDetail> stocks) {
         log.debug("Finding element by css");
-        List<List<String>> allData = (List<List<String>>) ((JavascriptExecutor) driver).executeScript(
-                "return Array.from(document.querySelectorAll('table.markets-table tbody tr')).map(row => " +
-                        "Array.from(row.querySelectorAll('td:not(.hidden)')).slice(0,4).map(cell => cell.innerText))"
-        );
+        String xpath = "//div[contains(@class, 'tableContainer')]//table[contains(@class, 'bd')]";
+        WebElement table = driver.findElement(By.xpath(xpath));
+
+        String script =
+                "return Array.from(arguments[0].querySelectorAll('tbody tr')).map(row => " +
+                        "Array.from(row.querySelectorAll('td:not(.hidden)')).slice(0,4).map(cell => cell.innerText.trim()))";
+
+        List<List<String>> allData = (List<List<String>>) ((JavascriptExecutor) driver)
+                .executeScript(script, table);
 
         log.debug("Found {} rows starting processing", allData.size());
         for (List<String> cells : allData) {

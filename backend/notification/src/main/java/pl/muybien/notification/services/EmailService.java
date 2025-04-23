@@ -20,6 +20,7 @@ public class EmailService implements NotificationService {
     @Override
     public void sendMessage(String target, String message) {
         var mimeMessage = javaMailSender.createMimeMessage();
+
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
@@ -31,7 +32,6 @@ public class EmailService implements NotificationService {
             helper.setText(htmlContent, true);
 
             javaMailSender.send(mimeMessage);
-
         } catch (MailException | jakarta.mail.MessagingException e) {
             log.error(e.getMessage(), e);
             throw new MessageNotSendException(

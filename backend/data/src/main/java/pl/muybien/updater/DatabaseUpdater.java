@@ -19,6 +19,8 @@ public class DatabaseUpdater {
     public void saveFinanceToDatabase(String assetType, Map<String, FinanceDetail> financeDetails) {
         String normalizedAssetType = assetType.toLowerCase();
 
+        financeDetails.forEach((_, financeDetail) -> System.out.println(financeDetail));
+
         repository.findFinanceByAssetType(normalizedAssetType)
                 .ifPresentOrElse(finance -> {
                             finance.initializeNestedMapIfNeeded(normalizedAssetType);
