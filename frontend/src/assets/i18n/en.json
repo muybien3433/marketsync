@@ -37,10 +37,12 @@
     "edit.asset": "Edit asset",
     "type.crypto": "Crypto",
     "type.stock": "Stock",
+    "type.currency": "Currency",
     "type.custom": "Custom",
     "type.selection": "Select asset type",
     "search.asset": "Type to search from: ",
     "purchase.price": "Purchase price",
+    "purchase.rate": "Purchase rate",
     "current.price": "Current price",
     "average.purchase.price": "Avg. Purchase Price",
     "investment.start.date": "Creation date",
@@ -112,6 +114,9 @@
     "asset.type.required": "Asset type is required",
     "digit.should.be.positive": "Price should be a positive number",
     "asset.add.fail": "Failed to add asset. Please try again",
-    "asset.edit.fail": "Failed to edit asset. Please try again"
+    "asset.edit.fail": "Failed to edit asset. Please try again",
+    "subscription.add.fail": "Failed to add subscription. Please try again",
+    "subscription.value.must.be.above": "Value must be above current price",
+    "subscription.value.must.be.below": "Value must be below current price"
   }
 }

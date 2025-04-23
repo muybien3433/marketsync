@@ -28,7 +28,7 @@
                 </thead>
                 <tbody>
                 <tr class="table" *ngFor="let asset of _assets">
-                    <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.uri }}</td>
+                    <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.name }}</td>
 
                     <td *ngIf="asset.unitType === 'UNIT'">
                         {{ asset.count }}
@@ -42,8 +42,8 @@
                         {{ asset.count }} {{ asset.unitType ? '(' +  asset.unitType + ')' : '' }}
                     </td>
 
-                    <td>{{ asset.purchasePrice | currency: asset.currencyType }}</td>
-                    <td>{{ asset.currentPrice ? (asset.currentPrice | currency: asset.currencyType) : "-" }}</td>
+                    <td>{{ asset.purchasePrice }} {{ CurrencyType.Symbols[asset.currencyType] }}</td>
+                    <td>{{ asset.currentPrice ? (asset.currentPrice + CurrencyType.Symbols[asset.currencyType]) : '-' }}</td>
                     <td>{{ asset.createdDate | date:'dd-MM-yyyy | | HH:mm:ss' }}</td>
                     <td>
                         <div class="form-group">

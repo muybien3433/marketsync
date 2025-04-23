@@ -21,7 +21,7 @@
                             <thead>
                             <tr>
                                 <th>{{ 'common.name' | translate }}</th>
-                                <th>{{ 'common.count' | translate }}</th>
+                                <th>{{ 'common.count' | translate }} ({{ 'unit.UNIT' | translate }})</th>
                                 <th>{{ 'common.value' | translate }}</th>
                                 <th>{{ 'asset.average.purchase.price' | translate }}</th>
                                 <th>{{ 'common.current.price' | translate }} ({{ 'unit.UNIT' | translate }})</th>
@@ -38,23 +38,34 @@
 
                                 <tr *ngFor="let asset of groupedAssets[assetType]">
                                     <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.name }}</td>
-                                    <td>{{ asset.count }}</td>
-                                    <td>{{ asset.value | currency: asset.currencyType : 'symbol' : '1.0-6' }}</td>
-                                    <td>{{ asset.averagePurchasePrice | currency: asset.currencyType }}</td>
+                                    <td *ngIf="asset.assetType === 'CURRENCY'; else customCount">
+                                        {{ asset.count | number: '1.0-2' }} ({{ CurrencyType.Symbols[asset.name] }})
+                                    </td>
+                                    <ng-template #customCount>
+                                        <td *ngIf="asset.unitType === 'UNIT'; else customUnit">
+                                            {{ asset.count | number: '1.0-6' }}
+                                        </td>
+                                        <ng-template>
+                                            <td>
+                                                {{ asset.count | number:'1.0-6' }} ({{ ('unit.' + asset.unitType) | translate }})
+                                            </td>
+                                        </ng-template>
+                                    </ng-template>
+                                    <td>{{ asset.value | number: '1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}</td>
+                                    <td>{{ asset.averagePurchasePrice | number: '1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}</td>                                      
                                     <td *ngIf="asset.assetType !== 'CUSTOM'; else customUnit">
-                                        {{ asset.currentPrice | currency: asset.currencyType : 'symbol' : '1.0-6' }}
+                                        {{ asset.currentPrice | number:'1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}
                                         {{ asset.unitType === 'UNIT' ? '' : '(' + ('unit.' + asset.unitType | translate) + ')' }}
                                     </td>
                                     <ng-template #customUnit>
                                         <td>
-                                            {{ asset.currentPrice | currency: asset.currencyType }}
+                                            {{ asset.currentPrice }}{{ CurrencyType.Symbols[asset.currencyType] }}
                                             {{ asset.unitType ? '(' + asset.unitType + ')' : '' }}
                                         </td>
                                     </ng-template>
-
                                     <td>{{ calculateWeight(asset) }}%</td>
                                     <td [ngStyle]="{ color: asset.profit === 0 ? 'black' : ( asset.profit > 0 ? 'green' : 'red') }">
-                                        {{ asset.profit | currency: asset.currencyType : 'symbol' : '1.0-6' }}
+                                        {{ asset.profit | number:'1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}
                                     </td>
                                     <td [ngStyle]="{ color: asset.profitInPercentage === 0 ? 'black' : (asset.profitInPercentage >= 0 ? 'green' : 'red') }">
                                         {{ asset.profitInPercentage + '%' }}
@@ -92,7 +103,7 @@
                                 <div class="col-10">
                                     <h3 class="f-w-300 d-flex align-items-center m-b-0">
                                         <i class="feather {{ profit.icon }} f-30 m-r-10"></i>
-                                        {{ profit.amount | currency:selectedCurrency }}
+                                        {{ profit.amount | number:'1.2-2' }}{{ CurrencyType.Symbols[selectedCurrency] }}
                                         {{ profit.percent }}
                                     </h3>
                                 </div>

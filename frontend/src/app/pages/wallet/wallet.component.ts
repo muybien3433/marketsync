@@ -23,6 +23,7 @@ export default class WalletComponent implements OnInit {
     protected _assets: AssetAggregate[] = [];
     groupedAssets: { [key: string]: AssetAggregate[] } = {};
     selectedCurrency: CurrencyType;
+    CurrencyType = CurrencyType;
     donutChart: Partial<ApexOptions>;
     profits: any[] = [];
 

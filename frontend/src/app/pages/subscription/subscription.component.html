@@ -41,16 +41,16 @@
                                 <td>
                                     <div *ngIf="subscription?.upperBoundPrice ?? false; else lowerBound">
                                         {{ 'subscription.price.grater' | translate }}
-                                        {{ subscription.upperBoundPrice | currency: subscription.currencyType }}
+                                        {{ subscription.upperBoundPrice }}{{ CurrencyType.Symbols[subscription.currencyType] }}
                                     </div>
                                     <ng-template #lowerBound>
                                         <div *ngIf="subscription?.lowerBoundPrice ?? false">
                                             {{ 'subscription.price.lower' | translate }}
-                                            {{ subscription.lowerBoundPrice | currency: subscription.currencyType }}
+                                            {{ subscription.lowerBoundPrice }}{{ CurrencyType.Symbols[subscription.currencyType] }}
                                         </div>
                                     </ng-template>
                                 </td>
-                                <td>{{ subscription.currentPrice | currency: subscription.currencyType }}</td>
+                                <td>{{ subscription.currentPrice }}{{ CurrencyType.Symbols[subscription.currencyType] }}</td>
                                 <td>{{ subscription.createdDate | date:'dd-MM-yyyy | | HH:mm:ss' }}</td>
                                 <td class="button-cell">
                                     <button (click)="deleteSubscription(subscription.uri, subscription.id)"

@@ -37,10 +37,12 @@
     "edit.asset": "Edytuj aktywo",
     "type.crypto": "Kryptowaluty",
     "type.stock": "Giełda",
+    "type.currency": "Waluty",
     "type.custom": "Niestandardowe",
     "type.selection": "Wybierz typ aktywa",
     "search.asset": "Wpisz by wyszukać spośród: ",
     "purchase.price": "Cena zakupu",
+    "purchase.rate": "Kurs zakupu",
     "current.price": "Aktualna cena",
     "average.purchase.price": "Śr. Cena zakupu",
     "investment.start.date": "Data utworzenia",
@@ -113,6 +115,9 @@
     "asset.type.required": "Typ aktywa jest wymagany",
     "digit.should.be.positive": "Liczba powinna być dodatnia",
     "asset.add.fail": "Nie udało się dodać aktywa. Spróbuj ponownie",
-    "asset.edit.fail": "Nie udało się edytować aktywa. Spróbuj ponownie"
+    "asset.edit.fail": "Nie udało się edytować aktywa. Spróbuj ponownie",
+    "subscription.add.fail": "Nie udało się dodać subskrybcji. Spróbuj ponownie",
+    "subscription.value.must.be.above": "Wartość musi być powyżej aktualnej ceny",
+    "subscription.value.must.be.below": "Wartość musi być poniżej aktualnej ceny"
   }
 }

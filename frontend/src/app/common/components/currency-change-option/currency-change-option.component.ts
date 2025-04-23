@@ -18,8 +18,9 @@ import {CurrencyService} from "../../service/currency-service";
 export class CurrencyChangeOptionComponent implements OnInit, OnDestroy {
   @Output() currencyChanged = new EventEmitter<CurrencyType>();
 
-  currencyOptions = Object.values(CurrencyType);
+  currencyOptions = Object.values(CurrencyType).filter(value => typeof value === 'string') as CurrencyType[];
   selectedCurrency!: CurrencyType;
+  CurrencyType = CurrencyType;
 
   constructor(private currencyService: CurrencyService) {}
 

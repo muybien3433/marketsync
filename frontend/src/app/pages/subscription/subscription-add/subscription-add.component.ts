@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {environment} from "../../../../environments/environment";
@@ -60,6 +60,7 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
         private router: Router,
         private assetService: AssetService,
         private currencyService: CurrencyService,
+        private translate: TranslateService
     ) {
         this.addSubscriptionForm = this.fb.group({
             uri: ['', [Validators.required, Validators.minLength(1)]],
@@ -103,7 +104,7 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
         }
 
         if (this.addSubscriptionForm.invalid) {
-            this.errorMessage = 'Please select an asset.';
+            this.errorMessage = this.translate.instant('error.asset.is.required');
             return;
         }
 
@@ -123,13 +124,13 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
         };
 
         if (condition === 'increase' && this.asset && numericValue < this.asset.price) {
-            this.errorMessage = 'Value must be above current price';
+            this.errorMessage = this.translate.instant('error.subscription.value.must.be.above');
             this.isSubmitting = false;
             return;
         }
 
         if (condition === 'decrease' && this.asset && numericValue > this.asset.price) {
-            this.errorMessage = 'Value must be below current price';
+            this.errorMessage = this.translate.instant('error.subscription.value.must.be.below');
             this.isSubmitting = false;
             return;
         }
@@ -141,7 +142,7 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
             },
             error: () => {
                 this.isSubmitting = false;
-                this.errorMessage = 'Failed to add subscription.';
+                this.errorMessage = this.translate.instant('error.subscription.add.fail');
             }
         });
     }

@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
-import {CurrencyPipe, DatePipe, NgForOf, NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {TranslatePipe} from "@ngx-translate/core";
 import {Router} from "@angular/router";
 import {SubscriptionDetail} from "../../common/model/subscription-detail";
 import {API_ENDPOINTS} from "../../common/service/api-endpoints";
 import {CardComponent} from "../../common/components/card/card.component";
+import { CurrencyType } from 'src/app/common/model/currency-type';
 
 @Component({
   selector: 'app-subscription',
@@ -16,7 +17,6 @@ import {CardComponent} from "../../common/components/card/card.component";
     NgIf,
     TranslatePipe,
     DatePipe,
-    CurrencyPipe,
     CardComponent
   ],
   templateUrl: './subscription.component.html',
@@ -25,6 +25,7 @@ import {CardComponent} from "../../common/components/card/card.component";
 export default class SubscriptionComponent {
   protected _subscriptions: SubscriptionDetail[] = [];
   isLoading: boolean = true;
+  CurrencyType = CurrencyType;
 
   constructor(
       private http: HttpClient,

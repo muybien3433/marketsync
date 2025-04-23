@@ -8,6 +8,7 @@ import {AssetHistory} from "../../../common/model/asset-history";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
 import {FormsModule} from "@angular/forms";
+import { CurrencyType } from 'src/app/common/model/currency-type';
 
 @Component({
   selector: 'app-wallet-asset-history',
@@ -18,7 +19,6 @@ import {FormsModule} from "@angular/forms";
         DatePipe,
         NgIf,
         CardComponent,
-        CurrencyPipe,
         FormsModule,
     ],
   templateUrl: './wallet-asset-history.component.html',
@@ -28,6 +28,7 @@ export default class WalletAssetHistoryComponent implements OnInit {
   protected _assets: AssetHistory[] = [];
   isLoading: boolean = true;
   showSuccessMessage: boolean = false;
+  CurrencyType = CurrencyType;
 
   constructor(private http: HttpClient, private router: Router) {}
 

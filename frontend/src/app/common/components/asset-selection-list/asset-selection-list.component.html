@@ -26,18 +26,17 @@
         </div>
 
         <!-- Currency Selection -->
-<!--        <div *ngIf="selectedAssetType === AssetType.CURRENCY">-->
-<!--            <div *ngFor="let currencyType of _currencies | filterByName: searchTerm"-->
-<!--                 class="asset-item"-->
-<!--                 (click)="onAssetSelect(currencyType)">-->
-<!--                <span class="symbol">({{ currencyType.symbol }})</span>-->
-<!--                {{ currencyType.name }}-->
-<!--            </div>-->
-<!--        </div>-->
+        <div *ngIf="selectedAssetType === AssetType.CURRENCY">
+            <div *ngFor="let currencyType of _currencies | filterByName: searchTerm"
+                 class="asset-item"
+                 (click)="onCurrencySelect(currencyType)">
+                 {{ currencyType }}
+                 <span class="symbol">({{ CurrencyType.Symbols[currencyType] }})</span>
+            </div>
+        </div>
 
         <!-- Asset Selection (for other asset types) -->
-<!--        <div *ngIf="selectedAssetType !== AssetType.CUSTOM && selectedAssetType !== AssetType.CURRENCY">-->
-        <div *ngIf="selectedAssetType !== AssetType.CUSTOM">
+        <div *ngIf="selectedAssetType !== AssetType.CUSTOM && selectedAssetType !== AssetType.CURRENCY">
             <div class="search-header" *ngIf="!selectedAsset">
                 <input
                         [(ngModel)]="searchTerm"
@@ -54,7 +53,7 @@
             </div>
         </div>
 
-        <div *ngIf="selectedAsset" class="selected-asset">
+        <div *ngIf="selectedAsset && selectedAssetType !== AssetType.CUSTOM" class="selected-asset">
             <div class="native-input d-flex align-items-center gap-3">
                 <span>
                     ({{ selectedAsset.symbol }})
@@ -68,6 +67,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>

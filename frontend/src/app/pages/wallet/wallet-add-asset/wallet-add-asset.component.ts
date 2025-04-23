@@ -129,6 +129,10 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         }
     }
 
+    currencyIsSame(): boolean {
+        return this.currencyType === this.asset?.currencyType;
+    }
+
     onSubmit(): void {
         if (this.addAssetForm.invalid) {
             this.errorMessage = this.translate.instant('error.asset.is.required');
@@ -170,6 +174,9 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         currencyType: string;
         comment: string;
     }) {
+        console.log(asset)
         return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, asset);
     }
+
+    protected readonly AssetType = AssetType;
 }

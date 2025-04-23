@@ -60,6 +60,7 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - LOGGING_LEVEL_ROOT=DEBUG
     restart: unless-stopped
     networks:
       - backend-net

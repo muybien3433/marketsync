@@ -26,16 +26,28 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="purchasePrice">{{ 'asset.purchase.price' | translate }}</label>
+                        <label for="purchasePrice">
+                            <ng-container *ngIf="assetType !== 'CURRENCY'; else currencyLabel">
+                                {{ 'asset.purchase.price' | translate }}
+                            </ng-container>
+                            <ng-template #currencyLabel>
+                                {{ 'asset.purchase.rate' | translate }}
+                            </ng-template>
+                        </label>
+
                         <input
                                 type="text"
                                 class="form-control"
                                 id="purchasePrice"
                                 formControlName="purchasePrice"
-                                placeholder="{{ 'enter.purchase.price' | translate }}"
+                                placeholder="{{ 'enter.price' | translate }}"
+                                [value]="assetType === 'CURRENCY' && currencyIsSame() ? 1 : null"
+                                [readonly]="assetType === 'CURRENCY' && currencyIsSame()"
+                                [disabled]="assetType === 'CURRENCY' && currencyIsSame()"
                                 required
                                 appNumberInput
                         />
+
                         <div *ngIf="addAssetForm.get('purchasePrice')?.invalid">
                             <small class="error">{{ 'error.digit.should.be.positive' | translate }}</small>
                         </div>

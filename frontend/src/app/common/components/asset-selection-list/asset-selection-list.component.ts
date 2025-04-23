@@ -12,6 +12,7 @@ import {CurrencyType} from "../../model/currency-type";
 import {AssetService} from "../../service/asset-service";
 import {CurrencyService} from "../../service/currency-service";
 import {API_ENDPOINTS} from "../../service/api-endpoints";
+import { UnitType } from '../../model/unit-type';
 
 @Component({
     selector: 'app-asset-selection-list',
@@ -38,7 +39,9 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     selectedAssetType: AssetType = AssetType.CRYPTO;
     searchTerm: string = '';
     customAssetName: string = '';
-    // _currencies: CurrencyType[] = Object.values(CurrencyType);
+    _currencies: CurrencyType[] = Object.values(CurrencyType).filter(value => typeof value === 'string') as CurrencyType[];
+    CurrencyType = CurrencyType;
+    UnitType = UnitType;
 
     private currencySubscription!: Subscription;
     currentCurrency!: CurrencyType;
@@ -67,14 +70,17 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         this.resetPickedAsset();
 
         this._assets = [];
-        // if (assetType !== AssetType.CUSTOM && assetType !== AssetType.CURRENCY) {
-        //     this.fetchAssets(assetType, this.currentCurrency);
-        // }
-        if (assetType !== AssetType.CUSTOM) {
+        if (assetType !== AssetType.CUSTOM && assetType !== AssetType.CURRENCY) {
             this.fetchAssets(assetType, this.currentCurrency);
         }
     }
 
+    onAssetSelect(asset: AssetDetail) {
+        this.selectedAsset = asset;
+        this.assetService.setSelectedAsset(this.selectedAsset);
+        this.assetChanged.emit(this.selectedAsset);
+    }
+    
     onCustomAssetInput(): void {
         if (this.customAssetName.trim()) {
             const customAsset: AssetDetail = new AssetDetail(
@@ -84,11 +90,10 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
                 null,
                 this.currentCurrency,
                 AssetType.CUSTOM,
-                null,
+                UnitType.UNIT,
                 null,
                 null
             );
-
             this.selectedAsset = customAsset;
             this.assetService.setSelectedAsset(customAsset);
             this.assetChanged.emit(customAsset);
@@ -96,10 +101,21 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
             this.resetPickedAsset();
         }
     }
-
-    onAssetSelect(asset: AssetDetail) {
-        this.selectedAsset = asset;
-        this.assetService.setSelectedAsset(this.selectedAsset);
+    
+    onCurrencySelect(currency: CurrencyType) {
+        const currencyAsset: AssetDetail = new AssetDetail(
+            currency,
+            CurrencyType.Symbols[currency],
+            currency,
+            null,
+            currency,
+            AssetType.CURRENCY,
+            UnitType.UNIT,
+            null,
+            null
+        );
+        this.selectedAsset = currencyAsset;
+        this.assetService.setSelectedAsset(currencyAsset);
         this.assetChanged.emit(this.selectedAsset);
     }
 
@@ -112,8 +128,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     }
 
     fetchAssets(assetType: AssetType, currencyType: CurrencyType): void {
-        // if (assetType !== AssetType.CURRENCY && assetType !== AssetType.CUSTOM) {
-        if (assetType !== AssetType.CUSTOM) {
+        if (assetType !== AssetType.CURRENCY && assetType !== AssetType.CUSTOM) {
             this.http
                 .get<any[]>(`${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${assetType}/currencies/${currencyType}`)
                 .pipe(
