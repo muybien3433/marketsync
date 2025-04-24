@@ -5,9 +5,9 @@ management. It helps users track their assets and receive timely updates on thei
 
 The platform fetches and compares targeted assets in real time with over 5.4k cryptocurrencies and 1.2k stocks, 
 providing dynamic insights to keep users informed about market fluctuations. It simplifies 
-the management of cryptocurrency and stocks interests and subscriptions, 
+the management of cryptocurrency, stock, currencies and commodity interests and subscriptions, 
 while also offering the ability to create and manage personal wallets that calculate profits in real time, 
-based on the user's preferred currency. Users can track assets, view detailed information, 
+based on the user's preferred currency. Users can track assets, view detailed information
 and calculate real-time profits across various asset types.
 
 ## Test credentials
@@ -21,11 +21,13 @@ password: test
 
 ## Features
 
-- **Wallet Management**: Manage personal customer wallet with various assets and real time profit calculation.
-- **Subscriptions**: Effortlessly add or remove assets subscriptions with custom price and currencies thresholds.
-- **Real-Time Notifications**: Receive email notifications when subscribed assets hit user-defined price targets,
+- **Wallet Management**: Manage a personal wallet with various assets, real-time profit calculations, 
+create your own comments or look at your asset history.
+- **Subscriptions**: Effortlessly add or remove asset subscriptions with custom price and currencies thresholds 
+and receive email notifications when the subscribed asset hit targeted price,
 ensuring that users stay informed about market changes in real-time.
-- **Multiple CurrencyType Support**: Choose between currencies multiple currencies (USD, EUR, GBP, PLN).
+- **Multiple Asset Support** Chose between Crypto, Stock, Currency, Commodity or even create your Custom asset if needed.
+- **Multiple Currency Support**: Choose between multiple currencies (USD, EUR, GBP, PLN).
 
 ## Tech Stack
 
