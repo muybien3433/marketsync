@@ -34,12 +34,12 @@ public class WiseScraper extends QueueUpdater {
     @Override
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(fixedDelay = 45000)
-    protected void scheduleUpdate() {
+    public void scheduleUpdate() {
         enqueueUpdate("wise");
     }
 
     @Override
-    protected void updateAssets() {
+    public void updateAssets() {
         log.info("Starting the update of Wise data...");
         var allCurrencies = Arrays.asList(CurrencyType.values());
 

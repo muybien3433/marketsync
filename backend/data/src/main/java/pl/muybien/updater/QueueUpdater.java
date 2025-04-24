@@ -22,8 +22,8 @@ public abstract class QueueUpdater {
     private static final AtomicInteger activeTasks = new AtomicInteger(0);
     private static volatile boolean processingStarted = false;
 
-    protected abstract void scheduleUpdate();
-    protected abstract void updateAssets();
+    public abstract void scheduleUpdate();
+    public abstract void updateAssets();
 
     protected QueueUpdater() {
         startTaskProcessingOnce();

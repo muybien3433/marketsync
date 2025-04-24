@@ -3,24 +3,18 @@ package pl.muybien.crypto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.common.YahooScraper;
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
 import pl.muybien.finance.FinanceDetail;
 import pl.muybien.enums.UnitType;
 import pl.muybien.updater.DatabaseUpdater;
-import pl.muybien.updater.QueueUpdater;
 
-import java.net.URL;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class YahooQueueCryptoScraper extends QueueUpdater {
+public class YahooQueueCryptoScraper extends YahooScraper {
 
     private static final String TARGET_URL = "https://finance.yahoo.com/markets/crypto/all/?start=";
-    private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
     private static final int THREAD_POOL_SIZE = 2;
     private static final int RETRY_ATTEMPTS = 4;
     private static final int PAGE_DELAY_MS = 200;
@@ -60,6 +53,8 @@ public class YahooQueueCryptoScraper extends QueueUpdater {
     @Transactional
     public void updateAssets() {
         log.info("Starting the update of YahooFinanceCrypto data...");
+
+        setTargetUrl(TARGET_URL);
 
         long startTime = System.currentTimeMillis();
         int invCounter = invocationCount.getAndIncrement();
@@ -113,36 +108,8 @@ public class YahooQueueCryptoScraper extends QueueUpdater {
         log.info("Finished updating YahooFinanceCrypto data");
     }
 
-    private Runnable createScrapingTask(int startPage, int endPage, Map<String, FinanceDetail> cryptos) {
-        return () -> {
-            RemoteWebDriver driver = null;
-            try {
-                driver = new RemoteWebDriver(new URL(REMOTE_WEB_DRIVER), createChromeOptions());
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(100));
-                handleCookieConsent(driver, wait);
-                scrapePages(driver, startPage, endPage, cryptos);
-            } catch (Exception e) {
-                log.error("Thread error: {}", e.getMessage());
-            } finally {
-                if (driver != null) driver.quit();
-            }
-        };
-    }
-
-    private void handleCookieConsent(WebDriver driver, WebDriverWait wait) {
-        try {
-            driver.get(TARGET_URL + "0&count=100");
-            WebElement acceptButton = wait.until(ExpectedConditions.elementToBeClickable(
-                    By.cssSelector("button[type='submit'][name='agree']")));
-            acceptButton.click();
-            log.debug("Cookie consent accepted.");
-        } catch (TimeoutException e) {
-            log.debug("No cookie consent found.");
-        }
-    }
-
-    private void scrapePages(WebDriver driver, int startPage, int endPage,
-                             Map<String, FinanceDetail> cryptos) throws InterruptedException {
+    @Override
+    protected void scrapePages(WebDriver driver, int startPage, int endPage, Map<String, FinanceDetail> cryptos) {
         log.debug("Scraping pages {}-{}", startPage, endPage);
 
         final String rowCheckScript =
@@ -171,7 +138,11 @@ public class YahooQueueCryptoScraper extends QueueUpdater {
                     break;
                 } catch (TimeoutException e) {
                     log.warn("Timeout page {} (attempt {})", page, attempt + 1);
-                    Thread.sleep(RETRY_DELAY_MS * (attempt + 1));
+                    try {
+                        Thread.sleep(RETRY_DELAY_MS * (attempt + 1));
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } catch (Exception e) {
                     log.error("Page {} error: {}", page, e.getMessage());
                     if (attempt == RETRY_ATTEMPTS - 1) {
@@ -222,33 +193,6 @@ public class YahooQueueCryptoScraper extends QueueUpdater {
             }
         }
         log.debug("Finished processing rows");
-    }
-
-    private ChromeOptions createChromeOptions() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments(
-                "--headless=new",
-                "--no-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-gpu",
-                "--disable-extensions",
-                "--disable-popup-blocking",
-                "--blink-settings=imagesEnabled=false",
-                "--disable-logging"
-        );
-        options.setPageLoadStrategy(PageLoadStrategy.EAGER);
-        return options;
-    }
-
-    private void awaitCompletion(ExecutorService executor, List<Future<?>> futures) {
-        futures.forEach(future -> {
-            try {
-                future.get();
-            } catch (Exception e) {
-                log.error("Scraping task failed", e);
-            }
-        });
-        executor.shutdown();
     }
 }
 
