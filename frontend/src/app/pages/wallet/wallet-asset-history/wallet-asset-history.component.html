@@ -35,7 +35,7 @@
                     </td>
 
                     <td *ngIf="asset.unitType !== 'UNIT' && asset.assetType !== 'CUSTOM'">
-                        {{ asset.count }} {{ asset.unitType ? '(' + ('unit.' + asset.unitType | translate) + ')' : '' }}
+                        {{ asset.count }} {{ asset.unitType ? '(' + (asset.unitType | translate) + ')' : '' }}
                     </td>
 
                     <td *ngIf="asset.assetType === 'CUSTOM'">

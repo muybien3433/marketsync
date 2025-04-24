@@ -57,7 +57,7 @@ export default class WalletComponent implements OnInit {
                     offsetY: 20
                 }
             },
-            colors: ['#775DD0', '#777777', '#008FFB'],
+            colors: ['#775DD0', '#777777', '#008FFB', '#00E396', '#FEB019', '#F8666B'],
             series: [],
             labels: [],
             legend: {
