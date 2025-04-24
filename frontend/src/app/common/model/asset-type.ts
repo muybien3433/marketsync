@@ -3,5 +3,5 @@ export enum AssetType {
     STOCK = 'STOCK',
     CRYPTO = 'CRYPTO',
     CURRENCY = 'CURRENCY',
-    // COMMODITY = 'COMMODITY',
+    COMMODITY = 'COMMODITY',
 }

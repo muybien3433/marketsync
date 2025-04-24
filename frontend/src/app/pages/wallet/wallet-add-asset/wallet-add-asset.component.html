@@ -10,7 +10,7 @@
 
                     <div class="form-group">
                         <label for="count">{{ 'common.count' | translate }}
-                            <span *ngIf="asset?.unitType">({{ 'unit.' + asset.unitType | translate }})</span>
+                            <span *ngIf="asset?.unitType">({{ asset.unitType | translate }})</span>
                         </label> <input
                             type="text"
                             class="form-control"

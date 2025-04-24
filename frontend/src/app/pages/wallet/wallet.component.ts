@@ -11,6 +11,7 @@ import {ApexOptions, ChartComponent} from "ng-apexcharts";
 import {CardComponent} from "../../common/components/card/card.component";
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {environment} from "../../../environments/environment";
+import {AssetType} from "../../common/model/asset-type";
 
 @Component({
     selector: 'app-wallet',
@@ -205,4 +206,6 @@ export default class WalletComponent implements OnInit {
                 }
             );
     }
+
+    protected readonly AssetType = AssetType;
 }

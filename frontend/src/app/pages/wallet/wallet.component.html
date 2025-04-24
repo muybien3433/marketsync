@@ -1,21 +1,30 @@
+<!-- Loading State -->
 <div *ngIf="isLoading" class="loading-state">
     <div class="spinner-border text-primary" role="status">
         <span class="sr-only">Loading...</span>
     </div>
 </div>
 
+<!-- Wallet Assets -->
 <div class="row">
     <ng-container *ngIf="!_assets.length && !isLoading; else assetTable">
         <div class="empty-wallet-history-text">
             <h3>{{ 'asset.no.assets.message' | translate }}</h3>
-            <button class="btn btn-primary" (click)="addAssetButton()">{{ 'asset.add.asset' | translate }}</button>
+            <button class="btn btn-primary" (click)="addAssetButton()">
+                {{ 'asset.add.asset' | translate }}
+            </button>
         </div>
     </ng-container>
 
     <ng-template #assetTable>
+        <!-- Wallet Table -->
         <div class="col-xl-12 col-md-6">
             <div class="col-xl-12">
-                <app-card cardTitle="Wallet Table" [options]="false" blockClass="table-border-style">
+                <app-card
+                        cardTitle="Wallet Table"
+                        [options]="false"
+                        blockClass="table-border-style"
+                >
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -37,36 +46,46 @@
                                 </tr>
 
                                 <tr *ngFor="let asset of groupedAssets[assetType]">
-                                    <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.name }}</td>
-                                    <td *ngIf="asset.assetType === 'CURRENCY'; else customCount">
+                                    <td>
+                                        {{ asset.name }}
+                                    </td>
+
+                                    <td *ngIf="asset.assetType === AssetType.CURRENCY; else customCount">
                                         {{ asset.count | number: '1.0-2' }} ({{ CurrencyType.Symbols[asset.name] }})
                                     </td>
+
                                     <ng-template #customCount>
                                         <td *ngIf="asset.unitType === 'UNIT'; else customUnit">
                                             {{ asset.count | number: '1.0-6' }}
                                         </td>
-                                        <ng-template>
+                                        <ng-template #customUnit>
                                             <td>
-                                                {{ asset.count | number:'1.0-6' }} ({{ ('unit.' + asset.unitType) | translate }})
+                                                {{ asset.count | number: '1.0-6' }} ({{ asset.unitType | translate }})
                                             </td>
                                         </ng-template>
                                     </ng-template>
+
                                     <td>{{ asset.value | number: '1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}</td>
-                                    <td>{{ asset.averagePurchasePrice | number: '1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}</td>                                      
-                                    <td *ngIf="asset.assetType !== 'CUSTOM'; else customUnit">
+                                    <td>{{ asset.averagePurchasePrice | number: '1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}</td>
+
+                                    <td *ngIf="asset.assetType !== 'CUSTOM'; else fallbackUnit">
                                         {{ asset.currentPrice | number:'1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}
-                                        {{ asset.unitType === 'UNIT' ? '' : '(' + ('unit.' + asset.unitType | translate) + ')' }}
+                                        {{ asset.unitType === 'UNIT' ? '' : '(' + (asset.unitType | translate) + ')' }}
                                     </td>
-                                    <ng-template #customUnit>
+
+                                    <ng-template #fallbackUnit>
                                         <td>
-                                            {{ asset.currentPrice }}{{ CurrencyType.Symbols[asset.currencyType] }}
+                                            {{ asset.count }}
                                             {{ asset.unitType ? '(' + asset.unitType + ')' : '' }}
                                         </td>
                                     </ng-template>
+
                                     <td>{{ calculateWeight(asset) }}%</td>
-                                    <td [ngStyle]="{ color: asset.profit === 0 ? 'black' : ( asset.profit > 0 ? 'green' : 'red') }">
+
+                                    <td [ngStyle]="{ color: asset.profit === 0 ? 'black' : (asset.profit > 0 ? 'green' : 'red') }">
                                         {{ asset.profit | number:'1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}
                                     </td>
+
                                     <td [ngStyle]="{ color: asset.profitInPercentage === 0 ? 'black' : (asset.profitInPercentage >= 0 ? 'green' : 'red') }">
                                         {{ asset.profitInPercentage + '%' }}
                                     </td>
@@ -79,6 +98,7 @@
             </div>
         </div>
 
+        <!-- Donut Chart -->
         <div class="col-md-6">
             <app-card cardTitle="Asset Division Chart" [options]="false">
                 <apx-chart
@@ -93,6 +113,7 @@
             </app-card>
         </div>
 
+        <!-- Profit Cards -->
         <div class="col-md-6 h-100">
             <div class="row g-3 h-100">
                 <ng-container *ngFor="let profit of profits; trackBy: trackProfit">
@@ -112,8 +133,8 @@
                                 <ngb-progressbar
                                         type="progress-bar {{ profit.progress_bg }}"
                                         height="5px"
-                                        [value]="profit.progress">
-                                </ngb-progressbar>
+                                        [value]="profit.progress"
+                                ></ngb-progressbar>
                             </div>
                         </app-card>
                     </div>
