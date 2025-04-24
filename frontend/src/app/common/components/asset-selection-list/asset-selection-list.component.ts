@@ -41,7 +41,6 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     customAssetName: string = '';
     _currencies: CurrencyType[] = Object.values(CurrencyType).filter(value => typeof value === 'string') as CurrencyType[];
     CurrencyType = CurrencyType;
-    UnitType = UnitType;
 
     private currencySubscription!: Subscription;
     currentCurrency!: CurrencyType;

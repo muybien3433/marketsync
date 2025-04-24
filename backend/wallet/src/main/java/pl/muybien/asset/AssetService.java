@@ -2,7 +2,6 @@ package pl.muybien.asset;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.asset.dto.AssetAggregateDTO;
@@ -24,11 +23,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
-
-
-@Slf4j
-
 public class AssetService {
 
     private final AssetRepository repository;
@@ -174,13 +168,6 @@ public class AssetService {
         BigDecimal profitPercentage = resolveProfitInPercentage(totalInvested, profit);
         BigDecimal exchangeRateToDesired = resolveExchangeRateToDesired(asset.currencyType().name(), desiredCurrency);
 
-        log.info("Asset: " + asset.name());
-        log.info("Value: " + value);
-        log.info("Total invested: " + totalInvested);
-        log.info("Profit: " + profit);
-        log.info("Profit percentage: " + profitPercentage);
-        log.info("Exchange rate to desired: " + exchangeRateToDesired);
-
         return new AssetAggregateDTO(
                 asset.name(),
                 asset.symbol(),
@@ -195,18 +182,6 @@ public class AssetService {
                 profitPercentage,
                 exchangeRateToDesired
         );
-    }
-
-    private BigDecimal resolveCurrencyPrice(String assetCurrency, String desiredCurrency) {
-        boolean currencyIsDifferent = CurrencyType.valueOf(assetCurrency) != CurrencyType.valueOf(desiredCurrency);
-        if (currencyIsDifferent) {
-            try {
-                return financeClient.findExchangeRate(desiredCurrency, assetCurrency);
-            } catch (FinanceNotFoundException e) {
-                return BigDecimal.ZERO;
-            }
-        }
-        return BigDecimal.ONE;
     }
 
     private BigDecimal resolvePriceByCurrency(CurrencyType assetCurrency, String desiredCurrency, BigDecimal price) {

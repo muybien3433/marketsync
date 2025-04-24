@@ -70,7 +70,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
             unitType: ['', Validators.maxLength(6)],
             uri: ['', [Validators.required, Validators.minLength(1)]],
             count: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
-            purchasePrice: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
+            purchasePrice: [ '0.01', [Validators.required, Validators.min(0.0000000000001)]],
             currentPrice: ['0.01', [Validators.min(0.0000000000001)]],
             currencyType: [currencyService.getGlobalCurrencyType(), [Validators.required]],
             comment: ['', [Validators.maxLength(this.maxCommentLength)]],
@@ -146,7 +146,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
             unitType: formValue.unitType,
             uri: formValue.uri,
             count: formValue.count,
-            purchasePrice: formValue.purchasePrice,
+            purchasePrice: this.resolvePurchasePrice(formValue.purchasePrice),
             currentPrice: formValue.currentPrice,
             currencyType: formValue.currencyType,
             comment: formValue.comment,
@@ -164,6 +164,13 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         });
     }
 
+    resolvePurchasePrice(purchasePrice: number) {
+        if (this.assetType === AssetType.CURRENCY && this.currencyIsSame()) {
+            return 1;
+        }
+        return purchasePrice;
+    }
+
     addAsset(asset: {
         assetType: string;
         uri: string;
@@ -177,6 +184,4 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         console.log(asset)
         return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, asset);
     }
-
-    protected readonly AssetType = AssetType;
 }

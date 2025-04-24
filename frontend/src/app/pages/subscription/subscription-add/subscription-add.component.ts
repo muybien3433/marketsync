@@ -135,6 +135,8 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
             return;
         }
 
+        console.log(this.assetType)
+
         this.addSubscription(subscription)?.subscribe({
             next: () => {
                 this.isSubmitting = false;
@@ -159,4 +161,6 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
             `${environment.baseUrl}${API_ENDPOINTS.SUBSCRIPTION}`,
             subscription);
     }
+
+    protected readonly AssetType = AssetType;
 }

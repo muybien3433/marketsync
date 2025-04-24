@@ -81,6 +81,7 @@
     "above": "Powyżej",
     "below": "Poniżej",
     "price": "Ceny",
+    "currency.price": "Kurs",
     "currently": "kosztuje obecnie",
     "no.subscription.message": "Ups... Nie posiadasz aktualnie żadnych subskrybcji! Nic straconego, kliknij przycisk poniżej."
   },

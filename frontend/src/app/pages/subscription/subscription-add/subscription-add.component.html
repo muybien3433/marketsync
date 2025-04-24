@@ -29,7 +29,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="value">{{ 'subscription.price' | translate }}</label>
+                    <label for="value">
+                        <ng-container *ngIf="assetType !== AssetType.CURRENCY; else currencyLabel">
+                            {{ 'subscription.price' | translate }}
+                        </ng-container>
+                        <ng-template #currencyLabel>
+                            {{ 'subscription.currency.price' | translate }}
+                        </ng-template>
+                    </label>
+
                     <div class="value">
                         <input
                                 type="text"
@@ -41,6 +49,7 @@
                                 appNumberInput
                         >
                     </div>
+
                     <div *ngIf="addSubscriptionForm.get('price')?.invalid">
                         <small class="error">{{ 'error.price.should.be.positive' | translate }}</small>
                     </div>

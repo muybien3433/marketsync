@@ -80,6 +80,7 @@
     "above": "Above",
     "below": "Below",
     "price": "The price of",
+    "currency.price": "Exchange rate",
     "currently": "is currently",
     "no.subscription.message": "Ops... You don't have any subscriptions yet! No worries just click the button below."
   },
