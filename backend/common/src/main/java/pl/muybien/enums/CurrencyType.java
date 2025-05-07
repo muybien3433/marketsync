@@ -4,7 +4,14 @@ public enum CurrencyType {
     USD("$"),
     PLN("zł"),
     GBP("£"),
-    EUR("€");
+    EUR("€"),
+    CNY("¥"),
+    MYR("RM"),
+    CAD("C$"),
+    AUD("A$"),
+    INR("₹"),
+    BRL("R$"),
+    NOK("kr");
 
     private final String symbol;
 
