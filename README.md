@@ -27,7 +27,7 @@ create your own comments or look at your asset history.
 and receive email notifications when the subscribed asset hit targeted price,
 ensuring that users stay informed about market changes in real-time.
 - **Multiple Asset Support** Chose between Crypto, Stock, Currency, Commodity or even create your Custom asset if needed.
-- **Multiple Currency Support**: Choose between multiple currencies (USD, EUR, GBP, PLN).
+- **Multiple Currency Support**: Choose between 11 currencies.
 
 ## Tech Stack
 
