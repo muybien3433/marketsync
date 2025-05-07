@@ -8,6 +8,7 @@ import pl.muybien.enums.CurrencyType;
 import pl.muybien.finance.exception.FinanceNotFoundException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -107,15 +108,32 @@ public class FinanceService {
     public FinanceDetailDTO convertCurrencyIfNecessary(
             FinanceDetailDTO detail, CurrencyType desiredCurrency, Map<CurrencyType, BigDecimal> cache) {
 
+        BigDecimal originalPrice = new BigDecimal(detail.price());
+        if (originalPrice.compareTo(BigDecimal.ZERO) == 0) {
+            return new FinanceDetailDTO(
+                    detail.name(),
+                    detail.symbol(),
+                    detail.uri(),
+                    detail.unitType(),
+                    "0.00",
+                    desiredCurrency.name(),
+                    detail.assetType(),
+                    detail.lastUpdated()
+            );
+        }
+
         CurrencyType sourceCurrency = CurrencyType.valueOf(detail.currencyType().toUpperCase());
         boolean isExchangeNeeded = !Objects.equals(sourceCurrency, desiredCurrency);
+
         if (isExchangeNeeded) {
             BigDecimal rate = cache.computeIfAbsent(
                     sourceCurrency,
                     key -> findExchangeRate(key, desiredCurrency)
             );
 
-            BigDecimal updatedPrice = new BigDecimal(detail.price()).multiply(rate);
+            BigDecimal updatedPrice = originalPrice.multiply(rate)
+                    .setScale(2, RoundingMode.HALF_UP);
+
             return new FinanceDetailDTO(
                     detail.name(),
                     detail.symbol(),
@@ -139,7 +157,7 @@ public class FinanceService {
         return exchange.getExchange();
     }
 
-    private String currencyNameResolver(CurrencyType from, CurrencyType to) {
+    String currencyNameResolver(CurrencyType from, CurrencyType to) {
         return from.name().toLowerCase() + "-" + to.name().toLowerCase();
     }
 }

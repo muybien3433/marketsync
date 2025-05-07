@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public abstract class QueueUpdater {
 
-    private static final int MAX_QUEUE_CAPACITY = 100;
+    private static final int MAX_QUEUE_CAPACITY = 50;
     private static final int maxRetries = 3;
 
     private static final ExecutorService taskExecutor = Executors.newSingleThreadExecutor();
