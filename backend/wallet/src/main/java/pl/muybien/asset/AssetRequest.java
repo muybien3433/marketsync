@@ -32,6 +32,7 @@ public record AssetRequest(
         @NotBlank(message = "Currency type is required")
         String currencyType,
 
+        String name,
         String unitType,
         BigDecimal currentPrice,
         String comment

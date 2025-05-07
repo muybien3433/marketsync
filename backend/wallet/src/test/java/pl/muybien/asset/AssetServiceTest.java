@@ -61,6 +61,7 @@ class AssetServiceTest {
                 BigDecimal.valueOf(2),
                 BigDecimal.valueOf(30000),
                 CurrencyType.USD.name(),
+                "Bitcoin",
                 UnitType.UNIT.name(),
                 null,
                 ""
@@ -99,6 +100,7 @@ class AssetServiceTest {
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(50000),
                 CurrencyType.USD.name(),
+                "Bitcoin",
                 UnitType.UNIT.name(),
                 null,
                 ""
@@ -128,6 +130,7 @@ class AssetServiceTest {
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(50000),
                 UnitType.UNIT.name(),
+                "Bitcoin",
                 CurrencyType.USD.name(),
                 null,
                 ""
@@ -151,6 +154,7 @@ class AssetServiceTest {
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(50000),
                 UnitType.UNIT.name(),
+                "Bitcoin",
                 CurrencyType.USD.name(),
                 null,
                 ""
@@ -176,6 +180,7 @@ class AssetServiceTest {
                 BigDecimal.valueOf(3),
                 BigDecimal.valueOf(35000),
                 UnitType.UNIT.name(),
+                "Bitcoin",
                 CurrencyType.USD.name(),
                 null,
                 ""

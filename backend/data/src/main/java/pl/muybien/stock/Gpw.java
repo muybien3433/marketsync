@@ -5,15 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.common.SeleniumHandler;
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
 import pl.muybien.enums.UnitType;
@@ -22,11 +20,8 @@ import pl.muybien.finance.exception.FinanceNotFoundException;
 import pl.muybien.updater.DatabaseUpdater;
 import pl.muybien.updater.QueueUpdater;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,8 +32,8 @@ import java.util.regex.Pattern;
 public class Gpw extends QueueUpdater {
 
     private final static String TARGET_URL = "https://www.gpw.pl/akcje";
-    private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
 
+    private final SeleniumHandler seleniumHandler;
     private final DatabaseUpdater databaseUpdater;
 
     @Override
@@ -56,28 +51,9 @@ public class Gpw extends QueueUpdater {
 
         WebDriver driver = null;
         try {
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--headless=new");
-            options.addArguments("--disable-blink-features=AutomationControlled");
-            options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
-            options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36");
-            options.addArguments("--disable-extensions");
-            options.addArguments("--disable-gpu");
-            options.addArguments("--disable-logging");
-
-            driver = new RemoteWebDriver(new URL(REMOTE_WEB_DRIVER), options);
-            driver.get(TARGET_URL);
-
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(8));
-
-            try {
-                WebElement acceptCookiesButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Akceptuję')]")));
-                acceptCookiesButton.click();
-                log.info("Accepted cookie policy");
-            } catch (Exception _) {
-            }
+            driver = seleniumHandler.getDriverAndNavigate(TARGET_URL);
+            WebDriverWait wait = seleniumHandler.getDriverWait(driver, Duration.ofMillis(8000));
+            seleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(text(),'Akceptuję')]"));
 
             WebElement body = driver.findElement(By.tagName("body"));
             String pageContent = body.getText();
@@ -129,8 +105,6 @@ public class Gpw extends QueueUpdater {
                 stocks.put(uri, financeDetail);
             }
             databaseUpdater.saveFinanceToDatabase(AssetType.STOCK.name(), stocks);
-        } catch (MalformedURLException e) {
-            throw new FinanceNotFoundException("Gpw data not found");
         } catch (Exception e) {
             throw new FinanceNotFoundException("Gpw data: " + e.getMessage());
         } finally {
@@ -139,6 +113,7 @@ public class Gpw extends QueueUpdater {
             }
             System.gc();
         }
+        log.info("Found {} stocks", stocks.size());
         log.info("Finished updating Gpw data");
     }
 }

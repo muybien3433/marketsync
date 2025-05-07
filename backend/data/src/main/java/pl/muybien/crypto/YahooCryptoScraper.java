@@ -1,6 +1,5 @@
 package pl.muybien.crypto;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -8,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.common.SeleniumHandler;
 import pl.muybien.common.YahooScraper;
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
@@ -26,9 +26,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class YahooQueueCryptoScraper extends YahooScraper {
+public class YahooCryptoScraper extends YahooScraper {
 
     private static final String TARGET_URL = "https://finance.yahoo.com/markets/crypto/all/?start=";
     private static final int THREAD_POOL_SIZE = 2;
@@ -41,6 +40,19 @@ public class YahooQueueCryptoScraper extends YahooScraper {
     private final AtomicInteger invocationCount = new AtomicInteger(1);
 
     private final DatabaseUpdater databaseUpdater;
+
+    public YahooCryptoScraper(SeleniumHandler seleniumHandler, DatabaseUpdater databaseUpdater) {
+        super(seleniumHandler);
+        this.databaseUpdater = databaseUpdater;
+        log.debug("YahooCryptoScraper initialized");
+        log.debug("THREAD_POOL_SIZE: {}", THREAD_POOL_SIZE);
+        log.debug("RETRY_ATTEMPTS: {}", RETRY_ATTEMPTS);
+        log.debug("PAGE_DELAY_MS: {}", PAGE_DELAY_MS);
+        log.debug("RETRY_DELAY_MS: {}", RETRY_DELAY_MS);
+        log.debug("REGULAR_PAGES: {}", REGULAR_PAGES);
+        log.debug("SECOND_SECTION_PAGES: {}", SECOND_SECTION_PAGES);
+        log.debug("THIRD_SECTION_PAGES: {}", THIRD_SECTION_PAGES);
+    }
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
@@ -103,6 +115,7 @@ public class YahooQueueCryptoScraper extends YahooScraper {
         }
 
         long durationDataPersisting = (System.currentTimeMillis() - persistStartTime) / 1000;
+        log.info("Saved {} cryptos", cryptos.size());
         log.debug("Data saved in {} seconds", durationDataPersisting);
 
         log.info("Finished updating YahooFinanceCrypto data");

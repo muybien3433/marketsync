@@ -1,6 +1,5 @@
 package pl.muybien.stock;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -8,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.common.SeleniumHandler;
 import pl.muybien.common.YahooScraper;
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
@@ -25,18 +25,28 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class YahooQueueStockScraper extends YahooScraper {
+public class YahooStockScraper extends YahooScraper {
 
     private static final String TARGET_URL = "https://finance.yahoo.com/markets/stocks/most-active/?start=";
     private static final int THREAD_POOL_SIZE = 2;
     private static final int RETRY_ATTEMPTS = 4;
     private static final int PAGE_DELAY_MS = 500;
     private static final int RETRY_DELAY_MS = 2000;
-    private static final int REGULAR_PAGES = 6;  // Pages 0-5 (6 pages)
+    private static final int REGULAR_PAGES = 2;  // Pages 0-1 (2 pages)
 
     private final DatabaseUpdater databaseUpdater;
+
+    public YahooStockScraper(SeleniumHandler seleniumHandler, DatabaseUpdater databaseUpdater) {
+        super(seleniumHandler);
+        this.databaseUpdater = databaseUpdater;
+        log.debug("YahooStockScraper initialized");
+        log.debug("THREAD_POOL_SIZE: {}", THREAD_POOL_SIZE);
+        log.debug("RETRY_ATTEMPTS: {}", RETRY_ATTEMPTS);
+        log.debug("PAGE_DELAY_MS: {}", PAGE_DELAY_MS);
+        log.debug("RETRY_DELAY_MS: {}", RETRY_DELAY_MS);
+        log.debug("REGULAR_PAGES: {}", REGULAR_PAGES);
+    }
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
@@ -88,6 +98,7 @@ public class YahooQueueStockScraper extends YahooScraper {
         }
 
         long durationDataPersisting = (System.currentTimeMillis() - persistStartTime) / 1000;
+        log.info("Saved {} stocks", stocks.size());
         log.debug("Data saved in {} seconds", durationDataPersisting);
 
         log.info("Finished updating YahooFinanceStock data");

@@ -22,7 +22,6 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Slf4j
 public class WiseScraper extends QueueUpdater {
-
     private static final String TARGET_URL = "https://wise.com/gb/currency-converter/";
     private static final String URL_SEPARATOR_ONE = "-to-";
     private static final String URL_SEPARATOR_TWO = "-rate?amount=1";

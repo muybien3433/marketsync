@@ -86,8 +86,9 @@ public class AssetService {
 
         boolean isCustomUnitType = asset.getAssetType() == AssetType.CUSTOM;
         if (isCustomUnitType) {
-            if (request.uri() != null) {
-                asset.setUri(request.uri().trim());
+            if (request.name() != null) {
+                asset.setName(request.name().trim());
+                asset.setUri(request.name().trim().toLowerCase().replaceAll(" ", "-"));
             }
             if (request.unitType() != null) {
                 asset.setUnitType(request.unitType().trim());
