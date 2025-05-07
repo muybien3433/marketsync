@@ -21,6 +21,7 @@ import {CurrencyService} from "../../../common/service/currency-service";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
 import {NumberInputDirective} from "../../../common/service/number-input.directive";
+import {UnitType, UnitTypeLabels} from "../../../common/model/unit-type";
 
 @Component({
     selector: 'app-wallet-add-asset',
@@ -85,7 +86,6 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         this.assetSubscription = this.assetService.selectedAsset$.subscribe(asset => {
             this.asset = asset;
             this.addAssetForm.get('uri')?.setValue(asset?.uri);
-            this.addAssetForm.get('unitType')?.setValue(asset?.unitType);
         })
         this.currencyTypeSubscription = this.currencyService.selectedCurrencyType$
             .subscribe(currencyType => {
@@ -184,4 +184,6 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         console.log(asset)
         return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, asset);
     }
+
+    protected readonly UnitTypeLabels = UnitTypeLabels;
 }

@@ -28,7 +28,7 @@
                 </thead>
                 <tbody>
                 <tr class="table" *ngFor="let asset of _assets">
-                    <td>({{ asset.symbol ? asset.symbol : 'asset.custom' | translate }}) {{ asset.name }}</td>
+                    <td>{{ asset.name }}</td>
 
                     <td *ngIf="asset.unitType === 'UNIT'">
                         {{ asset.count }}

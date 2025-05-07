@@ -50,17 +50,21 @@
                                         {{ asset.name }}
                                     </td>
 
-                                    <td *ngIf="asset.assetType === AssetType.CURRENCY; else customCount">
+                                    <td *ngIf="asset.assetType === 'CURRENCY'; else normalCount">
                                         {{ asset.count | number: '1.0-2' }} ({{ CurrencyType.Symbols[asset.name] }})
                                     </td>
 
-                                    <ng-template #customCount>
+                                    <ng-template #normalCount>
                                         <td *ngIf="asset.unitType === 'UNIT'; else customUnit">
                                             {{ asset.count | number: '1.0-6' }}
                                         </td>
                                         <ng-template #customUnit>
                                             <td>
-                                                {{ asset.count | number: '1.0-6' }} ({{ asset.unitType | translate }})
+                                                {{ asset.count | number: '1.0-6' }}{{
+                                                    asset.unitType ?
+                                                        ' (' + (asset.assetType === 'COMMODITY' ?
+                                                            UnitTypeLabels[asset.unitType] : asset.unitType | translate) + ')' : ''
+                                                }}
                                             </td>
                                         </ng-template>
                                     </ng-template>
@@ -68,17 +72,14 @@
                                     <td>{{ asset.value | number: '1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}</td>
                                     <td>{{ asset.averagePurchasePrice | number: '1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}</td>
 
-                                    <td *ngIf="asset.assetType !== 'CUSTOM'; else fallbackUnit">
+                                    <td>
                                         {{ asset.currentPrice | number:'1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}
-                                        {{ asset.unitType === 'UNIT' ? '' : '(' + (asset.unitType | translate) + ')' }}
+                                        {{
+                                            asset.unitType === 'UNIT' ||
+                                            asset.unitType === '' ? '' : '(' + (asset.assetType === 'COMMODITY' ?
+                                                UnitTypeLabels[asset.unitType] : asset.unitType | translate) + ')'
+                                        }}
                                     </td>
-
-                                    <ng-template #fallbackUnit>
-                                        <td>
-                                            {{ asset.count }}
-                                            {{ asset.unitType ? '(' + asset.unitType + ')' : '' }}
-                                        </td>
-                                    </ng-template>
 
                                     <td>{{ calculateWeight(asset) }}%</td>
 

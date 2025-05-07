@@ -5,12 +5,12 @@
             <form [formGroup]="editAssetForm" (ngSubmit)="onSubmit()">
                 <div>
                     <div class="form-group">
-                        <label for="uri">{{ 'asset.name' | translate }}</label>
+                        <label for="name">{{ 'asset.name' | translate }}</label>
                         <input
                                 type="text"
                                 class="form-control"
-                                id="uri"
-                                formControlName="uri"
+                                id="name"
+                                formControlName="name"
                         />
                     </div>
 

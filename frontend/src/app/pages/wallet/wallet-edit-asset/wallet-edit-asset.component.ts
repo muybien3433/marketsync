@@ -50,7 +50,8 @@ export default class WalletEditAssetComponent {
       this.editAssetForm = this.fb.group({
         assetType: [{ value: asset.assetType, disabled: true }],
         unitType: [ asset.unitType || '', [Validators.maxLength(this.maxUnitLength)]],
-        uri: [{ value: asset.uri, disabled: asset.assetType !== 'CUSTOM' }],
+        name: [{value: asset.name, disabled: asset.assetType !== 'CUSTOM' }],
+        uri: [{value: asset.name, disabled: true }],
         count: [asset.count, [Validators.required, Validators.min(0.0000000000001)]],
         purchasePrice: [asset.purchasePrice, [Validators.required, Validators.min(0.0000000000001)]],
         currentPrice: [asset.currentPrice, [Validators.min(0.0000000000001)]],
@@ -94,6 +95,7 @@ export default class WalletEditAssetComponent {
       this.editAssetForm = this.fb.group({
         assetType: [{ value: '', disabled: true }],
         unitType: [{ value: '', disabled: true }],
+        name: [{ value: '', disabled: asset.assetType !== 'CUSTOM' }],
         uri: [{ value: '', disabled: true }],
         count: [0, [Validators.required, Validators.min(0.001)]],
         purchasePrice: [0, [Validators.required, Validators.min(0.01)]],
@@ -115,6 +117,7 @@ export default class WalletEditAssetComponent {
     const assetData = {
       assetType: formValue.assetType,
       unitType: formValue.unitType,
+      name: formValue.name,
       uri: formValue.uri,
       count: formValue.count,
       purchasePrice: formValue.purchasePrice,

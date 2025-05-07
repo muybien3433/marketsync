@@ -10,7 +10,14 @@
 
                     <div class="form-group">
                         <label for="count">{{ 'common.count' | translate }}
-                            <span *ngIf="asset?.unitType">({{ asset.unitType | translate }})</span>
+                            <span *ngIf="asset?.unitType && asset.unitType !== 'UNIT' && asset.assetType !== 'COMMODITY'; else commodityCount">
+                                ({{ asset.unitType | translate }})
+                            </span>
+                            <ng-template #commodityCount>
+                                <span>
+                                    ({{ UnitTypeLabels[asset?.unitType] }})
+                                </span>
+                            </ng-template>
                         </label> <input
                             type="text"
                             class="form-control"
