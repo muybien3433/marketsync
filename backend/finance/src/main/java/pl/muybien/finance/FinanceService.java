@@ -103,7 +103,8 @@ public class FinanceService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private FinanceDetailDTO convertCurrencyIfNecessary(
+    @Transactional
+    public FinanceDetailDTO convertCurrencyIfNecessary(
             FinanceDetailDTO detail, CurrencyType desiredCurrency, Map<CurrencyType, BigDecimal> cache) {
 
         CurrencyType sourceCurrency = CurrencyType.valueOf(detail.currencyType().toUpperCase());

@@ -1,10 +1,8 @@
 package pl.muybien.finance;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pl.muybien.enums.AssetType;
-import pl.muybien.enums.UnitType;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -12,7 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 
 @Document(collection = "finances")
-@Slf4j
 public class Finance {
 
     @Id
@@ -72,7 +69,5 @@ public class Finance {
 
             removedCount += (initialSize - financeDetailMap.size());
         }
-
-        log.info("Cleaned up {} old finance details from {} assets", removedCount, financeDetails.size());
     }
 }
