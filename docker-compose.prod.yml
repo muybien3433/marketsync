@@ -357,6 +357,8 @@ services:
       - SE_NODE_MAX_SESSIONS=5
       - SE_NODE_OVERRIDE_MAX_SESSIONS=true
     restart: unless-stopped
+    networks:
+      - backend-net
     deploy:
       resources:
         limits:

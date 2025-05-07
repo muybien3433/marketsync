@@ -1,13 +1,18 @@
 package pl.muybien.finance;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import pl.muybien.enums.AssetType;
+import pl.muybien.enums.UnitType;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 @Document(collection = "finances")
+@Slf4j
 public class Finance {
 
     @Id
@@ -49,5 +54,25 @@ public class Finance {
     @Override
     public int hashCode() {
         return Objects.hash(id, financeDetails);
+    }
+
+    public void cleanOldFinanceDetails() {
+        LocalDateTime daysAgo = LocalDateTime.now().minusDays(1);
+        int removedCount = 0;
+
+        for (Map.Entry<String, Map<String, FinanceDetail>> assetEntry : financeDetails.entrySet()) {
+            Map<String, FinanceDetail> financeDetailMap = assetEntry.getValue();
+            int initialSize = financeDetailMap.size();
+
+            financeDetailMap.entrySet().removeIf(entry -> {
+                FinanceDetail detail = entry.getValue();
+                return !Objects.equals(detail.unitType(), AssetType.CUSTOM.name())
+                        && detail.lastUpdated().isBefore(daysAgo);
+            });
+
+            removedCount += (initialSize - financeDetailMap.size());
+        }
+
+        log.info("Cleaned up {} old finance details from {} assets", removedCount, financeDetails.size());
     }
 }
