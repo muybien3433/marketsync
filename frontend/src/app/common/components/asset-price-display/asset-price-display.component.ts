@@ -6,7 +6,7 @@ import {AssetDetail} from "../../model/asset-detail";
 import {CurrencyType} from "../../model/currency-type";
 import {AssetService} from "../../service/asset-service";
 import {CurrencyService} from "../../service/currency-service";
-import {CommonModule} from '@angular/common'; // Import CommonModule here
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-asset-price-display',

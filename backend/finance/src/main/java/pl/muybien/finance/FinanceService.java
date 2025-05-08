@@ -131,9 +131,7 @@ public class FinanceService {
                     key -> findExchangeRate(key, desiredCurrency)
             );
 
-            BigDecimal updatedPrice = originalPrice.multiply(rate)
-                    .setScale(2, RoundingMode.HALF_UP);
-
+            BigDecimal updatedPrice = originalPrice.multiply(rate);
             return new FinanceDetailDTO(
                     detail.name(),
                     detail.symbol(),

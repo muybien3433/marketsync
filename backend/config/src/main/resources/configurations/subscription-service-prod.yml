@@ -1,6 +1,13 @@
 server:
   port: 8900
 
+schedule:
+  time-ms: 50000 # 50s
+  fetch-page-size-per-round: 5
+
+kafka:
+  enabled: true
+
 spring:
   data:
     mongodb:
@@ -18,10 +25,6 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.type.mapping: subscriptionConfirmation:pl.muybien.kafka.confirmation.SubscriptionConfirmation,
-
-schedule:
-  time-ms: 50000 # 50s
-  fetch-page-size-per-round: 5
 
 application:
   config:

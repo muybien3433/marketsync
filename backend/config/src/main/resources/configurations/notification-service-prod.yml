@@ -1,6 +1,9 @@
 server:
   port: 9000
 
+kafka:
+  enabled: true
+
 spring:
   kafka:
     bootstrap-servers: ${BOOTSTRAP_SERVERS}

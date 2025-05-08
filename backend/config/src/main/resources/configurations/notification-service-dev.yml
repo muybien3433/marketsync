@@ -1,9 +1,12 @@
 server:
   port: 9000
 
+kafka:
+  enabled: true
+
 spring:
   kafka:
-    bootstrap-servers: kafka-1:9092
+    bootstrap-servers: kafka-1:9092,kafka-2:9092
     consumer:
       group-id: send-notification-event
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

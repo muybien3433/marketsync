@@ -1,9 +1,9 @@
 package pl.muybien.exception;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import pl.muybien.enums.AlertType;
@@ -21,13 +21,13 @@ public class GlobalExceptionHandler {
 
     //                          Data
     @ExceptionHandler(DataUpdateException.class)
-    public ResponseEntity<ErrorResponse> handleDataUpdateException(DataUpdateException e, HttpServletRequest r) {
+    public ResponseEntity<ErrorResponse> handleDataUpdateException(DataUpdateException e, ServerHttpRequest r) {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now().toString(),
                 500,
                 e.getMessage(),
                 "INTERNAL_SERVER_ERROR",
-                r.getRequestURI()
+                r.getURI().getPath()
         );
         support.sendNotification(new SupportConfirmation(TeamType.TECHNICS, AlertType.WARNING, response));
 
@@ -36,26 +36,26 @@ public class GlobalExceptionHandler {
 
     //                          Finance
     @ExceptionHandler(FinanceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleCryptoNotFoundException(FinanceNotFoundException e, HttpServletRequest r) {
+    public ResponseEntity<ErrorResponse> handleCryptoNotFoundException(FinanceNotFoundException e, ServerHttpRequest r) {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now().toString(),
                 400,
                 e.getMessage(),
                 "BAD_REQUEST",
-                r.getRequestURI()
+                r.getURI().getPath()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     //                          Other
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest r) {
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e, ServerHttpRequest r) {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now().toString(),
                 400,
                 e.getMessage(),
                 "BAD_REQUEST",
-                r.getRequestURI()
+                r.getURI().getPath()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }

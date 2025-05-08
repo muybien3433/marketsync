@@ -2,6 +2,7 @@ package pl.muybien.asset;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.asset.dto.AssetAggregateDTO;
@@ -28,6 +29,9 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
+
+@Slf4j
 public class AssetService {
 
     private final AssetRepository repository;
@@ -173,6 +177,8 @@ public class AssetService {
                     finance = createFallbackFinance(asset);
                     currentPrice = new BigDecimal(finance.price());
 
+                    log.info("Finance has not been found, sending notification");
+
                     /*
                      * Notify the IT team that finance data is missing for this asset.
                      * Finance data should always be present—otherwise, the asset would not exist in the database.
@@ -188,6 +194,8 @@ public class AssetService {
                     );
                     support.sendNotification(new SupportConfirmation(TeamType.TECHNICS, AlertType.WARNING, error));
                 } catch (Exception e) {
+                    log.info("Other error occurred while retrieving finance data for asset: {}. Sending notification.", asset.uri());
+
                     finance = createFallbackFinance(asset);
                     currentPrice = new BigDecimal(finance.price());
                 }
