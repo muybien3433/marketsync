@@ -113,7 +113,7 @@ public class NewconnectScraper extends QueueUpdater {
             }
             System.gc();
         }
-        log.info("Found {} stocks", stocks.size());
+        log.info("Saved {} stocks", stocks.size());
         log.info("Finished updating NewConnect data");
     }
 }

@@ -97,7 +97,7 @@ public class TradingEconomicsScraper extends QueueUpdater {
             }
 
              databaseUpdater.saveFinanceToDatabase(AssetType.COMMODITY.name(), commodities);
-            log.info("Successfully processed {} commodities", commodities.size());
+            log.info("Saved {} commodities", commodities.size());
         } catch (Exception e) {
             throw new FinanceNotFoundException("TradingEconomics data: " + e.getMessage());
         } finally {
