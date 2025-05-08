@@ -354,7 +354,7 @@ services:
       - "4444:4444"
     container_name: selenium-chrome
     environment:
-      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_MAX_SESSIONS=3
       - SE_NODE_OVERRIDE_MAX_SESSIONS=true
     restart: unless-stopped
     networks:

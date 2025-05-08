@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public record AssetAggregateDTO(
         @JsonProperty("name") String name,
         @JsonProperty("symbol") String symbol,
+        @JsonProperty("uri") String uri,
         @JsonProperty("assetType") AssetType assetType,
         @JsonProperty("unitType") String unitType,
         @JsonProperty("count") BigDecimal count,

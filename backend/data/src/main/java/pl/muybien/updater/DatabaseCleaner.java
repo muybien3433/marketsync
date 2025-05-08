@@ -2,6 +2,8 @@ package pl.muybien.updater;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import pl.muybien.finance.FinanceRepository;
@@ -9,11 +11,18 @@ import pl.muybien.finance.FinanceRepository;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DatabaseCleaner {
+public class DatabaseCleaner extends QueueUpdater {
     private final FinanceRepository repository;
 
     @Scheduled(cron = "0 0 4 * * ?")
-    public void cleanOldFinanceDetails() {
+    @EventListener(ApplicationReadyEvent.class)
+    @Override
+    public void scheduleUpdate() {
+        enqueueUpdate("database-cleaner");
+    }
+
+    @Override
+    public void updateAssets() {
         log.info("Starting cleanup of old finance details...");
 
         repository.findAll().forEach(finance -> {

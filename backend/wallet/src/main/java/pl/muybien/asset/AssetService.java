@@ -46,6 +46,11 @@ public class AssetService {
                     LocalDateTime.now()
             );
         } else {
+            /*
+              This validates the asset: if the frontend passes incorrect data,
+              the system will attempt to override it if finance data is found,
+              otherwise, a FinanceNotFoundException will be thrown and terminate method execution.
+             */
             finance = financeClient.findFinanceByTypeAndUri(request.assetType(), request.uri());
         }
 
@@ -59,7 +64,7 @@ public class AssetService {
                         .count(request.count().setScale(12, RoundingMode.HALF_UP))
                         .purchasePrice(request.purchasePrice().setScale(12, RoundingMode.HALF_UP))
                         .currentPrice(assetType == AssetType.CUSTOM ? request.currentPrice() : null)
-                        .currencyType(CurrencyType.valueOf(finance.currencyType()))
+                        .currencyType(CurrencyType.valueOf(request.currencyType()))
                         .customerId(customerId)
                         .comment(request.comment())
                         .build()
@@ -153,12 +158,14 @@ public class AssetService {
             case CUSTOM -> currentPrice = asset.currentPrice();
             case CURRENCY -> currentPrice = resolveExchangeRateToDesired(asset.name(), asset.currencyType().name());
             default -> {
+                FinanceResponse finance;
                 try {
-                    var finance = financeClient.findFinanceByTypeAndUri(asset.assetType().name(), asset.uri());
+                    finance = financeClient.findFinanceByTypeAndUri(asset.assetType().name(), asset.uri());
                     currentPrice = resolvePriceByCurrency(
                             asset.currencyType(), finance.currencyType(), new BigDecimal(finance.price()));
-                } catch (FinanceNotFoundException e) {
-                    currentPrice = BigDecimal.ZERO;
+                } catch (Exception e) {
+                    finance = createFallbackFinance(asset);
+                    currentPrice = new BigDecimal(finance.price());
                 }
             }
         }
@@ -172,6 +179,7 @@ public class AssetService {
         return new AssetAggregateDTO(
                 asset.name(),
                 asset.symbol(),
+                asset.uri(),
                 asset.assetType(),
                 asset.unitType(),
                 asset.count(),
@@ -185,11 +193,24 @@ public class AssetService {
         );
     }
 
+    private FinanceResponse createFallbackFinance(AssetGroupDTO asset) {
+        return new FinanceResponse(
+                asset.name(),
+                asset.symbol(),
+                asset.uri(),
+                asset.unitType(),
+                BigDecimal.ZERO.toPlainString(),
+                asset.currencyType().name(),
+                asset.assetType().name(),
+                null
+        );
+    }
+
     private BigDecimal resolvePriceByCurrency(CurrencyType assetCurrency, String desiredCurrency, BigDecimal price) {
         boolean currencyIsDifferent = assetCurrency != CurrencyType.valueOf(desiredCurrency);
         if (currencyIsDifferent) {
             try {
-                var exchangeRate = financeClient.findExchangeRate(assetCurrency.name(), desiredCurrency);
+                var exchangeRate = financeClient.findExchangeRate(desiredCurrency, assetCurrency.name());
                 return price.multiply(exchangeRate);
             } catch (FinanceNotFoundException e) {
                 return BigDecimal.ZERO;

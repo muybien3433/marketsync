@@ -31,7 +31,7 @@ class DatabaseCleanerTest {
     void cleanOldFinanceDetails_ShouldDoNothing_WhenNoFinancesExist() {
         when(repository.findAll()).thenReturn(List.of());
 
-        databaseCleaner.cleanOldFinanceDetails();
+        databaseCleaner.updateAssets();
 
         verify(repository).findAll();
         verifyNoMoreInteractions(repository);
@@ -41,7 +41,7 @@ class DatabaseCleanerTest {
     void cleanOldFinanceDetails_ShouldCleanAndSave_WhenSingleFinanceExists() {
         when(repository.findAll()).thenReturn(List.of(finance1));
 
-        databaseCleaner.cleanOldFinanceDetails();
+        databaseCleaner.updateAssets();
 
         verify(repository).findAll();
         verify(finance1).cleanOldFinanceDetails();
@@ -52,7 +52,7 @@ class DatabaseCleanerTest {
     void cleanOldFinanceDetails_ShouldCleanAndSaveAll_WhenMultipleFinancesExist() {
         when(repository.findAll()).thenReturn(List.of(finance1, finance2));
 
-        databaseCleaner.cleanOldFinanceDetails();
+        databaseCleaner.updateAssets();
 
         verify(repository).findAll();
         verify(finance1).cleanOldFinanceDetails();
@@ -66,7 +66,7 @@ class DatabaseCleanerTest {
         Finance emptyFinance = mock(Finance.class);
         when(repository.findAll()).thenReturn(List.of(emptyFinance));
 
-        databaseCleaner.cleanOldFinanceDetails();
+        databaseCleaner.updateAssets();
 
         verify(emptyFinance).cleanOldFinanceDetails();
         verify(repository).save(emptyFinance);

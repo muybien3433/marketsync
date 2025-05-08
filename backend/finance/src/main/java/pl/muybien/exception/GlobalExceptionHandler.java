@@ -10,7 +10,7 @@ import pl.muybien.finance.exception.FinanceNotFoundException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(FinanceNotFoundException.class)
-    public ResponseEntity<String> handleCryptoNotFoundException(FinanceNotFoundException e) {
+    public ResponseEntity<String> handleFinanceNotFoundException(FinanceNotFoundException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 

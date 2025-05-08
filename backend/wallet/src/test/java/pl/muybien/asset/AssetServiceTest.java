@@ -529,4 +529,43 @@ class AssetServiceTest {
         assertThat(asset.name()).isEqualTo("Ethereum");
         assertEquals(String.format("%.2f", BigDecimal.valueOf(35000)), String.format("%.2f", asset.currentPrice()));
     }
+
+    @Test
+    void findAllCustomerAssets_shouldAggregateAssetsWithFallbackFinance() {
+        String customerId = "customerId";
+        String name = "Ethereum";
+        String symbol = "ETH";
+        String uri = "ethereum";
+        AssetType assetType = AssetType.CRYPTO;
+        CurrencyType currencyType = CurrencyType.USD;
+        String unitType = UnitType.UNIT.name();
+        var assetGroup = new AssetGroupDTO(
+                name,
+                symbol,
+                uri,
+                AssetType.CRYPTO,
+                unitType,
+                BigDecimal.valueOf(2),
+                new BigDecimal("30000.0"),
+                null,
+                currencyType,
+                "customerId"
+        );
+
+        when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
+        when(financeClient.findFinanceByTypeAndUri(assetType.name(), uri))
+                .thenThrow(new FinanceNotFoundException("Finance not found"));
+
+        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currencyType.name());
+
+        assertThat(assets).hasSize(1);
+        AssetAggregateDTO asset = assets.getFirst();
+        assertEquals(name, asset.name());
+        assertEquals(symbol, asset.symbol());
+        assertEquals(uri, asset.uri());
+        assertEquals(assetType, asset.assetType());
+        assertEquals(currencyType, asset.currencyType());
+        assertEquals(unitType, asset.unitType());
+        assertEquals(String.format("%.2f", BigDecimal.ZERO), String.format("%.2f", asset.currentPrice()));
+    }
 }
