@@ -10,9 +10,9 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: |
-          subscriptionConfirmation:pl.muybien.kafka.SubscriptionConfirmation,
-          supportConfirmation:pl.muybien.kafka.SupportConfirmation
+        spring.json.type.mapping:
+          subscriptionConfirmation: pl.muybien.kafka.confirmation.SubscriptionConfirmation
+          supportConfirmation: pl.muybien.kafka.confirmation.SupportConfirmation
       isolation-level: read_committed
 
   cloud:
