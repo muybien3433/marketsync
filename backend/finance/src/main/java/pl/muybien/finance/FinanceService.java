@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.currency.CurrencyRepository;
 import pl.muybien.enums.CurrencyType;
-import pl.muybien.finance.exception.FinanceNotFoundException;
+import pl.muybien.exception.FinanceNotFoundException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

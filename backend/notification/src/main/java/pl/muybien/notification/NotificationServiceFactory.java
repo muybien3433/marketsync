@@ -13,10 +13,10 @@ public class NotificationServiceFactory {
 
     private final Map<String, NotificationService> notificationServices;
 
-    public void sendMessage(NotificationType notificationType, String target, String message) {
+    public void sendMessage(NotificationType notificationType, String target, String body) {
         var service = notificationServices.get(notificationType.name().toLowerCase());
         if (service != null) {
-            service.sendMessage(target, message);
+            service.sendMessage(target, body);
         } else {
             throw new ServiceNotFoundException("Service %s not supported"
                     .formatted(notificationType.name()));

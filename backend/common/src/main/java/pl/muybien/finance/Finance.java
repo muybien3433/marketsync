@@ -18,7 +18,7 @@ public class Finance {
 
     public void initializeNestedMapIfNeeded(String normalizedAssetType) {
         this.financeDetails.computeIfAbsent(
-                normalizedAssetType, _ -> new HashMap<>(17001, 0.75f)
+                normalizedAssetType, f -> new HashMap<>(17001, 0.75f)
         );
     }
 

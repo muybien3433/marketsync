@@ -7,13 +7,18 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.asset.dto.AssetAggregateDTO;
 import pl.muybien.asset.dto.AssetGroupDTO;
 import pl.muybien.asset.dto.AssetHistoryDTO;
+import pl.muybien.enums.AlertType;
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
+import pl.muybien.enums.TeamType;
 import pl.muybien.exception.AssetNotFoundException;
+import pl.muybien.exception.ErrorResponse;
 import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.finance.FinanceClient;
 import pl.muybien.finance.FinanceResponse;
+import pl.muybien.kafka.confirmation.SupportConfirmation;
+import pl.muybien.kafka.producer.SupportProducer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,6 +32,7 @@ public class AssetService {
 
     private final AssetRepository repository;
     private final FinanceClient financeClient;
+    private final SupportProducer support;
 
     @Transactional
     public void createAsset(String customerId, AssetRequest request) {
@@ -163,6 +169,24 @@ public class AssetService {
                     finance = financeClient.findFinanceByTypeAndUri(asset.assetType().name(), asset.uri());
                     currentPrice = resolvePriceByCurrency(
                             asset.currencyType(), finance.currencyType(), new BigDecimal(finance.price()));
+                } catch (FinanceNotFoundException e) {
+                    finance = createFallbackFinance(asset);
+                    currentPrice = new BigDecimal(finance.price());
+
+                    /*
+                     * Notify the IT team that finance data is missing for this asset.
+                     * Finance data should always be present—otherwise, the asset would not exist in the database.
+                     * This issue may occur if the DB cleaner removed the finance record due to outdated data,
+                     * leading to an orphaned asset reference.
+                     */
+                    ErrorResponse error = new ErrorResponse(
+                            LocalDateTime.now().toString(),
+                            500,
+                            e.getMessage(),
+                            "INTERNAL_SERVER_ERROR",
+                            "/api/v1/wallets/assets/" + desiredCurrency
+                    );
+                    support.sendNotification(new SupportConfirmation(TeamType.TECHNICS, AlertType.WARNING, error));
                 } catch (Exception e) {
                     finance = createFallbackFinance(asset);
                     currentPrice = new BigDecimal(finance.price());

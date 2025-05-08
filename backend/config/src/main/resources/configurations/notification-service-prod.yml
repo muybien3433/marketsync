@@ -10,7 +10,9 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: subscriptionConfirmation:pl.muybien.kafka.SubscriptionConfirmation
+        spring.json.type.mapping: |
+          subscriptionConfirmation:pl.muybien.kafka.SubscriptionConfirmation,
+          supportConfirmation:pl.muybien.kafka.SupportConfirmation
       isolation-level: read_committed
 
   cloud:
@@ -25,3 +27,16 @@ spring:
         secret-key: ${AWS_SES_SECRET}
 
 company-email: noreply@muybien.pl
+
+support:
+  alert:
+    technics:
+      emails:
+        - ${ADMIN_EMAIL_1}
+      numbers:
+        - ""
+    supports:
+      emails:
+        - ${SUPPORT_EMAIL_1}
+      numbers:
+        - ""

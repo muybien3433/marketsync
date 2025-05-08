@@ -18,24 +18,24 @@ public class EmailService implements NotificationService {
     private final JavaMailSender javaMailSender;
 
     @Override
-    public void sendMessage(String target, String message) {
+    public void sendMessage(String target, String body) {
         var mimeMessage = javaMailSender.createMimeMessage();
 
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
-            helper.setFrom("subscription@muybien.pl");
+            helper.setFrom("noreply@muybien.pl");
             helper.setTo(target);
             helper.setSubject("MuyBien");
 
-            String htmlContent = "<html><body><h1>Heyy!</h1><p>" + message + "</p></body></html>";
+            String htmlContent = "<html><body><h1>Halo!</h1><p>" + body + "</p></body></html>";
             helper.setText(htmlContent, true);
 
             javaMailSender.send(mimeMessage);
         } catch (MailException | jakarta.mail.MessagingException e) {
             log.error(e.getMessage(), e);
             throw new MessageNotSendException(
-                    "Message to %s with body %s could not be send".formatted(target, message));
+                    "Message to %s with body %s could not be send".formatted(target, body));
         }
     }
 }

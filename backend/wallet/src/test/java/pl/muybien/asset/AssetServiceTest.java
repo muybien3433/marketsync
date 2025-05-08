@@ -18,6 +18,9 @@ import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.finance.FinanceClient;
 import pl.muybien.finance.FinanceResponse;
+import pl.muybien.kafka.confirmation.SubscriptionConfirmation;
+import pl.muybien.kafka.confirmation.SupportConfirmation;
+import pl.muybien.kafka.producer.SupportProducer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -37,6 +40,9 @@ class AssetServiceTest {
 
     @Mock
     private FinanceClient financeClient;
+
+    @Mock
+    private SupportProducer support;
 
     @InjectMocks
     private AssetService assetService;
@@ -135,7 +141,7 @@ class AssetServiceTest {
                 CurrencyType.USD.name(),
                 null,
                 ""
-                );
+        );
 
         when(repository.findById(asset.getId())).thenReturn(Optional.empty());
 
@@ -567,5 +573,36 @@ class AssetServiceTest {
         assertEquals(currencyType, asset.currencyType());
         assertEquals(unitType, asset.unitType());
         assertEquals(String.format("%.2f", BigDecimal.ZERO), String.format("%.2f", asset.currentPrice()));
+    }
+
+    @Test
+    void findAllCustomerAssets_shouldSendNotificationToSupport() {
+        String customerId = "customerId";
+        String name = "Ethereum";
+        String symbol = "ETH";
+        String uri = "ethereum";
+        AssetType assetType = AssetType.CRYPTO;
+        CurrencyType currencyType = CurrencyType.USD;
+        String unitType = UnitType.UNIT.name();
+        var assetGroup = new AssetGroupDTO(
+                name,
+                symbol,
+                uri,
+                AssetType.CRYPTO,
+                unitType,
+                BigDecimal.valueOf(2),
+                new BigDecimal("30000.0"),
+                null,
+                currencyType,
+                "customerId"
+        );
+
+        when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
+        when(financeClient.findFinanceByTypeAndUri(assetType.name(), uri))
+                .thenThrow(new FinanceNotFoundException("Finance not found"));
+
+        assetService.findAllCustomerAssets(customerId, currencyType.name());
+
+        verify(support, times(1)).sendNotification(any(SupportConfirmation.class));
     }
 }

@@ -3,23 +3,39 @@ server:
 
 spring:
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: kafka-1:9092
     consumer:
       group-id: send-notification-event
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*'
-        spring.json.type.mapping: subscriptionConfirmation:pl.muybien.kafka.SubscriptionConfirmation
+        spring.json.type.mapping: |
+          subscriptionConfirmation:pl.muybien.kafka.SubscriptionConfirmation,
+          supportConfirmation:pl.muybien.kafka.SupportConfirmation
       isolation-level: read_committed
 
   cloud:
     aws:
       region:
-        static: eu-central-1 @@@@ change to us
+        static: us-east-1
         auto: false
       stack:
         auto: false
       credentials:
-        access-key: ----
-        secret-key: ----
+        access-key: -----
+        secret-key: -----
+
+support:
+  notification:
+    technics:
+      emails:
+        - "your@email.com"
+      numbers:
+        - ""
+    supports:
+      emails:
+        - "your@email.com"
+      numbers:
+        - ""
+

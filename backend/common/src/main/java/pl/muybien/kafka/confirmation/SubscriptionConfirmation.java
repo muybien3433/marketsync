@@ -1,4 +1,4 @@
-package pl.muybien.kafka;
+package pl.muybien.kafka.confirmation;
 
 import pl.muybien.enums.NotificationType;
 

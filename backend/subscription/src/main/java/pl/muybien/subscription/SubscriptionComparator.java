@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.finance.FinanceClient;
 import pl.muybien.finance.FinanceResponse;
-import pl.muybien.kafka.SubscriptionConfirmation;
-import pl.muybien.kafka.SubscriptionProducer;
+import pl.muybien.kafka.confirmation.SubscriptionConfirmation;
+import pl.muybien.kafka.producer.SubscriptionProducer;
 import pl.muybien.subscription.data.SubscriptionDetail;
 
 import java.math.BigDecimal;

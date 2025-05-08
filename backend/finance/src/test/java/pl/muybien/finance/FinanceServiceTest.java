@@ -10,7 +10,7 @@ import pl.muybien.currency.CurrencyRepository;
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
 import pl.muybien.enums.UnitType;
-import pl.muybien.finance.exception.FinanceNotFoundException;
+import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.currency.Currency;
 
 import java.math.BigDecimal;

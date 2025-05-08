@@ -1,4 +1,4 @@
-package pl.muybien.finance.exception;
+package pl.muybien.exception;
 
 public class FinanceNotFoundException extends RuntimeException {
     public FinanceNotFoundException(String message) {

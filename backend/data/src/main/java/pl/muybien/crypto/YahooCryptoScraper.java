@@ -160,6 +160,7 @@ public class YahooCryptoScraper extends YahooScraper {
                     log.error("Page {} error: {}", page, e.getMessage());
                     if (attempt == RETRY_ATTEMPTS - 1) {
                         log.error("Failed page {} after {} attempts", page, RETRY_ATTEMPTS);
+
                     }
                 }
             }

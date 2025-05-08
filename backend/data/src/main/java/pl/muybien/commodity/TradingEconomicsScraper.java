@@ -17,7 +17,7 @@ import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
 import pl.muybien.enums.UnitType;
 import pl.muybien.finance.FinanceDetail;
-import pl.muybien.finance.exception.FinanceNotFoundException;
+import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.updater.DatabaseUpdater;
 import pl.muybien.updater.QueueUpdater;
 

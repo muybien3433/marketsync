@@ -2,7 +2,7 @@ package pl.muybien.updater;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import pl.muybien.finance.exception.FinanceUpdateException;
+import pl.muybien.exception.DataUpdateException;
 
 import javax.annotation.PreDestroy;
 import java.util.Set;
@@ -96,7 +96,7 @@ public abstract class QueueUpdater {
             } catch (Exception e) {
                 if (attempts == maxRetries) {
                     log.error("Failed to process task {} after {} attempts", task.taskKey(), maxRetries, e);
-                    throw new FinanceUpdateException("Asset update failed after retries", e);
+                    throw new DataUpdateException("Data update failed after retries", e);
                 }
                 log.warn("Retrying task {} (attempt {}/{})", task.taskKey(), attempts, maxRetries);
                 attempts++;

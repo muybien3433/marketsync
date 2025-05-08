@@ -75,7 +75,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                     List<String> roles = extractRoles(decodedToken);
 
                     if (customerId == null || email == null) {
-                        sink.error(new CustomerNotFoundException("Customer not found"));
+                        sink.error(new CustomerNotFoundException("Could not extract customer details from the token"));
                         return;
                     }
                     sink.next(new CustomerResponse(customerId, firstName, lastName, email, number, roles));

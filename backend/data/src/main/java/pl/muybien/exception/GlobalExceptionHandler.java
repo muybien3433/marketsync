@@ -1,21 +1,62 @@
 package pl.muybien.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import pl.muybien.finance.exception.FinanceNotFoundException;
+import pl.muybien.enums.AlertType;
+import pl.muybien.enums.TeamType;
+import pl.muybien.kafka.confirmation.SupportConfirmation;
+import pl.muybien.kafka.producer.SupportProducer;
+
+import java.time.LocalDateTime;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(FinanceNotFoundException.class)
-    public ResponseEntity<String> handleCryptoNotFoundException(FinanceNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    private final SupportProducer support;
+
+    //                          Data
+    @ExceptionHandler(DataUpdateException.class)
+    public ResponseEntity<ErrorResponse> handleDataUpdateException(DataUpdateException e, HttpServletRequest r) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now().toString(),
+                500,
+                e.getMessage(),
+                "INTERNAL_SERVER_ERROR",
+                r.getRequestURI()
+        );
+        support.sendNotification(new SupportConfirmation(TeamType.TECHNICS, AlertType.WARNING, response));
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
+    //                          Finance
+    @ExceptionHandler(FinanceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCryptoNotFoundException(FinanceNotFoundException e, HttpServletRequest r) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now().toString(),
+                400,
+                e.getMessage(),
+                "BAD_REQUEST",
+                r.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    //                          Other
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest r) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now().toString(),
+                400,
+                e.getMessage(),
+                "BAD_REQUEST",
+                r.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
