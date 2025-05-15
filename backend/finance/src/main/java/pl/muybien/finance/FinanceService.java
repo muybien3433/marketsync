@@ -8,7 +8,6 @@ import pl.muybien.enums.CurrencyType;
 import pl.muybien.exception.FinanceNotFoundException;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;

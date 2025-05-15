@@ -31,9 +31,8 @@ import java.util.regex.Pattern;
 @Slf4j
 public class Gpw extends QueueUpdater {
 
-    private final static String TARGET_URL = "https://www.gpw.pl/akcje";
+    private static final String TARGET_URL = "https://www.gpw.pl/akcje";
 
-    private final SeleniumHandler seleniumHandler;
     private final DatabaseUpdater databaseUpdater;
 
     @Override
@@ -51,9 +50,9 @@ public class Gpw extends QueueUpdater {
 
         WebDriver driver = null;
         try {
-            driver = seleniumHandler.getDriverAndNavigate(TARGET_URL);
-            WebDriverWait wait = seleniumHandler.getDriverWait(driver, Duration.ofMillis(8000));
-            seleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(text(),'Akceptuję')]"));
+            driver = SeleniumHandler.getDriverAndNavigate(TARGET_URL);
+            WebDriverWait wait = SeleniumHandler.getDriverWait(driver, Duration.ofMillis(8000));
+            SeleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(text(),'Akceptuję')]"));
 
             WebElement body = driver.findElement(By.tagName("body"));
             String pageContent = body.getText();

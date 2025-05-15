@@ -1,5 +1,6 @@
 package pl.muybien.asset;
 
+import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -173,11 +174,9 @@ public class AssetService {
                     finance = financeClient.findFinanceByTypeAndUri(asset.assetType().name(), asset.uri());
                     currentPrice = resolvePriceByCurrency(
                             asset.currencyType(), finance.currencyType(), new BigDecimal(finance.price()));
-                } catch (FinanceNotFoundException e) {
+                } catch (FeignException.InternalServerError e) {
                     finance = createFallbackFinance(asset);
                     currentPrice = new BigDecimal(finance.price());
-
-                    log.info("Finance has not been found, sending notification");
 
                     /*
                      * Notify the IT team that finance data is missing for this asset.
@@ -194,10 +193,9 @@ public class AssetService {
                     );
                     support.sendNotification(new SupportConfirmation(TeamType.TECHNICS, AlertType.WARNING, error));
                 } catch (Exception e) {
-                    log.info("Other error occurred while retrieving finance data for asset: {}. Sending notification.", asset.uri());
-
                     finance = createFallbackFinance(asset);
                     currentPrice = new BigDecimal(finance.price());
+                    support.sendNotification(new SupportConfirmation(TeamType.TECHNICS, AlertType.WARNING, e));
                 }
             }
         }

@@ -7,7 +7,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.common.SeleniumHandler;
 import pl.muybien.common.YahooScraper;
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
@@ -30,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class YahooCryptoScraper extends YahooScraper {
 
     private static final String TARGET_URL = "https://finance.yahoo.com/markets/crypto/all/?start=";
-    private static final int THREAD_POOL_SIZE = 2;
+    private static final int THREAD_POOL_SIZE = 1;
     private static final int RETRY_ATTEMPTS = 4;
     private static final int PAGE_DELAY_MS = 200;
     private static final int RETRY_DELAY_MS = 5000;
@@ -41,8 +40,7 @@ public class YahooCryptoScraper extends YahooScraper {
 
     private final DatabaseUpdater databaseUpdater;
 
-    public YahooCryptoScraper(SeleniumHandler seleniumHandler, DatabaseUpdater databaseUpdater) {
-        super(seleniumHandler);
+    public YahooCryptoScraper(DatabaseUpdater databaseUpdater) {
         this.databaseUpdater = databaseUpdater;
         log.debug("YahooCryptoScraper initialized");
         log.debug("THREAD_POOL_SIZE: {}", THREAD_POOL_SIZE);

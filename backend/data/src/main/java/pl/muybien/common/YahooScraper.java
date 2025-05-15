@@ -18,7 +18,6 @@ import java.util.concurrent.Future;
 @RequiredArgsConstructor
 @Slf4j
 public abstract class YahooScraper extends QueueUpdater {
-    private final SeleniumHandler seleniumHandler;
 
     private String targetUrl;
 
@@ -45,9 +44,9 @@ public abstract class YahooScraper extends QueueUpdater {
         return () -> {
             WebDriver driver = null;
             try {
-                driver = seleniumHandler.getDriverAndNavigate(targetUrl + "0&count=100");
-                WebDriverWait wait = seleniumHandler.getDriverWait(driver, Duration.ofMillis(100));
-                seleniumHandler.handleCookieConsent(wait, "button[type='submit'][name='agree']");
+                driver = SeleniumHandler.getDriverAndNavigate(targetUrl + "0&count=100");
+                WebDriverWait wait = SeleniumHandler.getDriverWait(driver, Duration.ofMillis(100));
+                SeleniumHandler.handleCookieConsent(wait, "button[type='submit'][name='agree']");
                 scrapePages(driver, startPage, endPage, assets);
             } catch (Exception e) {
                 log.error("Thread error: {}", e.getMessage());

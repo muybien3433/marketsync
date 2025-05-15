@@ -5,9 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import pl.muybien.enums.AssetType;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Document(collection = "finances")
 public class Finance {
@@ -53,21 +51,26 @@ public class Finance {
         return Objects.hash(id, financeDetails);
     }
 
-    public void cleanOldFinanceDetails() {
+    public List<FinanceDetail> cleanOldFinanceDetails() {
         LocalDateTime daysAgo = LocalDateTime.now().minusDays(1);
-        int removedCount = 0;
+        List<FinanceDetail> removedDetails = new ArrayList<>();
 
         for (Map.Entry<String, Map<String, FinanceDetail>> assetEntry : financeDetails.entrySet()) {
             Map<String, FinanceDetail> financeDetailMap = assetEntry.getValue();
-            int initialSize = financeDetailMap.size();
 
-            financeDetailMap.entrySet().removeIf(entry -> {
+            Iterator<Map.Entry<String, FinanceDetail>> iterator = financeDetailMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, FinanceDetail> entry = iterator.next();
                 FinanceDetail detail = entry.getValue();
-                return !Objects.equals(detail.unitType(), AssetType.CUSTOM.name())
-                        && detail.lastUpdated().isBefore(daysAgo);
-            });
 
-            removedCount += (initialSize - financeDetailMap.size());
+                if (!Objects.equals(detail.unitType(), AssetType.CUSTOM.name())
+                        && detail.lastUpdated().isBefore(daysAgo)) {
+                    removedDetails.add(detail);
+                    iterator.remove();
+                }
+            }
         }
+
+        return removedDetails;
     }
 }

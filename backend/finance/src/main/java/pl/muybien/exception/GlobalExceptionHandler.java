@@ -17,12 +17,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleFinanceNotFoundException(FinanceNotFoundException e, ServerHttpRequest r) {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now().toString(),
-                400,
+                500,
                 e.getMessage(),
-                "BAD_REQUEST",
+                "INTERNAL_SERVER_ERROR",
                 r.getURI().getPath()
         );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     //                          Other

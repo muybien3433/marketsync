@@ -18,12 +18,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleFinanceNotFoundException(FinanceNotFoundException e, HttpServletRequest r) {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now().toString(),
-                404,
+                500,
                 e.getMessage(),
-                "NOT_FOUND",
+                "INTERNAL_SERVER_ERROR",
                 r.getRequestURI()
         );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     //                          Customer

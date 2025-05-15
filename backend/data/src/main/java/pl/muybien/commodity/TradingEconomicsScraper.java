@@ -32,8 +32,6 @@ import java.util.List;
 public class TradingEconomicsScraper extends QueueUpdater {
 
     private static final String TARGET_URL = "https://tradingeconomics.com/commodities";
-
-    private final SeleniumHandler seleniumHandler;
     private final DatabaseUpdater databaseUpdater;
 
     @Override
@@ -50,11 +48,11 @@ public class TradingEconomicsScraper extends QueueUpdater {
 
         WebDriver driver = null;
         try {
-            driver = seleniumHandler.getDriverAndNavigate(TARGET_URL);
+            driver = SeleniumHandler.getDriverAndNavigate(TARGET_URL);
             driver.manage().window().maximize();
-            WebDriverWait wait = seleniumHandler.getDriverWait(driver, Duration.ofSeconds(10));
+            WebDriverWait wait = SeleniumHandler.getDriverWait(driver, Duration.ofSeconds(10));
 
-            seleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(., 'Consent')]"));
+            SeleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(., 'Consent')]"));
 
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("table.table-hover tbody tr")));
             List<WebElement> rows = driver.findElements(By.cssSelector("table.table-hover tbody tr[data-symbol]"));

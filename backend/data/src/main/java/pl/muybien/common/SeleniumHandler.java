@@ -18,9 +18,9 @@ import java.util.Collections;
 @RequiredArgsConstructor
 @Slf4j
 public class SeleniumHandler {
-    private final static String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
+    private static final String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
 
-    public final WebDriver getDriverAndNavigate(String url) {
+    public static WebDriver getDriverAndNavigate(String url) {
         try {
             WebDriver driver = new RemoteWebDriver(new URL(REMOTE_WEB_DRIVER), createChromeOptions());
             driver.get(url);
@@ -30,11 +30,11 @@ public class SeleniumHandler {
         }
     }
 
-    public final WebDriverWait getDriverWait(WebDriver driver, Duration duration) {
+    public static WebDriverWait getDriverWait(WebDriver driver, Duration duration) {
         return new WebDriverWait(driver, duration);
     }
 
-    public final void handleCookieConsent(WebDriverWait wait, String cssSelector) {
+    public static void handleCookieConsent(WebDriverWait wait, String cssSelector) {
         try {
             WebElement acceptButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(cssSelector)));
             acceptButton.click();
@@ -44,7 +44,7 @@ public class SeleniumHandler {
         }
     }
 
-    public final void handleCookieConsent(WebDriverWait wait, By by) {
+    public static void handleCookieConsent(WebDriverWait wait, By by) {
         try {
             WebElement acceptButton = wait.until(ExpectedConditions.elementToBeClickable(by));
             acceptButton.click();
@@ -54,7 +54,7 @@ public class SeleniumHandler {
         }
     }
 
-    private ChromeOptions createChromeOptions() {
+    private static ChromeOptions createChromeOptions() {
         ChromeOptions options = new ChromeOptions();
 
         options.addArguments("--no-sandbox");

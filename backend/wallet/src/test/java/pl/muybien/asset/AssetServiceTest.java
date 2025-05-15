@@ -1,5 +1,7 @@
 package pl.muybien.asset;
 
+import feign.FeignException;
+import feign.Request;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -597,9 +599,19 @@ class AssetServiceTest {
                 "customerId"
         );
 
+        Request request = Request.create(
+                Request.HttpMethod.GET,
+                "http://localhost/api/v1/finances/asset-type/uri",
+                Collections.emptyMap(),
+                null,
+                null,
+                null
+        );
+
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
         when(financeClient.findFinanceByTypeAndUri(assetType.name(), uri))
-                .thenThrow(new FinanceNotFoundException("Finance not found"));
+                .thenThrow(new FeignException.InternalServerError(
+                        "Finance not found", request, null, null));
 
         assetService.findAllCustomerAssets(customerId, currencyType.name());
 

@@ -34,7 +34,6 @@ public class NewconnectScraper extends QueueUpdater {
 
     private static final String TARGET_URL = "https://newconnect.pl/notowania";
 
-    private final SeleniumHandler seleniumHandler;
     private final DatabaseUpdater databaseUpdater;
 
     @Override
@@ -52,9 +51,9 @@ public class NewconnectScraper extends QueueUpdater {
 
         WebDriver driver = null;
         try {
-            driver = seleniumHandler.getDriverAndNavigate(TARGET_URL);
-            WebDriverWait wait = seleniumHandler.getDriverWait(driver, Duration.ofMillis(8000));
-            seleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(text(),'Akceptuję')]"));
+            driver = SeleniumHandler.getDriverAndNavigate(TARGET_URL);
+            WebDriverWait wait = SeleniumHandler.getDriverWait(driver, Duration.ofMillis(8000));
+            SeleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(text(),'Akceptuję')]"));
 
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body")));
             WebElement body = driver.findElement(By.tagName("body"));
