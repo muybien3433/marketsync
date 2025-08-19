@@ -86,6 +86,8 @@ services:
         condition: service_healthy
       mongodb-finance:
         condition: service_healthy
+      selenium-chrome:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - backend-net
@@ -348,15 +350,19 @@ services:
 
   ######### [ Selenium ] #########
   selenium-chrome:
-    image: selenium/standalone-chrome:4.28.1
+    image: selenium/standalone-chromium:4.28.1
+    container_name: selenium-chrome
     shm_size: 2g
-    platform: linux/arm64
     ports:
       - "4444:4444"
-    container_name: selenium-chrome
     environment:
       - SE_NODE_MAX_SESSIONS=1
       - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fs http://localhost:4444/status | grep -q '\"ready\": true'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     restart: unless-stopped
     networks:
       - backend-net
@@ -365,6 +371,7 @@ services:
         limits:
           cpus: '2'
           memory: 3072M
+
 
 
   ######### [ Zookeeper ] #########
