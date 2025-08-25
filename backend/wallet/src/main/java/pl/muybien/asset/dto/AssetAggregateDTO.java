@@ -3,6 +3,7 @@ package pl.muybien.asset.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
+import pl.muybien.enums.UnitType;
 
 import java.math.BigDecimal;
 
@@ -11,7 +12,7 @@ public record AssetAggregateDTO(
         @JsonProperty("symbol") String symbol,
         @JsonProperty("uri") String uri,
         @JsonProperty("assetType") AssetType assetType,
-        @JsonProperty("unitType") String unitType,
+        @JsonProperty("unitType") UnitType unitType,
         @JsonProperty("count") BigDecimal count,
         @JsonProperty("currentPrice") BigDecimal currentPrice,
         @JsonProperty("currencyType") CurrencyType currencyType,

@@ -45,7 +45,7 @@ public class SubscriptionScheduleChecker {
 
         if (!subscriptionDetails.isEmpty()) {
             var finance = financeClient.findFinanceByTypeAndUri(
-                    subscriptionDetails.getFirst().assetType().name(), uri);
+                    subscriptionDetails.getFirst().assetType(), uri);
 
             subscriptionDetails.forEach(s ->
                     subscriptionComparator.priceMetSubscriptionConditionCheck(finance, s)

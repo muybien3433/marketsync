@@ -28,12 +28,12 @@ public class SubscriptionComparator {
             Double lowerTargetPrice = subscriptionDetail.lowerBoundPrice();
 
             boolean financeCurrencyDifferentThanSubscription =
-                    !finance.currencyType().equalsIgnoreCase(subscriptionDetail.requestedCurrency().name());
+                    !finance.currencyType().equals(subscriptionDetail.requestedCurrency());
 
             BigDecimal currentPrice = new BigDecimal(finance.price());
             if (financeCurrencyDifferentThanSubscription) {
                 var rate = financeClient
-                        .findExchangeRate(finance.currencyType(), subscriptionDetail.requestedCurrency().name());
+                        .findExchangeRate(finance.currencyType(), subscriptionDetail.requestedCurrency());
 
                 currentPrice = currentPrice.multiply(rate);
             }

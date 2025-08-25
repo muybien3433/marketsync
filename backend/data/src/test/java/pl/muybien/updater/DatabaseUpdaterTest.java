@@ -6,6 +6,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pl.muybien.enums.AssetType;
 import pl.muybien.finance.Finance;
 import pl.muybien.finance.FinanceDetail;
 import pl.muybien.finance.FinanceRepository;
@@ -28,7 +29,7 @@ class DatabaseUpdaterTest {
 
     @Test
     void saveFinanceToDatabase_shouldUpdateExistingFinance() {
-        String assetType = "crypto";
+        AssetType assetType = AssetType.CRYPTO;
         Finance existingFinance = new Finance();
         existingFinance.initializeNestedMapIfNeeded(assetType);
         existingFinance.getFinanceDetails().get(assetType).put("btc", mock(FinanceDetail.class));
@@ -50,7 +51,7 @@ class DatabaseUpdaterTest {
 
     @Test
     void saveFinanceToDatabase_shouldCreateNewFinanceWhenNoneExists() {
-        String assetType = "stocks";
+        AssetType assetType = AssetType.STOCK;
         when(repository.findFinanceByAssetType(assetType)).thenReturn(Optional.empty());
 
         Map<String, FinanceDetail> newDetails = new HashMap<>();
@@ -67,24 +68,24 @@ class DatabaseUpdaterTest {
                 .containsExactlyInAnyOrderElementsOf(newDetails.entrySet());
     }
 
-    @Test
-    void saveFinanceToDatabase_shouldNormalizeAssetTypeToLowerCase() {
-        String assetType = "FOREX";
-        String normalizedType = "forex";
-        when(repository.findFinanceByAssetType(normalizedType)).thenReturn(Optional.empty());
-
-        databaseUpdater.saveFinanceToDatabase(assetType, Map.of());
-
-        ArgumentCaptor<Finance> captor = ArgumentCaptor.forClass(Finance.class);
-        verify(repository).save(captor.capture());
-
-        assertThat(captor.getValue().getFinanceDetails())
-                .containsKey(normalizedType);
-    }
+//    @Test
+//    void saveFinanceToDatabase_shouldNormalizeAssetTypeToLowerCase() {
+//        String assetType = "FOREX";
+//        String normalizedType = "forex";
+//        when(repository.findFinanceByAssetType(normalizedType)).thenReturn(Optional.empty());
+//
+//        databaseUpdater.saveFinanceToDatabase(assetType, Map.of());
+//
+//        ArgumentCaptor<Finance> captor = ArgumentCaptor.forClass(Finance.class);
+//        verify(repository).save(captor.capture());
+//
+//        assertThat(captor.getValue().getFinanceDetails())
+//                .containsKey(normalizedType);
+//    }
 
     @Test
     void saveFinanceToDatabase_shouldHandleEmptyDetails() {
-        String assetType = "commodities";
+        AssetType assetType = AssetType.COMMODITY;
         when(repository.findFinanceByAssetType(assetType)).thenReturn(Optional.empty());
 
         databaseUpdater.saveFinanceToDatabase(assetType, Map.of());
@@ -98,8 +99,8 @@ class DatabaseUpdaterTest {
 
     @Test
     void saveFinanceToDatabase_shouldPreserveExistingAssetTypes() {
-        String assetType = "crypto";
-        String otherAssetType = "stocks";
+        AssetType assetType = AssetType.CRYPTO;
+        AssetType otherAssetType = AssetType.STOCK;
 
         Finance existingFinance = new Finance();
         existingFinance.initializeNestedMapIfNeeded(otherAssetType);
@@ -115,7 +116,7 @@ class DatabaseUpdaterTest {
 
     @Test
     void saveFinanceToDatabase_shouldOverwriteExistingEntries() {
-        String assetType = "crypto";
+        AssetType assetType = AssetType.CRYPTO;
         Finance existingFinance = new Finance();
         existingFinance.initializeNestedMapIfNeeded(assetType);
         FinanceDetail oldDetail = mock(FinanceDetail.class);

@@ -3,8 +3,6 @@ package pl.muybien.subscription;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.enums.AssetType;
-import pl.muybien.enums.CurrencyType;
 import pl.muybien.enums.NotificationType;
 import pl.muybien.exception.InvalidSubscriptionParametersException;
 import pl.muybien.exception.OwnershipException;
@@ -57,11 +55,11 @@ public class SubscriptionService {
                 customerId,
                 target,
                 finance.name(),
-                CurrencyType.valueOf(request.currencyType()),
+                request.currencyType(),
                 request.upperBoundPrice(),
                 request.lowerBoundPrice(),
-                AssetType.valueOf(finance.assetType()),
-                NotificationType.valueOf(request.notificationType()),
+                finance.assetType(),
+                request.notificationType(),
                 LocalDateTime.now()
         );
 
@@ -69,8 +67,8 @@ public class SubscriptionService {
         subscriptionRepository.save(subscription);
     }
 
-    private String resolveTargetByNotificationType(String notificationType, String customerEmail, String phoneNumber) {
-        switch (NotificationType.valueOf(notificationType)) {
+    private String resolveTargetByNotificationType(NotificationType notificationType, String customerEmail, String phoneNumber) {
+        switch (notificationType) {
             case EMAIL -> {
                 if (customerEmail != null && !customerEmail.isEmpty()) {
                     return customerEmail;
@@ -119,12 +117,12 @@ public class SubscriptionService {
 
     String resolveCurrentPrice(SubscriptionDetail subscriptionDetail) {
         var finance = financeClient
-                .findFinanceByTypeAndUri(subscriptionDetail.assetType().name(), subscriptionDetail.uri());
+                .findFinanceByTypeAndUri(subscriptionDetail.assetType(), subscriptionDetail.uri());
 
         String currentPrice = finance.price();
-        if (!finance.currencyType().equalsIgnoreCase(subscriptionDetail.requestedCurrency().name())) {
+        if (!finance.currencyType().equals(subscriptionDetail.requestedCurrency())) {
             var exchange = financeClient
-                    .findExchangeRate(finance.currencyType(), subscriptionDetail.requestedCurrency().name());
+                    .findExchangeRate(finance.currencyType(), subscriptionDetail.requestedCurrency());
 
             currentPrice = new BigDecimal(currentPrice).multiply(exchange).toPlainString();
         }

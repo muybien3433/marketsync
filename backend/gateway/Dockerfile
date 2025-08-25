@@ -1,4 +1,4 @@
-FROM openjdk:23-jdk-slim
+FROM openjdk:23-jdk
 WORKDIR /app
 COPY target/gateway-1.0.jar /app/gateway-1.0.jar
 EXPOSE 9999

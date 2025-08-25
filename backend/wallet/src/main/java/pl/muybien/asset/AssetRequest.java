@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import pl.muybien.enums.AssetType;
+import pl.muybien.enums.CurrencyType;
+import pl.muybien.enums.UnitType;
 
 import java.math.BigDecimal;
 
@@ -12,7 +15,7 @@ public record AssetRequest(
         @NotNull(message = "Asset type is required")
         @NotEmpty(message = "Asset type is required")
         @NotBlank(message = "Asset type is required")
-        String assetType,
+        AssetType assetType,
 
         @NotNull(message = "Uri is required")
         @NotEmpty(message = "Uri is required")
@@ -30,11 +33,14 @@ public record AssetRequest(
         @NotNull(message = "Currency type is required")
         @NotEmpty(message = "Currency type is required")
         @NotBlank(message = "Currency type is required")
-        String currencyType,
+        CurrencyType currencyType,
 
         String name,
-        String unitType,
+
+        UnitType unitType,
+
         BigDecimal currentPrice,
+
         String comment
 ) {
 }

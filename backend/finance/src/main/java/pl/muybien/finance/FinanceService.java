@@ -3,11 +3,14 @@ package pl.muybien.finance;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.currency.Currency;
 import pl.muybien.currency.CurrencyRepository;
+import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
 import pl.muybien.exception.FinanceNotFoundException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -16,20 +19,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FinanceService {
 
+    private static final int SCALE = 12;
+
     private final FinanceRepository financeRepository;
-    private final CurrencyRepository currencyRepository;
+    private final CurrencyRepository currencyRepository; // TODO: Change to service in the future
     private final FinanceDetailDTOMapper mapper;
 
     @Transactional(readOnly = true)
-    public FinanceResponse fetchFinance(String assetType, String uri) {
-        String normalizedAssetType = assetType.toLowerCase();
-
+    public FinanceResponse fetchFinance(AssetType assetType, String uri) {
         if (uri == null || uri.isBlank()) {
             throw new IllegalArgumentException("Finance identifier cannot be null or blank");
         }
 
-        String normalizedUri = uri.toLowerCase();
-        var financeDetail = resolveFinanceDetail(normalizedAssetType, normalizedUri);
+        String normalizedUri = uri.toUpperCase();
+        var financeDetail = resolveFinanceDetail(assetType, normalizedUri);
 
         return new FinanceResponse(
                 financeDetail.name(),
@@ -43,15 +46,15 @@ public class FinanceService {
         );
     }
 
-    private FinanceDetail resolveFinanceDetail(String normalizedAssetType, String normalizedUri) {
-        var finance = financeRepository.findFinanceByAssetType(normalizedAssetType)
+    private FinanceDetail resolveFinanceDetail(AssetType assetType, String normalizedUri) {
+        var finance = financeRepository.findFinanceByAssetType(assetType)
                 .orElseThrow(() ->
-                        new FinanceNotFoundException("Finance not found for asset type: " + normalizedAssetType)
+                        new FinanceNotFoundException("Finance not found for asset type: " + assetType.name())
                 );
 
-        var assetDetail = finance.getFinanceDetails().get(normalizedAssetType);
+        var assetDetail = finance.getFinanceDetails().get(assetType);
         if (assetDetail == null) {
-            throw new FinanceNotFoundException("No finance details found for asset type: " + normalizedAssetType);
+            throw new FinanceNotFoundException("No finance details found for asset type: " + assetType);
         }
 
         var financeDetail = assetDetail.get(normalizedUri);
@@ -63,14 +66,12 @@ public class FinanceService {
     }
 
     @Transactional(readOnly = true)
-    public Set<FinanceDetailDTO> displayAvailableFinance(String assetType) {
-        String normalizedAssetType = assetType.toLowerCase();
-        var finance = financeRepository.findFinanceByAssetType(normalizedAssetType)
+    public Set<FinanceDetailDTO> displayAvailableFinance(AssetType assetType) {
+        var finance = financeRepository.findFinanceByAssetType(assetType)
                 .orElseThrow(() -> new FinanceNotFoundException(
-                        "Finance not found for asset type: " + normalizedAssetType));
+                        "Finance not found for asset type: " + assetType.name()));
 
-        var financeDetails = finance.getFinanceDetails().get(normalizedAssetType);
-
+        var financeDetails = finance.getFinanceDetails().get(assetType);
         if (financeDetails == null) {
             return Collections.emptySet();
         }
@@ -82,24 +83,22 @@ public class FinanceService {
     }
 
     @Transactional(readOnly = true)
-    public Set<FinanceDetailDTO> displayAvailableFinance(String assetType, String currencyType) {
-        String normalizedAssetType = assetType.toLowerCase();
-        var finance = financeRepository.findFinanceByAssetType(normalizedAssetType)
+    public Set<FinanceDetailDTO> displayAvailableFinance(AssetType assetType, CurrencyType currencyType) {
+        var finance = financeRepository.findFinanceByAssetType(assetType)
                 .orElseThrow(() -> new FinanceNotFoundException(
-                        "Finance not found for asset type: " + normalizedAssetType));
+                        "Finance not found for asset type: " + assetType.name()));
 
-        var financeDetails = finance.getFinanceDetails().get(normalizedAssetType);
+        Map<String, FinanceDetail> financeDetails = finance.getFinanceDetails().get(assetType);
         if (financeDetails == null) {
             return Collections.emptySet();
         }
 
-        CurrencyType resolvedDesiredCurrency = CurrencyType.valueOf(currencyType.toUpperCase());
         Map<CurrencyType, BigDecimal> cachedCurrencies = new ConcurrentHashMap<>();
 
         return financeDetails.values().stream()
                 .map(mapper::toDTO)
                 .sorted(Comparator.comparing(FinanceDetailDTO::name))
-                .map(detail -> convertCurrencyIfNecessary(detail, resolvedDesiredCurrency, cachedCurrencies))
+                .map(detail -> convertCurrencyIfNecessary(detail, currencyType, cachedCurrencies))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
@@ -115,13 +114,13 @@ public class FinanceService {
                     detail.uri(),
                     detail.unitType(),
                     "0.00",
-                    desiredCurrency.name(),
+                    desiredCurrency,
                     detail.assetType(),
                     detail.lastUpdated()
             );
         }
 
-        CurrencyType sourceCurrency = CurrencyType.valueOf(detail.currencyType().toUpperCase());
+        CurrencyType sourceCurrency = detail.currencyType();
         boolean isExchangeNeeded = !Objects.equals(sourceCurrency, desiredCurrency);
 
         if (isExchangeNeeded) {
@@ -137,7 +136,7 @@ public class FinanceService {
                     detail.uri(),
                     detail.unitType(),
                     updatedPrice.toPlainString(),
-                    desiredCurrency.name(),
+                    desiredCurrency,
                     detail.assetType(),
                     detail.lastUpdated()
             );
@@ -147,14 +146,30 @@ public class FinanceService {
 
     @Transactional(readOnly = true)
     public BigDecimal findExchangeRate(CurrencyType from, CurrencyType to) {
-    // var exchange = currencyRepository.findCurrencyByName(currencyNameResolver(from, to))
-    //        .orElseThrow(() -> new FinanceNotFoundException(
-    //              "Could not find currency pair for " + from + " to " + to));
-    // return exchange.getExchange();
-        return new BigDecimal("1.00");
+        if (from == null || to == null) throw new IllegalArgumentException("Currencies required");
+        if (from == to) return BigDecimal.ONE;
+
+        // Short-circuits for USD to avoid an extra divide
+        if (from == CurrencyType.USD) return usdTo(to);                         // USD -> B = USD->B
+        if (to   == CurrencyType.USD) return BigDecimal.ONE.divide(usdTo(from), SCALE, RoundingMode.HALF_UP); // A -> USD
+
+        // General cross: A/B = (USD->B) / (USD->A)
+        BigDecimal usdToFrom = usdTo(from);
+        BigDecimal usdToTo   = usdTo(to);
+        return usdToTo.divide(usdToFrom, SCALE, RoundingMode.HALF_UP);
     }
 
-    String currencyNameResolver(CurrencyType from, CurrencyType to) {
-        return from.name().toLowerCase() + "-" + to.name().toLowerCase();
+    private BigDecimal usdTo(CurrencyType currencyType) {
+        if (currencyType == CurrencyType.USD) return BigDecimal.ONE;
+
+        BigDecimal rate = currencyRepository
+                .findById(currencyType.name()) // _id is the code (e.g., "PLN")
+                .map(Currency::getExchangeFromUSD) // 1 USD = X <code>
+                .orElseThrow(() -> new IllegalStateException("Missing rate USD/" + currencyType.name()));
+
+        if (rate.signum() <= 0) {
+            throw new IllegalStateException("Non-positive rate for USD/" + currencyType.name() + ": " + rate);
+        }
+        return rate.setScale(SCALE, RoundingMode.HALF_UP);
     }
 }

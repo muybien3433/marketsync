@@ -78,9 +78,16 @@ public abstract class QueueUpdater {
 
     private static void processTask(FinanceUpdateTask task) {
         activeTasks.incrementAndGet();
+        long start = System.currentTimeMillis();
         try {
             log.info("Processing task: {}", task.taskKey());
             executeUpdateWithRetry(task);
+            long duration = (System.currentTimeMillis() - start) / 1000;
+            log.info("Task {} completed successfully in {}s", task.taskKey(), duration);
+        } catch (Exception e) {
+            long duration = (System.currentTimeMillis() - start) / 1000;
+            log.error("Task {} failed after {}s", task.taskKey(), duration, e);
+            throw e;
         } finally {
             activeTasks.decrementAndGet();
             pendingTasks.remove(task.taskKey());

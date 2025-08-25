@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import pl.muybien.enums.AssetType;
+import pl.muybien.enums.CurrencyType;
+import pl.muybien.enums.NotificationType;
 
 public record SubscriptionRequest(
 
@@ -22,16 +25,16 @@ public record SubscriptionRequest(
         @NotNull(message = "Asset type is required")
         @NotEmpty(message = "Asset type is required")
         @NotBlank(message = "Asset type is required")
-        @JsonProperty("assetType") String assetType,
+        @JsonProperty("assetType") AssetType assetType,
 
         @NotNull(message = "Notification type is required")
         @NotEmpty(message = "Notification type is required")
         @NotBlank(message = "Notification type is required")
-        @JsonProperty("notificationType") String notificationType,
+        @JsonProperty("notificationType") NotificationType notificationType,
 
         @NotNull(message = "Currency type is required")
         @NotEmpty(message = "Currency type is required")
         @NotBlank(message = "Currency type is required")
-        @JsonProperty("currencyType") String currencyType
+        @JsonProperty("currencyType") CurrencyType currencyType
 ) {
 }

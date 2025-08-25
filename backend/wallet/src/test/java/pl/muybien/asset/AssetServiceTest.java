@@ -20,7 +20,6 @@ import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.finance.FinanceClient;
 import pl.muybien.finance.FinanceResponse;
-import pl.muybien.kafka.confirmation.SubscriptionConfirmation;
 import pl.muybien.kafka.confirmation.SupportConfirmation;
 import pl.muybien.kafka.producer.SupportProducer;
 
@@ -65,13 +64,13 @@ class AssetServiceTest {
     void createAsset_shouldSaveAsset() {
         String customerId = "customerId";
         AssetRequest request = new AssetRequest(
-                AssetType.CRYPTO.name(),
+                AssetType.CRYPTO,
                 "bitcoin",
                 BigDecimal.valueOf(2),
                 BigDecimal.valueOf(30000),
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 "Bitcoin",
-                UnitType.UNIT.name(),
+                UnitType.UNIT,
                 null,
                 ""
 
@@ -82,10 +81,10 @@ class AssetServiceTest {
                         "Bitcoin",
                         "BTC",
                         "bitcoin",
-                        UnitType.UNIT.name(),
+                        UnitType.UNIT,
                         "100000",
-                        CurrencyType.USD.name(),
-                        AssetType.CRYPTO.name(),
+                        CurrencyType.USD,
+                        AssetType.CRYPTO,
                         LocalDateTime.now()));
 
         assetService.createAsset(customerId, request);
@@ -104,13 +103,13 @@ class AssetServiceTest {
     void updateAsset_shouldUpdateAsset() {
         String customerId = "customerId";
         AssetRequest request = new AssetRequest(
-                AssetType.CRYPTO.name(),
+                AssetType.CRYPTO,
                 "bitcoin",
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(50000),
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 "Bitcoin",
-                UnitType.UNIT.name(),
+                UnitType.UNIT,
                 null,
                 ""
         );
@@ -134,13 +133,13 @@ class AssetServiceTest {
     void updateAsset_shouldThrowAssetNotFoundException_whenAssetNotFound() {
         String customerId = "customerId";
         var request = new AssetRequest(
-                AssetType.CRYPTO.name(),
+                AssetType.CRYPTO,
                 "bitcoin",
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(50000),
-                UnitType.UNIT.name(),
+                CurrencyType.USD,
                 "Bitcoin",
-                CurrencyType.USD.name(),
+                UnitType.UNIT,
                 null,
                 ""
         );
@@ -158,13 +157,13 @@ class AssetServiceTest {
     void updateAsset_shouldThrowOwnershipException_whenCustomerNotOwner() {
         String customerId = "customerId";
         var request = new AssetRequest(
-                AssetType.CRYPTO.name(),
+                AssetType.CRYPTO,
                 "bitcoin",
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(50000),
-                UnitType.UNIT.name(),
+                CurrencyType.USD,
                 "Bitcoin",
-                CurrencyType.USD.name(),
+                UnitType.UNIT,
                 null,
                 ""
         );
@@ -184,13 +183,13 @@ class AssetServiceTest {
     void updateAsset_shouldThrowOwnershipExceptionIfCustomerMismatch() {
         String customerId = "customerId";
         var request = new AssetRequest(
-                AssetType.CRYPTO.name(),
+                AssetType.CRYPTO,
                 "bitcoin",
                 BigDecimal.valueOf(3),
                 BigDecimal.valueOf(35000),
-                UnitType.UNIT.name(),
+                CurrencyType.USD,
                 "Bitcoin",
-                CurrencyType.USD.name(),
+                UnitType.UNIT,
                 null,
                 ""
         );
@@ -252,13 +251,13 @@ class AssetServiceTest {
     @Test
     void createAsset_CustomType_GeneratesFinanceResponseWithoutClientCall() {
         AssetRequest request = new AssetRequest(
-                AssetType.CUSTOM.name(),
+                AssetType.CUSTOM,
                 "  My Gold  ",
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(1000),
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 "My Gold",
-                UnitType.KG.name(),
+                UnitType.KG,
                 BigDecimal.valueOf(1500),
                 "Custom asset"
         );
@@ -278,19 +277,19 @@ class AssetServiceTest {
     @Test
     void createAsset_NormalizesUriToLowercaseHyphenated() {
         AssetRequest request = new AssetRequest(
-                AssetType.CRYPTO.name(),
+                AssetType.CRYPTO,
                 "  BiTcoIn Cash  ",
                 BigDecimal.ONE,
                 BigDecimal.TEN,
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 "Bitcoin Cash",
-                UnitType.UNIT.name(),
+                UnitType.UNIT,
                 null,
                 ""
         );
 
         when(financeClient.findFinanceByTypeAndUri(any(), any()))
-                .thenReturn(new FinanceResponse("Bitcoin Cash", "BCH", "bitcoin-cash", "UNIT", "10000", "USD", "CRYPTO", LocalDateTime.now()));
+                .thenReturn(new FinanceResponse("Bitcoin Cash", "BCH", "bitcoin-cash", UnitType.UNIT, "10000", CurrencyType.USD, AssetType.CRYPTO, LocalDateTime.now()));
 
         assetService.createAsset("customerId", request);
 
@@ -307,18 +306,18 @@ class AssetServiceTest {
                 .assetType(AssetType.CUSTOM)
                 .name("Old Name")
                 .uri("old-name")
-                .unitType(UnitType.UNIT.name())
+                .unitType(UnitType.UNIT)
                 .currentPrice(BigDecimal.TEN)
                 .build();
 
         AssetRequest request = new AssetRequest(
-                AssetType.CUSTOM.name(),
+                AssetType.CUSTOM,
                 "New Name",
                 BigDecimal.ONE,
                 BigDecimal.ONE,
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 "New Name",
-                UnitType.KG.name(),
+                UnitType.KG,
                 BigDecimal.valueOf(20),
                 "Updated comment"
         );
@@ -329,7 +328,7 @@ class AssetServiceTest {
 
         assertThat(customAsset.getName()).isEqualTo("New Name");
         assertThat(customAsset.getUri()).isEqualTo("new-name");
-        assertThat(customAsset.getUnitType()).isEqualTo(UnitType.KG.name());
+        assertThat(customAsset.getUnitType()).isEqualTo(UnitType.KG);
         assertThat(customAsset.getCurrentPrice()).isEqualTo(BigDecimal.valueOf(20));
         assertThat(customAsset.getComment()).isEqualTo("Updated comment");
     }
@@ -342,19 +341,19 @@ class AssetServiceTest {
                 .assetType(AssetType.CRYPTO)
                 .name("Bitcoin")
                 .uri("bitcoin")
-                .unitType(UnitType.UNIT.name())
+                .unitType(UnitType.UNIT)
                 .currentPrice(null)
                 .comment("Original comment")
                 .build();
 
         AssetRequest request = new AssetRequest(
-                AssetType.CRYPTO.name(),
+                AssetType.CRYPTO,
                 "bitcoin",
                 BigDecimal.ONE,
                 BigDecimal.ONE,
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 "New Name",
-                UnitType.KG.name(),
+                UnitType.KG,
                 BigDecimal.valueOf(20),
                 null
         );
@@ -364,7 +363,7 @@ class AssetServiceTest {
         assetService.updateAsset("customerId", request, 1L);
 
         assertThat(cryptoAsset.getName()).isEqualTo("Bitcoin");
-        assertThat(cryptoAsset.getUnitType()).isEqualTo(UnitType.UNIT.name());
+        assertThat(cryptoAsset.getUnitType()).isEqualTo(UnitType.UNIT);
         assertThat(cryptoAsset.getCurrentPrice()).isNull();
         assertThat(cryptoAsset.getComment()).isEqualTo("Original comment");
     }
@@ -376,7 +375,7 @@ class AssetServiceTest {
                 "€",
                 "eur",
                 AssetType.CURRENCY,
-                UnitType.UNIT.name(),
+                UnitType.UNIT,
                 BigDecimal.valueOf(1000),
                 new BigDecimal("1.1"),
                 null,
@@ -385,10 +384,10 @@ class AssetServiceTest {
         );
 
         when(repository.findAndAggregateAssetsByCustomerId("customerId")).thenReturn(Optional.of(List.of(currencyGroup)));
-        when(financeClient.findExchangeRate("EUR", "USD")).thenReturn(new BigDecimal("1.2"));
-        when(financeClient.findExchangeRate("USD", "EUR")).thenReturn(new BigDecimal("0.85"));
+        when(financeClient.findExchangeRate(CurrencyType.EUR, CurrencyType.USD)).thenReturn(new BigDecimal("1.2"));
+        when(financeClient.findExchangeRate(CurrencyType.USD, CurrencyType.EUR)).thenReturn(new BigDecimal("0.85"));
 
-        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", "EUR");
+        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", CurrencyType.EUR);
 
         AssetAggregateDTO dto = result.getFirst();
         assertThat(dto.currentPrice()).isEqualTo(new BigDecimal("1.2"));
@@ -403,7 +402,7 @@ class AssetServiceTest {
                 "AAPL",
                 "aapl",
                 AssetType.STOCK,
-                UnitType.UNIT.name(),
+                UnitType.UNIT,
                 BigDecimal.TEN,
                 new BigDecimal("150"),
                 null,
@@ -414,10 +413,10 @@ class AssetServiceTest {
         when(repository.findAndAggregateAssetsByCustomerId("customerId"))
                 .thenReturn(Optional.of(List.of(stockGroup)));
 
-        when(financeClient.findFinanceByTypeAndUri(eq("STOCK"), eq("aapl")))
+        when(financeClient.findFinanceByTypeAndUri(eq(AssetType.STOCK), eq("aapl")))
                 .thenThrow(new FinanceNotFoundException("Not found"));
 
-        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", "USD");
+        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", CurrencyType.USD);
 
         AssetAggregateDTO dto = result.getFirst();
         assertThat(dto.currentPrice()).isEqualTo(BigDecimal.ZERO);
@@ -431,7 +430,7 @@ class AssetServiceTest {
                 "",
                 "gold",
                 AssetType.CUSTOM,
-                UnitType.KG.name(),
+                UnitType.KG,
                 BigDecimal.valueOf(5),
                 BigDecimal.ZERO,
                 new BigDecimal("1500"),
@@ -441,7 +440,7 @@ class AssetServiceTest {
 
         when(repository.findAndAggregateAssetsByCustomerId("customerId")).thenReturn(Optional.of(List.of(group)));
 
-        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", "USD");
+        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", CurrencyType.USD);
 
         AssetAggregateDTO dto = result.getFirst();
         assertThat(dto.profitInPercentage()).isEqualTo(BigDecimal.ZERO);
@@ -454,7 +453,7 @@ class AssetServiceTest {
                 "BTC",
                 "bitcoin",
                 AssetType.CRYPTO,
-                UnitType.UNIT.name(),
+                UnitType.UNIT,
                 BigDecimal.ONE,
                 new BigDecimal("30000"),
                 null,
@@ -463,10 +462,10 @@ class AssetServiceTest {
         );
 
         when(repository.findAndAggregateAssetsByCustomerId("customerId")).thenReturn(Optional.of(List.of(group)));
-        when(financeClient.findFinanceByTypeAndUri("CRYPTO", "bitcoin"))
-                .thenReturn(new FinanceResponse("Bitcoin", "BTC", "bitcoin", "UNIT", "35000", "USD", "CRYPTO", LocalDateTime.now()));
+        when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTO, "bitcoin"))
+                .thenReturn(new FinanceResponse("Bitcoin", "BTC", "bitcoin", UnitType.UNIT, "35000", CurrencyType.USD, AssetType.CRYPTO, LocalDateTime.now()));
 
-        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", "USD");
+        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", CurrencyType.USD);
 
         AssetAggregateDTO dto = result.getFirst();
         assertThat(dto.exchangeRateToDesired()).isEqualTo(BigDecimal.ONE);
@@ -475,18 +474,18 @@ class AssetServiceTest {
     @Test
     void createAsset_NonCustomCurrencyType_ThrowsFinanceNotFoundException() {
         AssetRequest request = new AssetRequest(
-                AssetType.STOCK.name(),
+                AssetType.STOCK,
                 "AAPL",
                 BigDecimal.ONE,
                 BigDecimal.TEN,
-                CurrencyType.USD.name(),
+                CurrencyType.USD,
                 "Apple Inc.",
-                UnitType.UNIT.name(),
+                UnitType.UNIT,
                 null,
                 ""
         );
 
-        when(financeClient.findFinanceByTypeAndUri(eq("STOCK"), eq("AAPL")))
+        when(financeClient.findFinanceByTypeAndUri(eq(AssetType.STOCK), eq("AAPL")))
                 .thenThrow(new FinanceNotFoundException("Stock not found"));
 
         assertThatThrownBy(() -> assetService.createAsset("customerId", request))
@@ -504,7 +503,7 @@ class AssetServiceTest {
         String uri = "ethereum";
         AssetType assetType = AssetType.CRYPTO;
         CurrencyType currencyType = CurrencyType.USD;
-        String unitType = UnitType.UNIT.name();
+        UnitType unitType = UnitType.UNIT;
         var assetGroup = new AssetGroupDTO(
                 name,
                 symbol,
@@ -519,18 +518,18 @@ class AssetServiceTest {
         );
 
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
-        when(financeClient.findFinanceByTypeAndUri(assetType.name(), uri))
+        when(financeClient.findFinanceByTypeAndUri(assetType, uri))
                 .thenReturn(new FinanceResponse(
                         name,
                         symbol,
                         uri,
                         unitType,
                         "35000",
-                        currencyType.name(),
-                        assetType.name(),
+                        currencyType,
+                        assetType,
                         LocalDateTime.now()));
 
-        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currencyType.name());
+        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currencyType);
 
         assertThat(assets).hasSize(1);
         AssetAggregateDTO asset = assets.getFirst();
@@ -546,7 +545,7 @@ class AssetServiceTest {
         String uri = "ethereum";
         AssetType assetType = AssetType.CRYPTO;
         CurrencyType currencyType = CurrencyType.USD;
-        String unitType = UnitType.UNIT.name();
+        UnitType unitType = UnitType.UNIT;
         var assetGroup = new AssetGroupDTO(
                 name,
                 symbol,
@@ -561,10 +560,10 @@ class AssetServiceTest {
         );
 
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
-        when(financeClient.findFinanceByTypeAndUri(assetType.name(), uri))
+        when(financeClient.findFinanceByTypeAndUri(assetType, uri))
                 .thenThrow(new FinanceNotFoundException("Finance not found"));
 
-        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currencyType.name());
+        List<AssetAggregateDTO> assets = assetService.findAllCustomerAssets(customerId, currencyType);
 
         assertThat(assets).hasSize(1);
         AssetAggregateDTO asset = assets.getFirst();
@@ -585,7 +584,7 @@ class AssetServiceTest {
         String uri = "ethereum";
         AssetType assetType = AssetType.CRYPTO;
         CurrencyType currencyType = CurrencyType.USD;
-        String unitType = UnitType.UNIT.name();
+        UnitType unitType = UnitType.UNIT;
         var assetGroup = new AssetGroupDTO(
                 name,
                 symbol,
@@ -609,11 +608,11 @@ class AssetServiceTest {
         );
 
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
-        when(financeClient.findFinanceByTypeAndUri(assetType.name(), uri))
+        when(financeClient.findFinanceByTypeAndUri(assetType, uri))
                 .thenThrow(new FeignException.InternalServerError(
                         "Finance not found", request, null, null));
 
-        assetService.findAllCustomerAssets(customerId, currencyType.name());
+        assetService.findAllCustomerAssets(customerId, currencyType);
 
         verify(support, times(1)).sendNotification(any(SupportConfirmation.class));
     }

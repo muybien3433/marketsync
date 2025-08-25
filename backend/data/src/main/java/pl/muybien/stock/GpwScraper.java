@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class Gpw extends QueueUpdater {
+public class GpwScraper extends QueueUpdater {
 
     private static final String TARGET_URL = "https://www.gpw.pl/akcje";
 
@@ -45,7 +45,6 @@ public class Gpw extends QueueUpdater {
     @Override
     @Transactional
     public void updateAssets() {
-        log.info("Starting the update of Gpw data...");
         var stocks = new HashMap<String, FinanceDetail>();
 
         WebDriver driver = null;
@@ -95,15 +94,15 @@ public class Gpw extends QueueUpdater {
                         name,
                         symbol,
                         uri,
-                        UnitType.UNIT.name(),
+                        UnitType.UNIT,
                         price,
-                        CurrencyType.PLN.name(),
-                        AssetType.STOCK.name(),
+                        CurrencyType.PLN,
+                        AssetType.STOCK,
                         LocalDateTime.now()
                 );
                 stocks.put(uri, financeDetail);
             }
-            databaseUpdater.saveFinanceToDatabase(AssetType.STOCK.name(), stocks);
+            databaseUpdater.saveFinanceToDatabase(AssetType.STOCK, stocks);
         } catch (Exception e) {
             throw new FinanceNotFoundException("Gpw data: " + e.getMessage());
         } finally {
@@ -112,7 +111,6 @@ public class Gpw extends QueueUpdater {
             }
             System.gc();
         }
-        log.info("Saved {} stocks", stocks.size());
-        log.info("Finished updating Gpw data");
+        log.debug("Saved {} stocks", stocks.size());
     }
 }

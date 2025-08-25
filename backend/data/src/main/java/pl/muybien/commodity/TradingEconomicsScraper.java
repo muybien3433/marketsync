@@ -43,7 +43,6 @@ public class TradingEconomicsScraper extends QueueUpdater {
 
     @Override
     public void updateAssets() {
-        log.info("Starting the update of TradingEconomics data...");
         var commodities = new HashMap<String, FinanceDetail>();
 
         WebDriver driver = null;
@@ -81,10 +80,10 @@ public class TradingEconomicsScraper extends QueueUpdater {
                                 name,
                                 null,
                                 uri,
-                                unitType.name(),
+                                unitType,
                                 price,
-                                currencyType.name(),
-                                AssetType.COMMODITY.name(),
+                                currencyType,
+                                AssetType.COMMODITY,
                                 LocalDateTime.now()
                         );
                         commodities.put(uri, detail);
@@ -93,9 +92,7 @@ public class TradingEconomicsScraper extends QueueUpdater {
                     log.warn("Skipping row due to missing elements: {}", e.getMessage());
                 }
             }
-
-             databaseUpdater.saveFinanceToDatabase(AssetType.COMMODITY.name(), commodities);
-            log.info("Saved {} commodities", commodities.size());
+            databaseUpdater.saveFinanceToDatabase(AssetType.COMMODITY, commodities);
         } catch (Exception e) {
             throw new FinanceNotFoundException("TradingEconomics data: " + e.getMessage());
         } finally {
@@ -103,6 +100,7 @@ public class TradingEconomicsScraper extends QueueUpdater {
             System.gc();
         }
     }
+
     private CurrencyType extractCurrency(String unit) {
         for (CurrencyType currency : CurrencyType.values()) {
             if (unit.toUpperCase().contains(currency.name())) return currency;

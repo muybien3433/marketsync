@@ -45,14 +45,14 @@ class SubscriptionServiceTest {
     private final String customerEmail = "test@example.com";
     private final String phoneNumber = "+1234567890";
     private final String uri = "http://example.com/asset";
-    private final String assetType = "STOCK";
+    private final AssetType assetType = AssetType.STOCK;
     private final String financeName = "Example Corp";
     private final String price = "100.50";
 
     @Test
     void createSubscription_ThrowsWhenBothBoundsNull() {
         SubscriptionRequest request = new SubscriptionRequest(
-                uri, null, null, assetType, "EMAIL", "USD"
+                uri, null, null, assetType, NotificationType.EMAIL, CurrencyType.USD
         );
 
         assertThrows(InvalidSubscriptionParametersException.class,
@@ -63,7 +63,7 @@ class SubscriptionServiceTest {
     @Test
     void createSubscription_ThrowsWhenBothBoundsProvided() {
         SubscriptionRequest request = new SubscriptionRequest(
-                uri, 10.0, 5.0, assetType, "EMAIL", "USD"
+                uri, 10.0, 5.0, assetType, NotificationType.EMAIL, CurrencyType.USD
         );
 
         assertThrows(InvalidSubscriptionParametersException.class,
@@ -74,11 +74,11 @@ class SubscriptionServiceTest {
     @Test
     void createSubscription_ValidUpperBound_CreatesSubscription() {
         SubscriptionRequest request = new SubscriptionRequest(
-                uri, 10.0, null, assetType, "EMAIL", "USD"
+                uri, 10.0, null, assetType, NotificationType.EMAIL, CurrencyType.USD
         );
 
         FinanceResponse financeResponse = new FinanceResponse(
-                financeName, "SYM", uri, UnitType.UNIT.name(), price, "USD", assetType, LocalDateTime.now()
+                financeName, "SYM", uri, UnitType.UNIT, price, CurrencyType.USD, assetType, LocalDateTime.now()
         );
 
         when(financeClient.findFinanceByTypeAndUri(assetType, uri))
@@ -95,7 +95,7 @@ class SubscriptionServiceTest {
     @Test
     void createSubscription_EmailNotificationWithoutEmail_Throws() {
         SubscriptionRequest request = new SubscriptionRequest(
-                uri, null, 5.0, assetType, "EMAIL", "USD"
+                uri, null, 5.0, assetType, NotificationType.EMAIL, CurrencyType.USD
         );
 
         assertThrows(InvalidSubscriptionParametersException.class,
@@ -106,7 +106,7 @@ class SubscriptionServiceTest {
     @Test
     void createSubscription_SmsNotificationWithoutPhone_Throws() {
         SubscriptionRequest request = new SubscriptionRequest(
-                uri, 10.0, null, assetType, "SMS", "USD"
+                uri, 10.0, null, assetType, NotificationType.SMS, CurrencyType.USD
         );
 
         assertThrows(InvalidSubscriptionParametersException.class,
@@ -229,9 +229,9 @@ class SubscriptionServiceTest {
                 financeName,
                 "SYM",
                 uri,
-                UnitType.UNIT.name(),
+                UnitType.UNIT,
                 price,
-                "USD",
+                CurrencyType.USD,
                 assetType,
                 LocalDateTime.now()
         );
@@ -256,11 +256,11 @@ class SubscriptionServiceTest {
 
         BigDecimal exchangeRate = BigDecimal.valueOf(0.85);
         FinanceResponse financeResponse = new FinanceResponse(
-                financeName, "SYM", uri, UnitType.UNIT.name(), "100", "USD", assetType, LocalDateTime.now()
+                financeName, "SYM", uri, UnitType.UNIT, "100", CurrencyType.USD, assetType, LocalDateTime.now()
         );
         when(financeClient.findFinanceByTypeAndUri(any(), any()))
                 .thenReturn(financeResponse);
-        when(financeClient.findExchangeRate("USD", "EUR"))
+        when(financeClient.findExchangeRate(CurrencyType.USD, CurrencyType.EUR))
                 .thenReturn(exchangeRate);
 
         String result = subscriptionService.resolveCurrentPrice(detail);

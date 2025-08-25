@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.muybien.asset.dto.AssetAggregateDTO;
 import pl.muybien.asset.dto.AssetHistoryDTO;
+import pl.muybien.enums.CurrencyType;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class AssetController {
     @GetMapping("/{currency}")
     public ResponseEntity<List<AssetAggregateDTO>> findAllCustomerAssets(
             @RequestHeader("X-Customer-Id") String customerId,
-            @PathVariable("currency") String currency
+            @PathVariable("currency") CurrencyType currency
     ) {
         return ResponseEntity.ok(service.findAllCustomerAssets(customerId, currency));
     }

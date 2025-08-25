@@ -93,6 +93,8 @@ services:
 
   mongodb-finance:
     image: mongo:latest
+    ports:
+      - "27017:27017"
     container_name: mongodb-finance
     environment:
       MONGO_INITDB_ROOT_USERNAME: finance

@@ -46,7 +46,6 @@ public class NewconnectScraper extends QueueUpdater {
     @Override
     @Transactional
     public void updateAssets() {
-        log.info("Starting the update of NewConnect data...");
         var stocks = new HashMap<String, FinanceDetail>();
 
         WebDriver driver = null;
@@ -95,15 +94,15 @@ public class NewconnectScraper extends QueueUpdater {
                         name,
                         symbol,
                         uri,
-                        UnitType.UNIT.name(),
+                        UnitType.UNIT,
                         price,
-                        CurrencyType.PLN.name(),
-                        AssetType.STOCK.name(),
+                        CurrencyType.PLN,
+                        AssetType.STOCK,
                         LocalDateTime.now()
                 );
                 stocks.put(uri, financeDetail);
             }
-            databaseUpdater.saveFinanceToDatabase(AssetType.STOCK.name(), stocks);
+            databaseUpdater.saveFinanceToDatabase(AssetType.STOCK, stocks);
         } catch (Exception e) {
             throw new FinanceNotFoundException("NewConnect data: " + e.getMessage());
         } finally {
@@ -112,7 +111,6 @@ public class NewconnectScraper extends QueueUpdater {
             }
             System.gc();
         }
-        log.info("Saved {} stocks", stocks.size());
-        log.info("Finished updating NewConnect data");
+        log.debug("Saved {} stocks", stocks.size());
     }
 }

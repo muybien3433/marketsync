@@ -1,62 +1,31 @@
 package pl.muybien.currency;
 
+import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+import pl.muybien.enums.CurrencyType;
+import pl.muybien.enums.UnitType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Builder
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Document(collection = "currency_exchange")
 public class Currency {
 
     @Id
-    private String name;
-    private BigDecimal exchange;
-    private String unitType;
+    @EqualsAndHashCode.Include
+    private CurrencyType name;
 
-    @LastModifiedDate
+    private BigDecimal exchangeFromUSD;
+
+    private UnitType unitType;
+
     private LocalDateTime lastModifiedDate;
-
-    public Currency() {
-    }
-
-    public Currency(String name, BigDecimal exchange, String unitType, LocalDateTime lastModifiedDate) {
-        this.name = name;
-        this.exchange = exchange;
-        this.unitType = unitType;
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getExchange() {
-        return exchange;
-    }
-
-    public void setExchange(BigDecimal exchange) {
-        this.exchange = exchange;
-    }
-
-    public String getUnitType() {
-        return unitType;
-    }
-
-    public void setUnitType(String unitType) {
-        this.unitType = unitType;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
 }

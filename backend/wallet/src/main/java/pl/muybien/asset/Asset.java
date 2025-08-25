@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.Nullable;
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
+import pl.muybien.enums.UnitType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,15 +28,21 @@ public class Asset {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
+
     private String name;
+
     private String symbol;
+
     private String uri;
+
     private BigDecimal count;
+
     private BigDecimal purchasePrice;
+
     private String customerId;
 
     @Nullable
-    private String unitType;
+    private UnitType unitType;
 
     @Nullable
     private BigDecimal currentPrice;

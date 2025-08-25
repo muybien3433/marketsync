@@ -3,6 +3,7 @@ package pl.muybien.updater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.enums.AssetType;
 import pl.muybien.finance.Finance;
 import pl.muybien.finance.FinanceDetail;
 import pl.muybien.finance.FinanceRepository;
@@ -16,19 +17,17 @@ public class DatabaseUpdater {
     private final FinanceRepository repository;
 
     @Transactional
-    public void saveFinanceToDatabase(String assetType, Map<String, FinanceDetail> financeDetails) {
-        String normalizedAssetType = assetType.toLowerCase();
-
-        repository.findFinanceByAssetType(normalizedAssetType)
+    public void saveFinanceToDatabase(AssetType assetType, Map<String, FinanceDetail> financeDetails) {
+        repository.findFinanceByAssetType(assetType)
                 .ifPresentOrElse(finance -> {
-                            finance.initializeNestedMapIfNeeded(normalizedAssetType);
-                            finance.getFinanceDetails().get(normalizedAssetType).putAll(financeDetails);
+                            finance.initializeNestedMapIfNeeded(assetType);
+                            finance.getFinanceDetails().get(assetType).putAll(financeDetails);
                             repository.save(finance);
                         },
                         () -> {
                             Finance newFinance = new Finance();
-                            newFinance.initializeNestedMapIfNeeded(normalizedAssetType);
-                            newFinance.getFinanceDetails().get(normalizedAssetType).putAll(financeDetails);
+                            newFinance.initializeNestedMapIfNeeded(assetType);
+                            newFinance.getFinanceDetails().get(assetType).putAll(financeDetails);
                             repository.save(newFinance);
                         }
                 );

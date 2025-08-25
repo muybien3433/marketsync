@@ -62,8 +62,6 @@ public class YahooCryptoScraper extends YahooScraper {
     @Override
     @Transactional
     public void updateAssets() {
-        log.info("Starting the update of YahooFinanceCrypto data...");
-
         setTargetUrl(TARGET_URL);
 
         long startTime = System.currentTimeMillis();
@@ -109,14 +107,11 @@ public class YahooCryptoScraper extends YahooScraper {
 
         long persistStartTime = System.currentTimeMillis();
         if (!cryptos.isEmpty()) {
-            databaseUpdater.saveFinanceToDatabase(AssetType.CRYPTO.name(), cryptos);
+            databaseUpdater.saveFinanceToDatabase(AssetType.CRYPTO, cryptos);
         }
 
         long durationDataPersisting = (System.currentTimeMillis() - persistStartTime) / 1000;
-        log.info("Saved {} cryptos", cryptos.size());
         log.debug("Data saved in {} seconds", durationDataPersisting);
-
-        log.info("Finished updating YahooFinanceCrypto data");
     }
 
     @Override
@@ -194,10 +189,10 @@ public class YahooCryptoScraper extends YahooScraper {
                             name,
                             symbol,
                             uri,
-                            UnitType.UNIT.name(),
+                            UnitType.UNIT,
                             cleanedPrice,
-                            CurrencyType.USD.name(),
-                            AssetType.CRYPTO.name(),
+                            CurrencyType.USD,
+                            AssetType.CRYPTO,
                             LocalDateTime.now()
                     );
                     cryptos.put(uri, detail);

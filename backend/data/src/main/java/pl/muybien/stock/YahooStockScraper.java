@@ -56,8 +56,6 @@ public class YahooStockScraper extends YahooScraper {
     @Override
     @Transactional
     public void updateAssets() {
-        log.info("Starting the update of YahooFinanceStock data...");
-
         setTargetUrl(TARGET_URL);
 
         long startTime = System.currentTimeMillis();
@@ -92,14 +90,12 @@ public class YahooStockScraper extends YahooScraper {
 
         long persistStartTime = System.currentTimeMillis();
         if (!stocks.isEmpty()) {
-            databaseUpdater.saveFinanceToDatabase(AssetType.STOCK.name(), stocks);
+            databaseUpdater.saveFinanceToDatabase(AssetType.STOCK, stocks);
         }
 
         long durationDataPersisting = (System.currentTimeMillis() - persistStartTime) / 1000;
-        log.info("Saved {} stocks", stocks.size());
+        log.debug("Saved {} stocks", stocks.size());
         log.debug("Data saved in {} seconds", durationDataPersisting);
-
-        log.info("Finished updating YahooFinanceStock data");
     }
 
     protected void scrapePages(WebDriver driver, int startPage, int endPage, Map<String, FinanceDetail> stocks) {
@@ -173,10 +169,10 @@ public class YahooStockScraper extends YahooScraper {
 
                     stocks.put(uri, new FinanceDetail(
                             name, symbol, uri,
-                            UnitType.UNIT.name(),
+                            UnitType.UNIT,
                             cleanedPrice,
-                            CurrencyType.USD.name(),
-                            AssetType.STOCK.name(),
+                            CurrencyType.USD,
+                            AssetType.STOCK,
                             LocalDateTime.now()
                     ));
                 }

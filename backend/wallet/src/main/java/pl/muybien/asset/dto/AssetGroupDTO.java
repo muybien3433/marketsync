@@ -2,6 +2,7 @@ package pl.muybien.asset.dto;
 
 import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
+import pl.muybien.enums.UnitType;
 
 import java.math.BigDecimal;
 
@@ -10,7 +11,7 @@ public record AssetGroupDTO(
         String symbol,
         String uri,
         AssetType assetType,
-        String unitType,
+        UnitType unitType,
         BigDecimal count,
         BigDecimal averagePurchasePrice,
         BigDecimal currentPrice,

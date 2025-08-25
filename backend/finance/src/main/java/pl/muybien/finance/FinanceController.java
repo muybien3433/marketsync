@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pl.muybien.enums.AssetType;
 import pl.muybien.enums.CurrencyType;
 
 import java.math.BigDecimal;
@@ -20,7 +21,7 @@ public class FinanceController {
 
     @GetMapping("/{asset-type}/{uri}")
     public ResponseEntity<FinanceResponse> findFinanceWithDefaultCurrency(
-            @PathVariable("asset-type") String assetType,
+            @PathVariable("asset-type") AssetType assetType,
             @PathVariable("uri") String uri
     ) {
         return ResponseEntity.ok(service.fetchFinance(assetType, uri));
@@ -28,15 +29,15 @@ public class FinanceController {
 
     @GetMapping("/{asset-type}")
     public ResponseEntity<Set<FinanceDetailDTO>> displayAvailableFinance(
-            @PathVariable("asset-type") String assetType
+            @PathVariable("asset-type") AssetType assetType
     ) {
         return ResponseEntity.ok(service.displayAvailableFinance(assetType));
     }
 
     @GetMapping("/{asset-type}/currencies/{currency-type}")
     public ResponseEntity<Set<FinanceDetailDTO>> displayAvailableFinance(
-            @PathVariable("asset-type") String assetType,
-            @PathVariable("currency-type") String currencyType
+            @PathVariable("asset-type") AssetType assetType,
+            @PathVariable("currency-type") CurrencyType currencyType
     ) {
         return ResponseEntity.ok(service.displayAvailableFinance(assetType, currencyType));
     }
