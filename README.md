@@ -3,7 +3,8 @@
 MarketSync is a solution that delivers real-time market insights, enabling personalized notifications and wallet 
 management. It helps users track their assets and receive timely updates on their subscriptions based on price changes.
 
-The platform fetches and compares targeted assets in real time with over 5.4k cryptocurrencies and 1.2k stocks, 
+The platform fetches and compares targeted assets in real time with around 5k cryptocurrencies, 1k stocks,
+currencies and commodities -
 providing dynamic insights to keep users informed about market fluctuations. It simplifies 
 the management of cryptocurrency, stock, currencies and commodity interests and subscriptions, 
 while also offering the ability to create and manage personal wallets that calculate profits in real time, 
@@ -40,14 +41,6 @@ ensuring that users stay informed about market changes in real-time.
 - **Testing**: JUnit 5
 - **Build Tool**: Maven, Docker
 
-## Prerequisites
-
-Ensure you have the following installed before running the project:
-
-- **Java 23**
-- **Maven**
-- **Docker**
-
 ## API Endpoints
 
 **API will be available at localhost:9999/api/v1**
@@ -70,6 +63,14 @@ Ensure you have the following installed before running the project:
     - `PATCH /{id} ` – Edit asset in the wallet.
     - `DELETE /{id}` – Remove an asset from the wallet.
 
+
+## Prerequisites
+
+Ensure you have the following installed before running the project:
+
+- **Java 23**
+- **Docker**
+
 ## Installation
 
 1. Clone the repository:
@@ -77,14 +78,20 @@ Ensure you have the following installed before running the project:
    git clone https://github.com/muybien3433/marketsync.git
    ```
    
-2. Provide region, access-key and access-secret for AWS-SES in backend/services/config-server/configurations/notification-service-dev.yml
+2. If you want notification - provide region, access-key and access-secret for AWS-SES in backend/services/config-server/configurations/notification-service-dev.yml
 
-3. Now everything you need to do is to start docker containers
+
+3. Compile:
+   ```bash
+   ./mvnw clean compile
+   ```
+
+4. Now everything you need to do is to start docker containers
    ```bash
    docker compose -f docker-compose.dev.yml up -d
    ```
    
-4. Run tests
+5. Run tests
    ```bash
    mvn clean test
    ```
