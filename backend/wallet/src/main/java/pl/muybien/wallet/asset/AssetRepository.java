@@ -14,7 +14,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     @Query(
             """
-                    SELECT new pl.muybien.asset.dto.AssetHistoryDTO(
+                    SELECT new pl.muybien.wallet.asset.dto.AssetHistoryDTO(
                             a.id,
                             a.name,
                             a.uri,
@@ -33,7 +33,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     @Query(
             """
-                    SELECT new pl.muybien.asset.dto.AssetGroupDTO(
+                    SELECT new pl.muybien.wallet.asset.dto.AssetGroupDTO(
                         a.name,
                         a.symbol,
                         a.uri,
