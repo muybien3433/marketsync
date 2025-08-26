@@ -75,9 +75,19 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     }
 
     onAssetSelect(asset: AssetDetail) {
-        this.selectedAsset = asset;
-        this.assetService.setSelectedAsset(this.selectedAsset);
-        this.assetChanged.emit(this.selectedAsset);
+        const normalized: AssetDetail = {
+            ...asset,
+            unitType: this.normalizeUnitType((asset as any).unitType)
+        };
+        this.selectedAsset = normalized;
+        this.assetService.setSelectedAsset(normalized);
+        this.assetChanged.emit(normalized);
+    }
+
+    private normalizeUnitType(v: any): UnitType | null {
+        if (v === undefined || v === null) return UnitType.UNIT;
+        if (typeof v === 'string' && v.trim() === '') return UnitType.UNIT;
+        return v as UnitType;
     }
     
     onCustomAssetInput(): void {
