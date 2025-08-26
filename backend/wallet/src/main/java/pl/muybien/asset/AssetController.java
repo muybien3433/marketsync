@@ -10,6 +10,7 @@ import pl.muybien.asset.dto.AssetHistoryDTO;
 import pl.muybien.enums.CurrencyType;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/wallets/assets")
@@ -20,7 +21,7 @@ public class AssetController {
 
     @GetMapping("/{currency}")
     public ResponseEntity<List<AssetAggregateDTO>> findAllCustomerAssets(
-            @RequestHeader("X-Customer-Id") String customerId,
+            @RequestHeader("X-Customer-Id") UUID customerId,
             @PathVariable("currency") CurrencyType currency
     ) {
         return ResponseEntity.ok(service.findAllCustomerAssets(customerId, currency));
@@ -28,14 +29,14 @@ public class AssetController {
 
     @GetMapping("/history")
     public ResponseEntity<List<AssetHistoryDTO>> findAllHistoryAssets(
-            @RequestHeader("X-Customer-Id") String customerId
+            @RequestHeader("X-Customer-Id") UUID customerId
     ) {
         return ResponseEntity.ok(service.findAllAssetHistory(customerId));
     }
 
     @PostMapping
     public ResponseEntity<String> createAsset(
-            @RequestHeader("X-Customer-Id") String customerId,
+            @RequestHeader("X-Customer-Id") UUID customerId,
             @RequestBody @Valid AssetRequest request
     ) {
         service.createAsset(customerId, request);
@@ -44,17 +45,17 @@ public class AssetController {
 
     @PatchMapping("/{asset-id}")
     public ResponseEntity<AssetHistoryDTO> updateAsset(
-            @RequestHeader("X-Customer-Id") String customerId,
+            @RequestHeader("X-Customer-Id") UUID customerId,
             @RequestBody @Valid AssetRequest request,
-            @PathVariable("asset-id") String assetId
+            @PathVariable("asset-id") UUID assetId
     ) {
         return ResponseEntity.ok(service.updateAsset(customerId, request, assetId));
     }
 
     @DeleteMapping("/{asset-id}")
     public ResponseEntity<String> deleteAsset(
-            @RequestHeader("X-Customer-Id") String customerId,
-            @PathVariable("asset-id") String assetId) {
+            @RequestHeader("X-Customer-Id") UUID customerId,
+            @PathVariable("asset-id") UUID assetId) {
         service.deleteAsset(customerId, assetId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -5,6 +5,7 @@ import pl.muybien.enums.CurrencyType;
 import pl.muybien.enums.UnitType;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record AssetGroupDTO(
         String name,
@@ -16,6 +17,6 @@ public record AssetGroupDTO(
         BigDecimal averagePurchasePrice,
         BigDecimal currentPrice,
         CurrencyType currencyType,
-        String customerId
+        UUID customerId
 ) {
 }

@@ -51,6 +51,7 @@ class AssetServiceTest {
 
     private Asset asset;
     private String assetIdString;
+    private UUID customerUuid;
 
     @BeforeEach
     void setUp() {
@@ -59,13 +60,14 @@ class AssetServiceTest {
         assetIdString = "550e8400-e29b-41d4-a716-446655440000";
         asset = Asset.builder()
                 .id(UUID.fromString(assetIdString))
-                .customerId("customerId")
+                .customerId(UUID.fromString("550e8400-e29b-41d4-a716-446655440010"))
                 .build();
+        customerUuid = UUID.fromString("550e8400-e29b-41d4-a716-446655440010");
     }
 
     @Test
     void createAsset_shouldSaveAsset() {
-        String customerId = "customerId";
+        UUID customerId = customerUuid;
         AssetRequest request = new AssetRequest(
                 AssetType.CRYPTO,
                 "bitcoin",
@@ -104,7 +106,7 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_shouldUpdateAsset() {
-        String customerId = "customerId";
+        UUID customerId = customerUuid;
         AssetRequest request = new AssetRequest(
                 AssetType.CRYPTO,
                 "bitcoin",
@@ -119,7 +121,7 @@ class AssetServiceTest {
 
         when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assetService.updateAsset(customerId, request, assetIdString);
+        assetService.updateAsset(customerId, request, UUID.fromString(assetIdString));
 
         assertThat(asset.getCount()).isEqualTo(BigDecimal.valueOf(5).setScale(12, RoundingMode.HALF_UP));
         assertThat(asset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(50000).setScale(12, RoundingMode.HALF_UP));
@@ -134,7 +136,7 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_shouldThrowAssetNotFoundException_whenAssetNotFound() {
-        String customerId = "customerId";
+        UUID customerId = customerUuid;
         var request = new AssetRequest(
                 AssetType.CRYPTO,
                 "bitcoin",
@@ -149,7 +151,7 @@ class AssetServiceTest {
 
         when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, assetIdString))
+        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, UUID.fromString(assetIdString)))
                 .isInstanceOf(AssetNotFoundException.class)
                 .hasMessage("Asset with ID " + assetIdString + " not found");
 
@@ -158,7 +160,7 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_shouldThrowOwnershipException_whenCustomerNotOwner() {
-        String customerId = "customerId";
+        UUID customerId = customerUuid;
         var request = new AssetRequest(
                 AssetType.CRYPTO,
                 "bitcoin",
@@ -175,7 +177,7 @@ class AssetServiceTest {
 
         when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, assetIdString))
+        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, UUID.fromString(assetIdString)))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Asset updating failed:: Customer id mismatch");
 
@@ -184,7 +186,7 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_shouldThrowOwnershipExceptionIfCustomerMismatch() {
-        String customerId = "customerId";
+        UUID customerId = customerUuid;
         var request = new AssetRequest(
                 AssetType.CRYPTO,
                 "bitcoin",
@@ -200,29 +202,29 @@ class AssetServiceTest {
 
         when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, assetIdString))
+        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, UUID.fromString(assetIdString)))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Asset updating failed:: Customer id mismatch");
     }
 
     @Test
     void deleteAsset_shouldThrowEntityNotFoundExceptionIfAssetNotFound() {
-        String authHeader = "Bearer token";
+        UUID customerId = customerUuid;
 
         when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> assetService.deleteAsset(authHeader, assetIdString))
+        assertThatThrownBy(() -> assetService.deleteAsset(customerId, UUID.fromString(assetIdString)))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("Asset with ID: " + assetIdString + " not found");
     }
 
     @Test
     void deleteAsset_shouldDeleteAsset() {
-        String customerId = "customerId";
+        UUID customerId = customerUuid;
 
         when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assetService.deleteAsset(customerId, assetIdString);
+        assetService.deleteAsset(customerId, UUID.fromString(assetIdString));
 
         verify(repository).delete(asset);
         verify(repository, times(1)).findById(UUID.fromString(assetIdString));
@@ -230,19 +232,19 @@ class AssetServiceTest {
 
     @Test
     void deleteAsset_shouldThrowOwnershipExceptionIfCustomerMismatch() {
-        String customerId = "customerId";
+        UUID customerId = customerUuid;
         asset.setCustomerId("differentCustomerId");
 
         when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assertThatThrownBy(() -> assetService.deleteAsset(customerId, assetIdString))
+        assertThatThrownBy(() -> assetService.deleteAsset(customerId, UUID.fromString(assetIdString)))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Asset deletion failed:: Customer id mismatch");
     }
 
     @Test
     void findAllAssetHistory_shouldReturnEmptyListIfNoHistory() {
-        String customerId = "customerId";
+        UUID customerId = customerUuid;
 
         when(repository.findAssetHistoryByCustomerId(customerId)).thenReturn(Collections.emptyList());
 
@@ -265,7 +267,7 @@ class AssetServiceTest {
                 "Custom asset"
         );
 
-        assetService.createAsset("customerId", request);
+        assetService.createAsset(customerUuid, request);
 
         verify(financeClient, never()).findFinanceByTypeAndUri(any(), any());
         ArgumentCaptor<Asset> captor = ArgumentCaptor.forClass(Asset.class);
@@ -365,7 +367,7 @@ class AssetServiceTest {
 
         when(repository.findById(UUID.fromString(cryptoAssetId))).thenReturn(Optional.of(cryptoAsset));
 
-        assetService.updateAsset("customerId", request, cryptoAssetId);
+        assetService.updateAsset(customerUuid, request, UUID.fromString(cryptoAssetId));
 
         assertThat(cryptoAsset.getName()).isEqualTo("Bitcoin");
         assertThat(cryptoAsset.getUnitType()).isEqualTo(UnitType.UNIT);
@@ -385,14 +387,14 @@ class AssetServiceTest {
                 new BigDecimal("1.1"),
                 null,
                 CurrencyType.USD,
-                "customerId"
+                customerUuid
         );
 
-        when(repository.findAndAggregateAssetsByCustomerId("customerId")).thenReturn(Optional.of(List.of(currencyGroup)));
+        when(repository.findAndAggregateAssetsByCustomerId(customerUuid)).thenReturn(Optional.of(List.of(currencyGroup)));
         when(financeClient.findExchangeRate(CurrencyType.EUR, CurrencyType.USD)).thenReturn(new BigDecimal("1.2"));
         when(financeClient.findExchangeRate(CurrencyType.USD, CurrencyType.EUR)).thenReturn(new BigDecimal("0.85"));
 
-        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", CurrencyType.EUR);
+        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets(customerUuid, CurrencyType.EUR);
 
         AssetAggregateDTO dto = result.getFirst();
         assertThat(dto.currentPrice()).isEqualTo(new BigDecimal("1.2"));
@@ -412,16 +414,16 @@ class AssetServiceTest {
                 new BigDecimal("150"),
                 null,
                 CurrencyType.USD,
-                "customerId"
+                customerUuid
         );
 
-        when(repository.findAndAggregateAssetsByCustomerId("customerId"))
+        when(repository.findAndAggregateAssetsByCustomerId(customerUuid))
                 .thenReturn(Optional.of(List.of(stockGroup)));
 
         when(financeClient.findFinanceByTypeAndUri(eq(AssetType.STOCK), eq("aapl")))
                 .thenThrow(new FinanceNotFoundException("Not found"));
 
-        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", CurrencyType.USD);
+        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets(customerUuid, CurrencyType.USD);
 
         AssetAggregateDTO dto = result.getFirst();
         assertThat(dto.currentPrice()).isEqualTo(BigDecimal.ZERO);
@@ -440,12 +442,12 @@ class AssetServiceTest {
                 BigDecimal.ZERO,
                 new BigDecimal("1500"),
                 CurrencyType.USD,
-                "customerId"
+                customerUuid
         );
 
-        when(repository.findAndAggregateAssetsByCustomerId("customerId")).thenReturn(Optional.of(List.of(group)));
+        when(repository.findAndAggregateAssetsByCustomerId(customerUuid)).thenReturn(Optional.of(List.of(group)));
 
-        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", CurrencyType.USD);
+        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets(customerUuid, CurrencyType.USD);
 
         AssetAggregateDTO dto = result.getFirst();
         assertThat(dto.profitInPercentage()).isEqualTo(BigDecimal.ZERO);
@@ -463,14 +465,14 @@ class AssetServiceTest {
                 new BigDecimal("30000"),
                 null,
                 CurrencyType.USD,
-                "customerId"
+                customerUuid
         );
 
-        when(repository.findAndAggregateAssetsByCustomerId("customerId")).thenReturn(Optional.of(List.of(group)));
+        when(repository.findAndAggregateAssetsByCustomerId(customerUuid)).thenReturn(Optional.of(List.of(group)));
         when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTO, "bitcoin"))
                 .thenReturn(new FinanceResponse("Bitcoin", "BTC", "bitcoin", UnitType.UNIT, "35000", CurrencyType.USD, AssetType.CRYPTO, LocalDateTime.now()));
 
-        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets("customerId", CurrencyType.USD);
+        List<AssetAggregateDTO> result = assetService.findAllCustomerAssets(customerUuid, CurrencyType.USD);
 
         AssetAggregateDTO dto = result.getFirst();
         assertThat(dto.exchangeRateToDesired()).isEqualTo(BigDecimal.ONE);
@@ -493,7 +495,7 @@ class AssetServiceTest {
         when(financeClient.findFinanceByTypeAndUri(eq(AssetType.STOCK), eq("AAPL")))
                 .thenThrow(new FinanceNotFoundException("Stock not found"));
 
-        assertThatThrownBy(() -> assetService.createAsset("customerId", request))
+        assertThatThrownBy(() -> assetService.createAsset(customerUuid, request))
                 .isInstanceOf(FinanceNotFoundException.class)
                 .hasMessage("Stock not found");
 
@@ -519,7 +521,7 @@ class AssetServiceTest {
                 new BigDecimal("30000.0"),
                 null,
                 currencyType,
-                "customerId"
+                customerUuid
         );
 
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));
@@ -561,7 +563,7 @@ class AssetServiceTest {
                 new BigDecimal("30000.0"),
                 null,
                 currencyType,
-                "customerId"
+                customerUuid
         );
 
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(assetGroup)));

@@ -40,7 +40,7 @@ public class Asset {
 
     private BigDecimal purchasePrice;
 
-    private String customerId;
+    private UUID customerId;
 
     @Nullable
     private UnitType unitType;
