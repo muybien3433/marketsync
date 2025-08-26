@@ -46,7 +46,7 @@ public class AssetController {
     public ResponseEntity<AssetHistoryDTO> updateAsset(
             @RequestHeader("X-Customer-Id") String customerId,
             @RequestBody @Valid AssetRequest request,
-            @PathVariable("asset-id") Long assetId
+            @PathVariable("asset-id") String assetId
     ) {
         return ResponseEntity.ok(service.updateAsset(customerId, request, assetId));
     }
@@ -54,7 +54,7 @@ public class AssetController {
     @DeleteMapping("/{asset-id}")
     public ResponseEntity<String> deleteAsset(
             @RequestHeader("X-Customer-Id") String customerId,
-            @PathVariable("asset-id") Long assetId) {
+            @PathVariable("asset-id") String assetId) {
         service.deleteAsset(customerId, assetId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

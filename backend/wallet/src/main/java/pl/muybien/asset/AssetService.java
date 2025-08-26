@@ -79,8 +79,8 @@ public class AssetService {
     }
 
     @Transactional
-    public AssetHistoryDTO updateAsset(String customerId, AssetRequest request, Long assetId) {
-        var asset = repository.findById(assetId).orElseThrow(() ->
+    public AssetHistoryDTO updateAsset(String customerId, AssetRequest request, String assetId) {
+        var asset = repository.findById(UUID.fromString(assetId)).orElseThrow(() ->
                 new AssetNotFoundException("Asset with ID %s not found".formatted(assetId)));
 
         boolean customerIsNotOwner = !customerId.equals(asset.getCustomerId());
@@ -128,8 +128,8 @@ public class AssetService {
     }
 
     @Transactional
-    public void deleteAsset(String customerId, Long assetId) {
-        var asset = repository.findById(assetId).orElseThrow(() ->
+    public void deleteAsset(String customerId, String assetId) {
+        var asset = repository.findById(UUID.fromString(assetId)).orElseThrow(() ->
                 new EntityNotFoundException("Asset with ID: %s not found".formatted(assetId)));
 
         boolean customerIsNotOwner = !customerId.equals(asset.getCustomerId());

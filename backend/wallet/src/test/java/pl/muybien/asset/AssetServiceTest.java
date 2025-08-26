@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,13 +50,15 @@ class AssetServiceTest {
     private AssetService assetService;
 
     private Asset asset;
+    private String assetIdString;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
+        
+        assetIdString = "550e8400-e29b-41d4-a716-446655440000";
         asset = Asset.builder()
-                .id(1L)
+                .id(UUID.fromString(assetIdString))
                 .customerId("customerId")
                 .build();
     }
@@ -114,9 +117,9 @@ class AssetServiceTest {
                 ""
         );
 
-        when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
+        when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assetService.updateAsset(customerId, request, asset.getId());
+        assetService.updateAsset(customerId, request, assetIdString);
 
         assertThat(asset.getCount()).isEqualTo(BigDecimal.valueOf(5).setScale(12, RoundingMode.HALF_UP));
         assertThat(asset.getPurchasePrice()).isEqualTo(BigDecimal.valueOf(50000).setScale(12, RoundingMode.HALF_UP));
@@ -144,11 +147,11 @@ class AssetServiceTest {
                 ""
         );
 
-        when(repository.findById(asset.getId())).thenReturn(Optional.empty());
+        when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, asset.getId()))
+        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, assetIdString))
                 .isInstanceOf(AssetNotFoundException.class)
-                .hasMessage("Asset with ID 1 not found");
+                .hasMessage("Asset with ID " + assetIdString + " not found");
 
         verify(repository, never()).save(any());
     }
@@ -170,9 +173,9 @@ class AssetServiceTest {
 
         asset.setCustomerId("differentCustomerId");
 
-        when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
+        when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, asset.getId()))
+        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, assetIdString))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Asset updating failed:: Customer id mismatch");
 
@@ -195,9 +198,9 @@ class AssetServiceTest {
         );
         asset.setCustomerId("differentCustomerId");
 
-        when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
+        when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, asset.getId()))
+        assertThatThrownBy(() -> assetService.updateAsset(customerId, request, assetIdString))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Asset updating failed:: Customer id mismatch");
     }
@@ -206,23 +209,23 @@ class AssetServiceTest {
     void deleteAsset_shouldThrowEntityNotFoundExceptionIfAssetNotFound() {
         String authHeader = "Bearer token";
 
-        when(repository.findById(asset.getId())).thenReturn(Optional.empty());
+        when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> assetService.deleteAsset(authHeader, asset.getId()))
+        assertThatThrownBy(() -> assetService.deleteAsset(authHeader, assetIdString))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessage("Asset with ID: 1 not found");
+                .hasMessage("Asset with ID: " + assetIdString + " not found");
     }
 
     @Test
     void deleteAsset_shouldDeleteAsset() {
         String customerId = "customerId";
 
-        when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
+        when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assetService.deleteAsset(customerId, asset.getId());
+        assetService.deleteAsset(customerId, assetIdString);
 
         verify(repository).delete(asset);
-        verify(repository, times(1)).findById(asset.getId());
+        verify(repository, times(1)).findById(UUID.fromString(assetIdString));
     }
 
     @Test
@@ -230,9 +233,9 @@ class AssetServiceTest {
         String customerId = "customerId";
         asset.setCustomerId("differentCustomerId");
 
-        when(repository.findById(asset.getId())).thenReturn(Optional.of(asset));
+        when(repository.findById(UUID.fromString(assetIdString))).thenReturn(Optional.of(asset));
 
-        assertThatThrownBy(() -> assetService.deleteAsset(customerId, asset.getId()))
+        assertThatThrownBy(() -> assetService.deleteAsset(customerId, assetIdString))
                 .isInstanceOf(OwnershipException.class)
                 .hasMessage("Asset deletion failed:: Customer id mismatch");
     }
@@ -300,8 +303,9 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_CustomType_UpdatesNameUriUnitTypeAndCurrentPrice() {
+        String customAssetId = "550e8400-e29b-41d4-a716-446655440001";
         Asset customAsset = Asset.builder()
-                .id(1L)
+                .id(UUID.fromString(customAssetId))
                 .customerId("customerId")
                 .assetType(AssetType.CUSTOM)
                 .name("Old Name")
@@ -322,9 +326,9 @@ class AssetServiceTest {
                 "Updated comment"
         );
 
-        when(repository.findById(1L)).thenReturn(Optional.of(customAsset));
+        when(repository.findById(UUID.fromString(customAssetId))).thenReturn(Optional.of(customAsset));
 
-        assetService.updateAsset("customerId", request, 1L);
+        assetService.updateAsset("customerId", request, customAssetId);
 
         assertThat(customAsset.getName()).isEqualTo("New Name");
         assertThat(customAsset.getUri()).isEqualTo("new-name");
@@ -335,8 +339,9 @@ class AssetServiceTest {
 
     @Test
     void updateAsset_NonCustomType_IgnoresNameUnitTypeCurrentPrice() {
+        String cryptoAssetId = "550e8400-e29b-41d4-a716-446655440002";
         Asset cryptoAsset = Asset.builder()
-                .id(1L)
+                .id(UUID.fromString(cryptoAssetId))
                 .customerId("customerId")
                 .assetType(AssetType.CRYPTO)
                 .name("Bitcoin")
@@ -358,9 +363,9 @@ class AssetServiceTest {
                 null
         );
 
-        when(repository.findById(1L)).thenReturn(Optional.of(cryptoAsset));
+        when(repository.findById(UUID.fromString(cryptoAssetId))).thenReturn(Optional.of(cryptoAsset));
 
-        assetService.updateAsset("customerId", request, 1L);
+        assetService.updateAsset("customerId", request, cryptoAssetId);
 
         assertThat(cryptoAsset.getName()).isEqualTo("Bitcoin");
         assertThat(cryptoAsset.getUnitType()).isEqualTo(UnitType.UNIT);
