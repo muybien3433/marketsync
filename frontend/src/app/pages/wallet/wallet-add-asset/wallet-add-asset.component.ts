@@ -68,7 +68,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
     ) {
         this.addAssetForm = this.fb.group({
             assetType: ['', Validators.required],
-            unitType: ['', Validators.maxLength(6)],
+            unitType: [UnitType.UNIT, Validators.maxLength(6)],
             uri: ['', [Validators.required, Validators.minLength(1)]],
             count: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
             purchasePrice: [ '0.01', [Validators.required, Validators.min(0.0000000000001)]],
