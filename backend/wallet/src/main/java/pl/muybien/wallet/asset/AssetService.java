@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +38,7 @@ public class AssetService {
     private final SupportProducer support;
 
     @Transactional
-    public void createAsset(String customerId, AssetRequest request) {
+    public void createAsset(UUID customerId, AssetRequest request) {
         AssetType assetType = request.assetType();
         String normalizedUri = request.uri().trim().toLowerCase().replaceAll(" ", "-");
 
@@ -80,7 +81,7 @@ public class AssetService {
     }
 
     @Transactional
-    public AssetHistoryDTO updateAsset(String customerId, AssetRequest request, Long assetId) {
+    public AssetHistoryDTO updateAsset(UUID customerId, AssetRequest request, UUID assetId) {
         var asset = repository.findById(assetId).orElseThrow(() ->
                 new AssetNotFoundException("Asset with ID %s not found".formatted(assetId)));
 
@@ -129,7 +130,7 @@ public class AssetService {
     }
 
     @Transactional
-    public void deleteAsset(String customerId, Long assetId) {
+    public void deleteAsset(UUID customerId, UUID assetId) {
         var asset = repository.findById(assetId).orElseThrow(() ->
                 new EntityNotFoundException("Asset with ID: %s not found".formatted(assetId)));
 
@@ -142,7 +143,7 @@ public class AssetService {
     }
 
     @Transactional(readOnly = true)
-    public List<AssetHistoryDTO> findAllAssetHistory(String customerId) {
+    public List<AssetHistoryDTO> findAllAssetHistory(UUID customerId) {
         var assetHistory = repository.findAssetHistoryByCustomerId(customerId);
 
         return assetHistory.stream()
@@ -151,7 +152,7 @@ public class AssetService {
     }
 
     @Transactional(readOnly = true)
-    public List<AssetAggregateDTO> findAllCustomerAssets(String customerId, CurrencyType desiredCurrency) {
+    public List<AssetAggregateDTO> findAllCustomerAssets(UUID customerId, CurrencyType desiredCurrency) {
         var groupedAssets = repository.findAndAggregateAssetsByCustomerId(customerId).orElse(Collections.emptyList());
         var aggregatedAssets = new ArrayList<AssetAggregateDTO>();
 

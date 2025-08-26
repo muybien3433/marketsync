@@ -12,6 +12,7 @@ import pl.muybien.enumeration.UnitType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Builder
@@ -25,9 +26,9 @@ import java.time.LocalDateTime;
 public class Asset {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
-    private Long id;
+    private UUID id;
 
     private String name;
 
@@ -39,7 +40,7 @@ public class Asset {
 
     private BigDecimal purchasePrice;
 
-    private String customerId;
+    private UUID customerId;
 
     @Nullable
     @Enumerated(EnumType.STRING)

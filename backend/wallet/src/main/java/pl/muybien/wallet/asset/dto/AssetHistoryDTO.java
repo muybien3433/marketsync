@@ -7,9 +7,10 @@ import pl.muybien.enumeration.UnitType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record AssetHistoryDTO(
-        @JsonProperty("id") Long id,
+        @JsonProperty("id") UUID id,
         @JsonProperty("name") String name,
         @JsonProperty("uri") String uri,
         @JsonProperty("symbol") String symbol,
