@@ -1,7 +1,7 @@
 package pl.muybien.subscription.dto;
 
 import org.springframework.stereotype.Service;
-import pl.muybien.subscription.data.SubscriptionDetail;
+import pl.muybien.entity.helper.SubscriptionDetail;
 
 @Service
 public class SubscriptionDetailDTOMapper {

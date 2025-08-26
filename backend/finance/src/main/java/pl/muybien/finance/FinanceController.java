@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.muybien.enums.AssetType;
-import pl.muybien.enums.CurrencyType;
+import pl.muybien.response.FinanceResponse;
+import pl.muybien.enumeration.AssetType;
+import pl.muybien.enumeration.CurrencyType;
 
 import java.math.BigDecimal;
 import java.util.Set;

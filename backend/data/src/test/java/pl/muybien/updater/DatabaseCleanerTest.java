@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.muybien.finance.Finance;
+import pl.muybien.entity.Finance;
 import pl.muybien.finance.FinanceRepository;
 
 import java.util.List;

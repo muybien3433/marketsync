@@ -2,7 +2,7 @@ package pl.muybien.notification;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.muybien.enums.NotificationType;
+import pl.muybien.enumeration.NotificationType;
 import pl.muybien.exception.ServiceNotFoundException;
 
 import java.util.Map;

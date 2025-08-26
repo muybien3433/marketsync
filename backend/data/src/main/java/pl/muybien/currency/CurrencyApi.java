@@ -8,8 +8,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import pl.muybien.enums.CurrencyType;
-import pl.muybien.enums.UnitType;
+import pl.muybien.entity.Currency;
+import pl.muybien.enumeration.CurrencyType;
+import pl.muybien.enumeration.UnitType;
 import pl.muybien.updater.QueueUpdater;
 
 import java.io.InputStream;

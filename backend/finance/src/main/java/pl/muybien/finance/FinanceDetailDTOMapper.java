@@ -1,6 +1,7 @@
 package pl.muybien.finance;
 
 import org.springframework.stereotype.Service;
+import pl.muybien.entity.helper.FinanceDetail;
 
 @Service
 public class FinanceDetailDTOMapper {

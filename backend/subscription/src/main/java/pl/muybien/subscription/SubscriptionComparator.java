@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.finance.FinanceClient;
-import pl.muybien.finance.FinanceResponse;
+import pl.muybien.feign.FinanceClient;
+import pl.muybien.response.FinanceResponse;
 import pl.muybien.kafka.confirmation.SubscriptionConfirmation;
 import pl.muybien.kafka.producer.SubscriptionProducer;
-import pl.muybien.subscription.data.SubscriptionDetail;
+import pl.muybien.entity.helper.SubscriptionDetail;
 
 import java.math.BigDecimal;
 

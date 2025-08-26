@@ -6,9 +6,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.muybien.enums.AssetType;
-import pl.muybien.finance.Finance;
-import pl.muybien.finance.FinanceDetail;
+import pl.muybien.enumeration.AssetType;
+import pl.muybien.entity.Finance;
+import pl.muybien.entity.helper.FinanceDetail;
 import pl.muybien.finance.FinanceRepository;
 
 import java.util.HashMap;

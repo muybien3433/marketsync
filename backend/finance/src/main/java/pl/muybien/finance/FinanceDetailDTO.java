@@ -1,9 +1,9 @@
 package pl.muybien.finance;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import pl.muybien.enums.AssetType;
-import pl.muybien.enums.CurrencyType;
-import pl.muybien.enums.UnitType;
+import pl.muybien.enumeration.AssetType;
+import pl.muybien.enumeration.CurrencyType;
+import pl.muybien.enumeration.UnitType;
 
 import java.time.LocalDateTime;
 

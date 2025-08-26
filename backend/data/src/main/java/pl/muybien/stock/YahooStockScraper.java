@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.common.YahooScraper;
-import pl.muybien.enums.AssetType;
-import pl.muybien.enums.CurrencyType;
-import pl.muybien.finance.FinanceDetail;
-import pl.muybien.enums.UnitType;
+import pl.muybien.enumeration.AssetType;
+import pl.muybien.enumeration.CurrencyType;
+import pl.muybien.entity.helper.FinanceDetail;
+import pl.muybien.enumeration.UnitType;
 import pl.muybien.updater.DatabaseUpdater;
 
 import java.time.LocalDateTime;

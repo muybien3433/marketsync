@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import pl.muybien.enums.AlertType;
-import pl.muybien.enums.TeamType;
+import pl.muybien.enumeration.AlertType;
+import pl.muybien.enumeration.TeamType;
 import pl.muybien.kafka.confirmation.SupportConfirmation;
 import pl.muybien.kafka.producer.SupportProducer;
 

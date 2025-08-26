@@ -3,10 +3,12 @@ package pl.muybien.finance;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.currency.Currency;
+import pl.muybien.entity.helper.FinanceDetail;
+import pl.muybien.response.FinanceResponse;
+import pl.muybien.entity.Currency;
 import pl.muybien.currency.CurrencyRepository;
-import pl.muybien.enums.AssetType;
-import pl.muybien.enums.CurrencyType;
+import pl.muybien.enumeration.AssetType;
+import pl.muybien.enumeration.CurrencyType;
 import pl.muybien.exception.FinanceNotFoundException;
 
 import java.math.BigDecimal;

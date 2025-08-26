@@ -1,7 +1,7 @@
 package pl.muybien.kafka.confirmation;
 
-import pl.muybien.enums.AlertType;
-import pl.muybien.enums.TeamType;
+import pl.muybien.enumeration.AlertType;
+import pl.muybien.enumeration.TeamType;
 
 public record SupportConfirmation(
         TeamType teamType,

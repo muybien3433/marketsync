@@ -3,9 +3,9 @@ package pl.muybien.updater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.enums.AssetType;
-import pl.muybien.finance.Finance;
-import pl.muybien.finance.FinanceDetail;
+import pl.muybien.enumeration.AssetType;
+import pl.muybien.entity.Finance;
+import pl.muybien.entity.helper.FinanceDetail;
 import pl.muybien.finance.FinanceRepository;
 
 import java.util.Map;

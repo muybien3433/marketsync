@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
-import pl.muybien.finance.FinanceDetail;
+import pl.muybien.entity.helper.FinanceDetail;
 import pl.muybien.updater.QueueUpdater;
 
 import java.time.Duration;

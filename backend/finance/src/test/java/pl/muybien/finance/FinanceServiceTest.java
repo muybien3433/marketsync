@@ -7,9 +7,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.muybien.currency.CurrencyRepository;
-import pl.muybien.enums.AssetType;
-import pl.muybien.enums.CurrencyType;
-import pl.muybien.enums.UnitType;
+import pl.muybien.entity.helper.FinanceDetail;
+import pl.muybien.entity.Finance;
+import pl.muybien.enumeration.AssetType;
+import pl.muybien.enumeration.CurrencyType;
+import pl.muybien.enumeration.UnitType;
 import pl.muybien.exception.FinanceNotFoundException;
 
 import java.time.LocalDateTime;

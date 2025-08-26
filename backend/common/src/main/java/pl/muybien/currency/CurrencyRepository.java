@@ -1,6 +1,7 @@
 package pl.muybien.currency;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import pl.muybien.entity.Currency;
 
 import java.util.Optional;
 

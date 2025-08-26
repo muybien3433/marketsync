@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import pl.muybien.enums.AssetType;
-import pl.muybien.enums.CurrencyType;
-import pl.muybien.enums.NotificationType;
+import pl.muybien.enumeration.AssetType;
+import pl.muybien.enumeration.CurrencyType;
+import pl.muybien.enumeration.NotificationType;
 
 public record SubscriptionRequest(
 
