@@ -9,10 +9,9 @@ kafka:
   enabled: true
 
 spring:
-  data:
-    mongodb:
-      uri: mongodb://subscription:subscription@mongodb-subscription/subscription?authSource=admin&authMechanism=SCRAM-SHA-256&tls=false
-      authentication-database: admin
+  mongodb:
+    uri: mongodb://subscription:subscription@mongodb-subscription/subscription?authSource=admin&authMechanism=SCRAM-SHA-256&tls=false
+    authentication-database: admin
   kafka:
     bootstrap-servers: kafka-1:9092,kafka-2:9092
     producer:

@@ -1,6 +1,5 @@
 spring:
   config:
-    import:
-      - configserver:http://config-server:7777/
+    import: configserver:http://config-server:7777
   application:
     name: finance-service

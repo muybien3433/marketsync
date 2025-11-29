@@ -6,13 +6,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.muybien.currency.CurrencyRepository;
+import pl.muybien.repository.CurrencyRepository;
 import pl.muybien.entity.helper.FinanceDetail;
 import pl.muybien.entity.Finance;
 import pl.muybien.enumeration.AssetType;
 import pl.muybien.enumeration.CurrencyType;
 import pl.muybien.enumeration.UnitType;
 import pl.muybien.exception.FinanceNotFoundException;
+import pl.muybien.repository.FinanceRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;

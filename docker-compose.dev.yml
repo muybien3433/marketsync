@@ -24,7 +24,6 @@ services:
           cpus: '0.5'
           memory: 512M
 
-
   ######### [ Gateway ] #########
   gateway-server:
     build:
@@ -92,9 +91,7 @@ services:
           memory: 1536M
 
   mongodb-finance:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
+    image: mongo:8.2.2
     container_name: mongodb-finance
     environment:
       MONGO_INITDB_ROOT_USERNAME: finance
@@ -139,7 +136,7 @@ services:
           memory: 1024M
 
   postgres-wallet:
-    image: postgres:latest
+    image: postgres:17
     container_name: postgres-wallet
     environment:
       POSTGRES_USER: wallet
@@ -186,7 +183,7 @@ services:
           memory: 1024M
 
   mongodb-subscription:
-    image: mongo:latest
+    image: mongo:8.2.2
     container_name: mongodb-subscription
     environment:
       MONGO_INITDB_ROOT_USERNAME: subscription
@@ -265,7 +262,7 @@ services:
           memory: 768M
 
   postgres-keycloak:
-    image: postgres:latest
+    image: postgres:17
     container_name: postgres-keycloak
     environment:
       POSTGRES_DB: keycloak

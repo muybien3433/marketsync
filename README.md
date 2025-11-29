@@ -68,7 +68,7 @@ ensuring that users stay informed about market changes in real-time.
 
 Ensure you have the following installed before running the project:
 
-- **Java 23**
+- **Java 25**
 - **Docker**
 
 ## Installation

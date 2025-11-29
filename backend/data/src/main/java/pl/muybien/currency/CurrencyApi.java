@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import pl.muybien.entity.Currency;
 import pl.muybien.enumeration.CurrencyType;
 import pl.muybien.enumeration.UnitType;
+import pl.muybien.repository.CurrencyRepository;
 import pl.muybien.updater.QueueUpdater;
 
 import java.io.InputStream;

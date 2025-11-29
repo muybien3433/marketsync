@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "pl.muybien.common")
 @EnableFeignClients
 @EnableJpaAuditing
 public class WalletApplication {
@@ -13,5 +13,4 @@ public class WalletApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WalletApplication.class, args);
 	}
-
 }
