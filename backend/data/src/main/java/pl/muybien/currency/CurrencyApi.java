@@ -36,7 +36,7 @@ public class CurrencyApi extends QueueUpdater {
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
-    @Scheduled(fixedDelay = 14400000) // 4 hours for free api key TODO: fetch from config
+    @Scheduled(fixedDelay = 14400000) // 4 hours for free api key TODO: fetch from config when new
     public void scheduleUpdate() {
         enqueueUpdate("currency-api");
     }
@@ -51,7 +51,7 @@ public class CurrencyApi extends QueueUpdater {
             conn.setReadTimeout(15_000);
             conn.setRequestProperty("Accept", "application/json");
             conn.setRequestProperty("User-Agent", "muybien-data-service/1.0");
-            conn.setRequestProperty("apikey", "cur_live_iRfBC5llXvpTZaqiM4YGvXBiMP5HBLYSr4qBtOH0"); // TODO: fetch from config
+            conn.setRequestProperty("apikey", "cur_live_iRfBC5llXvpTZaqiM4YGvXBiMP5HBLYSr4qBtOH0"); // TODO: fetch from config when new
 
             int status = conn.getResponseCode();
             try (InputStream is = status >= 200 && status < 300 ? conn.getInputStream() : conn.getErrorStream()) {

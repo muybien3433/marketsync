@@ -7,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.common.SeleniumHandler;
 import pl.muybien.common.YahooScraper;
 import pl.muybien.enumeration.AssetType;
 import pl.muybien.enumeration.CurrencyType;
@@ -40,7 +41,8 @@ public class YahooCryptoScraper extends YahooScraper {
 
     private final DatabaseUpdater databaseUpdater;
 
-    public YahooCryptoScraper(DatabaseUpdater databaseUpdater) {
+    public YahooCryptoScraper(SeleniumHandler seleniumHandler, DatabaseUpdater databaseUpdater) {
+        super(seleniumHandler);
         this.databaseUpdater = databaseUpdater;
         log.debug("YahooCryptoScraper initialized");
         log.debug("THREAD_POOL_SIZE: {}", THREAD_POOL_SIZE);

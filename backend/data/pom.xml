@@ -20,11 +20,6 @@
             <groupId>pl.muybien</groupId>
             <artifactId>common</artifactId>
         </dependency>
-        <!--		Web		-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
         <!--		Validation		-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -59,7 +54,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.17.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <!--		Javax		-->
         <dependency>
@@ -83,10 +81,6 @@
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>

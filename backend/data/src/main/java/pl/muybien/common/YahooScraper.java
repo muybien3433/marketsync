@@ -21,6 +21,8 @@ public abstract class YahooScraper extends QueueUpdater {
 
     private String targetUrl;
 
+    private final SeleniumHandler seleniumHandler;
+
     public abstract void scheduleUpdate();
     public abstract void updateAssets();
     protected abstract void scrapePages(WebDriver driver, int startPage, int endPage, Map<String, FinanceDetail> assets);
@@ -30,26 +32,40 @@ public abstract class YahooScraper extends QueueUpdater {
     }
 
     protected void awaitCompletion(ExecutorService executor, List<Future<?>> futures) {
-        futures.forEach(future -> {
+        RuntimeException collected = null;
+
+        for (Future<?> future : futures) {
             try {
                 future.get();
             } catch (Exception e) {
                 log.error("Scraping task failed", e);
+                if (collected == null) {
+                    collected = new RuntimeException("One or more scraping tasks failed", e);
+                }
             }
-        });
+        }
+
         executor.shutdown();
+
+        if (collected != null) {
+            throw collected;
+        }
     }
 
     protected Runnable createScrapingTask(int startPage, int endPage, Map<String, FinanceDetail> assets) {
         return () -> {
             WebDriver driver = null;
             try {
-                driver = SeleniumHandler.getDriverAndNavigate(targetUrl + "0&count=100");
-                WebDriverWait wait = SeleniumHandler.getDriverWait(driver, Duration.ofMillis(100));
-                SeleniumHandler.handleCookieConsent(wait, "button[type='submit'][name='agree']");
+                driver = seleniumHandler.getDriverAndNavigate(targetUrl + "0&count=100");
+                WebDriverWait wait = seleniumHandler.getDriverWait(driver, Duration.ofMillis(100));
+                seleniumHandler.handleCookieConsent(wait, "button[type='submit'][name='agree']");
                 scrapePages(driver, startPage, endPage, assets);
             } catch (Exception e) {
-                log.error("Thread error: {}", e.getMessage());
+                log.error("Thread error", e);
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
+                throw new RuntimeException(e);
             } finally {
                 if (driver != null) {
                     driver.quit();

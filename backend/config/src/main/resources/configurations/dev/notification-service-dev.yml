@@ -6,7 +6,7 @@ kafka:
 
 spring:
   kafka:
-    bootstrap-servers: kafka-1:9092,kafka-2:9092
+    bootstrap-servers: localhost:9092,localhost:9094
     consumer:
       group-id: send-notification-event
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

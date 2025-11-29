@@ -9,11 +9,13 @@ kafka:
   enabled: true
 
 spring:
-  mongodb:
-    uri: mongodb://subscription:subscription@mongodb-subscription/subscription?authSource=admin&authMechanism=SCRAM-SHA-256&tls=false
-    authentication-database: admin
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: subscription
   kafka:
-    bootstrap-servers: kafka-1:9092,kafka-2:9092
+    bootstrap-servers: localhost:9092,localhost:9094
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

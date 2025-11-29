@@ -1,17 +1,17 @@
-server:
-  port: 7777
-
 spring:
-  application:
-    name: config-server
   profiles:
     active: native
+  application:
+    name: config-server
   cloud:
     config:
       server:
         native:
-          search-locations: file:/app/configurations
+          search-locations: classpath:/configurations/{profile}
       fail-fast: true
+
+server:
+  port: 7777
 
 management:
   endpoints:

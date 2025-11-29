@@ -20,6 +20,11 @@
             <groupId>pl.muybien</groupId>
             <artifactId>common</artifactId>
         </dependency>
+        <!--		Web			-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
         <!--		Kafka		-->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
@@ -65,10 +70,6 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
         </dependency>
     </dependencies>
 

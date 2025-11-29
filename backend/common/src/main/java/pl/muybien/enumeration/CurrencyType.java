@@ -210,4 +210,10 @@ public enum CurrencyType {
         }
     }
 
+    public static CurrencyType extractCurrency(String unit) {
+        for (CurrencyType currency : CurrencyType.values()) {
+            if (unit.toUpperCase().contains(currency.name())) return currency;
+        }
+        return null;
+    }
 }

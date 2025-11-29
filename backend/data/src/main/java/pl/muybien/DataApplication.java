@@ -2,13 +2,20 @@ package pl.muybien;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(scanBasePackages = "pl.muybien.common")
+@SpringBootApplication
+@ComponentScan(
+        basePackages = "pl.muybien",
+        excludeFilters = @ComponentScan.Filter(
+                type = FilterType.REGEX,
+                pattern = "pl\\.muybien\\.kafka\\..*"
+        )
+)
 @EnableScheduling
-@EnableMongoAuditing
 @EnableAsync
 public class DataApplication {
 

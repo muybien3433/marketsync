@@ -20,7 +20,7 @@ import pl.muybien.wallet.exception.OwnershipException;
 import pl.muybien.feign.FinanceClient;
 import pl.muybien.response.FinanceResponse;
 import pl.muybien.kafka.confirmation.SupportConfirmation;
-import pl.muybien.kafka.producer.SupportProducer;
+import pl.muybien.kafka.SupportProducer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

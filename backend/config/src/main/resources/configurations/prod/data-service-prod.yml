@@ -8,3 +8,6 @@ spring:
     username: ${MONGO_FINANCE_USER}
     password: ${MONGO_FINANCE_PASSWORD}
     authentication-database: admin
+
+selenium:
+  remote-web-driver: http://selenium-chrome:4444/wd/hub

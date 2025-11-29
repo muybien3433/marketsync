@@ -5,7 +5,7 @@ spring:
   datasource:
     username: wallet
     password: wallet
-    url: jdbc:postgresql://postgres-wallet/wallet?sslmode=disable
+    url: jdbc:postgresql://localhost/wallet?sslmode=disable
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,4 +14,4 @@ spring:
 
 application:
   config:
-    finance-url: http://finance-server:8800/api/v1/finances
+    finance-url: http://localhost:8800/api/v1/finances

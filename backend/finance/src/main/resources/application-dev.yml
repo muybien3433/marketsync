@@ -1,0 +1,5 @@
+spring:
+  config:
+    import: configserver:http://localhost:7777
+  application:
+    name: finance-service

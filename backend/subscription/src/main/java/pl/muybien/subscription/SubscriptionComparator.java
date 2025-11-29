@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.feign.FinanceClient;
 import pl.muybien.response.FinanceResponse;
 import pl.muybien.kafka.confirmation.SubscriptionConfirmation;
-import pl.muybien.kafka.producer.SubscriptionProducer;
+import pl.muybien.kafka.SubscriptionProducer;
 import pl.muybien.entity.helper.SubscriptionDetail;
 
 import java.math.BigDecimal;

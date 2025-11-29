@@ -1,0 +1,286 @@
+services:
+  ######### [ Data & Finance ] #########
+  mongodb-finance:
+    image: mongo:8.2.2
+    container_name: mongodb-finance
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: finance
+      MONGO_INITDB_ROOT_PASSWORD: finance
+      MONGO_INITDB_DATABASE: finance
+    volumes:
+      - mongodb_finance_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  ######### [ Wallet ] #########
+  postgres-wallet:
+    image: postgres:17
+    container_name: postgres-wallet
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: wallet
+      POSTGRES_PASSWORD: wallet
+      POSTGRES_DB: wallet
+    volumes:
+      - postgres_wallet:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U wallet" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  ######### [ Subscription ] #########
+  mongodb-subscription:
+    image: mongo:8.2.2
+    container_name: mongodb-subscription
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: subscription
+      MONGO_INITDB_ROOT_PASSWORD: subscription
+      MONGO_INITDB_DATABASE: subscription
+    volumes:
+      - mongodb_subscription_data:/data/db
+      - ./init/mongo-subscription.js:/docker-entrypoint-initdb.d/mongo-subscription.js:ro
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
+
+  ######### [ Authentication ] #########
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-keycloak/keycloak?sslmode=disable
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_STRICT: "false"
+#    volumes:
+#      - ./init/marketsync-client-dev.json:/opt/keycloak/data/import/marketsync-client-dev.json
+    command:
+      - "start-dev"
+      - "--import-realm"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
+
+  postgres-keycloak:
+    image: postgres:17
+    container_name: postgres-keycloak
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - postgres_keycloak:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U keycloak" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+
+  ######### [ Selenium ] #########
+  selenium-chrome:
+    image: selenium/standalone-chromium:latest
+    ports:
+      - "4444:4444"
+    container_name: selenium-chrome
+    environment:
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2048M
+
+
+  ######### [ Zookeeper ] #########
+  zookeeper-1:
+    image: confluentinc/cp-zookeeper:7.9.0
+    container_name: zookeeper-1
+    restart: unless-stopped
+    volumes:
+      - zookeeper_data_1:/var/lib/zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVERS: zookeeper-1:2888:3888;zookeeper-2:2888:3888;zookeeper-3:2888:3888
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "2181" ]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  zookeeper-2:
+    image: confluentinc/cp-zookeeper:7.9.0
+    container_name: zookeeper-2
+    restart: unless-stopped
+    volumes:
+      - zookeeper_data_2:/var/lib/zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVERS: zookeeper-1:2888:3888;zookeeper-2:2888:3888;zookeeper-3:2888:3888
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "2181" ]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  zookeeper-3:
+    image: confluentinc/cp-zookeeper:7.9.0
+    container_name: zookeeper-3
+    restart: unless-stopped
+    volumes:
+      - zookeeper_data_3:/var/lib/zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVERS: zookeeper-1:2888:3888;zookeeper-2:2888:3888;zookeeper-3:2888:3888
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "2181" ]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ######### [ Kafka Brokers ] #########
+  kafka-1:
+    image: confluentinc/cp-kafka:7.9.0
+    container_name: kafka-1
+    ports:
+      - "9092:9092"
+    restart: unless-stopped
+    volumes:
+      - kafka_data_1:/var/lib/kafka
+    depends_on:
+      zookeeper-1:
+        condition: service_healthy
+      zookeeper-2:
+        condition: service_healthy
+      zookeeper-3:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092" ]
+      start_period: 40s
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  kafka-2:
+    image: confluentinc/cp-kafka:7.9.0
+    container_name: kafka-2
+    ports:
+      - "9094:9094"
+    restart: unless-stopped
+    volumes:
+      - kafka_data_2:/var/lib/kafka
+    depends_on:
+      zookeeper-1:
+        condition: service_healthy
+      zookeeper-2:
+        condition: service_healthy
+      zookeeper-3:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9094" ]
+      start_period: 40s
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  postgres_keycloak:
+  postgres_wallet:
+  mongodb_finance_data:
+  mongodb_subscription_data:
+  zookeeper_data_1:
+  zookeeper_data_2:
+  zookeeper_data_3:
+  kafka_data_1:
+  kafka_data_2:

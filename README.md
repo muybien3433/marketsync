@@ -88,7 +88,7 @@ Ensure you have the following installed before running the project:
 
 4. Now everything you need to do is to start docker containers
    ```bash
-   docker compose -f docker-compose.dev.yml up -d
+   docker compose -f docker-compose-dev.yml up -d
    ```
    
 5. Run tests

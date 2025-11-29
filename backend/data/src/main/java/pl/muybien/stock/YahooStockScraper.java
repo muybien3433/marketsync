@@ -7,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.muybien.common.SeleniumHandler;
 import pl.muybien.common.YahooScraper;
 import pl.muybien.enumeration.AssetType;
 import pl.muybien.enumeration.CurrencyType;
@@ -36,7 +37,8 @@ public class YahooStockScraper extends YahooScraper {
 
     private final DatabaseUpdater databaseUpdater;
 
-    public YahooStockScraper(DatabaseUpdater databaseUpdater) {
+    public YahooStockScraper(SeleniumHandler seleniumHandler, DatabaseUpdater databaseUpdater) {
+        super(seleniumHandler);
         this.databaseUpdater = databaseUpdater;
         log.debug("YahooStockScraper initialized");
         log.debug("THREAD_POOL_SIZE: {}", THREAD_POOL_SIZE);
@@ -56,6 +58,7 @@ public class YahooStockScraper extends YahooScraper {
     @Override
     @Transactional
     public void updateAssets() {
+        log.info("Starting update of yahoo-finance-stock");
         setTargetUrl(TARGET_URL);
 
         long startTime = System.currentTimeMillis();

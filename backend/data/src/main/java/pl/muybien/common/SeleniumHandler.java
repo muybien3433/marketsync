@@ -7,6 +7,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
@@ -18,11 +19,13 @@ import java.util.Collections;
 @RequiredArgsConstructor
 @Slf4j
 public class SeleniumHandler {
-    private static final String REMOTE_WEB_DRIVER = "http://selenium-chrome:4444/wd/hub";
 
-    public static WebDriver getDriverAndNavigate(String url) {
+    @Value("${selenium.remote-web-driver}")
+    private String remoteWebDriver;
+
+    public WebDriver getDriverAndNavigate(String url) {
         try {
-            WebDriver driver = new RemoteWebDriver(new URL(REMOTE_WEB_DRIVER), createChromeOptions());
+            WebDriver driver = new RemoteWebDriver(new URL(remoteWebDriver), createChromeOptions());
             driver.get(url);
             return driver;
         } catch (MalformedURLException e) {
@@ -30,11 +33,11 @@ public class SeleniumHandler {
         }
     }
 
-    public static WebDriverWait getDriverWait(WebDriver driver, Duration duration) {
+    public WebDriverWait getDriverWait(WebDriver driver, Duration duration) {
         return new WebDriverWait(driver, duration);
     }
 
-    public static void handleCookieConsent(WebDriverWait wait, String cssSelector) {
+    public void handleCookieConsent(WebDriverWait wait, String cssSelector) {
         try {
             WebElement acceptButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(cssSelector)));
             acceptButton.click();
@@ -44,7 +47,7 @@ public class SeleniumHandler {
         }
     }
 
-    public static void handleCookieConsent(WebDriverWait wait, By by) {
+    public void handleCookieConsent(WebDriverWait wait, By by) {
         try {
             WebElement acceptButton = wait.until(ExpectedConditions.elementToBeClickable(by));
             acceptButton.click();
@@ -54,7 +57,7 @@ public class SeleniumHandler {
         }
     }
 
-    private static ChromeOptions createChromeOptions() {
+    private ChromeOptions createChromeOptions() {
         ChromeOptions options = new ChromeOptions();
 
         options.addArguments("--no-sandbox");

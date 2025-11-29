@@ -34,6 +34,7 @@ public class GpwScraper extends QueueUpdater {
     private static final String TARGET_URL = "https://www.gpw.pl/akcje";
 
     private final DatabaseUpdater databaseUpdater;
+    private final SeleniumHandler seleniumHandler;
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
@@ -45,13 +46,14 @@ public class GpwScraper extends QueueUpdater {
     @Override
     @Transactional
     public void updateAssets() {
+        log.info("Starting update of gpw");
         var stocks = new HashMap<String, FinanceDetail>();
 
         WebDriver driver = null;
         try {
-            driver = SeleniumHandler.getDriverAndNavigate(TARGET_URL);
-            WebDriverWait wait = SeleniumHandler.getDriverWait(driver, Duration.ofMillis(8000));
-            SeleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(text(),'Akceptuję')]"));
+            driver = seleniumHandler.getDriverAndNavigate(TARGET_URL);
+            WebDriverWait wait = seleniumHandler.getDriverWait(driver, Duration.ofMillis(8000));
+            seleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(text(),'Akceptuję')]"));
 
             WebElement body = driver.findElement(By.tagName("body"));
             String pageContent = body.getText();

@@ -9,25 +9,25 @@ spring:
           enabled: false
       routes:
         - id: finance-service
-          uri: http://finance-server:8800
+          uri: http://localhost:8800
           predicates:
             - Path=/api/v1/finances/**
         - id: subscription-service
-          uri: http://subscription-server:8900
+          uri: http://localhost:8900
           predicates:
             - Path=/api/v1/subscriptions/**
         - id: wallet-service
-          uri: http://wallet-server:8200
+          uri: http://localhost:8200
           predicates:
             - Path=/api/v1/wallets/**
   security:
     oauth2:
       resourceserver:
-        issuer-uri: http://keycloak:8080/realms/marketsync-client
+        issuer-uri: http://localhost:8080/realms/marketsync-client
 
 frontend-url: http://localhost:4200
 
-jwk-uri: http://keycloak:8080/realms/marketsync-client/protocol/openid-connect/certs
+jwk-uri: http://localhost:8080/realms/marketsync-client/protocol/openid-connect/certs
 
 management:
   endpoints:

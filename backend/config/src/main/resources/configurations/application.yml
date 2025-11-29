@@ -1,5 +1,0 @@
-spring:
-  cloud:
-    config:
-      override-none: false
-      override-system-properties: true

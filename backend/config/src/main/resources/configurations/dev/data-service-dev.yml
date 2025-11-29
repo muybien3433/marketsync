@@ -1,0 +1,9 @@
+server:
+  port: 8100
+
+spring:
+  mongodb:
+    uri: mongodb://finance:finance@localhost:27017/finance?authSource=admin
+
+selenium:
+  remote-web-driver: http://localhost:4444/wd/hub

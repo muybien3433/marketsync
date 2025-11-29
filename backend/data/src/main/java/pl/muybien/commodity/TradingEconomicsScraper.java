@@ -26,13 +26,17 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
+import static pl.muybien.enumeration.CurrencyType.extractCurrency;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TradingEconomicsScraper extends QueueUpdater {
 
     private static final String TARGET_URL = "https://tradingeconomics.com/commodities";
+
     private final DatabaseUpdater databaseUpdater;
+    private final SeleniumHandler seleniumHandler;
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
@@ -47,11 +51,11 @@ public class TradingEconomicsScraper extends QueueUpdater {
 
         WebDriver driver = null;
         try {
-            driver = SeleniumHandler.getDriverAndNavigate(TARGET_URL);
+            driver = seleniumHandler.getDriverAndNavigate(TARGET_URL);
             driver.manage().window().maximize();
-            WebDriverWait wait = SeleniumHandler.getDriverWait(driver, Duration.ofSeconds(10));
+            WebDriverWait wait = seleniumHandler.getDriverWait(driver, Duration.ofSeconds(10));
 
-            SeleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(., 'Consent')]"));
+            seleniumHandler.handleCookieConsent(wait, By.xpath("//button[contains(., 'Consent')]"));
 
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("table.table-hover tbody tr")));
             List<WebElement> rows = driver.findElements(By.cssSelector("table.table-hover tbody tr[data-symbol]"));
@@ -73,7 +77,7 @@ public class TradingEconomicsScraper extends QueueUpdater {
                     String uri = href.substring(href.lastIndexOf("/") + 1);
 
                     CurrencyType currencyType = extractCurrency(unitText);
-                    UnitType unitType = extractUnit(unitText);
+                    UnitType unitType = UnitType.extractUnit(unitText);
 
                     if (currencyType != null && unitType != null) {
                         FinanceDetail detail = new FinanceDetail(
@@ -99,19 +103,5 @@ public class TradingEconomicsScraper extends QueueUpdater {
             if (driver != null) driver.quit();
             System.gc();
         }
-    }
-
-    private CurrencyType extractCurrency(String unit) {
-        for (CurrencyType currency : CurrencyType.values()) {
-            if (unit.toUpperCase().contains(currency.name())) return currency;
-        }
-        return null;
-    }
-
-    private UnitType extractUnit(String unit) {
-        for (UnitType type : UnitType.values()) {
-            if (unit.toUpperCase().contains(type.name())) return type;
-        }
-        return null;
     }
 }

@@ -1,4 +1,4 @@
-package pl.muybien.kafka.producer;
+package pl.muybien.kafka;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;

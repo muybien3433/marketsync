@@ -14,7 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class QueueUpdater {
 
     private static final int MAX_QUEUE_CAPACITY = 50;
-    private static final int maxRetries = 3;
+    private static final int MAX_RETRIES = 3;
+    private static final long RETRY_BACKOFF_MS = 5000;
 
     private static final ExecutorService taskExecutor = Executors.newSingleThreadExecutor();
     private static final BlockingQueue<FinanceUpdateTask> taskQueue = new LinkedBlockingQueue<>(MAX_QUEUE_CAPACITY);
@@ -54,6 +55,7 @@ public abstract class QueueUpdater {
     }
 
     public void enqueueUpdate(String taskIdentifier) {
+        log.debug("Enqueuing update for task: " + taskIdentifier);
         if (pendingTasks.add(taskIdentifier)) {
             try {
                 Runnable updater = this::updateAssets;
@@ -78,16 +80,16 @@ public abstract class QueueUpdater {
 
     private static void processTask(FinanceUpdateTask task) {
         activeTasks.incrementAndGet();
-        long start = System.currentTimeMillis();
+        long startNs = System.nanoTime();
         try {
             log.info("Processing task: {}", task.taskKey());
             executeUpdateWithRetry(task);
-            long duration = (System.currentTimeMillis() - start) / 1000;
-            log.info("Task {} completed successfully in {}s", task.taskKey(), duration);
+            double seconds = (System.nanoTime() - startNs) / 1_000_000_000.0;
+            log.info("Task {} completed successfully in {}s", task.taskKey(), String.format("%.3f", seconds));
         } catch (Exception e) {
-            long duration = (System.currentTimeMillis() - start) / 1000;
-            log.error("Task {} failed after {}s", task.taskKey(), duration, e);
-            throw e;
+            double seconds = (System.nanoTime() - startNs) / 1_000_000_000.0;
+            log.error("Task {} failed after {}s", task.taskKey(), String.format("%.3f", seconds), e);
+            // TODO: Notify support with e
         } finally {
             activeTasks.decrementAndGet();
             pendingTasks.remove(task.taskKey());
@@ -96,16 +98,26 @@ public abstract class QueueUpdater {
 
     private static void executeUpdateWithRetry(FinanceUpdateTask task) {
         int attempts = 1;
-        while (attempts <= maxRetries) {
+        while (attempts <= MAX_RETRIES) {
             try {
                 task.updater().run();
                 return;
             } catch (Exception e) {
-                if (attempts == maxRetries) {
-                    log.error("Failed to process task {} after {} attempts", task.taskKey(), maxRetries, e);
+                if (attempts == MAX_RETRIES) {
+                    log.error("Failed to process task {} after {} attempts", task.taskKey(), MAX_RETRIES, e);
                     throw new DataUpdateException("Data update failed after retries", e);
                 }
-                log.warn("Retrying task {} (attempt {}/{})", task.taskKey(), attempts, maxRetries);
+
+                long backoff = RETRY_BACKOFF_MS * attempts;
+                log.warn("Retrying task {} (attempt {}/{}) after {} ms", task.taskKey(), attempts, MAX_RETRIES, backoff);
+
+                try {
+                    Thread.sleep(backoff);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new DataUpdateException("Retry interrupted", ie);
+                }
+
                 attempts++;
             }
         }
