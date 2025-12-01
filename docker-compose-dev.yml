@@ -36,7 +36,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
 #      - FRONTEND_URL=http://localhost:4200
-#      - KEYCLOAK_ISSUER_URL=http://keycloak:8080/realms/marketsync
+      - KEYCLOAK_ISSUER_URL=http://keycloak:8080/realms/marketsync
 #      - JWK_URI=http://keycloak/realms/marketsync/protocol/openid-connect/certs
     restart: unless-stopped
     networks:
@@ -245,8 +245,8 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HOSTNAME: localhost
       KC_HOSTNAME_STRICT: "false"
-#    volumes:
-#      - ./init/marketsync-client-dev.json:/opt/keycloak/data/import/marketsync-client-dev.json
+    volumes:
+      - ./init/marketsync-client-dev.json:/opt/keycloak/data/import/marketsync-client-dev.json
     command:
       - "start-dev"
       - "--import-realm"

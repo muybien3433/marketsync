@@ -46,9 +46,9 @@ ensuring that users stay informed about market changes in real-time.
 **API will be available at localhost:9999/api/v1**
 
 - *Finance*: `/finances`
-    - `GET /{asset-type}/{uri}` – Fetch the current price for specified type and uri with default currency.
-    - `GET /{asset-type}` – Display available assets and price.
-    - `GET /{asset-type}/currencies/{currency}` – Display available assets and price with desired currency.
+    - `GET /{assetType}/{uri}` – Fetch the current price for specified type and uri with default currency.
+    - `GET /{assetType}` – Display available assets and price.
+    - `GET /{assetType}/currencies/{currency}` – Display available assets and price with desired currency.
     - `GET /currencies/{from}/{to}` – Fetch the current exchange for two currencies.
 
 - *Subscription*: `/subscriptions`

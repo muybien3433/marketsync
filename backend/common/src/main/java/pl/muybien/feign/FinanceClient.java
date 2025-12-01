@@ -15,9 +15,9 @@ import java.math.BigDecimal;
 )
 public interface FinanceClient {
 
-    @GetMapping("/{asset-type}/{uri}")
+    @GetMapping("/{assetType}/{uri}")
     FinanceResponse findFinanceByTypeAndUri(
-            @PathVariable("asset-type") AssetType assetType,
+            @PathVariable("assetType") AssetType assetType,
             @PathVariable("uri") String uri
     );
 

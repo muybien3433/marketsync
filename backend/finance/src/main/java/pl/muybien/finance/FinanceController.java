@@ -20,25 +20,25 @@ public class FinanceController {
 
     private final FinanceService service;
 
-    @GetMapping("/{asset-type}/{uri}")
+    @GetMapping("/{assetType}/{uri}")
     public ResponseEntity<FinanceResponse> findFinanceWithDefaultCurrency(
-            @PathVariable("asset-type") AssetType assetType,
+            @PathVariable("assetType") AssetType assetType,
             @PathVariable("uri") String uri
     ) {
         return ResponseEntity.ok(service.fetchFinance(assetType, uri));
     }
 
-    @GetMapping("/{asset-type}")
+    @GetMapping("/{assetType}")
     public ResponseEntity<Set<FinanceDetailDTO>> displayAvailableFinance(
-            @PathVariable("asset-type") AssetType assetType
+            @PathVariable("assetType") AssetType assetType
     ) {
         return ResponseEntity.ok(service.displayAvailableFinance(assetType));
     }
 
-    @GetMapping("/{asset-type}/currencies/{currency-type}")
+    @GetMapping("/{assetType}/currencies/{currencyType}")
     public ResponseEntity<Set<FinanceDetailDTO>> displayAvailableFinance(
-            @PathVariable("asset-type") AssetType assetType,
-            @PathVariable("currency-type") CurrencyType currencyType
+            @PathVariable("assetType") AssetType assetType,
+            @PathVariable("currencyType") CurrencyType currencyType
     ) {
         return ResponseEntity.ok(service.displayAvailableFinance(assetType, currencyType));
     }

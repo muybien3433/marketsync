@@ -27,3 +27,12 @@ application:
     finance-url: http://finance-server:8800/api/v1/finances
 
 send-email-topic: send-email-topic
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

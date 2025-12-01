@@ -23,7 +23,9 @@ spring:
   security:
     oauth2:
       resourceserver:
-        issuer-uri: http://localhost:8080/realms/marketsync-client
+        jwt:
+          issuer-uri: http://localhost:8080/realms/marketsync-client
+
 
 frontend-url: http://localhost:4200
 
@@ -33,4 +35,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

@@ -15,3 +15,12 @@ spring:
 application:
   config:
     finance-url: http://localhost:8800/api/v1/finances
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

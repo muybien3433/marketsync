@@ -7,3 +7,12 @@ spring:
 
 selenium:
   remote-web-driver: http://localhost:4444/wd/hub
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

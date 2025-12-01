@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
     }
 
     //                          Other
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest r) {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now().toString(),

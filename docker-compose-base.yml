@@ -89,8 +89,8 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HOSTNAME: localhost
       KC_HOSTNAME_STRICT: "false"
-#    volumes:
-#      - ./init/marketsync-client-dev.json:/opt/keycloak/data/import/marketsync-client-dev.json
+    volumes:
+      - ./init/marketsync-client-dev.json:/opt/keycloak/data/import/marketsync-client-dev.json
     command:
       - "start-dev"
       - "--import-realm"

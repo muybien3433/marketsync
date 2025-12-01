@@ -601,7 +601,7 @@ class AssetServiceTest {
 
         Request request = Request.create(
                 Request.HttpMethod.GET,
-                "http://localhost/api/v1/finances/asset-type/uri",
+                "http://localhost/api/v1/finances/assetType/uri",
                 Collections.emptyMap(),
                 null,
                 null,
