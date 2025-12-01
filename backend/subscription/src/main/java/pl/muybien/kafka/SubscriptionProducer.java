@@ -11,10 +11,10 @@ import pl.muybien.kafka.confirmation.SubscriptionConfirmation;
 @Component
 public class SubscriptionProducer {
 
-    @Qualifier("subscriptionKafkaTemplate")
     private final KafkaTemplate<String, SubscriptionConfirmation> kafkaTemplate;
 
-    public SubscriptionProducer(KafkaTemplate<String, SubscriptionConfirmation> kafkaTemplate) {
+    public SubscriptionProducer(@Qualifier("subscriptionKafkaTemplate")
+                                KafkaTemplate<String, SubscriptionConfirmation> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

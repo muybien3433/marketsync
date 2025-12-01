@@ -4,22 +4,25 @@ server:
 spring:
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: false
-      routes:
-        - id: finance-service
-          uri: http://finance-server:8800
-          predicates:
-            - Path=/api/v1/finances/**
-        - id: subscription-service
-          uri: http://subscription-server:8900
-          predicates:
-            - Path=/api/v1/subscriptions/**
-        - id: wallet-service
-          uri: http://wallet-server:8200
-          predicates:
-            - Path=/api/v1/wallets/**
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: false
+          routes:
+            - id: finance-service
+              uri: http://finance-server:8800
+              predicates:
+                - Path=/api/v1/finances/**
+            - id: subscription-service
+              uri: http://subscription-server:8900
+              predicates:
+                - Path=/api/v1/subscriptions/**
+            - id: wallet-service
+              uri: http://wallet-server:8200
+              predicates:
+                - Path=/api/v1/wallets/**
+
   security:
     oauth2:
       resourceserver:

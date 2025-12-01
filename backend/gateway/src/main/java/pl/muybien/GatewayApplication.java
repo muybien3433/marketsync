@@ -3,7 +3,7 @@ package pl.muybien;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "pl.muybien.common")
+@SpringBootApplication
 public class GatewayApplication {
 
 	public static void main(String[] args) {

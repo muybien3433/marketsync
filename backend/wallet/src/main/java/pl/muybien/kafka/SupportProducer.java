@@ -11,10 +11,10 @@ import pl.muybien.kafka.confirmation.SupportConfirmation;
 @Component
 public class SupportProducer {
 
-    @Qualifier("supportKafkaTemplate")
     private final KafkaTemplate<String, SupportConfirmation> kafkaTemplate;
 
-    public SupportProducer(KafkaTemplate<String, SupportConfirmation> kafkaTemplate) {
+    public SupportProducer(@Qualifier("supportKafkaTemplate")
+                           KafkaTemplate<String, SupportConfirmation> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

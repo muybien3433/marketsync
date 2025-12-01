@@ -9,21 +9,16 @@ kafka:
   enabled: true
 
 spring:
-  mongodb:
-    host: mongodb-subscription
-    port: 27017
-    username: ${MONGO_SUBSCRIPTION_USER}
-    password: ${MONGO_SUBSCRIPTION_PASSWORD}
-    authentication-database: admin
+  host: mongodb-subscription
+  port: 27017
+  username: ${MONGO_SUBSCRIPTION_USER}
+  password: ${MONGO_SUBSCRIPTION_PASSWORD}
+  authentication-database: admin
   kafka:
     bootstrap-servers: ${BOOTSTRAP_SERVERS}
     producer:
-      enable-idempotence: true
-      retries: 3
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.type.mapping: subscriptionConfirmation:pl.muybien.kafka.confirmation.SubscriptionConfirmation
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 application:
   config:
     finance-url: ${FINANCE_API_URL}
