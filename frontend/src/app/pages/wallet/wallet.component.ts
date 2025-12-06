@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslatePipe, TranslateService} from "@ngx-translate/core";
-import {AssetAggregate} from "../../common/model/asset-aggregate";
+import {AssetAggregate} from "../../common/model/asset-aggregate.model";
 import {HttpClient} from "@angular/common/http";
-import {CurrencyType} from "../../common/model/currency-type";
+import {CurrencyType} from "../../common/enum/currency-type";
 import {API_ENDPOINTS} from "../../common/service/api-endpoints";
 import {PreferenceService} from "../../common/service/preference-service";
 import {Router} from "@angular/router";
@@ -11,7 +11,7 @@ import {ApexOptions, ChartComponent} from "ng-apexcharts";
 import {CardComponent} from "../../common/components/card/card.component";
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {environment} from "../../../environments/environment";
-import {UnitTypeLabels} from "../../common/model/unit-type";
+import {UnitTypeLabels} from "../../common/enum/unit-type";
 
 @Component({
     selector: 'app-wallet',

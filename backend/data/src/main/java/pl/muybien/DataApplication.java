@@ -18,9 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableAsync
 public class DataApplication {
-
-	public static void main(String[] args) {
+    static void main(String[] args) {
 		SpringApplication.run(DataApplication.class, args);
 	}
-
 }

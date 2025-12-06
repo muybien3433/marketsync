@@ -21,6 +21,7 @@ import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.updater.DatabaseUpdater;
 import pl.muybien.updater.QueueUpdater;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class NewconnectScraper extends QueueUpdater {
 
     private static final String TARGET_URL = "https://newconnect.pl/notowania";
@@ -45,7 +47,6 @@ public class NewconnectScraper extends QueueUpdater {
     }
 
     @Override
-    @Transactional
     public void updateAssets() {
         var stocks = new HashMap<String, FinanceDetail>();
 
@@ -88,8 +89,8 @@ public class NewconnectScraper extends QueueUpdater {
                 String symbol = matcher.group(2).trim();
                 String renewalRate = matcher.group(4).trim().replace(",", ".");
                 String lastTransactionRate = matcher.group(9).trim().replace(",", ".");
-                String price = lastTransactionRate.equals("-") ?
-                        renewalRate : lastTransactionRate;
+                BigDecimal price = new BigDecimal(lastTransactionRate.equals("-") ?
+                        renewalRate : lastTransactionRate);
 
                 var financeDetail = new FinanceDetail(
                         name,
@@ -99,7 +100,8 @@ public class NewconnectScraper extends QueueUpdater {
                         price,
                         CurrencyType.PLN,
                         AssetType.STOCK,
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        0
                 );
                 stocks.put(uri, financeDetail);
             }

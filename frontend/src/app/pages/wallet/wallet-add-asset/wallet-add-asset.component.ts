@@ -13,15 +13,15 @@ import {AssetPriceDisplayComponent} from "../../../common/components/asset-price
 import {
     CurrencyChangeOptionComponent
 } from "../../../common/components/currency-change-option/currency-change-option.component";
-import {CurrencyType} from "../../../common/model/currency-type";
-import {AssetType} from "../../../common/model/asset-type";
-import {AssetDetail} from "../../../common/model/asset-detail";
+import {CurrencyType} from "../../../common/enum/currency-type";
+import {AssetType} from "../../../common/enum/asset-type";
+import {AssetDetail} from "../../../common/model/asset-detail.model";
 import {AssetService} from "../../../common/service/asset-service";
 import {CurrencyService} from "../../../common/service/currency-service";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
 import {NumberInputDirective} from "../../../common/service/number-input.directive";
-import {UnitType, UnitTypeLabels} from "../../../common/model/unit-type";
+import {UnitType, UnitTypeLabels} from "../../../common/enum/unit-type";
 
 @Component({
     selector: 'app-wallet-add-asset',

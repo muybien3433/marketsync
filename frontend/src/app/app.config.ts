@@ -21,6 +21,8 @@ import {KeycloakService } from 'keycloak-angular';
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { TokenInterceptor } from "./common/service/token-interceptor";
 import {environment} from "../environments/environment";
+import Aura from '@primeng/themes/aura';
+import {providePrimeNG} from "primeng/config";
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
     new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -72,6 +74,11 @@ export const appConfig: ApplicationConfig = {
             withInterceptorsFromDi(),
             withFetch()
         ),
+        providePrimeNG({
+            theme: {
+                preset: Aura,
+            }
+        }),
         KeycloakService,
         TranslateService,
         KeycloakInitializerProvider,

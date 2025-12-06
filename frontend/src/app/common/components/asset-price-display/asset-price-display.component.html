@@ -2,7 +2,7 @@
     <div class="current-price">
         <span class="price">{{ currentAsset.name }} </span>{{ 'subscription.currently' | translate }}
         <span class="price">
-            {{ currentAsset.price | number:'1.10-10' }}{{ CurrencyType.Symbols[currentAsset.currencyType] }}
+            {{ currentAsset.price }}{{ CurrencyType.Symbols[currentAsset.currencyType] }}
           </span>
         </div>
 </div>

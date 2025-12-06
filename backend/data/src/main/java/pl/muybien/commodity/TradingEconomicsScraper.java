@@ -21,6 +21,7 @@ import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.updater.DatabaseUpdater;
 import pl.muybien.updater.QueueUpdater;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -70,7 +71,7 @@ public class TradingEconomicsScraper extends QueueUpdater {
                     String unitText = unitElement.getText().trim();
 
                     WebElement priceElement = row.findElement(By.cssSelector("td#p.datatable-item"));
-                    String price = priceElement.getText().trim();
+                    BigDecimal price = new BigDecimal(priceElement.getText().trim());
 
                     WebElement linkElement = row.findElement(By.cssSelector("td.datatable-item-first a"));
                     String href = linkElement.getAttribute("href");
@@ -88,7 +89,8 @@ public class TradingEconomicsScraper extends QueueUpdater {
                                 price,
                                 currencyType,
                                 AssetType.COMMODITY,
-                                LocalDateTime.now()
+                                LocalDateTime.now(),
+                                0
                         );
                         commodities.put(uri, detail);
                     }

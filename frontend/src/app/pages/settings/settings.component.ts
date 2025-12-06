@@ -6,7 +6,7 @@ import {
 } from "../../common/components/currency-change-option/currency-change-option.component";
 import {TranslatePipe} from "@ngx-translate/core";
 import {Subscription} from "rxjs";
-import {CurrencyType} from "../../common/model/currency-type";
+import {CurrencyType} from "../../common/enum/currency-type";
 import {CurrencyService} from "../../common/service/currency-service";
 import {NgIf} from "@angular/common";
 

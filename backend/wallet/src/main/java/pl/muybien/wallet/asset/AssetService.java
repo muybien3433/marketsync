@@ -29,11 +29,13 @@ import java.util.*;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static pl.muybien.util.PriceUtil.normalizePrice;
+
 @Service
 @RequiredArgsConstructor
 public class AssetService {
-
     private final AssetRepository repository;
+    private final AssetDTOMapper mapper;
     private final FinanceClient financeClient;
     private final SupportProducer support;
 
@@ -49,7 +51,7 @@ public class AssetService {
                     assetType == AssetType.CUSTOM ? "" : CurrencyType.valueOf(request.uri()).getSymbol(),
                     normalizedUri,
                     request.unitType(),
-                    request.purchasePrice().toPlainString(),
+                    request.purchasePrice(),
                     request.currencyType(),
                     assetType,
                     LocalDateTime.now()
@@ -112,21 +114,7 @@ public class AssetService {
             }
         }
 
-        repository.save(asset);
-        return new AssetHistoryDTO(
-                asset.getId(),
-                asset.getName(),
-                asset.getUri(),
-                asset.getSymbol(),
-                asset.getCount(),
-                asset.getCurrencyType(),
-                asset.getPurchasePrice(),
-                asset.getCurrentPrice(),
-                asset.getCreatedDate(),
-                asset.getAssetType(),
-                asset.getUnitType(),
-                asset.getComment()
-        );
+        return mapper.toAssetHistoryDTO(repository.save(asset));
     }
 
     @Transactional
@@ -171,10 +159,10 @@ public class AssetService {
                 try {
                     finance = financeClient.findFinanceByTypeAndUri(asset.assetType(), asset.uri());
                     currentPrice = resolvePriceByCurrency(
-                            asset.currencyType(), finance.currencyType(), new BigDecimal(finance.price()));
+                            asset.currencyType(), finance.currencyType(), finance.price());
                 } catch (FeignException.InternalServerError e) {
                     finance = createFallbackFinance(asset);
-                    currentPrice = new BigDecimal(finance.price());
+                    currentPrice = finance.price();
 
                     /*
                      * Notify the IT team that finance data is missing for this asset.
@@ -192,7 +180,7 @@ public class AssetService {
                     support.sendNotification(new SupportConfirmation(TeamType.TECHNICS, AlertType.WARNING, error));
                 } catch (Exception e) {
                     finance = createFallbackFinance(asset);
-                    currentPrice = new BigDecimal(finance.price());
+                    currentPrice = finance.price();
                     support.sendNotification(new SupportConfirmation(TeamType.TECHNICS, AlertType.WARNING, e));
                 }
             }
@@ -210,13 +198,13 @@ public class AssetService {
                 asset.uri(),
                 asset.assetType(),
                 asset.unitType(),
-                asset.count(),
-                currentPrice,
+                normalizePrice(asset.count()),
+                normalizePrice(currentPrice),
                 asset.currencyType(),
-                value,
-                asset.averagePurchasePrice(),
-                profit,
-                profitPercentage,
+                normalizePrice(value),
+                normalizePrice(asset.averagePurchasePrice()),
+                normalizePrice(profit),
+                normalizePrice(profitPercentage),
                 exchangeRateToDesired
         );
     }
@@ -227,7 +215,7 @@ public class AssetService {
                 asset.symbol(),
                 asset.uri(),
                 asset.unitType(),
-                BigDecimal.ZERO.toPlainString(),
+                BigDecimal.ZERO,
                 asset.currencyType(),
                 asset.assetType(),
                 null
@@ -244,6 +232,7 @@ public class AssetService {
                 return BigDecimal.ZERO;
             }
         }
+
         return price;
     }
 
