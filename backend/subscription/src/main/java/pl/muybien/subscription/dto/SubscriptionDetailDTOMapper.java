@@ -3,14 +3,18 @@ package pl.muybien.subscription.dto;
 import org.springframework.stereotype.Service;
 import pl.muybien.entity.helper.SubscriptionDetail;
 
+import java.math.BigDecimal;
+
+import static pl.muybien.util.PriceUtil.normalizePrice;
+
 @Service
 public class SubscriptionDetailDTOMapper {
-    public SubscriptionDetailDTO toDTO(SubscriptionDetail subscriptionDetail, String currentPrice) {
+    public SubscriptionDetailDTO toDTO(SubscriptionDetail subscriptionDetail, BigDecimal currentPrice) {
         return new SubscriptionDetailDTO(
                 subscriptionDetail.id(),
                 subscriptionDetail.financeName(),
                 subscriptionDetail.uri(),
-                currentPrice,
+                normalizePrice(currentPrice),
                 subscriptionDetail.upperBoundPrice(),
                 subscriptionDetail.lowerBoundPrice(),
                 subscriptionDetail.assetType().name(),

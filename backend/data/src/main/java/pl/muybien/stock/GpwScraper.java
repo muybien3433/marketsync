@@ -20,6 +20,7 @@ import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.updater.DatabaseUpdater;
 import pl.muybien.updater.QueueUpdater;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class GpwScraper extends QueueUpdater {
 
@@ -44,9 +46,7 @@ public class GpwScraper extends QueueUpdater {
     }
 
     @Override
-    @Transactional
     public void updateAssets() {
-        log.info("Starting update of gpw");
         var stocks = new HashMap<String, FinanceDetail>();
 
         WebDriver driver = null;
@@ -89,8 +89,8 @@ public class GpwScraper extends QueueUpdater {
                 String symbol = matcher.group(2).trim();
                 String renewalRate = matcher.group(4).trim().replaceAll("\\s+", "").replace(",", ".");
                 String lastTransactionRate = matcher.group(10).trim().replaceAll("\\s+", "").replace(",", ".");
-                String price = lastTransactionRate.equals("-") ?
-                        renewalRate : lastTransactionRate;
+                BigDecimal price = new BigDecimal(lastTransactionRate.equals("-") ?
+                        renewalRate : lastTransactionRate);
 
                 var financeDetail = new FinanceDetail(
                         name,
@@ -100,7 +100,8 @@ public class GpwScraper extends QueueUpdater {
                         price,
                         CurrencyType.PLN,
                         AssetType.STOCK,
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        0
                 );
                 stocks.put(uri, financeDetail);
             }

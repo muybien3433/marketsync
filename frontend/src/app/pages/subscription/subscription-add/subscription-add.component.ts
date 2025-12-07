@@ -13,9 +13,9 @@ import {AssetPriceDisplayComponent} from "../../../common/components/asset-price
 import {
     CurrencyChangeOptionComponent
 } from "../../../common/components/currency-change-option/currency-change-option.component";
-import {AssetType} from "../../../common/model/asset-type";
-import {AssetDetail} from "../../../common/model/asset-detail";
-import {CurrencyType} from "../../../common/model/currency-type";
+import {AssetType} from "../../../common/enum/asset-type";
+import {AssetDetail} from "../../../common/model/asset-detail.model";
+import {CurrencyType} from "../../../common/enum/currency-type";
 import {AssetService} from "../../../common/service/asset-service";
 import {CurrencyService} from "../../../common/service/currency-service";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";

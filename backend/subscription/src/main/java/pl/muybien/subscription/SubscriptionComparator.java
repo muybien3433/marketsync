@@ -30,7 +30,7 @@ public class SubscriptionComparator {
             boolean financeCurrencyDifferentThanSubscription =
                     !finance.currencyType().equals(subscriptionDetail.requestedCurrency());
 
-            BigDecimal currentPrice = new BigDecimal(finance.price());
+            BigDecimal currentPrice = finance.price();
             if (financeCurrencyDifferentThanSubscription) {
                 var rate = financeClient
                         .findExchangeRate(finance.currencyType(), subscriptionDetail.requestedCurrency());

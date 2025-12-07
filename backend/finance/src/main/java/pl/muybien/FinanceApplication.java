@@ -7,8 +7,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableAsync
 public class FinanceApplication {
-
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(FinanceApplication.class, args);
     }
 }

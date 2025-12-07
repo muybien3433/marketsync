@@ -47,7 +47,7 @@ class SubscriptionServiceTest {
     private final String uri = "http://example.com/asset";
     private final AssetType assetType = AssetType.STOCK;
     private final String financeName = "Example Corp";
-    private final String price = "100.50";
+    private final BigDecimal price = new BigDecimal("100.50");
 
     @Test
     void createSubscription_ThrowsWhenBothBoundsNull() {
@@ -211,7 +211,7 @@ class SubscriptionServiceTest {
         subscription.getSubscriptionDetails().addAll(List.of(detail1, detail2));
 
         when(subscriptionRepository.findAll()).thenReturn(List.of(subscription));
-        when(detailDTOMapper.toDTO(eq(detail1), any(String.class)))
+        when(detailDTOMapper.toDTO(eq(detail1), any(BigDecimal.class)))
                 .thenReturn(new SubscriptionDetailDTO(
                         "detail-1",
                         financeName,
@@ -256,15 +256,15 @@ class SubscriptionServiceTest {
 
         BigDecimal exchangeRate = BigDecimal.valueOf(0.85);
         FinanceResponse financeResponse = new FinanceResponse(
-                financeName, "SYM", uri, UnitType.UNIT, "100", CurrencyType.USD, assetType, LocalDateTime.now()
+                financeName, "SYM", uri, UnitType.UNIT, new BigDecimal("100"), CurrencyType.USD, assetType, LocalDateTime.now()
         );
         when(financeClient.findFinanceByTypeAndUri(any(), any()))
                 .thenReturn(financeResponse);
         when(financeClient.findExchangeRate(CurrencyType.USD, CurrencyType.EUR))
                 .thenReturn(exchangeRate);
 
-        String result = subscriptionService.resolveCurrentPrice(detail);
+        BigDecimal result = subscriptionService.resolveCurrentPrice(detail);
 
-        assertEquals(BigDecimal.valueOf(100).multiply(exchangeRate), new BigDecimal(result));
+        assertEquals(BigDecimal.valueOf(100).multiply(exchangeRate), result);
     }
 }

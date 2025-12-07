@@ -9,6 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import pl.muybien.wallet.asset.AssetDTOMapper;
 import pl.muybien.wallet.asset.AssetRepository;
 import pl.muybien.wallet.asset.AssetRequest;
 import pl.muybien.wallet.asset.AssetService;
@@ -46,6 +47,9 @@ class AssetServiceTest {
 
     @Mock
     private FinanceClient financeClient;
+
+    @Mock
+    private AssetDTOMapper  assetDTOMapper;
 
     @Mock
     private SupportProducer support;
@@ -90,7 +94,7 @@ class AssetServiceTest {
                         "BTC",
                         "bitcoin",
                         UnitType.UNIT,
-                        "100000",
+                        new BigDecimal("100000"),
                         CurrencyType.USD,
                         AssetType.CRYPTO,
                         LocalDateTime.now()));
@@ -289,7 +293,7 @@ class AssetServiceTest {
         );
 
         when(financeClient.findFinanceByTypeAndUri(any(), any()))
-                .thenReturn(new FinanceResponse("Bitcoin Cash", "BCH", "bitcoin-cash", UnitType.UNIT, "10000", CurrencyType.USD, AssetType.CRYPTO, LocalDateTime.now()));
+                .thenReturn(new FinanceResponse("Bitcoin Cash", "BCH", "bitcoin-cash", UnitType.UNIT, new BigDecimal("10000"), CurrencyType.USD, AssetType.CRYPTO, LocalDateTime.now()));
 
         assetService.createAsset(customerId, request);
 
@@ -391,8 +395,8 @@ class AssetServiceTest {
         List<AssetAggregateDTO> result = assetService.findAllCustomerAssets(customerId, CurrencyType.EUR);
 
         AssetAggregateDTO dto = result.getFirst();
-        assertThat(dto.currentPrice()).isEqualTo(new BigDecimal("1.2"));
-        assertThat(dto.value()).isEqualTo(new BigDecimal("1200.0"));
+        assertThat(dto.currentPrice()).isEqualTo(new BigDecimal("1.20"));
+        assertThat(dto.value()).isEqualTo(new BigDecimal("1200.00"));
         assertThat(dto.exchangeRateToDesired()).isEqualTo(new BigDecimal("0.85"));
     }
 
@@ -420,7 +424,7 @@ class AssetServiceTest {
         List<AssetAggregateDTO> result = assetService.findAllCustomerAssets(customerId, CurrencyType.USD);
 
         AssetAggregateDTO dto = result.getFirst();
-        assertThat(dto.currentPrice()).isEqualTo(BigDecimal.ZERO);
+        assertThat(dto.currentPrice()).isEqualTo("0.00");
         assertThat(dto.value().compareTo(BigDecimal.ZERO)).isZero();
     }
 
@@ -444,7 +448,7 @@ class AssetServiceTest {
         List<AssetAggregateDTO> result = assetService.findAllCustomerAssets(customerId, CurrencyType.USD);
 
         AssetAggregateDTO dto = result.getFirst();
-        assertThat(dto.profitInPercentage()).isEqualTo(BigDecimal.ZERO);
+        assertThat(dto.profitInPercentage()).isEqualTo("0.00");
     }
 
     @Test
@@ -464,7 +468,7 @@ class AssetServiceTest {
 
         when(repository.findAndAggregateAssetsByCustomerId(customerId)).thenReturn(Optional.of(List.of(group)));
         when(financeClient.findFinanceByTypeAndUri(AssetType.CRYPTO, "bitcoin"))
-                .thenReturn(new FinanceResponse("Bitcoin", "BTC", "bitcoin", UnitType.UNIT, "35000", CurrencyType.USD, AssetType.CRYPTO, LocalDateTime.now()));
+                .thenReturn(new FinanceResponse("Bitcoin", "BTC", "bitcoin", UnitType.UNIT, new BigDecimal("35000"), CurrencyType.USD, AssetType.CRYPTO, LocalDateTime.now()));
 
         List<AssetAggregateDTO> result = assetService.findAllCustomerAssets(customerId, CurrencyType.USD);
 
@@ -525,7 +529,7 @@ class AssetServiceTest {
                         symbol,
                         uri,
                         unitType,
-                        "35000",
+                        new BigDecimal("35000"),
                         currencyType,
                         assetType,
                         LocalDateTime.now()));

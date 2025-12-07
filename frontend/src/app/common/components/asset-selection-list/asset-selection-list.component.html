@@ -2,7 +2,7 @@
     <label>{{ 'asset.type' | translate }}</label>
     <select class="form-control"
             [(ngModel)]="selectedAssetType"
-            (change)="onAssetTypeSelect($any($event.target).value)">
+            (change)="onAssetTypeChange($any($event.target).value)">
         <option *ngFor="let assetType of assetTypeOptions"
                 [value]="assetType">
             {{ 'asset.' + assetType.toLowerCase() | translate }}
@@ -11,8 +11,10 @@
 </div>
 
 <label>{{ 'common.asset' | translate }}</label>
+
 <div class="form-control">
-    <div class="asset-list">
+    <app-loading-spinner [isLoading]="isLoading"></app-loading-spinner>
+    <div class="asset-list" *ngIf="!isLoading">
         <!-- Custom Asset Selection -->
         <div *ngIf="selectedAssetType === AssetType.CUSTOM">
             <div class="search-header">

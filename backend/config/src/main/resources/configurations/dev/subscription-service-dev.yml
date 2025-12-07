@@ -10,9 +10,7 @@ kafka:
 
 spring:
   mongodb:
-    host: localhost
-    port: 27017
-    database: subscription
+    uri: mongodb://finance:finance@localhost:27017/finance?authSource=admin
   kafka:
     bootstrap-servers: localhost:9092,localhost:9094
     producer:
@@ -21,7 +19,7 @@ spring:
 
 application:
   config:
-    finance-url: http://finance-server:8800/api/v1/finances
+    finance-url: http://localhost:8800/api/v1/finances
 
 send-email-topic: send-email-topic
 

@@ -35,26 +35,20 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
         return extractCustomerFromHeader(authHeader)
                 .flatMap(customer -> {
-                            HttpHeaders newHeaders = new HttpHeaders();
-                            newHeaders.addAll(request.getHeaders());
-                            newHeaders.set(HttpHeaders.AUTHORIZATION, authHeader);
-                            newHeaders.add("X-Customer-Id", customer.id());
-                            newHeaders.add("X-Customer-Email", customer.email());
-                            newHeaders.add("X-Customer-Number", customer.number());
-                            newHeaders.add("X-Customer-FirstName", customer.firstName());
-                            newHeaders.add("X-Customer-LastName", customer.lastName());
-                            newHeaders.add("X-Customer-Roles", String.join(",", customer.roles()));
+                    ServerHttpRequest mutatedRequest = request.mutate()
+                            .headers(headers -> {
+                                headers.set(HttpHeaders.AUTHORIZATION, authHeader);
+                                headers.set("X-Customer-Id", customer.id());
+                                headers.set("X-Customer-Email", customer.email());
+                                headers.set("X-Customer-Number", customer.number());
+                                headers.set("X-Customer-FirstName", customer.firstName());
+                                headers.set("X-Customer-LastName", customer.lastName());
+                                headers.set("X-Customer-Roles", String.join(",", customer.roles()));
+                            })
+                            .build();
 
-                            ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(request) {
-                                @Override
-                                @NonNull
-                                public HttpHeaders getHeaders() {
-                                    return HttpHeaders.readOnlyHttpHeaders(newHeaders);
-                                }
-                            };
-                            return chain.filter(exchange.mutate().request(modifiedRequest).build());
-                        }
-                );
+                    return chain.filter(exchange.mutate().request(mutatedRequest).build());
+                });
     }
 
     @Override

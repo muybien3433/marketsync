@@ -12,7 +12,7 @@ import pl.muybien.subscription.dto.SubscriptionDetailDTO;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/subscriptions")
+@RequestMapping("/api/v1/subscriptions")
 @RequiredArgsConstructor
 public class SubscriptionController {
 

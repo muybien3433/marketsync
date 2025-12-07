@@ -1,18 +1,17 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output,} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {TranslatePipe} from "@ngx-translate/core";
-import {HttpClient} from "@angular/common/http";
-import {environment} from "../../../../environments/environment";
-import {catchError, map, of, Subscription} from "rxjs";
+import {TranslatePipe, TranslateService} from "@ngx-translate/core";
+import {Subscription} from "rxjs";
 import {FilterByNamePipe} from "../../service/filter-by-name-pipe";
-import {AssetDetail} from "../../model/asset-detail";
-import {AssetType} from "../../model/asset-type";
-import {CurrencyType} from "../../model/currency-type";
+import {AssetDetail} from "../../model/asset-detail.model";
+import {AssetType} from "../../enum/asset-type";
+import {CurrencyType} from "../../enum/currency-type";
 import {AssetService} from "../../service/asset-service";
 import {CurrencyService} from "../../service/currency-service";
-import {API_ENDPOINTS} from "../../service/api-endpoints";
-import { UnitType } from '../../model/unit-type';
+import { UnitType } from '../../enum/unit-type';
+import {AssetBase} from "../../model/asset-base.model";
+import {LoadingSpinnerComponent} from "../loading/loading-spinner.component";
 
 @Component({
     selector: 'app-asset-selection-list',
@@ -24,6 +23,7 @@ import { UnitType } from '../../model/unit-type';
         TranslatePipe,
         FilterByNamePipe,
         FormsModule,
+        LoadingSpinnerComponent,
     ],
     templateUrl: './asset-selection-list.component.html',
     styleUrl: './asset-selection-list.component.scss'
@@ -34,10 +34,12 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
 
     protected readonly AssetType = AssetType;
 
-    _assets: AssetDetail[] = [];
+    _assets: AssetBase[] = [];
+    filteredAssets: AssetBase[] = [];
+    searchTerm = '';
     selectedAsset: AssetDetail | null = null;
     selectedAssetType: AssetType = AssetType.CRYPTO;
-    searchTerm: string = '';
+    assetTypeDropdownOptions: { label: string; value: AssetType }[] = [];
     customAssetName: string = '';
     _currencies: CurrencyType[] = Object.values(CurrencyType).filter(value => typeof value === 'string') as CurrencyType[];
     CurrencyType = CurrencyType;
@@ -45,18 +47,26 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     private currencySubscription!: Subscription;
     currentCurrency!: CurrencyType;
 
+    isLoading: boolean = false;
+
     constructor(
-        private http: HttpClient,
         private assetService: AssetService,
         private currencyService: CurrencyService,
+        private translate: TranslateService
     ) {
     }
 
     ngOnInit(): void {
-        this.currencySubscription = this.currencyService.selectedCurrencyType$.subscribe(currency => {
-            this.currentCurrency = currency;
-            this.fetchAssets(this.selectedAssetType, currency);
-        })
+        this.currencySubscription = this.currencyService.selectedCurrencyType$
+            .subscribe(currency => this.currentCurrency = currency);
+
+        this.buildAssetTypeOptions();
+
+        this.translate.onLangChange.subscribe(() => {
+            this.buildAssetTypeOptions();
+        });
+
+        this.fetchAssets();
     }
 
     ngOnDestroy(): void {
@@ -64,24 +74,76 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         this.resetPickedAsset();
     }
 
-    onAssetTypeSelect(assetType: AssetType): void {
+    private buildAssetTypeOptions(): void {
+        const keys = this.assetTypeOptions.map(type => 'asset.type.' + type.toLowerCase());
+
+        this.translate.get(keys).subscribe(translations => {
+            this.assetTypeDropdownOptions = this.assetTypeOptions.map(type => {
+                const key = 'asset.type.' + type.toLowerCase();
+                return {
+                    label: translations[key],
+                    value: type
+                };
+            });
+        });
+    }
+
+    fetchAssets(): void {
+        this.isLoading = true;
+        this.assetService.getAssetsBaseByAssetType(this.selectedAssetType).subscribe({
+            next: (assets: AssetBase[]) => {
+                this._assets = assets;
+                this.filteredAssets = assets.slice(0, 200);
+                this.isLoading = false;
+            },
+            error: err => {
+                console.error('Error fetching assets for type: ', this.selectedAssetType, err);
+                this._assets = [];
+                this.filteredAssets = [];
+                this.isLoading = false;
+            }
+        });
+    }
+
+    onAssetTypeChange(assetType: AssetType): void {
+        this.selectedAssetType = assetType;
         this.assetService.setSelectedAssetType(assetType);
         this.resetPickedAsset();
 
         this._assets = [];
+        this.filteredAssets = [];
+
         if (assetType !== AssetType.CUSTOM && assetType !== AssetType.CURRENCY) {
-            this.fetchAssets(assetType, this.currentCurrency);
+            this.fetchAssets();
         }
     }
 
-    onAssetSelect(asset: AssetDetail) {
-        const normalized: AssetDetail = {
-            ...asset,
-            unitType: this.normalizeUnitType((asset as any).unitType)
-        };
-        this.selectedAsset = normalized;
-        this.assetService.setSelectedAsset(normalized);
-        this.assetChanged.emit(normalized);
+    onAssetSelect(assetBase: AssetBase): void {
+        if (!assetBase?.uri) {
+            console.error('AssetBase without uri', assetBase);
+            return;
+        }
+        if (!this.currentCurrency) {
+            console.error('currentCurrency not set');
+            return;
+        }
+
+        this.assetService
+            .getAssetByAssetTypeAndUriAndCurrency(this.selectedAssetType, assetBase.uri, this.currentCurrency)
+            .subscribe({
+                next: detail => {
+                    const normalized: AssetDetail = {
+                        ...detail,
+                        unitType: this.normalizeUnitType((detail as any).unitType)
+                    };
+                    this.selectedAsset = normalized;
+                    this.assetService.setSelectedAsset(normalized);
+                    this.assetChanged.emit(normalized);
+                },
+                error: err => {
+                    console.error('Error fetching asset detail for ', assetBase, err);
+                }
+            });
     }
 
     private normalizeUnitType(v: any): UnitType | null {
@@ -89,7 +151,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         if (typeof v === 'string' && v.trim() === '') return UnitType.UNIT;
         return v as UnitType;
     }
-    
+
     onCustomAssetInput(): void {
         if (this.customAssetName.trim()) {
             const customAsset: AssetDetail = new AssetDetail(
@@ -110,7 +172,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
             this.resetPickedAsset();
         }
     }
-    
+
     onCurrencySelect(currency: CurrencyType) {
         const currencyAsset: AssetDetail = new AssetDetail(
             currency,
@@ -128,41 +190,32 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         this.assetChanged.emit(this.selectedAsset);
     }
 
+    onSearchTermChange(term: string): void {
+        this.searchTerm = term;
+        const t = term.toLowerCase().trim();
+
+        if (!t) {
+            this.filteredAssets = this._assets.slice(0, 200);
+            return;
+        }
+
+        this.filteredAssets = this._assets
+            .filter(a =>
+                (a.name && a.name.toLowerCase().includes(t)) ||
+                (a.symbol && a.symbol.toLowerCase().includes(t))
+            )
+            .slice(0, 200);
+    }
+
+    trackByAsset(index: number, item: AssetBase): string {
+        return item.uri;
+    }
+
     resetPickedAsset() {
         this.searchTerm = '';
         this.customAssetName = '';
         this.selectedAsset = null;
         this.assetService.setSelectedAsset(null);
         this.assetChanged.emit(null);
-    }
-
-    fetchAssets(assetType: AssetType, currencyType: CurrencyType): void {
-        if (assetType !== AssetType.CURRENCY && assetType !== AssetType.CUSTOM) {
-            this.http
-                .get<any[]>(`${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${assetType}/currencies/${currencyType}`)
-                .pipe(
-                    map((data) => {
-                        this._assets = Object.values(data);
-
-                        const currentAsset = this.assetService.getSelectedAsset();
-                        if (currentAsset) {
-                            const updatedAsset =
-                                this._assets.find(a => a.uri === currentAsset.uri);
-                            if (updatedAsset) {
-                                this.assetService.setSelectedAsset(updatedAsset);
-                            } else {
-                                this.resetPickedAsset();
-                            }
-                        }
-                    }),
-                    catchError((error) => {
-                        console.error('Error fetching assets: ', error);
-                        this._assets = [];
-                        this.resetPickedAsset();
-                        return of([]);
-                    })
-                )
-                .subscribe();
-        }
     }
 }

@@ -1,10 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { SpinnerComponent } from './common/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-root',
-  imports: [SpinnerComponent, RouterModule],
+  imports: [RouterModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

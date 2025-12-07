@@ -1,14 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {TranslatePipe} from "@ngx-translate/core";
 import {HttpClient} from '@angular/common/http';
-import {CurrencyPipe, DatePipe, NgForOf, NgIf} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 import {environment} from '../../../../environments/environment';
-import {AssetHistory} from "../../../common/model/asset-history";
+import {AssetHistory} from "../../../common/model/asset-history.model";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
 import {FormsModule} from "@angular/forms";
-import { CurrencyType } from 'src/app/common/model/currency-type';
+import { CurrencyType } from 'src/app/common/enum/currency-type';
 
 @Component({
   selector: 'app-wallet-asset-history',

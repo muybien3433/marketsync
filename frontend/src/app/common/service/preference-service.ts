@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {CurrencyType} from "../model/currency-type";
+import {CurrencyType} from "../enum/currency-type";
 
 @Injectable({
     providedIn: 'root',
