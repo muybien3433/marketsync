@@ -45,6 +45,7 @@ yarn-error.log
 # Angular
 .angular/
 frontend/dist
+package-lock.json
 
 # Production files
 .env
