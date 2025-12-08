@@ -68,6 +68,8 @@
     "typescript-eslint": "8.18.0"
   },
   "overrides": {
-    "htmlparser2>entities": "2.2.0"
+    "htmlparser2": {
+      "entities": "2.2.0"
+    }
   }
 }
