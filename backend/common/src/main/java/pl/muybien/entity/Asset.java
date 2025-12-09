@@ -36,8 +36,10 @@ public class Asset {
 
     private String uri;
 
+    @Column(precision = 38, scale = 18)
     private BigDecimal count;
 
+    @Column(precision = 38, scale = 18)
     private BigDecimal purchasePrice;
 
     private UUID customerId;
@@ -47,6 +49,7 @@ public class Asset {
     private UnitType unitType;
 
     @Nullable
+    @Column(precision = 38, scale = 18)
     private BigDecimal currentPrice;
 
     @Nullable

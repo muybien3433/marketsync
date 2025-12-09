@@ -12,10 +12,11 @@ import {CardComponent} from "../../common/components/card/card.component";
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {environment} from "../../../environments/environment";
 import {UnitTypeLabels} from "../../common/enum/unit-type";
+import {LoadingSpinnerComponent} from "../../common/components/loading/loading-spinner.component";
 
 @Component({
     selector: 'app-wallet',
-    imports: [CommonModule, CardComponent, ChartComponent, TranslatePipe, NgbProgressbar, CardComponent],
+    imports: [CommonModule, CardComponent, ChartComponent, TranslatePipe, NgbProgressbar, CardComponent, LoadingSpinnerComponent],
     templateUrl: './wallet.component.html',
     styleUrls: ['./wallet.component.scss']
 })

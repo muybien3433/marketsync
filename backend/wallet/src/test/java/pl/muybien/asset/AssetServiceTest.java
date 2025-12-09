@@ -5,10 +5,7 @@ import feign.Request;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import pl.muybien.wallet.asset.AssetDTOMapper;
 import pl.muybien.wallet.asset.AssetRepository;
 import pl.muybien.wallet.asset.AssetRequest;
@@ -48,8 +45,8 @@ class AssetServiceTest {
     @Mock
     private FinanceClient financeClient;
 
-    @Mock
-    private AssetDTOMapper  assetDTOMapper;
+    @Spy
+    private AssetDTOMapper assetDTOMapper = new AssetDTOMapper();
 
     @Mock
     private SupportProducer support;
@@ -64,13 +61,14 @@ class AssetServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
         assetId = UUID.randomUUID();
         customerId = UUID.randomUUID();
         asset = Asset.builder()
                 .id(assetId)
                 .customerId(customerId)
                 .build();
+
+        when(repository.save(any(Asset.class))).thenAnswer(inv -> inv.getArgument(0));
     }
 
     @Test

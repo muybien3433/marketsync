@@ -24,6 +24,7 @@ import {environment} from "../environments/environment";
 import Aura from '@primeng/themes/aura';
 import {providePrimeNG} from "primeng/config";
 
+
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
     new TranslateHttpLoader(http, './assets/i18n/', '.json');
 

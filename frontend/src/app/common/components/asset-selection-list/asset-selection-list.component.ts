@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output,} from '@angular/core';
-import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {Subscription} from "rxjs";
@@ -17,8 +16,6 @@ import {LoadingSpinnerComponent} from "../loading/loading-spinner.component";
     selector: 'app-asset-selection-list',
     standalone: true,
     imports: [
-        NgForOf,
-        NgIf,
         ReactiveFormsModule,
         TranslatePipe,
         FilterByNamePipe,
@@ -29,7 +26,7 @@ import {LoadingSpinnerComponent} from "../loading/loading-spinner.component";
     styleUrl: './asset-selection-list.component.scss'
 })
 export class AssetSelectionListComponent implements OnInit, OnDestroy {
-    @Input() assetTypeOptions: AssetType[] = Object.values(AssetType);
+    @Input() assetTypeOptions: AssetType[] = Object.values(AssetType).filter(type => type !== AssetType.CURRENCY);
     @Output() assetChanged: EventEmitter<AssetDetail> = new EventEmitter();
 
     protected readonly AssetType = AssetType;
@@ -61,12 +58,16 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
             .subscribe(currency => this.currentCurrency = currency);
 
         this.buildAssetTypeOptions();
-
-        this.translate.onLangChange.subscribe(() => {
-            this.buildAssetTypeOptions();
-        });
+        this.translate.onLangChange.subscribe(() => this.buildAssetTypeOptions());
 
         this.fetchAssets();
+
+        this.assetService.selectedAsset$.subscribe(asset => {
+            this.selectedAsset = asset;
+            if (asset) {
+                this.assetChanged.emit(asset);
+            }
+        });
     }
 
     ngOnDestroy(): void {
@@ -120,30 +121,11 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
 
     onAssetSelect(assetBase: AssetBase): void {
         if (!assetBase?.uri) {
-            console.error('AssetBase without uri', assetBase);
-            return;
-        }
-        if (!this.currentCurrency) {
-            console.error('currentCurrency not set');
+            console.error("AssetBase without uri", assetBase);
             return;
         }
 
-        this.assetService
-            .getAssetByAssetTypeAndUriAndCurrency(this.selectedAssetType, assetBase.uri, this.currentCurrency)
-            .subscribe({
-                next: detail => {
-                    const normalized: AssetDetail = {
-                        ...detail,
-                        unitType: this.normalizeUnitType((detail as any).unitType)
-                    };
-                    this.selectedAsset = normalized;
-                    this.assetService.setSelectedAsset(normalized);
-                    this.assetChanged.emit(normalized);
-                },
-                error: err => {
-                    console.error('Error fetching asset detail for ', assetBase, err);
-                }
-            });
+        this.assetService.setSelectedAssetRef(this.selectedAssetType, assetBase.uri);
     }
 
     private normalizeUnitType(v: any): UnitType | null {
@@ -187,7 +169,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         );
         this.selectedAsset = currencyAsset;
         this.assetService.setSelectedAsset(currencyAsset);
-        this.assetChanged.emit(this.selectedAsset);
+        this.assetChanged.emit(currencyAsset);
     }
 
     onSearchTermChange(term: string): void {
