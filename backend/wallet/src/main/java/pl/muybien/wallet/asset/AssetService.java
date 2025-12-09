@@ -132,10 +132,9 @@ public class AssetService {
 
     @Transactional(readOnly = true)
     public List<AssetHistoryDTO> findAllAssetHistory(UUID customerId) {
-        var assetHistory = repository.findAssetHistoryByCustomerId(customerId);
-
-        return assetHistory.stream()
-                .sorted(Comparator.comparing(AssetHistoryDTO::createdDate).reversed())
+        return repository.findAssetHistoryByCustomerId(customerId).stream()
+                .sorted(Comparator.comparing(Asset::getCreatedDate).reversed())
+                .map(mapper::toAssetHistoryDTO)
                 .collect(Collectors.toList());
     }
 
@@ -192,21 +191,7 @@ public class AssetService {
         BigDecimal profitPercentage = resolveProfitInPercentage(totalInvested, profit);
         BigDecimal exchangeRateToDesired = resolveExchangeRateToDesired(asset.currencyType(), desiredCurrency);
 
-        return new AssetAggregateDTO(
-                asset.name(),
-                asset.symbol(),
-                asset.uri(),
-                asset.assetType(),
-                asset.unitType(),
-                normalizePrice(asset.count()),
-                normalizePrice(currentPrice),
-                asset.currencyType(),
-                normalizePrice(value),
-                normalizePrice(asset.averagePurchasePrice()),
-                normalizePrice(profit),
-                normalizePrice(profitPercentage),
-                exchangeRateToDesired
-        );
+        return mapper.toAssetAggregateDTO(asset, currentPrice, value, profit, profitPercentage, exchangeRateToDesired);
     }
 
     private FinanceResponse createFallbackFinance(AssetGroupDTO asset) {

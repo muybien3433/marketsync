@@ -7,18 +7,21 @@ import java.math.RoundingMode;
 
 public class PriceUtil {
 
+    private static final int MAX_DECIMALS = 18;
+
     public static BigDecimal normalizePrice(BigDecimal value) {
         if (value == null) return null;
 
-        // if >= 1 -> 2 places after the decimal
+        // If the value is greater than or equal to 1, keep only two decimal places.
         if (value.compareTo(BigDecimal.ONE) >= 0) {
             return value.setScale(2, RoundingMode.HALF_UP);
         }
 
-        // lower than 1 – finding first not zero digit after the decimal
+        // For values lower than 1, find the first non-zero digit after the decimal point.
         String plain = value.stripTrailingZeros().toPlainString();
         int idx = plain.indexOf('.');
         if (idx < 0) {
+            // No decimal point found — treat as integer and keep two decimals.
             return value.setScale(2, RoundingMode.HALF_UP);
         }
 
@@ -30,11 +33,18 @@ public class PriceUtil {
             }
         }
 
-        int scale = Math.min(firstNonZero + 2, 8); // ex. 0.000024 -> 6 places
+        if (firstNonZero < 0) {
+            // All zeros after the decimal point — fallback to minimal precision.
+            return value.setScale(8, RoundingMode.HALF_UP);
+        }
+
+        // Keep four digits after the first non-zero one, but never exceed MAX_DECIMALS.
+        int scale = Math.min(firstNonZero + 4, MAX_DECIMALS);
         return value.setScale(scale, RoundingMode.HALF_UP);
     }
 
+    // Builds a readable string combining the asset symbol and name.
     public String toNameWithSymbol(FinanceDetail financeDetail) {
-        return "(" + financeDetail.symbol() + ") " + financeDetail.name() ;
+        return "(" + financeDetail.symbol() + ") " + financeDetail.name();
     }
 }
