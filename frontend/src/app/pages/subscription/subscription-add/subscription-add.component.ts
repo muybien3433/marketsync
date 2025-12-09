@@ -43,7 +43,7 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
     isSubmitting = false;
     errorMessage: string = '';
 
-    filteredAssetTypes: AssetType[] = Object.values(AssetType).filter(t => t !== AssetType.CUSTOM);
+    filteredAssetTypes: AssetType[] = Object.values(AssetType).filter(t => t !== AssetType.CUSTOM && t !== AssetType.CURRENCY);
 
     private assetTypeSubscription!: Subscription;
     assetType!: AssetType;

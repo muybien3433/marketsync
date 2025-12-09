@@ -1,3 +1,3 @@
-export enum AssetType {
+export enum NotificationType {
     EMAIL = 'EMAIL',
 }

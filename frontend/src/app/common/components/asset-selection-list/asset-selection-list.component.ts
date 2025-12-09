@@ -26,7 +26,7 @@ import {LoadingSpinnerComponent} from "../loading/loading-spinner.component";
     styleUrl: './asset-selection-list.component.scss'
 })
 export class AssetSelectionListComponent implements OnInit, OnDestroy {
-    @Input() assetTypeOptions: AssetType[] = Object.values(AssetType);
+    @Input() assetTypeOptions: AssetType[] = Object.values(AssetType).filter(type => type !== AssetType.CURRENCY);
     @Output() assetChanged: EventEmitter<AssetDetail> = new EventEmitter();
 
     protected readonly AssetType = AssetType;

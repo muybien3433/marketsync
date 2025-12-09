@@ -6,6 +6,7 @@ public enum AssetType {
     CRYPTO,
     CURRENCY,
     COMMODITY,
+    ETF,
     BOND;
 
     public static AssetType fromString(String type) {
