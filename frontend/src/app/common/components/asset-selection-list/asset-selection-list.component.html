@@ -1,12 +1,15 @@
 <div class="form-group">
     <label>{{ 'asset.type' | translate }}</label>
-    <select class="form-control"
+    <select
+            class="form-control"
             [(ngModel)]="selectedAssetType"
-            (change)="onAssetTypeChange($any($event.target).value)">
-        <option *ngFor="let assetType of assetTypeOptions"
-                [value]="assetType">
-            {{ 'asset.' + assetType.toLowerCase() | translate }}
-        </option>
+            (change)="onAssetTypeChange($any($event.target).value)"
+    >
+        @for (assetType of assetTypeOptions; track assetType) {
+            <option [value]="assetType">
+                {{ 'asset.' + assetType.toLowerCase() | translate }}
+            </option>
+        }
     </select>
 </div>
 
@@ -14,60 +17,66 @@
 
 <div class="form-control">
     <app-loading-spinner [isLoading]="isLoading"></app-loading-spinner>
-    <div class="asset-list" *ngIf="!isLoading">
-        <!-- Custom Asset Selection -->
-        <div *ngIf="selectedAssetType === AssetType.CUSTOM">
-            <div class="search-header">
-                <input
-                        [(ngModel)]="customAssetName"
-                        (input)="onCustomAssetInput()"
-                        placeholder="{{ 'asset.custom.placeholder' | translate }}"
-                        class="native-input"
-                />
-            </div>
-        </div>
 
-        <!-- Currency Selection -->
-        <div *ngIf="selectedAssetType === AssetType.CURRENCY">
-            <div *ngFor="let currencyType of _currencies | filterByName: searchTerm"
-                 class="asset-item"
-                 (click)="onCurrencySelect(currencyType)">
-                 {{ currencyType }}
-                 <span class="symbol">({{ CurrencyType.Symbols[currencyType] }})</span>
-            </div>
-        </div>
+    @if (!isLoading) {
+        <div class="asset-list">
 
-        <!-- Asset Selection (for other asset types) -->
-        <div *ngIf="selectedAssetType !== AssetType.CUSTOM && selectedAssetType !== AssetType.CURRENCY">
-            <div class="search-header" *ngIf="!selectedAsset">
-                <input
-                        [(ngModel)]="searchTerm"
-                        placeholder="{{ 'asset.search.asset' | translate }} {{ _assets.length }}"
-                        class="native-input"
-                />
-            </div>
-            <div *ngIf="!selectedAsset">
-                <div *ngFor="let asset of _assets | filterByName: searchTerm" class="asset-item"
-                     (click)="onAssetSelect(asset)">
-                    <span class="symbol">{{ asset.symbol ? '(' + asset.symbol + ')' : '' }}</span>
-                    {{ asset.name }}
+            <!-- Custom Asset Selection -->
+            @if (selectedAssetType === AssetType.CUSTOM) {
+                <div class="search-header">
+                    <input
+                            [(ngModel)]="customAssetName"
+                            (input)="onCustomAssetInput()"
+                            placeholder="{{ 'asset.custom.placeholder' | translate }}"
+                            class="native-input"
+                    />
                 </div>
-            </div>
-        </div>
+            } @else {
+            <!-- Asset Selection (for non-custom types) -->
+            @if (!selectedAsset) {
+                <div class="search-header">
+                    <input
+                            [(ngModel)]="searchTerm"
+                            placeholder="{{ 'asset.search.asset' | translate }} {{ _assets.length }}"
+                            class="native-input"
+                    />
+                </div>
 
-        <div *ngIf="selectedAsset && selectedAssetType !== AssetType.CUSTOM" class="selected-asset">
-            <div class="native-input d-flex align-items-center gap-3">
-                <span>
-                    {{ selectedAsset.symbol ? '(' + selectedAsset.symbol + ')' : '' }}
-                    {{ selectedAsset.name }}
+                <div>
+                    @for (asset of _assets | filterByName: searchTerm; track asset) {
+                        <div
+                                class="asset-item"
+                                (click)="onAssetSelect(asset)"
+                        >
+                <span class="symbol">
+                  {{ asset.symbol ? '(' + asset.symbol + ')' : '' }}
                 </span>
-                <div class="ms-auto">
-                    <button class="btn btn-outline-warning"
-                            (click)="resetPickedAsset()">
-                        {{ 'common.change' | translate }}
-                    </button>
+                            {{ asset.name }}
+                        </div>
+                    }
                 </div>
-            </div>
+            }
+        }
+
+            <!-- Selected asset (non-custom) -->
+            @if (selectedAsset && selectedAssetType !== AssetType.CUSTOM) {
+                <div class="selected-asset">
+                    <div class="native-input d-flex align-items-center gap-3">
+            <span>
+              {{ selectedAsset.symbol ? '(' + selectedAsset.symbol + ')' : '' }}
+                {{ selectedAsset.name }}
+            </span>
+                        <div class="ms-auto">
+                            <button
+                                    class="btn btn-outline-warning"
+                                    (click)="resetPickedAsset()"
+                            >
+                                {{ 'common.change' | translate }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-    </div>
+    }
 </div>
