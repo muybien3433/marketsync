@@ -9,11 +9,12 @@ kafka:
   enabled: true
 
 spring:
-  host: mongodb-subscription
-  port: 27017
-  username: ${MONGO_SUBSCRIPTION_USER}
-  password: ${MONGO_SUBSCRIPTION_PASSWORD}
-  authentication-database: admin
+  mongodb:
+    host: mongodb-subscription
+    port: 27017
+    username: ${MONGO_SUBSCRIPTION_USER}
+    password: ${MONGO_SUBSCRIPTION_PASSWORD}
+    authentication-database: admin
   kafka:
     bootstrap-servers: ${BOOTSTRAP_SERVERS}
     producer:
