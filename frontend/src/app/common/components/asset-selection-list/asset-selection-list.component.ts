@@ -94,7 +94,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         this.assetService.getAssetsBaseByAssetType(this.selectedAssetType).subscribe({
             next: (assets: AssetBase[]) => {
                 this._assets = assets;
-                this.filteredAssets = assets.slice(0, 200);
+                this.filteredAssets = assets.slice(0, 100);
                 this.isLoading = false;
             },
             error: err => {
@@ -177,7 +177,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
         const t = term.toLowerCase().trim();
 
         if (!t) {
-            this.filteredAssets = this._assets.slice(0, 200);
+            this.filteredAssets = this._assets.slice(0, 100);
             return;
         }
 
@@ -186,7 +186,7 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
                 (a.name && a.name.toLowerCase().includes(t)) ||
                 (a.symbol && a.symbol.toLowerCase().includes(t))
             )
-            .slice(0, 200);
+            .slice(0, 100);
     }
 
     trackByAsset(index: number, item: AssetBase): string {
