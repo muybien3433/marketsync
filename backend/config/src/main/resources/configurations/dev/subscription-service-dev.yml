@@ -10,9 +10,9 @@ kafka:
 
 spring:
   mongodb:
-    uri: mongodb://finance:finance@localhost:27017/finance?authSource=admin
+    uri: mongodb://subscription:subscription@localhost:27018/subscription?authSource=admin
   kafka:
-    bootstrap-servers: localhost:9092,localhost:9094
+    bootstrap-servers: localhost:9092,localhost:9094,localhost:9096
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer

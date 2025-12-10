@@ -2,8 +2,8 @@ server:
   port: 8900
 
 schedule:
-  time-ms: 50000 # 50s
-  fetch-page-size-per-round: 5
+  time-ms: 30000 # 30s
+  fetch-page-size-per-round: 10
 
 kafka:
   enabled: true

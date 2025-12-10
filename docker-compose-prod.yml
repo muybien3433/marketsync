@@ -515,6 +515,39 @@ services:
       timeout: 10s
       retries: 10
 
+  kafka-3:
+    image: confluentinc/cp-kafka:7.9.0
+    container_name: kafka-3
+    restart: unless-stopped
+    volumes:
+      - kafka_data_3:/var/lib/kafka
+    depends_on:
+      zookeeper-1:
+        condition: service_healthy
+      zookeeper-2:
+        condition: service_healthy
+      zookeeper-3:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9096
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9096
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    networks:
+      - backend-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9096" ]
+      start_period: 40s
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
   ######### [ Frontend ] #########
   frontend-server:
     build:
@@ -553,3 +586,4 @@ volumes:
   zookeeper_data_3:
   kafka_data_1:
   kafka_data_2:
+  kafka_data_3:

@@ -19,7 +19,7 @@ public class NotificationConsumer {
 
     @KafkaListener(topics = "support-notification-topic")
     public void consumerSupportNotification(SupportConfirmation supportConfirmation) {
-        log.debug("Consuming body from support-topic");
+        log.info("Consuming body from support-topic");
         supportNotification.sendMessage(
                 supportConfirmation.teamType(),
                 supportConfirmation.alertType(),
@@ -29,7 +29,7 @@ public class NotificationConsumer {
 
     @KafkaListener(topics = "subscription-notification-topic")
     public void consumeSubscriptionSuccessNotification(SubscriptionConfirmation subscriptionConfirmation) {
-        log.debug("Consuming body from subscription-topic");
+        log.info("Consuming body from subscription-topic");
 
         notificationService.sendMessage(
                 subscriptionConfirmation.notificationType(),

@@ -18,6 +18,13 @@ public class SubscriptionController {
 
     private final SubscriptionService service;
 
+    @GetMapping
+    public ResponseEntity<List<SubscriptionDetailDTO>> findAllSubscriptions(
+            @RequestHeader("X-Customer-Id") String customerId
+    ) {
+        return ResponseEntity.ok(service.findAllCustomerSubscriptions(customerId));
+    }
+
     @PostMapping
     public ResponseEntity<String> createSubscription(
             @RequestHeader("X-Customer-Id") String customerId,
@@ -37,12 +44,5 @@ public class SubscriptionController {
     ) {
         service.deleteSubscription(customerId, uri, id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<SubscriptionDetailDTO>> findAllSubscriptions(
-            @RequestHeader("X-Customer-Id") String customerId
-    ) {
-        return ResponseEntity.ok(service.findAllCustomerSubscriptions(customerId));
     }
 }

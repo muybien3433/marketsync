@@ -8,6 +8,8 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import pl.muybien.kafka.confirmation.SubscriptionConfirmation;
 
+import java.util.concurrent.TimeUnit;
+
 @Component
 public class SubscriptionProducer {
 
@@ -24,6 +26,10 @@ public class SubscriptionProducer {
                 .setHeader(KafkaHeaders.TOPIC, "subscription-notification-topic")
                 .build();
 
-        kafkaTemplate.send(message);
+        try {
+            kafkaTemplate.send(message).get(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to send subscription notification", e);
+        }
     }
 }

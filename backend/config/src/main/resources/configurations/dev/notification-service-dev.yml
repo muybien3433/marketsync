@@ -6,7 +6,7 @@ kafka:
 
 spring:
   kafka:
-    bootstrap-servers: localhost:9092,localhost:9094
+    bootstrap-servers: localhost:9092,localhost:9094,localhost:9096
     consumer:
       group-id: send-notification-event
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -27,8 +27,8 @@ spring:
       stack:
         auto: false
       credentials:
-        access-key: -----
-        secret-key: -----
+        access-key: ${AWS_SES_ACCESS}
+        secret-key: ${AWS_SES_SECRET}
 
 support:
   notification:
