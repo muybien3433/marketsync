@@ -3,10 +3,9 @@
 MarketSync is a solution that delivers real-time market insights, enabling personalized notifications and wallet 
 management. It helps users track their assets and receive timely updates on their subscriptions based on price changes.
 
-The platform fetches and compares targeted assets in real time with around 5k cryptocurrencies, 1k stocks,
-currencies and commodities -
-providing dynamic insights to keep users informed about market fluctuations. It simplifies 
-the management of cryptocurrency, stock, currencies and commodity interests and subscriptions, 
+The platform fetches and compares targeted assets in real time with around 9k cryptocurrencies, 
+15k stocks, 5k ETFs, 11k Mutual Funds and 100 futures - providing dynamic insights 
+to keep users informed about market fluctuations. It simplifies management,
 while also offering the ability to create and manage personal wallets that calculate profits in real time, 
 based on the user's preferred currency. Users can track assets, view detailed information
 and calculate real-time profits across various asset types.
@@ -27,13 +26,13 @@ create your own comments or look at your asset history.
 - **Subscriptions**: Effortlessly add or remove asset subscriptions with custom price and currencies thresholds 
 and receive email notifications when the subscribed asset hit targeted price,
 ensuring that users stay informed about market changes in real-time.
-- **Multiple Asset Support** Chose between Crypto, Stock, Currency, Commodity or even create your Custom asset if needed.
-- **Multiple Currency Support**: Choose between 11 currencies.
+- **Multiple Asset Support** Chose between Crypto, Stock, Currency, Commodity, ETFs, Mutual Funds or even create your Custom asset.
+- **Multiple Currency Support**: Choose between 189 currencies.
 
 ## Tech Stack
 
 - **Frontend**: Angular 19
-- **Backend**: Java 23, SpringBoot 6, Kafka
+- **Backend**: Java 25, SpringBoot 4.0, Kafka
 - **Database**: PostgreSQL for SQL and MongoDB for NoSQL
 - **Authentication & Security**: Keyclock, Gateway
 - **Cloud**: AWS-SES, Config-server
