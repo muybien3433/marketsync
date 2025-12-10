@@ -4,9 +4,10 @@ public enum AssetType {
     CUSTOM,
     STOCK,
     CRYPTO,
-    CURRENCY,
     COMMODITY,
     ETF,
+    MUTUAL_FUNDS,
+    CURRENCY,
     BOND;
 
     public static AssetType fromString(String type) {
