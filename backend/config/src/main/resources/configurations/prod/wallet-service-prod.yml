@@ -20,3 +20,9 @@ spring:
 application:
   config:
     finance-url: ${FINANCE_API_URL}
+
+wallet:
+  websocket:
+    refresh-interval-ms: 5000 # 5 second interval
+
+frontend-url: ${FRONTEND_URL}

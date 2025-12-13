@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .authorizeExchange(authorize -> authorize
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .pathMatchers("/").permitAll()
+                        .pathMatchers("/ws-wallet/**").permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtSpec ->
@@ -56,7 +57,8 @@ public class SecurityConfig {
         corsConfig.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig);
+        source.registerCorsConfiguration("/api/**", corsConfig);
         return source;
     }
+
 }

@@ -13,6 +13,7 @@ import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
 import {environment} from "../../../environments/environment";
 import {UnitTypeLabels} from "../../common/enum/unit-type";
 import {LoadingSpinnerComponent} from "../../common/components/loading/loading-spinner.component";
+import {WalletWebsocketService} from "../../common/service/wallet-web-socket.service";
 
 @Component({
     selector: 'app-wallet',
@@ -36,6 +37,7 @@ export default class WalletComponent implements OnInit {
         private preferenceService: PreferenceService,
         private router: Router,
         private translate: TranslateService,
+        private walletWs: WalletWebsocketService
     ) {
         this.donutChart = {
             chart: {
@@ -69,10 +71,35 @@ export default class WalletComponent implements OnInit {
     }
 
     ngOnInit() {
-        setTimeout(() => {
-            this.selectedCurrency = this.preferenceService.getPreferredCurrency();
-            this.fetchWalletAssets();
-        }, 300);
+        this.selectedCurrency = this.preferenceService.getPreferredCurrency();
+        this.fetchWalletAssets();
+        this.walletWs.connect(this.selectedCurrency);
+        this.walletWs.assets$.subscribe(assets => this.handleAssetsUpdate(assets));
+    }
+
+    private handleAssetsUpdate(assets: AssetAggregate[]): void {
+        this._assets = Array.isArray(assets) ? assets.map(asset => {
+            asset.currentPrice = parseFloat(asset.currentPrice).toFixed(6);
+            return asset;
+        }) : [];
+        this.groupAssetsByType();
+        this.updateProfitCharts();
+    }
+
+    fetchWalletAssets() {
+        this.isLoading = true;
+        this.http.get<AssetAggregate[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`)
+            .subscribe({
+                next: assets => {
+                    this.handleAssetsUpdate(assets);
+                    this.isLoading = false;
+                },
+                error: err => {
+                    console.error(err);
+                    this._assets = [];
+                    this.isLoading = false;
+                }
+            });
     }
 
     groupAssetsByType() {
@@ -184,28 +211,6 @@ export default class WalletComponent implements OnInit {
             labels,
             series
         };
-    }
-
-    fetchWalletAssets() {
-        this.isLoading = true;
-        this.http.get<AssetAggregate[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`)
-            .subscribe({
-                    next: (assets) => {
-                        this._assets = Array.isArray(assets) ? assets.map(asset => {
-                            asset.currentPrice = parseFloat(asset.currentPrice).toFixed(6);
-                            return asset;
-                        }) : [];
-                        this.groupAssetsByType();
-                        this.updateProfitCharts();
-                        this.isLoading = false;
-                    },
-                    error: (err) => {
-                        console.error(err);
-                        this._assets = [];
-                        this.isLoading = false;
-                    },
-                }
-            );
     }
 
     protected readonly UnitTypeLabels = UnitTypeLabels;

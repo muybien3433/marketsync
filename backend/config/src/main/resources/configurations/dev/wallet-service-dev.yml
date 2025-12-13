@@ -29,3 +29,9 @@ management:
   endpoint:
     health:
       show-details: always
+
+wallet:
+  websocket:
+    refresh-interval-ms: 5000 # 5 second interval
+
+frontend-url: http://localhost:4200

@@ -177,13 +177,6 @@ services:
     restart: unless-stopped
     volumes:
       - kafka_data_1:/var/lib/kafka
-    depends_on:
-      zookeeper-1:
-        condition: service_healthy
-      zookeeper-2:
-        condition: service_healthy
-      zookeeper-3:
-        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
@@ -207,13 +200,6 @@ services:
     restart: unless-stopped
     volumes:
       - kafka_data_2:/var/lib/kafka
-    depends_on:
-      zookeeper-1:
-        condition: service_healthy
-      zookeeper-2:
-        condition: service_healthy
-      zookeeper-3:
-        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
@@ -237,13 +223,6 @@ services:
     restart: unless-stopped
     volumes:
       - kafka_data_3:/var/lib/kafka
-    depends_on:
-      zookeeper-1:
-        condition: service_healthy
-      zookeeper-2:
-        condition: service_healthy
-      zookeeper-3:
-        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181

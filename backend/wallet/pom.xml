@@ -25,6 +25,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!--		Web Socket		-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>7.0.2</version>
+        </dependency>
         <!--		Kafka		-->
         <dependency>
             <groupId>org.springframework.kafka</groupId>

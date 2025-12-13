@@ -27,17 +27,29 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
+        String path = request.getURI().getPath();
         String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+
+        if ((authHeader == null || !authHeader.startsWith("Bearer "))
+                && path.startsWith("/ws-wallet")) {
+
+            String tokenParam = request.getQueryParams().getFirst("token");
+            if (tokenParam != null && !tokenParam.isBlank()) {
+                authHeader = "Bearer " + tokenParam;
+            }
+        }
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new IllegalArgumentException("Authorization header is invalid");
         }
 
-        return extractCustomerFromHeader(authHeader)
+        String finalAuthHeader = authHeader;
+
+        return extractCustomerFromHeader(finalAuthHeader)
                 .flatMap(customer -> {
                     ServerHttpRequest mutatedRequest = request.mutate()
                             .headers(headers -> {
-                                headers.set(HttpHeaders.AUTHORIZATION, authHeader);
+                                headers.set(HttpHeaders.AUTHORIZATION, finalAuthHeader);
                                 headers.set("X-Customer-Id", customer.id());
                                 headers.set("X-Customer-Email", customer.email());
                                 headers.set("X-Customer-Number", customer.number());
