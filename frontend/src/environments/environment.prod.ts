@@ -7,5 +7,5 @@ export const environment = {
     keycloakUrl: 'https://auth.muybien.pl',
     keycloakRealm: 'marketsync-client',
     keycloakClientId: 'frontend-client',
-    wsWalletUrl: 'wss://muybien.pl/api/ws-wallet'
+    wsWalletUrl: 'https://muybien.pl/api/ws-wallet'
 };
