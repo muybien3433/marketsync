@@ -7,5 +7,5 @@ export const environment = {
     keycloakUrl: 'http://localhost:8080',
     keycloakRealm: 'marketsync-client',
     keycloakClientId: 'frontend-client',
-    wsWalletUrl: 'http://localhost:9999/ws-wallet'
+    wsWalletUrl: 'http://localhost:9999/api/ws-wallet'
 }

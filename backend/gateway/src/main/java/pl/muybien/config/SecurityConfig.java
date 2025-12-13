@@ -38,7 +38,6 @@ public class SecurityConfig {
                 .authorizeExchange(authorize -> authorize
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .pathMatchers("/").permitAll()
-                        .pathMatchers("/ws-wallet/**").permitAll()
                         .pathMatchers("/api/ws-wallet/**").permitAll()
                         .anyExchange().authenticated()
                 )

@@ -25,7 +25,7 @@ spring:
             - id: wallet-ws
               uri: http://localhost:8200
               predicates:
-                - Path=/ws-wallet/**
+                - Path=/api/ws-wallet/**
 
   security:
     oauth2:
