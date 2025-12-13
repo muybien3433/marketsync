@@ -29,8 +29,9 @@ export default class WalletComponent implements OnInit {
     CurrencyType = CurrencyType;
     donutChart: Partial<ApexOptions>;
     profits: any[] = [];
-
     isLoading: boolean = true;
+
+    private priceChangeMap: { [key: string]: 'up' | 'down' } = {};
 
     constructor(
         private http: HttpClient,
@@ -77,13 +78,81 @@ export default class WalletComponent implements OnInit {
         this.walletWs.assets$.subscribe(assets => this.handleAssetsUpdate(assets));
     }
 
+    private getAssetKey(asset: AssetAggregate): string {
+        return `${(asset as any).id ?? asset.name}_${asset.assetType}`;
+    }
+
+    getProfitChangeClass(asset: AssetAggregate): string {
+        const key = this.getAssetKey(asset);
+        const state = this.priceChangeMap[key];
+        if (state === 'up') {
+            return 'profit-flash-up';
+        }
+        if (state === 'down') {
+            return 'profit-flash-down';
+        }
+        return '';
+    }
+
     private handleAssetsUpdate(assets: AssetAggregate[]): void {
-        this._assets = Array.isArray(assets) ? assets.map(asset => {
-            asset.currentPrice = parseFloat(asset.currentPrice).toFixed(6);
-            return asset;
-        }) : [];
+        const previousByKey: { [key: string]: AssetAggregate } = {};
+        this._assets.forEach(a => {
+            previousByKey[this.getAssetKey(a)] = a;
+        });
+
+        this._assets = Array.isArray(assets)
+            ? assets.map(asset => {
+                const key = this.getAssetKey(asset);
+
+                const count = this.toNumber((asset as any).count);
+                const numericCurrentPrice = this.toNumber((asset as any).currentPrice);
+                const averagePurchasePrice = this.toNumber((asset as any).averagePurchasePrice);
+
+                const value = count * numericCurrentPrice;
+                const totalInvested = averagePurchasePrice * count;
+                const profit = value - totalInvested;
+                const profitInPercentage = totalInvested > 0 ? (profit / totalInvested) * 100 : 0;
+
+                const previous = previousByKey[key];
+                if (previous) {
+                    const prevPrice = this.toNumber((previous as any).currentPrice);
+                    if (numericCurrentPrice > prevPrice) {
+                        this.priceChangeMap[key] = 'up';
+                    } else if (numericCurrentPrice < prevPrice) {
+                        this.priceChangeMap[key] = 'down';
+                    }
+                }
+
+                const updated: any = {
+                    ...asset,
+                    count,
+                    currentPrice: numericCurrentPrice,
+                    averagePurchasePrice,
+                    value,
+                    profit,
+                    profitInPercentage
+                };
+
+                return updated as AssetAggregate;
+            })
+            : [];
         this.groupAssetsByType();
         this.updateProfitCharts();
+
+        setTimeout(() => {
+            this.priceChangeMap = {};
+        }, 800);
+    }
+
+    private toNumber(value: string | number | null | undefined): number {
+        if (typeof value === 'number') {
+            return value;
+        }
+        if (value == null) {
+            return 0;
+        }
+        const parsed = parseFloat(value as string);
+        return Number.isNaN(parsed) ? 0 : parsed;
     }
 
     fetchWalletAssets() {

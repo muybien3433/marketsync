@@ -66,23 +66,35 @@
                                     <td>{{ asset.value | number: '1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}</td>
                                     <td>{{ asset.averagePurchasePrice | number: '1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}</td>
 
-                                    <td>
+                                    <td [ngClass]="[ getProfitChangeClass(asset), asset.currentPrice === 0 ? 'profit-neutral'
+                                        : (getProfitChangeClass(asset) === 'profit-flash-up' ? 'profit-positive'
+                                        : (getProfitChangeClass(asset) === 'profit-flash-down' ? 'profit-negative' : ''))]"
+                                    >
                                         {{ asset.currentPrice | number:'1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}
                                         {{
                                             asset.unitType === 'UNIT' ||
-                                            asset.unitType === '' ? '' : '(' + (asset.assetType === 'COMMODITY' ?
-                                                UnitTypeLabels[asset.unitType] : asset.unitType | translate) + ')'
+                                            asset.unitType === '' ? '' : '(' + (asset.assetType === 'COMMODITY'
+                                                ? UnitTypeLabels[asset.unitType]
+                                                : asset.unitType | translate) + ')'
                                         }}
                                     </td>
 
                                     <td>{{ calculateWeight(asset) }}%</td>
 
-                                    <td [ngStyle]="{ color: asset.profit === 0 ? 'black' : (asset.profit > 0 ? 'green' : 'red') }">
+                                    <td
+                                            [ngClass]="[
+                                            asset.profit === 0 ? 'profit-neutral' : (asset.profit > 0 ? 'profit-positive' : 'profit-negative'),
+                                            getProfitChangeClass(asset)]"
+                                    >
                                         {{ asset.profit | number:'1.0-6' }}{{ CurrencyType.Symbols[asset.currencyType] }}
                                     </td>
 
-                                    <td [ngStyle]="{ color: asset.profitInPercentage === 0 ? 'black' : (asset.profitInPercentage >= 0 ? 'green' : 'red') }">
-                                        {{ asset.profitInPercentage + '%' }}
+
+                                    <td
+                                            [ngClass]="[
+                                            asset.profitInPercentage === 0 ? 'profit-neutral' : (asset.profitInPercentage >= 0 ? 'profit-positive' : 'profit-negative'),
+                                            getProfitChangeClass(asset)]">
+                                        {{ asset.profitInPercentage | number:'1.0-2' }}%
                                     </td>
                                 </tr>
                             </ng-container>

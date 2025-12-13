@@ -26,7 +26,7 @@ public class YahooCryptoScraper extends YahooScraper {
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
-    @Scheduled(fixedDelay = 20000)
+    @Scheduled(fixedDelay = 10000)
     public void scheduleUpdate() {
         enqueueUpdate("yahoo-finance-crypto");
     }

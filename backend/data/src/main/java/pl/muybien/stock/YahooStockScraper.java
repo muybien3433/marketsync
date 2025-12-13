@@ -51,7 +51,7 @@ public class YahooStockScraper extends YahooScraper {
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 20000)
     public void scheduleUpdate() {
         enqueueUpdate("yahoo-finance-stocks");
     }

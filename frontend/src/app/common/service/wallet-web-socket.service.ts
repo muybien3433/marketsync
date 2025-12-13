@@ -28,7 +28,7 @@ export class WalletWebsocketService {
             .subscribe(urlWithToken => {
                 this.client = new Client({
                     webSocketFactory: () => new SockJS(urlWithToken),
-                    reconnectDelay: 5000
+                    reconnectDelay: 1000
                 });
 
                 this.client.onConnect = () => {
