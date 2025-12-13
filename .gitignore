@@ -49,7 +49,6 @@ package-lock.json
 
 # Production files
 .env
-environment.prod.ts
 marketsync-client-prod.json
 nginx
 nginx.conf
