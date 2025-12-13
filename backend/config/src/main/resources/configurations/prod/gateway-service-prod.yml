@@ -13,15 +13,15 @@ spring:
             - id: finance-service
               uri: http://finance-server:8800
               predicates:
-                - Path=/api/v1/finances/**
+                - Path=/v1/finances/**
             - id: subscription-service
               uri: http://subscription-server:8900
               predicates:
-                - Path=/api/v1/subscriptions/**
+                - Path=/v1/subscriptions/**
             - id: wallet-service
               uri: http://wallet-server:8200
               predicates:
-                - Path=/api/v1/wallets/**
+                - Path=/v1/wallets/**
             - id: wallet-ws
               uri: http://wallet-server:8200
               predicates:
