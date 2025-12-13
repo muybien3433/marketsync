@@ -130,9 +130,9 @@
                             <div class="row d-flex align-items-center">
                                 <div class="col-10">
                                     <h3 class="f-w-300 d-flex align-items-center m-b-0">
-                                        <i class="feather {{ profit.icon }} f-30 m-r-10"></i>
                                         {{ profit.amount | number:'1.2-2' }}{{ CurrencyType.Symbols[selectedCurrency] }}
                                         {{ profit.percent }}
+                                        <i *ngIf="profit.icon" class="feather {{ profit.icon }} f-30 m-r-10" style="margin-left: 0.5rem"></i>
                                     </h3>
                                 </div>
                             </div>

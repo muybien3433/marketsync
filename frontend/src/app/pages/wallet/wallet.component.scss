@@ -7,32 +7,35 @@
   text-align: center;
 }
 
-/* Kolory dla wartości */
 .profit-positive {
-  color: #198754; /* zielony */
+  color: #198754;
 }
 
 .profit-negative {
-  color: #dc3545; /* czerwony */
+  color: #dc3545;
 }
 
 .profit-neutral {
-  color: #212529; /* szary */
+  color: #212529;
 }
 
-/* Efekty migania (dla profit i currentPrice) */
 .profit-flash-up {
-  animation: profitFlashUp 0.6s ease-out;
+  animation: profitFlashUp 2.5s ease-out;
 }
 
 .profit-flash-down {
-  animation: profitFlashDown 0.6s ease-out;
+  animation: profitFlashDown 2.5s ease-out;
 }
 
-/* Animacje tła */
 @keyframes profitFlashUp {
   0% {
-    background-color: rgba(25, 135, 84, 0.25);
+    background-color: rgba(120, 230, 180, 0.35); /* pastelowa, lekka zieleń */
+  }
+  40% {
+    background-color: rgba(120, 230, 180, 0.18);
+  }
+  70% {
+    background-color: rgba(120, 230, 180, 0.08);
   }
   100% {
     background-color: transparent;
@@ -41,14 +44,19 @@
 
 @keyframes profitFlashDown {
   0% {
-    background-color: rgba(220, 53, 69, 0.25);
+    background-color: rgba(255, 150, 150, 0.35); /* delikatny różowo-czerwony */
+  }
+  40% {
+    background-color: rgba(255, 150, 150, 0.18);
+  }
+  70% {
+    background-color: rgba(255, 150, 150, 0.08);
   }
   100% {
     background-color: transparent;
   }
 }
 
-/* Dodatkowy efekt łagodnej zmiany koloru liczby */
 td {
-  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+  transition: color 0.6s ease-in-out, background-color 0.6s ease-in-out;
 }

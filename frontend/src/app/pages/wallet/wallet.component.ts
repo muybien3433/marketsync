@@ -32,6 +32,10 @@ export default class WalletComponent implements OnInit {
     isLoading: boolean = true;
 
     private priceChangeMap: { [key: string]: 'up' | 'down' } = {};
+    private lastDonutLabels: string[] = [];
+    private lastDonutSeries: number[] = [];
+    private lastTotalValue: number | null = null;
+    private totalValueDirection: 'up' | 'down' | null = null;
 
     constructor(
         private http: HttpClient,
@@ -238,11 +242,24 @@ export default class WalletComponent implements OnInit {
     }
 
     private updateProfitCharts() {
+        const currentTotalValue = this.getTotalValue();
+
+        if (this.lastTotalValue !== null) {
+            if (currentTotalValue > this.lastTotalValue) {
+                this.totalValueDirection = 'up';
+            } else if (currentTotalValue < this.lastTotalValue) {
+                this.totalValueDirection = 'down';
+            }
+            // jeśli równe, NIE zmieniamy totalValueDirection
+        }
+
+        this.lastTotalValue = currentTotalValue;
+
         this.profits = [
             {
                 title: this.translate.instant('common.total.value'),
                 icon: this.resolveProfitIcon(),
-                amount: this.getTotalValue(),
+                amount: currentTotalValue,
                 progress: 80,
                 design: 'col-md-6',
                 progress_bg: 'progress-c-theme'
@@ -267,13 +284,40 @@ export default class WalletComponent implements OnInit {
     }
 
     private resolveProfitIcon() {
-        return this.getTotalProfit() > 0 ? 'icon-arrow-up text-c-green' : 'icon-arrow-down text-c-red';
+        if (this.totalValueDirection === 'up') {
+            return 'icon-arrow-up text-c-green';
+        }
+        if (this.totalValueDirection === 'down') {
+            return 'icon-arrow-down text-c-red';
+        }
+        return null;
     }
-
 
     private updateAssetDivisionChart(totalValues: { [key: string]: number }) {
         const labels = Object.keys(this.groupedAssets);
-        const series = labels.map(label => totalValues[label]);
+        const series = labels.map(label => totalValues[label] ?? 0);
+
+        const sameLength =
+            labels.length === this.lastDonutLabels.length &&
+            series.length === this.lastDonutSeries.length;
+
+        let hasChanged = !sameLength;
+
+        if (sameLength) {
+            for (let i = 0; i < labels.length; i++) {
+                if (labels[i] !== this.lastDonutLabels[i] || series[i] !== this.lastDonutSeries[i]) {
+                    hasChanged = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasChanged) {
+            return;
+        }
+
+        this.lastDonutLabels = labels;
+        this.lastDonutSeries = series;
 
         this.donutChart = {
             ...this.donutChart,

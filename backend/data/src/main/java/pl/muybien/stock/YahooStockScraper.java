@@ -22,27 +22,26 @@ public class YahooStockScraper extends YahooScraper {
 
     private static final List<String> STOCK_SCREENERS = List.of(
             "MOST_ACTIVES",
-//            "TRENDING_NOW",
             "DAY_GAINERS",
             "DAY_LOSERS",
             "FIFTY_TWO_WK_GAINERS",
             "FIFTY_TWO_WK_LOSERS",
             "HIGHEST_DIVIDEND_STOCKS",
-            "SMALL_CAP_STOCKS",
-            "LARGE_CAP_STOCKS",
-            "MOST_EXPENSIVE_STOCKS",
-            "OVERSOLD_STOCKS",
+//            "SMALL_CAP_STOCKS",
+//            "LARGE_CAP_STOCKS",
+//            "MOST_EXPENSIVE_STOCKS",
+//            "OVERSOLD_STOCKS",
             "PINK_SHEET_STOCKS",
             "OVERBOUGHT_STOCKS",
-            "ALL_TIME_HIGH_STOCKS",
-            "UNUSUAL_VOLUME_STOCKS",
-            "HIGHEST_BETA_STOCKS",
-            "HIGHEST_REVENUE_STOCKS",
-            "HIGHEST_CASH_STOCKS",
-            "HIGHEST_NET_INCOME_STOCKS",
-            "HIGHEST_PROFIT_PER_EMPLOYEE_STOCKS",
-            "HIGHEST_REVENUE_PER_EMPLOYEE_STOCKS",
-            "LARGEST_EMPLOYER_STOCKS"
+            "ALL_TIME_HIGH_STOCKS"
+//            "UNUSUAL_VOLUME_STOCKS",
+//            "HIGHEST_BETA_STOCKS",
+//            "HIGHEST_REVENUE_STOCKS",
+//            "HIGHEST_CASH_STOCKS",
+//            "HIGHEST_NET_INCOME_STOCKS",
+//            "HIGHEST_PROFIT_PER_EMPLOYEE_STOCKS",
+//            "HIGHEST_REVENUE_PER_EMPLOYEE_STOCKS",
+//            "LARGEST_EMPLOYER_STOCKS"
     );
 
     public YahooStockScraper(WebClient yahooWebClient, DatabaseUpdater databaseUpdater) {
