@@ -31,7 +31,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
         if ((authHeader == null || !authHeader.startsWith("Bearer "))
-                && path.startsWith("/ws-wallet")) {
+                && (path.startsWith("/ws-wallet") || path.startsWith("/api/ws-wallet"))) {
 
             String tokenParam = request.getQueryParams().getFirst("token");
             if (tokenParam != null && !tokenParam.isBlank()) {
