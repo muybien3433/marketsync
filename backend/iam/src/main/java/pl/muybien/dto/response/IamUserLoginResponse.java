@@ -1,0 +1,10 @@
+package pl.muybien.dto.response;
+
+public record IamUserLoginResponse(
+        String access_token,
+        String refresh_token,
+        String token_type,
+        long expires_in,
+        long refresh_expires_in
+) {
+}

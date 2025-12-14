@@ -1,6 +1,20 @@
 server:
   port: 8888
 
+keycloak:
+  server-url: http://keycloak:8080
+  realm: my-realm
+  client-id: iam-service
+  client-secret: super-secret
+  admin-realm: master
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/my-realm
+
 management:
   endpoints:
     web:
