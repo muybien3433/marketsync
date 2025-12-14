@@ -11,3 +11,9 @@ spring:
 
 selenium:
   remote-web-driver: http://selenium-chrome:4444/wd/hub
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

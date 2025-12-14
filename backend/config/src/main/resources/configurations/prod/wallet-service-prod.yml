@@ -26,3 +26,9 @@ wallet:
     refresh-interval-ms: 5000 # 5 second interval
 
 frontend-url: ${FRONTEND_URL}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

@@ -25,3 +25,9 @@ application:
     finance-url: ${FINANCE_API_URL}
 
 send-notification-topic: send-notification-topic
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

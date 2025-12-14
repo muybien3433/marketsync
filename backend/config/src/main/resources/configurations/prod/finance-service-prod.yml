@@ -8,3 +8,9 @@ spring:
     username: ${MONGO_FINANCE_USER}
     password: ${MONGO_FINANCE_PASSWORD}
     authentication-database: admin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

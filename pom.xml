@@ -22,8 +22,10 @@
         <module>backend/data</module>
         <module>backend/finance</module>
         <module>backend/gateway</module>
+        <module>backend/iam</module>
         <module>backend/notification</module>
         <module>backend/subscription</module>
+        <module>backend/user</module>
         <module>backend/wallet</module>
     </modules>
 
