@@ -104,9 +104,14 @@ export default class WalletComponent implements OnInit {
             previousByKey[this.getAssetKey(a)] = a;
         });
 
-        this._assets = Array.isArray(assets)
-            ? assets.map(asset => {
+        const updatedAssets: AssetAggregate[] = [];
+        const seenKeys = new Set<string>();
+        let hasValueOrCompositionChange = false;
+
+        if (Array.isArray(assets)) {
+            for (const asset of assets) {
                 const key = this.getAssetKey(asset);
+                seenKeys.add(key);
 
                 const count = this.toNumber((asset as any).count);
                 const numericCurrentPrice = this.toNumber((asset as any).currentPrice);
@@ -118,13 +123,28 @@ export default class WalletComponent implements OnInit {
                 const profitInPercentage = totalInvested > 0 ? (profit / totalInvested) * 100 : 0;
 
                 const previous = previousByKey[key];
+
                 if (previous) {
                     const prevPrice = this.toNumber((previous as any).currentPrice);
+                    const prevCount = this.toNumber((previous as any).count);
+                    const prevValue = (previous as any).value;
+
                     if (numericCurrentPrice > prevPrice) {
                         this.priceChangeMap[key] = 'up';
                     } else if (numericCurrentPrice < prevPrice) {
                         this.priceChangeMap[key] = 'down';
                     }
+
+                    if (
+                        numericCurrentPrice !== prevPrice ||
+                        count !== prevCount ||
+                        value !== prevValue ||
+                        asset.exchangeRateToDesired !== (previous as any).exchangeRateToDesired
+                    ) {
+                        hasValueOrCompositionChange = true;
+                    }
+                } else {
+                    hasValueOrCompositionChange = true;
                 }
 
                 const updated: any = {
@@ -137,15 +157,28 @@ export default class WalletComponent implements OnInit {
                     profitInPercentage
                 };
 
-                return updated as AssetAggregate;
-            })
-            : [];
-        this.groupAssetsByType();
-        this.updateProfitCharts();
+                updatedAssets.push(updated as AssetAggregate);
+            }
+        }
+
+        const previousKeys = Object.keys(previousByKey);
+        if (
+            previousKeys.length !== seenKeys.size ||
+            previousKeys.some(k => !seenKeys.has(k))
+        ) {
+            hasValueOrCompositionChange = true;
+        }
+
+        this._assets = updatedAssets;
+
+        if (hasValueOrCompositionChange) {
+            this.groupAssetsByType();
+            this.updateProfitCharts();
+        }
 
         setTimeout(() => {
             this.priceChangeMap = {};
-        }, 800);
+        }, 600);
     }
 
     private toNumber(value: string | number | null | undefined): number {
@@ -179,18 +212,17 @@ export default class WalletComponent implements OnInit {
         this.groupedAssets = {};
         const totalValues: { [key: string]: number } = {};
 
-        this._assets.forEach((asset) => {
-            this.translate
-                .get(`asset.type.${asset.assetType}`.toLowerCase())
-                .subscribe((translatedType) => {
-                    if (!this.groupedAssets[translatedType]) {
-                        this.groupedAssets[translatedType] = [];
-                        totalValues[translatedType] = 0;
-                    }
-                    this.groupedAssets[translatedType].push(asset);
-                    totalValues[translatedType] += asset.value;
-                });
+        this._assets.forEach(asset => {
+            const translatedType = this.translate.instant(`asset.type.${asset.assetType}`.toLowerCase());
+
+            if (!this.groupedAssets[translatedType]) {
+                this.groupedAssets[translatedType] = [];
+                totalValues[translatedType] = 0;
+            }
+            this.groupedAssets[translatedType].push(asset);
+            totalValues[translatedType] += asset.value;
         });
+
         this.updateAssetDivisionChart(totalValues);
     }
 
@@ -250,7 +282,6 @@ export default class WalletComponent implements OnInit {
             } else if (currentTotalValue < this.lastTotalValue) {
                 this.totalValueDirection = 'down';
             }
-            // jeśli równe, NIE zmieniamy totalValueDirection
         }
 
         this.lastTotalValue = currentTotalValue;
@@ -296,25 +327,6 @@ export default class WalletComponent implements OnInit {
     private updateAssetDivisionChart(totalValues: { [key: string]: number }) {
         const labels = Object.keys(this.groupedAssets);
         const series = labels.map(label => totalValues[label] ?? 0);
-
-        const sameLength =
-            labels.length === this.lastDonutLabels.length &&
-            series.length === this.lastDonutSeries.length;
-
-        let hasChanged = !sameLength;
-
-        if (sameLength) {
-            for (let i = 0; i < labels.length; i++) {
-                if (labels[i] !== this.lastDonutLabels[i] || series[i] !== this.lastDonutSeries[i]) {
-                    hasChanged = true;
-                    break;
-                }
-            }
-        }
-
-        if (!hasChanged) {
-            return;
-        }
 
         this.lastDonutLabels = labels;
         this.lastDonutSeries = series;

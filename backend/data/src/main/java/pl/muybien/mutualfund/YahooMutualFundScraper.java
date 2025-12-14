@@ -34,7 +34,7 @@ public class YahooMutualFundScraper extends YahooScraper {
 
     @Override
     @EventListener(ApplicationReadyEvent.class)
-    @Scheduled(fixedDelay = 20000)
+    @Scheduled(fixedDelay = 60000)
     public void scheduleUpdate() {
         enqueueUpdate("yahoo-finance-mutual-funds");
     }
