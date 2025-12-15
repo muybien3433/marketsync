@@ -1,4 +1,4 @@
-package pl.muybien.exception;
+package pl.muybien.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

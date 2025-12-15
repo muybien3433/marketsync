@@ -1,6 +1,6 @@
 package pl.muybien.dto.response;
 
-public record IamUserCreatedResponse(
+public record UserCreatedResponse(
         String id,
         String username
 ) {

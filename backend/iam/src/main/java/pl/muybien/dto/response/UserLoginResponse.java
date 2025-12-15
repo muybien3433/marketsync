@@ -1,6 +1,6 @@
 package pl.muybien.dto.response;
 
-public record IamUserLoginResponse(
+public record UserLoginResponse(
         String access_token,
         String refresh_token,
         String token_type,

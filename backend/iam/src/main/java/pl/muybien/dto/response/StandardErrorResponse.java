@@ -1,4 +1,4 @@
-package pl.muybien.exception;
+package pl.muybien.dto.response;
 
 public record StandardErrorResponse(
         String code,
