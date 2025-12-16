@@ -4,10 +4,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.muybien.app.auth.ChangeEmailAsUserHandler;
 import pl.muybien.app.auth.LoginHandler;
 import pl.muybien.app.auth.ChangePasswordAsUserHandler;
+import pl.muybien.dto.request.UserChangeEmailRequest;
 import pl.muybien.dto.request.UserLoginRequest;
 import pl.muybien.dto.request.UserChangePasswordRequest;
+import pl.muybien.dto.response.EmailChangedResponse;
 import pl.muybien.dto.response.UserLoginResponse;
 
 @RestController
@@ -16,11 +19,18 @@ import pl.muybien.dto.response.UserLoginResponse;
 public class AuthController {
 
     private final LoginHandler loginHandler;
+    private final ChangeEmailAsUserHandler  changeEmailAsUserHandler;
     private final ChangePasswordAsUserHandler changePasswordAsUserHandler;
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
         return ResponseEntity.ok(loginHandler.handle(request));
+    }
+
+    @PostMapping("/change-email")
+    public ResponseEntity<EmailChangedResponse> changeEmail(
+            @Valid @RequestBody UserChangeEmailRequest request) {
+        return ResponseEntity.ok(changeEmailAsUserHandler.handle(request));
     }
 
     @PostMapping("/change-password")

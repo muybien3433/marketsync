@@ -10,11 +10,14 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import pl.muybien.dto.response.EmailChangedResponse;
 import pl.muybien.dto.response.UserCreatedResponse;
 import pl.muybien.exception.PasswordChangeException;
 import pl.muybien.exception.UserCreationException;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 @Component
 public class KeycloakUserClient {
@@ -83,5 +86,91 @@ public class KeycloakUserClient {
         }
 
         return users.getFirst().getId();
+    }
+
+    public boolean isUsernameAvailable(String username) {
+        String u = username != null ? username.trim() : "";
+        if (u.isEmpty()) return false;
+
+        UsersResource usersResource = keycloak.realm(realm).users();
+
+        try {
+            List<UserRepresentation> exact = usersResource.search(u, true);
+            if (exact == null || exact.isEmpty()) return true;
+
+            return exact.stream()
+                    .map(UserRepresentation::getUsername)
+                    .filter(Objects::nonNull)
+                    .noneMatch(found -> found.equalsIgnoreCase(u));
+        } catch (WebApplicationException ex) {
+            List<UserRepresentation> results = usersResource.search(u);
+            if (results == null || results.isEmpty()) return true;
+
+            String needle = u.toLowerCase(Locale.ROOT);
+            return results.stream()
+                    .map(UserRepresentation::getUsername)
+                    .filter(Objects::nonNull)
+                    .map(s -> s.toLowerCase(Locale.ROOT))
+                    .noneMatch(needle::equals);
+        }
+    }
+
+    public EmailChangedResponse changeEmailByUsername(String username, String newEmail, Boolean emailVerified) {
+        String userId = findUserIdByUsername(username);
+        changeEmailByUserId(userId, newEmail, emailVerified);
+
+        UserRepresentation updated = getUserById(userId);
+        return new EmailChangedResponse(
+                userId,
+                updated.getUsername(),
+                updated.getEmail(),
+                Boolean.TRUE.equals(updated.isEmailVerified())
+        );
+    }
+
+    public void changeEmailByUserId(String userId, String newEmail, Boolean emailVerified) {
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new PasswordChangeException("User id is required", 400);
+        }
+        if (newEmail == null || newEmail.trim().isEmpty()) {
+            throw new PasswordChangeException("New email is required", 400);
+        }
+
+        UserResource userResource = keycloak.realm(realm).users().get(userId);
+
+        try {
+            UserRepresentation rep = userResource.toRepresentation();
+            rep.setEmail(newEmail.trim());
+            if (emailVerified != null) {
+                rep.setEmailVerified(emailVerified);
+            }
+            userResource.update(rep);
+        } catch (WebApplicationException ex) {
+            int status = ex.getResponse() != null ? ex.getResponse().getStatus() : 500;
+
+            if (status == 404) {
+                throw new PasswordChangeException("User not found in Keycloak", status);
+            }
+            if (status == 400) {
+                throw new PasswordChangeException("Invalid email payload for Keycloak", status);
+            }
+            if (status == 409) {
+                throw new PasswordChangeException("Email already exists in Keycloak", status);
+            }
+
+            throw new PasswordChangeException("Failed to change email in Keycloak. Status: " + status, status);
+        }
+    }
+
+    public UserRepresentation getUserById(String userId) {
+        try {
+            return keycloak.realm(realm).users().get(userId).toRepresentation();
+        } catch (WebApplicationException ex) {
+            int status = ex.getResponse() != null ? ex.getResponse().getStatus() : 500;
+            if (status == 404) {
+                throw new PasswordChangeException("User not found in Keycloak", status);
+            }
+            throw new PasswordChangeException("Failed to read user from Keycloak. Status: " + status, status);
+        }
     }
 }

@@ -1,7 +1,11 @@
 package pl.muybien.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class KeycloakErrorResponse {
 
     private String error;
@@ -9,19 +13,4 @@ public class KeycloakErrorResponse {
     @JsonProperty("error_description")
     private String errorDescription;
 
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public String getErrorDescription() {
-        return errorDescription;
-    }
-
-    public void setErrorDescription(String errorDescription) {
-        this.errorDescription = errorDescription;
-    }
 }

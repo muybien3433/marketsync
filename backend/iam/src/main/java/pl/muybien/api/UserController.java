@@ -8,11 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.muybien.app.user.ChangePasswordAsAdminHandler;
-import pl.muybien.app.user.CreateUserHandler;
-import pl.muybien.app.user.CreateUserWithPasswordHandler;
-import pl.muybien.app.user.CreateUserWithoutPasswordHandler;
+import pl.muybien.app.user.*;
 import pl.muybien.dto.request.*;
+import pl.muybien.dto.response.EmailChangedResponse;
 import pl.muybien.dto.response.UserCreatedResponse;
 
 @RestController
@@ -23,6 +21,7 @@ public class UserController {
     private final CreateUserHandler createUserHandler;
     private final CreateUserWithPasswordHandler createUserWithPasswordHandler;
     private final CreateUserWithoutPasswordHandler createUserWithoutPasswordHandler;
+    private final ChangeEmailAsAdminHandler changeEmailAsAdminHandler;
     private final ChangePasswordAsAdminHandler changePasswordAsAdminHandler;
 
     @PostMapping
@@ -40,6 +39,12 @@ public class UserController {
     public ResponseEntity<UserCreatedResponse> createUserWithoutPassword(
             @Valid @RequestBody AdminCreateUserWithoutPasswordRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(createUserWithoutPasswordHandler.handle(request));
+    }
+
+    @PostMapping("/change-email-admin")
+    public ResponseEntity<EmailChangedResponse> changeEmailAsAdmin(
+            @Valid @RequestBody AdminChangeEmailRequest request) {
+        return ResponseEntity.ok(changeEmailAsAdminHandler.handle(request));
     }
 
     @PostMapping("/change-password-admin")
