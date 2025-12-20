@@ -1,4 +1,4 @@
-package pl.muybien.dto.response;
+package pl.muybien.dto.iam.response;
 
 public record UserLoginResponse(
         String access_token,

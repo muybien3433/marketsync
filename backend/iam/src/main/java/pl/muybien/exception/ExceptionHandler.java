@@ -2,7 +2,7 @@ package pl.muybien.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import pl.muybien.dto.response.StandardErrorResponse;
+import pl.muybien.dto.iam.response.StandardErrorResponse;
 
 @RestControllerAdvice
 public class ExceptionHandler {

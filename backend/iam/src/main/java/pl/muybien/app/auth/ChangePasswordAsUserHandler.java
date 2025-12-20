@@ -3,7 +3,7 @@ package pl.muybien.app.auth;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.springframework.stereotype.Service;
-import pl.muybien.dto.request.UserChangePasswordRequest;
+import pl.muybien.dto.iam.request.UserChangePasswordRequest;
 import pl.muybien.keycloak.KeycloakAuthClient;
 import pl.muybien.keycloak.KeycloakUserClient;
 

@@ -10,8 +10,8 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import pl.muybien.dto.response.EmailChangedResponse;
-import pl.muybien.dto.response.UserCreatedResponse;
+import pl.muybien.dto.iam.response.EmailChangedResponse;
+import pl.muybien.dto.iam.response.UserCreatedResponse;
 import pl.muybien.exception.PasswordChangeException;
 import pl.muybien.exception.UserCreationException;
 

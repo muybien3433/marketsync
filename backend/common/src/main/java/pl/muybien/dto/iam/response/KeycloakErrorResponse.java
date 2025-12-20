@@ -1,4 +1,4 @@
-package pl.muybien.dto.response;
+package pl.muybien.dto.iam.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

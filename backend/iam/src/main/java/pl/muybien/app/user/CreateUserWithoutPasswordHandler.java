@@ -5,8 +5,8 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 import pl.muybien.account.UserIdentityInput;
 import pl.muybien.account.UserIdentityResolution;
-import pl.muybien.dto.request.AdminCreateUserWithoutPasswordRequest;
-import pl.muybien.dto.response.UserCreatedResponse;
+import pl.muybien.dto.iam.request.AdminCreateUserWithoutPasswordRequest;
+import pl.muybien.dto.iam.response.UserCreatedResponse;
 import pl.muybien.keycloak.KeycloakUserClient;
 import pl.muybien.service.AccountIdentityService;
 

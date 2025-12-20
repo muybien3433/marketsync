@@ -1,6 +1,10 @@
 server:
   port: 8000
 
+application:
+  config:
+    iam-url: http://localhost:8888/api/v1/iam
+
 management:
   endpoints:
     web:

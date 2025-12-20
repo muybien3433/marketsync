@@ -2,18 +2,17 @@ server:
   port: 8888
 
 keycloak:
-  server-url: http://keycloak:8080
-  realm: my-realm
+  server-url: http://localhost:8080
+  realm: marketsync-client
   client-id: iam-service
-  client-secret: super-secret
-  admin-realm: master
+  client-secret: dOku5o71hY0AvQWrUeVdeQ90ScQsyjUn
 
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/my-realm
+          issuer-uri: http://keycloak:8080/realms/marketsync-client
 
 management:
   endpoints:

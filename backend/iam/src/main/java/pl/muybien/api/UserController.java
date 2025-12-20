@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.muybien.app.user.*;
-import pl.muybien.dto.request.*;
-import pl.muybien.dto.response.EmailChangedResponse;
-import pl.muybien.dto.response.UserCreatedResponse;
+import pl.muybien.dto.iam.request.*;
+import pl.muybien.dto.iam.response.EmailChangedResponse;
+import pl.muybien.dto.iam.response.UserCreatedResponse;
 
 @RestController
 @RequestMapping("/api/v1/iam/users")

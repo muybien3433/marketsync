@@ -3,17 +3,16 @@ server:
 
 keycloak:
   server-url: http://keycloak:8080
-  realm: my-realm
-  client-id: iam-service
-  client-secret: super-secret
-  admin-realm: master
+  realm: ${KC_REALM}
+  client-id: ${KC_CLIENT_ID}
+  client-secret: ${KC_CLIENT_SECRET}
 
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/my-realm
+          issuer-uri: http://keycloak:8080/realms/${KC_REALM}
 
 management:
   endpoints:

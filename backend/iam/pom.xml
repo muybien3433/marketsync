@@ -14,6 +14,11 @@
     <name>iam</name>
     <description>iam</description>
     <dependencies>
+        <!--		Common		-->
+        <dependency>
+            <groupId>pl.muybien</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
         <!--		Keycloak		-->
         <dependency>
             <groupId>org.keycloak</groupId>

@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import pl.muybien.dto.request.UserLoginRequest;
-import pl.muybien.dto.response.UserLoginResponse;
-import pl.muybien.dto.response.KeycloakErrorResponse;
+import pl.muybien.dto.iam.request.UserLoginRequest;
+import pl.muybien.dto.iam.response.UserLoginResponse;
+import pl.muybien.dto.iam.response.KeycloakErrorResponse;
 import pl.muybien.exception.LoginException;
 import pl.muybien.exception.PasswordChangeException;
 

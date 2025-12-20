@@ -2,8 +2,8 @@ package pl.muybien.app.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.muybien.dto.request.UserLoginRequest;
-import pl.muybien.dto.response.UserLoginResponse;
+import pl.muybien.dto.iam.request.UserLoginRequest;
+import pl.muybien.dto.iam.response.UserLoginResponse;
 import pl.muybien.keycloak.KeycloakAuthClient;
 
 @Service

@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import pl.muybien.app.auth.ChangeEmailAsUserHandler;
 import pl.muybien.app.auth.LoginHandler;
 import pl.muybien.app.auth.ChangePasswordAsUserHandler;
-import pl.muybien.dto.request.UserChangeEmailRequest;
-import pl.muybien.dto.request.UserLoginRequest;
-import pl.muybien.dto.request.UserChangePasswordRequest;
-import pl.muybien.dto.response.EmailChangedResponse;
-import pl.muybien.dto.response.UserLoginResponse;
+import pl.muybien.dto.iam.request.UserChangeEmailRequest;
+import pl.muybien.dto.iam.request.UserLoginRequest;
+import pl.muybien.dto.iam.request.UserChangePasswordRequest;
+import pl.muybien.dto.iam.response.EmailChangedResponse;
+import pl.muybien.dto.iam.response.UserLoginResponse;
 
 @RestController
 @RequestMapping("/api/v1/iam/auth")

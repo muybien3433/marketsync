@@ -14,6 +14,11 @@
     <name>user</name>
     <description>user</description>
     <dependencies>
+        <!--		Common		-->
+        <dependency>
+            <groupId>pl.muybien</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
         <!--		Web		-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

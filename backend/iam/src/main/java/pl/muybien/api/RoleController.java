@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.muybien.app.role.*;
-import pl.muybien.dto.request.AuthorityRoleRenameRequest;
-import pl.muybien.dto.request.CompositeRoleCreateRequest;
-import pl.muybien.dto.request.CompositeRoleUpdateRequest;
+import pl.muybien.dto.iam.request.AuthorityRoleRenameRequest;
+import pl.muybien.dto.iam.request.CompositeRoleCreateRequest;
+import pl.muybien.dto.iam.request.CompositeRoleUpdateRequest;
 
 @RestController
 @RequestMapping("/api/v1/iam/roles")

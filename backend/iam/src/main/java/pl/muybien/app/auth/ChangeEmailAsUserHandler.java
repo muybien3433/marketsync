@@ -2,8 +2,8 @@ package pl.muybien.app.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.muybien.dto.request.UserChangeEmailRequest;
-import pl.muybien.dto.response.EmailChangedResponse;
+import pl.muybien.dto.iam.request.UserChangeEmailRequest;
+import pl.muybien.dto.iam.response.EmailChangedResponse;
 import pl.muybien.keycloak.KeycloakAuthClient;
 import pl.muybien.keycloak.KeycloakUserClient;
 
