@@ -1,7 +1,7 @@
 package pl.muybien.exception;
 
-public class InvalidSubscriptionParametersException extends RuntimeException {
+public class InvalidSubscriptionParametersException extends ServiceException {
     public InvalidSubscriptionParametersException(String message) {
-        super(message);
+        super(400, "SUBSCRIPTION_INVALID_PARAMETERS", message);
     }
 }

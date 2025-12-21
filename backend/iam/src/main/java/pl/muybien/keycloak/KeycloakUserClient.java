@@ -10,8 +10,8 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import pl.muybien.dto.iam.response.EmailChangedResponse;
-import pl.muybien.dto.iam.response.UserCreatedResponse;
+import pl.muybien.dto.iam.response.KeycloakEmailChangedResponse;
+import pl.muybien.dto.iam.response.KeycloakUserCreatedResponse;
 import pl.muybien.exception.PasswordChangeException;
 import pl.muybien.exception.UserCreationException;
 
@@ -30,7 +30,7 @@ public class KeycloakUserClient {
         this.realm = realm;
     }
 
-    public UserCreatedResponse createUser(UserRepresentation user) {
+    public KeycloakUserCreatedResponse createUser(UserRepresentation user) {
         RealmResource realmResource = keycloak.realm(realm);
         UsersResource resource = realmResource.users();
 
@@ -40,26 +40,41 @@ public class KeycloakUserClient {
             if (status == 201) {
                 String locationPath = response.getLocation().getPath();
                 String id = locationPath.substring(locationPath.lastIndexOf('/') + 1);
-                return new UserCreatedResponse(id, user.getUsername());
+                return new KeycloakUserCreatedResponse(id, user.getUsername());
             }
 
             if (status == 400) {
-                throw new UserCreationException("Invalid user data sent to Keycloak", status);
+                throw new UserCreationException(
+                        status,
+                        "Invalid user data sent to Keycloak"
+                );
             }
 
             if (status == 403) {
-                throw new UserCreationException("Forbidden to create users in this realm", status);
+                throw new UserCreationException(
+                        status,
+                        "Forbidden to create users in this realm"
+                );
             }
 
             if (status == 409) {
-                throw new UserCreationException("User already exists in Keycloak", status);
+                throw new UserCreationException(
+                        status,
+                        "User already exists in Keycloak"
+                );
             }
 
             if (status >= 500) {
-                throw new UserCreationException("Internal error during user creation", status);
+                throw new UserCreationException(
+                        502,
+                        "Keycloak internal error during user creation"
+                );
             }
 
-            throw new UserCreationException("Unexpected response from Keycloak. Status: " + status, status);
+            throw new UserCreationException(
+                    status,
+                    "Unexpected response from Keycloak. Status: " + status
+            );
         }
     }
 
@@ -69,20 +84,51 @@ public class KeycloakUserClient {
             user.resetPassword(credential);
         } catch (WebApplicationException ex) {
             int status = ex.getResponse() != null ? ex.getResponse().getStatus() : 500;
+
             if (status == 404) {
-                throw new PasswordChangeException("User not found in Keycloak", status);
+                throw new PasswordChangeException(
+                        404,
+                        "PASSWORD_CHANGE_USER_NOT_FOUND",
+                        "User not found in Keycloak",
+                        ex
+                );
             }
+
             if (status == 400) {
-                throw new PasswordChangeException("Invalid password payload for Keycloak", status);
+                throw new PasswordChangeException(
+                        400,
+                        "PASSWORD_CHANGE_BAD_REQUEST",
+                        "Invalid password payload for Keycloak",
+                        ex
+                );
             }
-            throw new PasswordChangeException("Failed to change password in Keycloak. Status: " + status, status);
+
+            if (status >= 500) {
+                throw new PasswordChangeException(
+                        502,
+                        "PASSWORD_CHANGE_KEYCLOAK_5XX",
+                        "Keycloak error during password change",
+                        ex
+                );
+            }
+
+            throw new PasswordChangeException(
+                    status,
+                    "PASSWORD_CHANGE_FAILED",
+                    "Failed to change password in Keycloak. Status: " + status,
+                    ex
+            );
         }
     }
 
     public String findUserIdByUsername(String username) {
         List<UserRepresentation> users = keycloak.realm(realm).users().search(username, true);
         if (users.isEmpty()) {
-            throw new PasswordChangeException("User not found: " + username, 404);
+            throw new PasswordChangeException(
+                    404,
+                    "PASSWORD_CHANGE_USER_NOT_FOUND",
+                    "User not found: " + username
+            );
         }
 
         return users.getFirst().getId();
@@ -115,12 +161,12 @@ public class KeycloakUserClient {
         }
     }
 
-    public EmailChangedResponse changeEmailByUsername(String username, String newEmail, Boolean emailVerified) {
+    public KeycloakEmailChangedResponse changeEmailByUsername(String username, String newEmail, Boolean emailVerified) {
         String userId = findUserIdByUsername(username);
         changeEmailByUserId(userId, newEmail, emailVerified);
 
         UserRepresentation updated = getUserById(userId);
-        return new EmailChangedResponse(
+        return new KeycloakEmailChangedResponse(
                 userId,
                 updated.getUsername(),
                 updated.getEmail(),
@@ -130,10 +176,19 @@ public class KeycloakUserClient {
 
     public void changeEmailByUserId(String userId, String newEmail, Boolean emailVerified) {
         if (userId == null || userId.trim().isEmpty()) {
-            throw new PasswordChangeException("User id is required", 400);
+            throw new PasswordChangeException(
+                    400,
+                    "PASSWORD_CHANGE_USER_ID_REQUIRED",
+                    "User id is required"
+            );
         }
+
         if (newEmail == null || newEmail.trim().isEmpty()) {
-            throw new PasswordChangeException("New email is required", 400);
+            throw new PasswordChangeException(
+                    400,
+                    "PASSWORD_CHANGE_NEW_EMAIL_REQUIRED",
+                    "New email is required"
+            );
         }
 
         UserResource userResource = keycloak.realm(realm).users().get(userId);
@@ -149,16 +204,47 @@ public class KeycloakUserClient {
             int status = ex.getResponse() != null ? ex.getResponse().getStatus() : 500;
 
             if (status == 404) {
-                throw new PasswordChangeException("User not found in Keycloak", status);
-            }
-            if (status == 400) {
-                throw new PasswordChangeException("Invalid email payload for Keycloak", status);
-            }
-            if (status == 409) {
-                throw new PasswordChangeException("Email already exists in Keycloak", status);
+                throw new PasswordChangeException(
+                        404,
+                        "EMAIL_CHANGE_USER_NOT_FOUND",
+                        "User not found in Keycloak",
+                        ex
+                );
             }
 
-            throw new PasswordChangeException("Failed to change email in Keycloak. Status: " + status, status);
+            if (status == 400) {
+                throw new PasswordChangeException(
+                        400,
+                        "EMAIL_CHANGE_BAD_REQUEST",
+                        "Invalid email payload for Keycloak",
+                        ex
+                );
+            }
+
+            if (status == 409) {
+                throw new PasswordChangeException(
+                        409,
+                        "EMAIL_CHANGE_CONFLICT",
+                        "Email already exists in Keycloak",
+                        ex
+                );
+            }
+
+            if (status >= 500) {
+                throw new PasswordChangeException(
+                        502,
+                        "EMAIL_CHANGE_KEYCLOAK_5XX",
+                        "Keycloak error during email change",
+                        ex
+                );
+            }
+
+            throw new PasswordChangeException(
+                    status,
+                    "EMAIL_CHANGE_FAILED",
+                    "Failed to change email in Keycloak. Status: " + status,
+                    ex
+            );
         }
     }
 
@@ -167,10 +253,31 @@ public class KeycloakUserClient {
             return keycloak.realm(realm).users().get(userId).toRepresentation();
         } catch (WebApplicationException ex) {
             int status = ex.getResponse() != null ? ex.getResponse().getStatus() : 500;
+
             if (status == 404) {
-                throw new PasswordChangeException("User not found in Keycloak", status);
+                throw new PasswordChangeException(
+                        404,
+                        "USER_NOT_FOUND",
+                        "User not found in Keycloak",
+                        ex
+                );
             }
-            throw new PasswordChangeException("Failed to read user from Keycloak. Status: " + status, status);
+
+            if (status >= 500) {
+                throw new PasswordChangeException(
+                        502,
+                        "KEYCLOAK_READ_USER_5XX",
+                        "Keycloak error while reading user",
+                        ex
+                );
+            }
+
+            throw new PasswordChangeException(
+                    status,
+                    "KEYCLOAK_READ_USER_FAILED",
+                    "Failed to read user from Keycloak. Status: " + status,
+                    ex
+            );
         }
     }
 }

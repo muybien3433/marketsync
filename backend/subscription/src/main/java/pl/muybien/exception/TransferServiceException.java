@@ -1,7 +1,12 @@
 package pl.muybien.exception;
 
-public class TransferServiceException extends RuntimeException {
+public class TransferServiceException extends ServiceException {
+
+    public TransferServiceException(String message) {
+        super(502, "TRANSFER_SERVICE_ERROR", message);
+    }
+
     public TransferServiceException(String message, Throwable cause) {
-        super(message, cause);
+        super(502, "TRANSFER_SERVICE_ERROR", message, cause);
     }
 }

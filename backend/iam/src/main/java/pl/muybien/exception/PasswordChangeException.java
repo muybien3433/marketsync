@@ -1,14 +1,12 @@
 package pl.muybien.exception;
 
-import lombok.Getter;
+public class PasswordChangeException extends ServiceException {
 
-@Getter
-public class PasswordChangeException extends RuntimeException {
+    public PasswordChangeException(int status, String code, String message) {
+        super(status, code, message);
+    }
 
-    private final int status;
-
-    public PasswordChangeException(String message, int status) {
-        super(message);
-        this.status = status;
+    public PasswordChangeException(int status, String code, String message, Throwable cause) {
+        super(status, code, message, cause);
     }
 }

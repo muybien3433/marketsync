@@ -3,8 +3,8 @@ package pl.muybien.wallet.asset;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import pl.muybien.wallet.asset.dto.AssetGroupDTO;
-import pl.muybien.entity.Asset;
+import pl.muybien.dto.wallet.AssetGroupDTO;
+import pl.muybien.entity.wallet.Asset;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,6 +1,17 @@
 server:
   port: 8000
 
+spring:
+  datasource:
+    username: user
+    password: user
+    url: jdbc:postgresql://localhost:5433/user?sslmode=disable
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 application:
   config:
     iam-url: http://localhost:8888/api/v1/iam

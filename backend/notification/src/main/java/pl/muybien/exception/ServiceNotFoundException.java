@@ -1,7 +1,7 @@
 package pl.muybien.exception;
 
-public class ServiceNotFoundException extends RuntimeException {
+public class ServiceNotFoundException extends ServiceException {
     public ServiceNotFoundException(String message) {
-        super(message);
+        super(404, "SERVICE_NOT_FOUND", message);
     }
 }

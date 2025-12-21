@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.feign.FinanceClient;
-import pl.muybien.entity.Subscription;
+import pl.muybien.entity.subscription.Subscription;
 import pl.muybien.subscription.data.SubscriptionRepository;
 
 @Service

@@ -1,6 +1,5 @@
 package pl.muybien.finance;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,9 +7,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.muybien.exception.FinanceNotFoundException;
-import pl.muybien.finance.dto.FinanceDetailDTO;
+import pl.muybien.mapper.finance.FinanceDetailDTO;
 import pl.muybien.entity.helper.FinanceDetail;
-import pl.muybien.entity.Finance;
+import pl.muybien.entity.finance.Finance;
 import pl.muybien.enumeration.AssetType;
 import pl.muybien.enumeration.CurrencyType;
 import pl.muybien.enumeration.UnitType;

@@ -5,7 +5,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import pl.muybien.wallet.asset.AssetService;
-import pl.muybien.wallet.asset.dto.AssetAggregateDTO;
+import pl.muybien.dto.wallet.AssetAggregateDTO;
 
 import java.util.List;
 import java.util.Map;

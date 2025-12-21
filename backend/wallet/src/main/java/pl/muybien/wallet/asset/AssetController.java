@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.muybien.enumeration.CurrencyType;
-import pl.muybien.wallet.asset.dto.AssetAggregateDTO;
-import pl.muybien.wallet.asset.dto.AssetHistoryDTO;
+import pl.muybien.dto.wallet.AssetAggregateDTO;
+import pl.muybien.dto.wallet.AssetHistoryDTO;
 
 import java.util.List;
 import java.util.UUID;

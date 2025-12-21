@@ -155,17 +155,17 @@ public class KeycloakRoleClient {
         int status = ex.getResponse() != null ? ex.getResponse().getStatus() : 500;
 
         if (status == 404) {
-            return new RoleException("ROLE_NOT_FOUND", message, status);
+            return new RoleException(status, "ROLE_NOT_FOUND", message, ex);
         }
         if (status == 409) {
-            return new RoleException("ROLE_CONFLICT", message, status);
+            return new RoleException(status, "ROLE_CONFLICT", message, ex);
         }
         if (status == 403) {
-            return new RoleException("ROLE_FORBIDDEN", message, status);
+            return new RoleException(status, "ROLE_FORBIDDEN", message, ex);
         }
         if (status == 400) {
-            return new RoleException("ROLE_BAD_REQUEST", message, status);
+            return new RoleException(status, "ROLE_BAD_REQUEST", message, ex);
         }
-        return new RoleException("ROLE_ERROR", message, status);
+        return new RoleException(status, "ROLE_ERROR", message, ex);
     }
 }

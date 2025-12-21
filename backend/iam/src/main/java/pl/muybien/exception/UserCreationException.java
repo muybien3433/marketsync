@@ -1,14 +1,12 @@
 package pl.muybien.exception;
 
-import lombok.Getter;
+public class UserCreationException extends ServiceException {
 
-@Getter
-public class UserCreationException extends RuntimeException {
+    public UserCreationException(int status, String message) {
+        super(status, "USER_CREATION_FAILED", message);
+    }
 
-    private final int status;
-
-    public UserCreationException(String message, int status) {
-        super(message);
-        this.status = status;
+    public UserCreationException(int status, String message, Throwable cause) {
+        super(status, "USER_CREATION_FAILED", message, cause);
     }
 }

@@ -1,0 +1,21 @@
+package pl.muybien.mapper.finance;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import pl.muybien.enumeration.AssetType;
+import pl.muybien.enumeration.CurrencyType;
+import pl.muybien.enumeration.UnitType;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record FinanceDetailDTO(
+        @JsonProperty("name") String name,
+        @JsonProperty("symbol") String symbol,
+        @JsonProperty("uri") String uri,
+        @JsonProperty("unitType") UnitType unitType,
+        @JsonProperty("price") BigDecimal price,
+        @JsonProperty("currencyType") CurrencyType currencyType,
+        @JsonProperty("assetType") AssetType assetType,
+        @JsonProperty("lastUpdated") LocalDateTime lastUpdated
+) {
+}

@@ -5,8 +5,8 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 import pl.muybien.account.UserIdentityInput;
 import pl.muybien.account.UserIdentityResolution;
-import pl.muybien.dto.iam.request.UserCreateRequest;
-import pl.muybien.dto.iam.response.UserCreatedResponse;
+import pl.muybien.dto.iam.request.KeycloakUserCreateRequest;
+import pl.muybien.dto.iam.response.KeycloakUserCreatedResponse;
 import pl.muybien.keycloak.KeycloakUserClient;
 import pl.muybien.service.AccountIdentityService;
 
@@ -17,7 +17,7 @@ public class CreateUserHandler {
     private final KeycloakUserClient keycloakUserClient;
     private final AccountIdentityService accountIdentityService;
 
-    public UserCreatedResponse handle(UserCreateRequest request) {
+    public KeycloakUserCreatedResponse handle(KeycloakUserCreateRequest request) {
 
         UserIdentityResolution identity = accountIdentityService.resolve(
                 new UserIdentityInput(request.username(), request.email(), request.firstName(), request.lastName())

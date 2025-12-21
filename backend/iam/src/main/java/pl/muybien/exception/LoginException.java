@@ -1,14 +1,12 @@
 package pl.muybien.exception;
 
-import lombok.Getter;
+public class LoginException extends ServiceException {
 
-@Getter
-public class LoginException extends RuntimeException {
+    public LoginException(int status, String code, String message) {
+        super(status, code, message);
+    }
 
-    private final int status;
-
-    public LoginException(String message, int status) {
-        super(message);
-        this.status = status;
+    public LoginException(int status, String code, String message, Throwable cause) {
+        super(status, code, message, cause);
     }
 }

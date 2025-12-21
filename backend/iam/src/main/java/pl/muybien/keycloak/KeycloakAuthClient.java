@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import pl.muybien.dto.iam.request.UserLoginRequest;
-import pl.muybien.dto.iam.response.UserLoginResponse;
+import pl.muybien.dto.iam.request.KeycloakUserLoginRequest;
+import pl.muybien.dto.iam.response.KeycloakUserLoginResponse;
 import pl.muybien.dto.iam.response.KeycloakErrorResponse;
 import pl.muybien.exception.LoginException;
 import pl.muybien.exception.PasswordChangeException;
@@ -33,7 +33,7 @@ public class KeycloakAuthClient {
         this.tokenUrl = keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token";
     }
 
-    public UserLoginResponse login(UserLoginRequest request) {
+    public KeycloakUserLoginResponse login(KeycloakUserLoginRequest request) {
         try {
             return webClient.post()
                     .uri(tokenUrl)
@@ -52,15 +52,30 @@ public class KeycloakAuthClient {
                             clientResponse.bodyToMono(KeycloakErrorResponse.class)
                                     .defaultIfEmpty(new KeycloakErrorResponse())
                                     .map(_ ->
-                                            new LoginException("Keycloak server error during login", clientResponse.statusCode().value())
+                                            new LoginException(
+                                                    502,
+                                                    "LOGIN_KEYCLOAK_5XX",
+                                                    "Keycloak server error during login"
+                                            )
                                     )
                     )
-                    .bodyToMono(UserLoginResponse.class)
+                    .bodyToMono(KeycloakUserLoginResponse.class)
                     .block();
         } catch (WebClientResponseException ex) {
-            throw new LoginException("Error calling Keycloak token endpoint. Status: " + ex.getStatusCode().value(), ex.getStatusCode().value());
+            int status = ex.getStatusCode().value();
+            throw new LoginException(
+                    status >= 500 ? 502 : status,
+                    "LOGIN_TOKEN_ENDPOINT_ERROR",
+                    "Error calling Keycloak token endpoint. Status: " + status,
+                    ex
+            );
         } catch (Exception ex) {
-            throw new LoginException("Unexpected error during login: " + ex.getMessage(), 500);
+            throw new LoginException(
+                    500,
+                    "LOGIN_UNEXPECTED",
+                    "Unexpected error during login",
+                    ex
+            );
         }
     }
 
@@ -69,26 +84,49 @@ public class KeycloakAuthClient {
         String description = error.getErrorDescription();
 
         if ("invalid_grant".equals(errorCode)) {
-            return new LoginException(description != null ? description : "Invalid username or password", 401);
+            return new LoginException(
+                    401,
+                    "LOGIN_INVALID_GRANT",
+                    description != null ? description : "Invalid username or password"
+            );
         }
 
         if ("invalid_client".equals(errorCode)) {
-            return new LoginException("Invalid client configuration for Keycloak (invalid_client)", 500);
+            return new LoginException(
+                    502,
+                    "LOGIN_INVALID_CLIENT",
+                    "Invalid client configuration for Keycloak (invalid_client)"
+            );
         }
 
         if ("unauthorized_client".equals(errorCode)) {
-            return new LoginException("Client not allowed to use this grant type (unauthorized_client)", 500);
+            return new LoginException(
+                    502,
+                    "LOGIN_UNAUTHORIZED_CLIENT",
+                    "Client not allowed to use this grant type (unauthorized_client)"
+            );
         }
 
         if ("unsupported_grant_type".equals(errorCode)) {
-            return new LoginException("Unsupported grant type for token endpoint", 500);
+            return new LoginException(
+                    502,
+                    "LOGIN_UNSUPPORTED_GRANT_TYPE",
+                    "Unsupported grant type for token endpoint"
+            );
         }
 
         if ("invalid_request".equals(errorCode)) {
-            return new LoginException(description != null ? description : "Invalid login request", status);
+            return new LoginException(
+                    400,
+                    "LOGIN_INVALID_REQUEST",
+                    description != null ? description : "Invalid login request"
+            );
         }
 
-        return new LoginException(description != null ? description : "Unexpected client error: " + errorCode, status);
+        return new LoginException(status,
+                "LOGIN_CLIENT_ERROR",
+                description != null ? description : "Unexpected client error: " + errorCode
+        );
     }
 
     public void verifyCredentials(String username, String password) {
@@ -103,11 +141,20 @@ public class KeycloakAuthClient {
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError, response ->
                             response.bodyToMono(KeycloakErrorResponse.class)
-                                    .map(error -> new PasswordChangeException("Invalid current password", 401)))
+                                    .map(_ -> new PasswordChangeException(
+                                            401,
+                                            "PASSWORD_INVALID_CURRENT",
+                                            "Invalid current password"
+                                    )))
                     .bodyToMono(Void.class)
                     .block();
         } catch (Exception ex) {
-            throw new PasswordChangeException("Failed to verify credentials: " + ex.getMessage(), 500);
+            throw new PasswordChangeException(
+                    500,
+                    "PASSWORD_VERIFY_FAILED",
+                    "Failed to verify credentials",
+                    ex
+            );
         }
     }
 }

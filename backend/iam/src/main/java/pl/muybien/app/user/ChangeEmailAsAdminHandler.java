@@ -2,8 +2,8 @@ package pl.muybien.app.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.muybien.dto.iam.request.AdminChangeEmailRequest;
-import pl.muybien.dto.iam.response.EmailChangedResponse;
+import pl.muybien.dto.iam.request.KeycloakAdminChangeEmailRequest;
+import pl.muybien.dto.iam.response.KeycloakEmailChangedResponse;
 import pl.muybien.keycloak.KeycloakUserClient;
 
 @Service
@@ -12,7 +12,7 @@ public class ChangeEmailAsAdminHandler {
 
     private final KeycloakUserClient keycloakUserClient;
 
-    public EmailChangedResponse handle(AdminChangeEmailRequest request) {
+    public KeycloakEmailChangedResponse handle(KeycloakAdminChangeEmailRequest request) {
         return keycloakUserClient.changeEmailByUsername(
                 request.username(),
                 request.newEmail(),

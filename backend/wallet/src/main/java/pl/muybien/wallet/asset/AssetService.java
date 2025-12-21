@@ -5,19 +5,20 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.wallet.asset.dto.AssetAggregateDTO;
-import pl.muybien.wallet.asset.dto.AssetGroupDTO;
-import pl.muybien.wallet.asset.dto.AssetHistoryDTO;
-import pl.muybien.entity.Asset;
+import pl.muybien.dto.wallet.AssetAggregateDTO;
+import pl.muybien.dto.wallet.AssetGroupDTO;
+import pl.muybien.dto.wallet.AssetHistoryDTO;
+import pl.muybien.entity.wallet.Asset;
 import pl.muybien.enumeration.AlertType;
 import pl.muybien.enumeration.AssetType;
 import pl.muybien.enumeration.CurrencyType;
 import pl.muybien.enumeration.TeamType;
-import pl.muybien.wallet.exception.AssetNotFoundException;
+import pl.muybien.exception.AssetNotFoundException;
 import pl.muybien.exception.ErrorResponse;
-import pl.muybien.wallet.exception.FinanceNotFoundException;
-import pl.muybien.wallet.exception.OwnershipException;
+import pl.muybien.exception.FinanceNotFoundException;
+import pl.muybien.exception.OwnershipException;
 import pl.muybien.feign.FinanceClient;
+import pl.muybien.mapper.wallet.AssetDTOMapper;
 import pl.muybien.response.FinanceResponse;
 import pl.muybien.kafka.confirmation.SupportConfirmation;
 import pl.muybien.kafka.SupportProducer;
@@ -28,8 +29,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static pl.muybien.util.PriceUtil.normalizePrice;
 
 @Service
 @RequiredArgsConstructor

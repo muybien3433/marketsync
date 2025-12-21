@@ -3,8 +3,8 @@ package pl.muybien.finance;
 import org.springframework.stereotype.Component;
 import pl.muybien.entity.helper.FinanceDetail;
 import pl.muybien.enumeration.CurrencyType;
-import pl.muybien.finance.dto.FinanceBaseDTO;
-import pl.muybien.finance.dto.FinanceDetailDTO;
+import pl.muybien.mapper.finance.FinanceBaseDTO;
+import pl.muybien.mapper.finance.FinanceDetailDTO;
 import pl.muybien.response.FinanceResponse;
 
 import java.math.BigDecimal;

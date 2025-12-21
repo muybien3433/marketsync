@@ -2,8 +2,8 @@ package pl.muybien.app.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.muybien.dto.iam.request.UserChangeEmailRequest;
-import pl.muybien.dto.iam.response.EmailChangedResponse;
+import pl.muybien.dto.iam.request.KeycloakUserChangeEmailRequest;
+import pl.muybien.dto.iam.response.KeycloakEmailChangedResponse;
 import pl.muybien.keycloak.KeycloakAuthClient;
 import pl.muybien.keycloak.KeycloakUserClient;
 
@@ -14,7 +14,7 @@ public class ChangeEmailAsUserHandler {
     private final KeycloakAuthClient keycloakAuthClient;
     private final KeycloakUserClient keycloakUserClient;
 
-    public EmailChangedResponse handle(UserChangeEmailRequest request) {
+    public KeycloakEmailChangedResponse handle(KeycloakUserChangeEmailRequest request) {
         String username = request.username();
         String password = request.currentPassword();
         String newEmail = request.newEmail();

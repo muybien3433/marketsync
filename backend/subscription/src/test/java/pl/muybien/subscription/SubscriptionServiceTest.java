@@ -12,11 +12,11 @@ import pl.muybien.enumeration.UnitType;
 import pl.muybien.exception.*;
 import pl.muybien.feign.FinanceClient;
 import pl.muybien.response.FinanceResponse;
-import pl.muybien.entity.Subscription;
+import pl.muybien.entity.subscription.Subscription;
 import pl.muybien.entity.helper.SubscriptionDetail;
 import pl.muybien.subscription.data.SubscriptionRepository;
-import pl.muybien.subscription.dto.SubscriptionDetailDTO;
-import pl.muybien.subscription.dto.SubscriptionDetailDTOMapper;
+import pl.muybien.dto.subscription.SubscriptionDetailDTO;
+import pl.muybien.mapper.subscription.SubscriptionDetailDTOMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

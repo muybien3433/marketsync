@@ -3,14 +3,13 @@ package pl.muybien.finance;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.muybien.finance.dto.FinanceBaseDTO;
-import pl.muybien.finance.dto.FinanceDetailDTO;
+import pl.muybien.mapper.finance.FinanceBaseDTO;
+import pl.muybien.mapper.finance.FinanceDetailDTO;
 import pl.muybien.response.FinanceResponse;
 import pl.muybien.enumeration.AssetType;
 import pl.muybien.enumeration.CurrencyType;
 
 import java.math.BigDecimal;
-import java.util.Map;
 import java.util.Set;
 
 @RestController

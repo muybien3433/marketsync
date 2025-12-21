@@ -3,7 +3,7 @@ package pl.muybien.app.user;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.springframework.stereotype.Service;
-import pl.muybien.dto.iam.request.AdminChangePasswordRequest;
+import pl.muybien.dto.iam.request.KeycloakAdminChangePasswordRequest;
 import pl.muybien.keycloak.KeycloakAuthClient;
 import pl.muybien.keycloak.KeycloakUserClient;
 
@@ -14,7 +14,7 @@ public class ChangePasswordAsAdminHandler {
     private final KeycloakAuthClient keycloakAuthClient;
     private final KeycloakUserClient keycloakUserClient;
 
-    public void handle(AdminChangePasswordRequest request) {
+    public void handle(KeycloakAdminChangePasswordRequest request) {
         String userId = keycloakUserClient.findUserIdByUsername(request.username());
 
         CredentialRepresentation credential = new CredentialRepresentation();

@@ -1,16 +1,12 @@
 package pl.muybien.exception;
 
-import lombok.Getter;
+public class RoleException extends ServiceException {
 
-@Getter
-public class RoleException extends RuntimeException {
+    public RoleException(int status, String code, String message) {
+        super(status, code, message);
+    }
 
-    private final String code;
-    private final int status;
-
-    public RoleException(String code, String message, int status) {
-        super(message);
-        this.code = code;
-        this.status = status;
+    public RoleException(int status, String code, String message, Throwable cause) {
+        super(status, code, message, cause);
     }
 }

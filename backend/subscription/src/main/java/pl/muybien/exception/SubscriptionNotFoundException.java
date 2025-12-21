@@ -1,7 +1,7 @@
 package pl.muybien.exception;
 
-public class SubscriptionNotFoundException extends RuntimeException {
+public class SubscriptionNotFoundException extends ServiceException {
     public SubscriptionNotFoundException(String message) {
-        super(message);
+        super(404, "SUBSCRIPTION_NOT_FOUND", message);
     }
 }

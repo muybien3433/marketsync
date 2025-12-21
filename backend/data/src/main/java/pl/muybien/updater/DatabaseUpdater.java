@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.muybien.enumeration.AssetType;
-import pl.muybien.entity.Finance;
+import pl.muybien.entity.finance.Finance;
 import pl.muybien.entity.helper.FinanceDetail;
 import pl.muybien.repository.FinanceRepository;
 
