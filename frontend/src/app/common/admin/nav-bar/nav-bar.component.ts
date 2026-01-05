@@ -1,43 +1,44 @@
-import { Component, output } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { NavRightComponent } from './nav-right/nav-right.component';
+import {Component, output} from '@angular/core';
+import {RouterModule} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {NavRightComponent} from './nav-right/nav-right.component';
 
 @Component({
-  selector: 'app-nav-bar',
-  imports: [NavRightComponent, RouterModule, CommonModule],
-  templateUrl: './nav-bar.component.html',
-  styleUrls: ['./nav-bar.component.scss']
+    selector: 'app-nav-bar',
+    standalone: true,
+    imports: [NavRightComponent, RouterModule, CommonModule],
+    templateUrl: './nav-bar.component.html',
+    styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent {
-  readonly NavCollapsedMob = output();
-  navCollapsedMob;
-  headerStyle: string;
-  menuClass: boolean;
-  collapseStyle: string;
+    readonly NavCollapsedMob = output();
+    navCollapsedMob;
+    headerStyle: string;
+    menuClass: boolean;
+    collapseStyle: string;
 
-  constructor() {
-    this.navCollapsedMob = false;
-    this.headerStyle = '';
-    this.menuClass = false;
-    this.collapseStyle = 'none';
-  }
-
-  toggleMobOption() {
-    this.menuClass = !this.menuClass;
-    this.headerStyle = this.menuClass ? 'none' : '';
-    this.collapseStyle = this.menuClass ? 'block' : 'none';
-  }
-
-  handleKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Escape') {
-      this.closeMenu();
+    constructor() {
+        this.navCollapsedMob = false;
+        this.headerStyle = '';
+        this.menuClass = false;
+        this.collapseStyle = 'none';
     }
-  }
 
-  closeMenu() {
-    if (document.querySelector('app-navigation.pcoded-navbar').classList.contains('mob-open')) {
-      document.querySelector('app-navigation.pcoded-navbar').classList.remove('mob-open');
+    toggleMobOption() {
+        this.menuClass = !this.menuClass;
+        this.headerStyle = this.menuClass ? 'none' : '';
+        this.collapseStyle = this.menuClass ? 'block' : 'none';
     }
-  }
+
+    handleKeyDown(event: KeyboardEvent): void {
+        if (event.key === 'Escape') {
+            this.closeMenu();
+        }
+    }
+
+    closeMenu() {
+        if (document.querySelector('app-navigation.pcoded-navbar').classList.contains('mob-open')) {
+            document.querySelector('app-navigation.pcoded-navbar').classList.remove('mob-open');
+        }
+    }
 }

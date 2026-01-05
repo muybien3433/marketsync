@@ -43,6 +43,19 @@ support:
       numbers:
         - ""
 
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: notification-service
+  public-key-pem: |
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HglAoDsfRTORBkzAAQk
+    nfhPoINcSZKOtvqH3mNSKYfXGUcRf0JVPONbMaLbC391N8quD8MkXXOr703mp60v
+    cvuRH4zsAQ/4kAitdMvEeDvzWqjVWAx61B19byQmVlC9D24kab36TcK66MrvrBpt
+    nm6xq4V6MfN0c+ETBKs3a5AmYDJYR6BTjkyyv72okYlc5RdW52I+p8oQQCxzv9nH
+    v87AsUuWHMqedf8uVetACwyMrK1kC/4LbNW5z9M5q8CIg1H07oZxZ/KE0N9yVvyc
+    BB03TRXk+WvG2DQ7g+2ECEt8uhuhOB/3lhiaMjPYLkfKyfgs4pFGCTEwDhAP6jm+
+    EQIDAQAB
+    -----END PUBLIC KEY-----
 
 management:
   endpoints:

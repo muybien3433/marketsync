@@ -1,8 +1,9 @@
-package pl.muybien.wallet.asset;
+package pl.muybien.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import pl.muybien.dto.wallet.AssetGroupDTO;
 import pl.muybien.entity.wallet.Asset;
 
@@ -10,13 +11,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface AssetRepository extends JpaRepository<Asset, UUID> {
 
     List<Asset> findAssetHistoryByCustomerId(@Param("customerId") UUID customerId);
 
     @Query(
             """
-                    SELECT new pl.muybien.wallet.asset.dto.AssetGroupDTO(
+                    SELECT new pl.muybien.dto.wallet.AssetGroupDTO(
                         a.name,
                         a.symbol,
                         a.uri,

@@ -1,4 +1,4 @@
-package pl.muybien.service;
+package pl.muybien.security;
 
 import lombok.RequiredArgsConstructor;
 import pl.muybien.account.UserIdentityInput;

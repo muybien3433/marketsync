@@ -1,4 +1,4 @@
-package pl.muybien.wallet.asset;
+package pl.muybien.security;
 
 import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,6 +22,8 @@ import pl.muybien.mapper.wallet.AssetDTOMapper;
 import pl.muybien.response.FinanceResponse;
 import pl.muybien.kafka.confirmation.SupportConfirmation;
 import pl.muybien.kafka.SupportProducer;
+import pl.muybien.repository.AssetRepository;
+import pl.muybien.dto.wallet.request.AssetRequest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -32,7 +34,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AssetService {
+public class AssetServiceImpl implements AssetService {
     private final AssetRepository repository;
     private final AssetDTOMapper mapper;
     private final FinanceClient financeClient;

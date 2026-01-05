@@ -9,6 +9,11 @@ spring:
     password: ${MONGO_FINANCE_PASSWORD}
     authentication-database: admin
 
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: finance-service
+  public-key-pem: ${PUBLIC_KEY_PEM}
+
 management:
   endpoints:
     web:

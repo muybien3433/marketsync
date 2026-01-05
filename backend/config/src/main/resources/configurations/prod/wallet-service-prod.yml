@@ -8,7 +8,7 @@ spring:
     url: jdbc:postgresql://postgres-wallet/${POSTGRES_WALLET_DB}?sslmode=disable
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   kafka:
@@ -26,6 +26,11 @@ wallet:
     refresh-interval-ms: 5000 # 5 second interval
 
 frontend-url: ${FRONTEND_URL}
+
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: wallet-service
+  public-key-pem: ${PUBLIC_KEY_PEM}
 
 management:
   endpoints:

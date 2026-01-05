@@ -1,4 +1,4 @@
-package pl.muybien.service;
+package pl.muybien.security;
 
 import org.springframework.http.ResponseEntity;
 import pl.muybien.dto.user.request.UserRegisterRequest;

@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { NavigationComponent } from './navigation/navigation.component';
+import {NavBarComponent} from "./nav-bar/nav-bar.component";
 
 @Component({
   selector: 'app-admin',
-  imports: [NavBarComponent, NavigationComponent, RouterModule, CommonModule],
+    imports: [NavigationComponent, RouterModule, CommonModule, NavBarComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })

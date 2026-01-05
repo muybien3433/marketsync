@@ -27,7 +27,11 @@
     "logout": "Logout",
     "main": "Main",
     "settings": "Settings",
-    "preferences": "Preferences"
+    "preferences": "Preferences",
+    "language": {
+      "polish": "Polish",
+      "english": "English"
+    }
   },
 
   "asset": {

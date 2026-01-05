@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="initial_schema-1" author="muybien3433">
+
+        <createTable tableName="asset">
+            <column name="id" type="${uuidType}"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="name" type="varchar(200)"/>
+            <column name="symbol" type="varchar(20)"/>
+            <column name="uri" type="varchar(200)"/>
+            <column name="count" type="numeric(38,18)"/>
+            <column name="purchase_price" type="numeric(38,18)"/>
+            <column name="customer_id" type="${uuidType}"/>
+            <column name="unit_type" type="varchar(20)"/>
+            <column name="current_price" type="numeric(38,18)"/>
+            <column name="comment" type="varchar(1000)"/>
+            <column name="currency_type" type="varchar(10)"><constraints nullable="false"/></column>
+            <column name="asset_type" type="varchar(30)"><constraints nullable="false"/></column>
+            <column name="created_by" type="varchar(20)"><constraints nullable="false"/></column>
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_by" type="varchar(20)"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </createTable>
+
+    </changeSet>
+</databaseChangeLog>

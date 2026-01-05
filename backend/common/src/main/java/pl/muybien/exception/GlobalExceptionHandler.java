@@ -2,10 +2,13 @@ package pl.muybien.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.OffsetDateTime;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

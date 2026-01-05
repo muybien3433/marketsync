@@ -27,7 +27,11 @@
     "logout": "Wyloguj się",
     "main": "Menu",
     "settings": "Ustawienia",
-    "preferences": "Preferencje"
+    "preferences": "Preferencje",
+    "language": {
+      "polish": "Polski",
+      "english": "Angielski"
+    }
   },
 
   "asset": {

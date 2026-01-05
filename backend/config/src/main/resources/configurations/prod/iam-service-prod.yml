@@ -14,6 +14,11 @@ spring:
         jwt:
           issuer-uri: http://keycloak:8080/realms/${KC_REALM}
 
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: iam-service
+  public-key-pem: ${PUBLIC_KEY_PEM}
+
 management:
   endpoints:
     web:

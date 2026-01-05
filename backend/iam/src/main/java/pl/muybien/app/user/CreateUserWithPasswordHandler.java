@@ -9,7 +9,7 @@ import pl.muybien.account.UserIdentityResolution;
 import pl.muybien.dto.iam.request.KeycloakAdminCreateUserWithPasswordRequest;
 import pl.muybien.dto.iam.response.KeycloakUserCreatedResponse;
 import pl.muybien.keycloak.KeycloakUserClient;
-import pl.muybien.service.AccountIdentityService;
+import pl.muybien.security.AccountIdentityService;
 
 import java.util.Collections;
 

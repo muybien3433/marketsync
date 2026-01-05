@@ -15,14 +15,14 @@
                     <a class="dropdown-item" href="javascript:"
                        (click)="useLanguage('en'); isMenuOpen = false">
                         <span class="flag-icon">🇬🇧</span>
-                        English
+                        {{ 'navbar.language.english' | translate }}
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item" href="javascript:"
                        (click)="useLanguage('pl'); isMenuOpen = false">
                         <span class="flag-icon">🇵🇱</span>
-                        Polski
+                        {{ 'navbar.language.polish' | translate }}
                     </a>
                 </li>
             </ul>
@@ -35,20 +35,11 @@
                 <i class="icon feather icon-settings"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-end profile-notification" ngbDropdownMenu>
-<!--                <div class="pro-head">-->
-<!--                    <span>Name</span>-->
-<!--                </div>-->
                 <ul class="pro-body">
-<!--                    <li>-->
-<!--                        <a href="javascript:" class="dropdown-item">-->
-<!--                            <i class="feather icon-settings"></i>-->
-<!--                            Settings-->
-<!--                        </a>-->
-<!--                    </li>-->
                     <li>
                         <a href="javascript:" class="dropdown-item" (click)="logout()">
                             <i class="feather icon-lock"></i>
-                            Log out
+                            {{ 'navbar.logout' | translate }}
                         </a>
                     </li>
                 </ul>

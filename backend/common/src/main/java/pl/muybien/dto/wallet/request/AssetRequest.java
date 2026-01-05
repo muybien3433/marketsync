@@ -1,4 +1,4 @@
-package pl.muybien.wallet.asset;
+package pl.muybien.dto.wallet.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

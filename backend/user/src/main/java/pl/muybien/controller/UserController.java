@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.muybien.dto.user.request.UserRegisterRequest;
-import pl.muybien.service.UserService;
+import pl.muybien.security.UserService;
 
 @RestController
 @RequestMapping("/api/v1/users")

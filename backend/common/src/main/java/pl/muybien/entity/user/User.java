@@ -3,8 +3,6 @@ package pl.muybien.entity.user;
 import jakarta.persistence.*;
 import lombok.*;
 import pl.muybien.entity.AbstractAuditingEntity;
-import pl.muybien.enumeration.CurrencyType;
-import pl.muybien.enumeration.LanguageType;
 
 import java.util.UUID;
 
@@ -26,9 +24,11 @@ public class User extends AbstractAuditingEntity {
     @EqualsAndHashCode.Include
     private String keycloakId;
 
-    @Enumerated(EnumType.STRING)
-    private LanguageType language;
-
-    @Enumerated(EnumType.STRING)
-    private CurrencyType currency;
+    @OneToOne(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    private UserConfig userConfig;
 }

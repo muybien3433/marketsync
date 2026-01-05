@@ -26,6 +26,11 @@ application:
 
 send-notification-topic: send-notification-topic
 
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: subscription-service
+  public-key-pem: ${PUBLIC_KEY_PEM}
+
 management:
   endpoints:
     web:

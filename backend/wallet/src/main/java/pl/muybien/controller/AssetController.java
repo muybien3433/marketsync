@@ -1,4 +1,4 @@
-package pl.muybien.wallet.asset;
+package pl.muybien.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import pl.muybien.enumeration.CurrencyType;
 import pl.muybien.dto.wallet.AssetAggregateDTO;
 import pl.muybien.dto.wallet.AssetHistoryDTO;
+import pl.muybien.dto.wallet.request.AssetRequest;
+import pl.muybien.security.AssetServiceImpl;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +18,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/wallets/assets")
 @RequiredArgsConstructor
 public class AssetController {
-    private final AssetService service;
+    private final AssetServiceImpl service;
 
     @GetMapping("/{currency}")
     public ResponseEntity<List<AssetAggregateDTO>> findAllCustomerAssets(
