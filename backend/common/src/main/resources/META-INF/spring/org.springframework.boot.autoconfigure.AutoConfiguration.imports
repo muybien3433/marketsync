@@ -1,0 +1,4 @@
+pl.muybien.autoconfig.CommonErrorAutoConfiguration
+pl.muybien.autoconfig.FeignAuthForwardingAutoConfiguration
+pl.muybien.autoconfig.InternalJwtServiceAutoConfiguration
+pl.muybien.autoconfig.InternalJwtServletSecurityAutoConfiguration

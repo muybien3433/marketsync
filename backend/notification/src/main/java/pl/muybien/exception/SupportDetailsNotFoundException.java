@@ -1,7 +1,7 @@
 package pl.muybien.exception;
 
-public class SupportDetailsNotFoundException extends RuntimeException {
+public class SupportDetailsNotFoundException extends ServiceException {
     public SupportDetailsNotFoundException(String message) {
-        super(message);
+        super(404, "SUPPORT_DETAILS_NOT_FOUND", message);
     }
 }

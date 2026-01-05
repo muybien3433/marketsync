@@ -36,6 +36,13 @@ frontend-url: ${FRONTEND_URL}
 
 jwk-uri: ${JWK_URI}
 
+internal-jwt:
+  issuer: marketsync-gateway
+  ttl-seconds: 90
+  public-key-pem: ${PUBLIC_KEY_PEM}
+  private-key-pem: ${PRIVATE_KEY_PEM}
+  key-id: gw-1
+
 management:
   endpoints:
     web:

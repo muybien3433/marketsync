@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.entity.Currency;
+import pl.muybien.entity.finance.Currency;
 import pl.muybien.enumeration.CurrencyType;
 import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.repository.CurrencyRepository;

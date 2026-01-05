@@ -271,6 +271,74 @@ services:
           cpus: '0.5'
           memory: 512M
 
+  ######### [ User ] #########
+  user-server:
+    build:
+      context: ./backend/user
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres-user:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+
+  postgres-user:
+    image: postgres:17.4
+    container_name: postgres-user
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_USER_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_USER_DB}
+    volumes:
+      - postgres_user:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  ######### [ Iam ] #########
+  iam-server:
+    build:
+      context: ./backend/iam
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres-iam:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
 
   ######### [ Authentication ] #########
   keycloak:

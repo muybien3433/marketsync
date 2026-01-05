@@ -2,77 +2,82 @@ import {Component, HostListener, inject, OnDestroy, OnInit} from '@angular/core'
 import {NgbDropdown, NgbDropdownConfig, NgbDropdownMenu, NgbDropdownToggle} from '@ng-bootstrap/ng-bootstrap';
 import {NgClass} from "@angular/common";
 import screenfull from "screenfull";
-import { KeycloakService } from "keycloak-angular";
-import { TranslateService } from "@ngx-translate/core";
+import {TranslatePipe, TranslateService} from "@ngx-translate/core";
+import Keycloak from "keycloak-js";
 
 @Component({
-  selector: 'app-nav-right',
-  imports: [
-    NgbDropdownToggle,
-    NgbDropdownMenu,
-    NgbDropdown,
-    NgClass,
-  ],
-  templateUrl: './nav-right.component.html',
-  styleUrls: ['./nav-right.component.scss'],
-  providers: [NgbDropdownConfig]
+    selector: 'app-nav-right',
+    standalone: true,
+    imports: [
+        NgbDropdownToggle,
+        NgbDropdownMenu,
+        NgbDropdown,
+        NgClass,
+        TranslatePipe,
+    ],
+    templateUrl: './nav-right.component.html',
+    styleUrls: ['./nav-right.component.scss'],
+    providers: [NgbDropdownConfig]
 })
 export class NavRightComponent implements OnInit, OnDestroy {
-  screenFull = true;
-  isMenuOpen = false;
+    private readonly keycloak = inject(Keycloak);
+    private readonly translate = inject(TranslateService);
 
-  constructor(private keycloakService: KeycloakService, private translate: TranslateService) {
-    const config = inject(NgbDropdownConfig);
-    config.placement = 'bottom-right';
+    screenFull = true;
+    isMenuOpen = false;
 
-    const savedLang = localStorage.getItem('selectedLanguage') || 'pl';
-    this.translate.addLangs(['pl', 'en']);
-    this.translate.setDefaultLang('pl');
-    this.translate.use(savedLang);
-  }
+    constructor() {
+        const config = inject(NgbDropdownConfig);
+        config.placement = 'bottom-right';
 
-  ngOnInit() {
-    if (screenfull.isEnabled) {
-      this.screenFull = screenfull.isFullscreen;
-      screenfull.on('change', () => {
-        this.screenFull = screenfull.isFullscreen;
-      });
+        const savedLang = localStorage.getItem('selectedLanguage') || 'pl';
+        this.translate.addLangs(['pl', 'en']);
+        this.translate.setDefaultLang('pl');
+        this.translate.use(savedLang);
     }
-  }
 
-  ngOnDestroy() {
-    if (screenfull.isEnabled) {
-      screenfull.off('change', () => {
-        this.screenFull = screenfull.isFullscreen;
-      });
+    ngOnInit() {
+        if (screenfull.isEnabled) {
+            this.screenFull = screenfull.isFullscreen;
+            screenfull.on('change', () => {
+                this.screenFull = screenfull.isFullscreen;
+            });
+        }
     }
-  }
 
-  useLanguage(lang: string) {
-    localStorage.setItem('selectedLanguage', lang);
-    this.translate.use(lang).subscribe(() => {
-      window.location.reload();
-    });
-    this.isMenuOpen = false;
-  }
-
-  @HostListener('document:click', ['$event'])
-  onClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.language-picker')) {
-      this.isMenuOpen = false;
+    ngOnDestroy() {
+        if (screenfull.isEnabled) {
+            screenfull.off('change', () => {
+                this.screenFull = screenfull.isFullscreen;
+            });
+        }
     }
-  }
 
-  toggleFullscreen() {
-    if (screenfull.isEnabled) {
-      screenfull.toggle().then(() => {
-        this.screenFull = screenfull.isFullscreen;
-      });
+    useLanguage(lang: string) {
+        localStorage.setItem('selectedLanguage', lang);
+        this.translate.use(lang).subscribe(() => {
+            window.location.reload();
+        });
+        this.isMenuOpen = false;
     }
-  }
 
-  logout() {
-    this.keycloakService.logout();
-  }
+    @HostListener('document:click', ['$event'])
+    onClick(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.language-picker')) {
+            this.isMenuOpen = false;
+        }
+    }
+
+    toggleFullscreen() {
+        if (screenfull.isEnabled) {
+            screenfull.toggle().then(() => {
+                this.screenFull = screenfull.isFullscreen;
+            });
+        }
+    }
+
+    logout() {
+        this.keycloak.logout(window.location.origin + "/auth/login");
+    }
 }

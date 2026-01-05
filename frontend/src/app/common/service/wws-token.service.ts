@@ -1,30 +1,28 @@
-import { Injectable } from '@angular/core';
-import { KeycloakService } from 'keycloak-angular';
+import { inject, Injectable } from '@angular/core';
+import Keycloak from 'keycloak-js';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class WsTokenService {
+    private readonly keycloak = inject(Keycloak);
 
-    constructor(private keycloak: KeycloakService) {}
-
-    async buildAuthenticatedUrl(baseUrl: string): Promise<string> {
-        try {
-            const isLoggedIn = await this.keycloak.isLoggedIn();
-            if (!isLoggedIn) {
-                return baseUrl;
-            }
-
-            const token = await this.keycloak.getToken();
-            if (!token) {
-                return baseUrl;
-            }
-
-            const separator = baseUrl.includes('?') ? '&' : '?';
-            return `${baseUrl}${separator}token=${encodeURIComponent(token)}`;
-        } catch (e) {
-            console.error('WS token resolve failed', e);
-            return baseUrl;
+    async getFreshToken(minValiditySeconds: number): Promise<string> {
+        if (!this.keycloak.authenticated) {
+            throw new Error('Not logged in');
         }
+
+        await this.keycloak.updateToken(minValiditySeconds);
+
+        const token = this.keycloak.token;
+        if (!token) {
+            throw new Error('Token missing after refresh');
+        }
+
+        return token;
+    }
+
+    async buildAuthenticatedUrl(baseUrl: string, minValiditySeconds = 70): Promise<string> {
+        const token = await this.getFreshToken(minValiditySeconds);
+        const separator = baseUrl.includes('?') ? '&' : '?';
+        return `${baseUrl}${separator}token=${encodeURIComponent(token)}`;
     }
 }

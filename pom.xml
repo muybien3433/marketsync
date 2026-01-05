@@ -22,8 +22,10 @@
         <module>backend/data</module>
         <module>backend/finance</module>
         <module>backend/gateway</module>
+        <module>backend/iam</module>
         <module>backend/notification</module>
         <module>backend/subscription</module>
+        <module>backend/user</module>
         <module>backend/wallet</module>
     </modules>
 
@@ -34,6 +36,8 @@
         <maven.compiler.release>25</maven.compiler.release>
         <spring-cloud.version>2025.1.0</spring-cloud.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <liquibase.version>4.31.1</liquibase.version>
     </properties>
 
     <dependencyManagement>
@@ -49,6 +53,22 @@
                 <groupId>pl.muybien</groupId>
                 <artifactId>common</artifactId>
                 <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${liquibase.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,0 +1,39 @@
+settings:
+  account:
+    username:
+      mode: PROVIDED   # PROVIDED | GENERATED | EMAIL
+      normalize:
+        lowercase: true
+        remove-diacritics: true
+        allowed-chars-regex: "[a-z0-9._-]"
+        max-length: 30
+      uniqueness:
+        strategy: SUFFIX   # REJECT | SUFFIX | RANDOM
+        suffix-separator: ""
+        max-attempts: 20
+
+      generation:
+        scheme: NAME_BASED   # NAME_BASED | EMAIL_LOCALPART | UUID | SLUG
+        name-based:
+          first-name:
+            take: 3
+          last-name:
+            take: 3
+          when-too-short:
+            pad-with: RANDOM_LETTERS   # NONE | RANDOM_LETTERS | RANDOM_DIGITS | BOTH
+            pad-length: 3
+          random:
+            append-digits: true
+            digits-count: 3
+            append-letters: false
+            letters-count: 0
+            letters-case: LOWER   # LOWER | UPPER | MIXED
+          separator: ""          # ex. ".", "_" or ""
+
+    email:
+      mode: PROVIDED   # PROVIDED | GENERATED
+      require-verified: false
+      generation:
+        scheme: DISABLED        # DISABLED | FROM_USERNAME | FROM_TEMPLATE
+        from-template:
+          template: "{username}@example.com"

@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.muybien.subscription.dto.SubscriptionDetailDTO;
+import pl.muybien.dto.subscription.SubscriptionDetailDTO;
 
 import java.util.List;
 

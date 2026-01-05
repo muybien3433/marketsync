@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { AdminComponent } from "./common/admin/admin.component";
-import { AuthGuard } from "./common/service/auth-guard";
 
 export const routes: Routes = [
     {
@@ -14,22 +13,18 @@ export const routes: Routes = [
         children: [
             {
                 path: 'assets',
-                canActivate: [AuthGuard],
                 loadComponent: () => import('./pages/wallet/wallet.component')
             },
             {
                 path: 'asset/add',
-                canActivate: [AuthGuard],
                 loadComponent: () => import('./pages/wallet/wallet-add-asset/wallet-add-asset.component')
             },
             {
                 path: 'asset/edit',
-                canActivate: [AuthGuard],
                 loadComponent: () => import('./pages/wallet/wallet-edit-asset/wallet-edit-asset.component')
             },
             {
                 path: 'assets/history',
-                canActivate: [AuthGuard],
                 loadComponent: () => import('./pages/wallet/wallet-asset-history/wallet-asset-history.component')
             },
         ]
@@ -40,12 +35,10 @@ export const routes: Routes = [
         children: [
             {
                 path: 'subscriptions',
-                canActivate: [AuthGuard],
                 loadComponent: () => import('./pages/subscription/subscription.component')
             },
             {
                 path: 'add',
-                canActivate: [AuthGuard],
                 loadComponent:() => import('./pages/subscription/subscription-add/subscription-add.component')
             }
         ]
@@ -56,7 +49,6 @@ export const routes: Routes = [
         children: [
             {
                 path: 'currency',
-                canActivate: [AuthGuard],
                 loadComponent:() => import('./pages/settings/settings.component')
             }
         ]

@@ -44,3 +44,14 @@ support:
         - ${SUPPORT_EMAIL_1}
       numbers:
         - ""
+
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: notification-service
+  public-key-pem: ${PUBLIC_KEY_PEM}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

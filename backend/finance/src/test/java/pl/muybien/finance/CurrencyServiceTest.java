@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.muybien.entity.Currency;
+import pl.muybien.entity.finance.Currency;
 import pl.muybien.enumeration.CurrencyType;
 import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.repository.CurrencyRepository;

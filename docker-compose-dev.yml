@@ -227,6 +227,49 @@ services:
           cpus: '0.5'
           memory: 512M
 
+  ######### [ User ] #########
+  user-server:
+    build:
+      context: ./backend/user
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres-user:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - backend-net
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+
+  postgres-user:
+    image: postgres:17
+    container_name: postgres-user
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: user
+    volumes:
+      - postgres_user:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - database-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   ######### [ Authentication ] #########
   keycloak:
@@ -506,6 +549,7 @@ networks:
 volumes:
   postgres_keycloak:
   postgres_wallet:
+  postgres_user:
   mongodb_finance_data:
   mongodb_subscription_data:
   zookeeper_data_1:

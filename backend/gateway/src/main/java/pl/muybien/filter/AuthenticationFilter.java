@@ -3,26 +3,29 @@ package pl.muybien.filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.route.Route;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
-import org.springframework.lang.NonNull;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 import pl.muybien.exception.CustomerNotFoundException;
+import pl.muybien.security.InternalTokenService;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     private final ReactiveJwtDecoder jwtDecoder;
+    private final InternalTokenService internalTokenService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -30,9 +33,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         String path = request.getURI().getPath();
         String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
-        if ((authHeader == null || !authHeader.startsWith("Bearer "))
-                && path.startsWith("/api/ws-wallet")) {
-
+        if ((authHeader == null || !authHeader.startsWith("Bearer ")) && path.startsWith("/ws-wallet")) {
             String tokenParam = request.getQueryParams().getFirst("token");
             if (tokenParam != null && !tokenParam.isBlank()) {
                 authHeader = "Bearer " + tokenParam;
@@ -40,27 +41,45 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         }
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Authorization header is invalid");
+            return Mono.error(new IllegalArgumentException("Authorization header is invalid"));
         }
 
-        String finalAuthHeader = authHeader;
+        String externalAuthorization = authHeader;
+        String audience = resolveAudience(exchange);
 
-        return extractCustomerFromHeader(finalAuthHeader)
-                .flatMap(customer -> {
+        return extractCustomerFromHeader(authHeader)
+                .flatMap(customer -> internalTokenService.mint(audience, customer)
+                        .map(internalJwt -> new Bundle(customer, internalJwt)))
+                .flatMap(bundle -> {
                     ServerHttpRequest mutatedRequest = request.mutate()
                             .headers(headers -> {
-                                headers.set(HttpHeaders.AUTHORIZATION, finalAuthHeader);
-                                headers.set("X-Customer-Id", customer.id());
-                                headers.set("X-Customer-Email", customer.email());
-                                headers.set("X-Customer-Number", customer.number());
-                                headers.set("X-Customer-FirstName", customer.firstName());
-                                headers.set("X-Customer-LastName", customer.lastName());
-                                headers.set("X-Customer-Roles", String.join(",", customer.roles()));
+                                headers.remove("X-Customer-Id");
+                                headers.remove("X-Customer-Email");
+                                headers.remove("X-Customer-Number");
+                                headers.remove("X-Customer-FirstName");
+                                headers.remove("X-Customer-LastName");
+                                headers.remove("X-Customer-Roles");
+                                headers.remove("X-External-Authorization");
+
+                                headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + bundle.internalJwt());
+                                headers.set("X-External-Authorization", externalAuthorization);
+                                headers.set("X-Customer-Id", bundle.customer().id());
+                                headers.set("X-Customer-Email", bundle.customer().email());
+                                headers.set("X-Customer-Number", bundle.customer().number());
+                                headers.set("X-Customer-FirstName", bundle.customer().firstName());
+                                headers.set("X-Customer-LastName", bundle.customer().lastName());
+                                headers.set("X-Customer-Roles", String.join(",", bundle.customer().roles()));
                             })
                             .build();
 
                     return chain.filter(exchange.mutate().request(mutatedRequest).build());
                 });
+    }
+
+    private String resolveAudience(ServerWebExchange exchange) {
+        Route route = exchange.getAttribute(GATEWAY_ROUTE_ATTR);
+        if (route == null) return "unknown-service";
+        return route.getId();
     }
 
     @Override
@@ -103,4 +122,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         Object roles = realmAccess.get("roles");
         return roles instanceof List<?> ? (List<String>) roles : List.of();
     }
+
+    private record Bundle(CustomerResponse customer, String internalJwt) {}
 }
