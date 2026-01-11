@@ -11,7 +11,7 @@ spring:
 
 internal-jwt:
   issuer: marketsync-gateway
-  audience: finance-service
+  audience: marketsync-internal
   public-key-pem: ${PUBLIC_KEY_PEM}
 
 management:

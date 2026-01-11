@@ -13,7 +13,7 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
+@Table(name = "app_user")
 public class User extends AbstractAuditingEntity {
 
     @Id
@@ -22,7 +22,7 @@ public class User extends AbstractAuditingEntity {
     private UUID id;
 
     @EqualsAndHashCode.Include
-    private String keycloakId;
+    private UUID keycloakId;
 
     @OneToOne(
             mappedBy = "user",

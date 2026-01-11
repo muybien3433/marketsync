@@ -6,12 +6,14 @@ import pl.muybien.dto.user.request.UserRegisterRequest;
 import pl.muybien.entity.user.User;
 import pl.muybien.entity.user.UserConfig;
 
+import java.util.UUID;
+
 @Component
 public class UserMapper {
 
     public User toEntity(UserRegisterRequest request, String keycloakId) {
         User user = User.builder()
-                .keycloakId(keycloakId)
+                .keycloakId(UUID.fromString(keycloakId))
                 .build();
 
         UserConfig config = UserConfig.builder()

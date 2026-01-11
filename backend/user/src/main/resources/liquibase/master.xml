@@ -12,6 +12,5 @@
     <property name="timeType" value="time(6)" dbms="postgresql"/>
 
     <include file="liquibase/changelog/2025-12-21_19:14_initial_schema.xml" relativeToChangelogFile="false"/>
-    <include file="liquibase/changelog/2026-01-05_21:14_add_user_config.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

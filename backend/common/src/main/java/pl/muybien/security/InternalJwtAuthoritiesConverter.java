@@ -1,4 +1,4 @@
-package pl.muybien.common.security;
+package pl.muybien.security;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
@@ -8,7 +8,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class InternalJwtAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 

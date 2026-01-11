@@ -47,7 +47,7 @@ support:
 
 internal-jwt:
   issuer: marketsync-gateway
-  audience: notification-service
+  audience: marketsync-internal
   public-key-pem: ${PUBLIC_KEY_PEM}
 
 management:

@@ -1,0 +1,134 @@
+<div class="auth-wrapper">
+    <div class="auth-bg" aria-hidden="true">
+        <span class="r"></span>
+        <span class="r s"></span>
+        <span class="r s"></span>
+        <span class="r"></span>
+    </div>
+
+    <div class="auth-content">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="auth-title-row">
+                    <span class="auth-icon" aria-hidden="true">🔒</span>
+                    <h1>{{ 'auth.title.register' | translate }}</h1>
+                </div>
+
+                <form
+                        name="form"
+                        class="global-form-style"
+                        (ngSubmit)="register()"
+                        [formGroup]="registerForm"
+                >
+
+                    <!-- USER CREATE REQUEST -->
+                    <div formGroupName="userCreateRequest">
+                        <!-- EMAIL -->
+                        <div class="mb-1 form-control-wrapper">
+                            <label for="email" [translate]="'auth.form.email'"></label>
+                            <div class="control-input">
+                                <input
+                                        class="form-control"
+                                        pInputText
+                                        id="email"
+                                        placeholder="{{ 'auth.form.placeholder.enterEmail' | translate }}"
+                                        formControlName="email"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- FIRST NAME -->
+                        <div class="mb-1 form-control-wrapper">
+                            <label for="firstName" [translate]="'auth.form.firstName'"></label>
+                            <div class="control-input">
+                                <input
+                                        class="form-control"
+                                        pInputText
+                                        id="firstName"
+                                        placeholder="{{ 'auth.form.placeholder.enterFirstName' | translate }}"
+                                        formControlName="firstName"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- LAST NAME -->
+                        <div class="mb-1 form-control-wrapper">
+                            <label for="lastName" [translate]="'auth.form.lastName'"></label>
+                            <div class="control-input">
+                                <input
+                                        class="form-control"
+                                        pInputText
+                                        id="lastName"
+                                        placeholder="{{ 'auth.form.placeholder.enterLastName' | translate }}"
+                                        formControlName="lastName"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LANGUAGE -->
+                    <div class="mb-1 form-control-wrapper">
+                        <label for="language" [translate]="'auth.form.language'"></label>
+                        <div class="control-input">
+                            <p-dropdown
+                                    id="language"
+                                    class="form-control"
+                                    formControlName="language"
+                                    [options]="languageOptions"
+                                    optionValue="value"
+                                    optionLabel="label"
+                                    [showClear]="false"
+                                    [placeholder]="'auth.form.placeholder.selectLanguage' | translate"
+                                    [emptyMessage]="'common.no.results.found' | translate"
+                                    [emptyFilterMessage]="'common.no.results.found.withFilters' | translate"
+                                    [filter]="true"
+                            >
+                            </p-dropdown>
+                        </div>
+                    </div>
+
+                    <!-- CURRENCY -->
+                    <div class="mb-1 form-control-wrapper">
+                        <label for="currency" [translate]="'auth.form.currency'"></label>
+                        <div class="control-input">
+                            <p-dropdown
+                                    id="currency"
+                                    class="form-control"
+                                    formControlName="currency"
+                                    [options]="currencyOptions"
+                                    optionValue="value"
+                                    optionLabel="label"
+                                    [showClear]="false"
+                                    [placeholder]="'auth.form.placeholder.selectCurrency' | translate"
+                                    [emptyMessage]="'common.no.results.found' | translate"
+                                    [emptyFilterMessage]="'common.no.results.found.withFilters' | translate"
+                                    [filter]="true"
+                            >
+                            </p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="auth-button-container">
+                        <p-button
+                                severity="primary"
+                                type="submit"
+                                [label]="'auth.form.button.register' | translate"
+                                [rounded]="true"
+                                data-cy="submit"
+                        ></p-button>
+
+                        <p-button
+                                severity="secondary"
+                                type="button"
+                                [label]="'auth.form.button.login' | translate"
+                                routerLink="/auth/login"
+                                [rounded]="true"
+                                data-cy="login"
+                        ></p-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

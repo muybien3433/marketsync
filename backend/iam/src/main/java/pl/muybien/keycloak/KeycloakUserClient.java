@@ -149,6 +149,11 @@ public class KeycloakUserClient {
                     .filter(Objects::nonNull)
                     .noneMatch(found -> found.equalsIgnoreCase(u));
         } catch (WebApplicationException ex) {
+            int status = ex.getResponse() != null ? ex.getResponse().getStatus() : 500;
+            if (status == 403) {
+                throw new UserCreationException(502, "Keycloak forbidden: missing roles for service account");
+            }
+
             List<UserRepresentation> results = usersResource.search(u);
             if (results == null || results.isEmpty()) return true;
 
@@ -276,6 +281,56 @@ public class KeycloakUserClient {
                     status,
                     "KEYCLOAK_READ_USER_FAILED",
                     "Failed to read user from Keycloak. Status: " + status,
+                    ex
+            );
+        }
+    }
+
+    public void deleteUserById(String userId) {
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new PasswordChangeException(
+                    400,
+                    "USER_DELETE_USER_ID_REQUIRED",
+                    "User id is required"
+            );
+        }
+
+        try {
+            keycloak.realm(realm).users().get(userId).remove();
+        } catch (WebApplicationException ex) {
+            int status = ex.getResponse() != null ? ex.getResponse().getStatus() : 500;
+
+            if (status == 404) {
+                throw new PasswordChangeException(
+                        404,
+                        "USER_DELETE_NOT_FOUND",
+                        "User not found in Keycloak",
+                        ex
+                );
+            }
+
+            if (status == 403) {
+                throw new PasswordChangeException(
+                        403,
+                        "USER_DELETE_FORBIDDEN",
+                        "Forbidden to delete users in this realm",
+                        ex
+                );
+            }
+
+            if (status >= 500) {
+                throw new PasswordChangeException(
+                        502,
+                        "USER_DELETE_KEYCLOAK_5XX",
+                        "Keycloak error during user deletion",
+                        ex
+                );
+            }
+
+            throw new PasswordChangeException(
+                    status,
+                    "USER_DELETE_FAILED",
+                    "Failed to delete user in Keycloak. Status: " + status,
                     ex
             );
         }

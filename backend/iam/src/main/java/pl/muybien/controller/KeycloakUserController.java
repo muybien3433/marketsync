@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.muybien.app.user.*;
 import pl.muybien.dto.iam.request.*;
 import pl.muybien.dto.iam.response.KeycloakEmailChangedResponse;
@@ -23,20 +20,27 @@ public class KeycloakUserController {
     private final CreateUserWithoutPasswordHandler createUserWithoutPasswordHandler;
     private final ChangeEmailAsAdminHandler changeEmailAsAdminHandler;
     private final ChangePasswordAsAdminHandler changePasswordAsAdminHandler;
+    private final DeleteUserHandler deleteUserHandler;
 
     @PostMapping
-    public ResponseEntity<KeycloakUserCreatedResponse> createUser(@Valid @RequestBody KeycloakUserCreateRequest request) {
+    public ResponseEntity<KeycloakUserCreatedResponse> create(@Valid @RequestBody KeycloakUserCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(createUserHandler.handle(request));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        deleteUserHandler.handle(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/with-password")
-    public ResponseEntity<KeycloakUserCreatedResponse> createUserWithPassword(
+    public ResponseEntity<KeycloakUserCreatedResponse> createWithPassword(
             @Valid @RequestBody KeycloakAdminCreateUserWithPasswordRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(createUserWithPasswordHandler.handle(request));
     }
 
     @PostMapping("/without-password")
-    public ResponseEntity<KeycloakUserCreatedResponse> createUserWithoutPassword(
+    public ResponseEntity<KeycloakUserCreatedResponse> createWithoutPassword(
             @Valid @RequestBody KeycloakAdminCreateUserWithoutPasswordRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(createUserWithoutPasswordHandler.handle(request));
     }

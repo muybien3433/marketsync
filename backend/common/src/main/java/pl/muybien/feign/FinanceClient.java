@@ -1,5 +1,6 @@
 package pl.muybien.feign;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
         name = "finance-service",
         url = "${application.config.finance-url}"
 )
+@ConditionalOnProperty(name = "application.config.finance-url")
 public interface FinanceClient {
 
     @GetMapping("/{assetType}/{uri}")

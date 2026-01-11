@@ -18,7 +18,9 @@
     "change": "Zmień",
     "save": "Zapisz",
     "unit": "Jednostka",
-    "remaining": "znaków pozostało"
+    "remaining": "znaków pozostało",
+    "no.results.found": "Nie znaleziono wyników",
+    "no.results.found.withFilters": "Nie znaleziono wyników dla wybranych filtrów"
   },
 
   "navbar": {
@@ -31,6 +33,39 @@
     "language": {
       "polish": "Polski",
       "english": "Angielski"
+    }
+  },
+
+  "auth": {
+    "title": {
+      "login": "Zaloguj się",
+      "register": "Zarejestruj się"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Hasło",
+      "firstName": "Imię",
+      "lastName": "Nazwisko",
+      "language": "Język",
+      "currency": "Waluta",
+      "placeholder": {
+        "enterLogin": "Wpisz swój login",
+        "enterPassword": "Wpisz swoje hasło",
+        "enterEmail": "Wpisz swój email",
+        "enterFirstName": "Wpisz swoje imię",
+        "enterLastName": "Wpisz swoje nazwisko",
+        "enterPhoneNumber": "Wpisz swój numer telefonu",
+        "selectLanguage": "Wybierz swój język",
+        "selectCurrency": "Wybierz swoją walutę"
+      },
+      "button": {
+        "login": "Zaloguj się",
+        "register": "Zarejestruj się"
+      },
+      "forgot": {
+        "password": "Zapomniałeś hasła?",
+        "email": "Zapomniałeś email?"
+      }
     }
   },
 

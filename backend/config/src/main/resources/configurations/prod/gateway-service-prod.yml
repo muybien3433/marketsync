@@ -10,6 +10,14 @@ spring:
             locator:
               enabled: false
           routes:
+            - id: iam-service
+              uri: http://iam-server:8888
+              predicates:
+                - Path=/api/v1/iam/**
+            - id: user-service
+              uri: http://user-server:8000
+              predicates:
+                - Path=/api/v1/users/**
             - id: finance-service
               uri: http://finance-server:8800
               predicates:
@@ -39,6 +47,7 @@ jwk-uri: ${JWK_URI}
 internal-jwt:
   issuer: marketsync-gateway
   ttl-seconds: 90
+  audience: marketsync-internal
   public-key-pem: ${PUBLIC_KEY_PEM}
   private-key-pem: ${PRIVATE_KEY_PEM}
   key-id: gw-1

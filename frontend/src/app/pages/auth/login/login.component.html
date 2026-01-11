@@ -1,0 +1,81 @@
+<div class="auth-wrapper">
+    <div class="auth-bg" aria-hidden="true">
+        <span class="r"></span>
+        <span class="r s"></span>
+        <span class="r s"></span>
+        <span class="r"></span>
+    </div>
+
+    <div class="auth-content">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="auth-title-row">
+                    <span class="auth-icon" aria-hidden="true">🔒</span>
+                    <h1>{{ 'auth.title.login' | translate }}</h1>
+                </div>
+
+                <form
+                        name="form"
+                        class="global-form-style"
+                        (ngSubmit)="login()"
+                        [formGroup]="loginForm"
+                >
+                    <div class="mb-1 form-control-wrapper">
+                        <label id="email-label" for="email" [translate]="'auth.form.email'"></label>
+                        <div class="control-input">
+                            <input
+                                    class="form-control"
+                                    pInputText
+                                    id="email"
+                                    placeholder="{{ 'auth.form.placeholder.enterEmail' | translate }}"
+                                    name="email"
+                                    formControlName="email"
+                                    data-cy="email"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="mb-1 form-control-wrapper">
+                        <label for="password" [translate]="'auth.form.password'"></label>
+                        <div class="control-input">
+                            <input
+                                    type="password"
+                                    pInputText
+                                    class="form-control"
+                                    id="password"
+                                    name="password"
+                                    placeholder="{{ 'auth.form.placeholder.enterPassword' | translate }}"
+                                    formControlName="password"
+                                    data-cy="firstPassword"
+                            />
+                        </div>
+                    </div>
+
+                    <div style="margin: 0.35rem 0;">
+                        <a routerLink="/auth/reset" [translate]="'auth.form.forgot.password'"></a>
+                    </div>
+
+                    <div class="auth-button-container">
+                        <p-button
+                                severity="primary"
+                                type="submit"
+                                [label]="'auth.form.button.login' | translate"
+                                [rounded]="true"
+                                data-cy="submit"
+                        ></p-button>
+
+                        <p-button
+                                severity="secondary"
+                                type="button"
+                                [label]="'auth.form.button.register' | translate"
+                                routerLink="/auth/register"
+                                [rounded]="true"
+                                data-cy="register"
+                        ></p-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

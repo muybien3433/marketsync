@@ -15,7 +15,7 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_config")
+@Table(name = "app_user_config")
 public class UserConfig extends AbstractAuditingEntity {
 
     @Id
@@ -31,7 +31,7 @@ public class UserConfig extends AbstractAuditingEntity {
 
     @OneToOne(optional = false)
     @JoinColumn(
-            name = "user_id",
+            name = "app_user_id",
             nullable = false,
             unique = true
     )

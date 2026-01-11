@@ -7,17 +7,36 @@
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet id="initial_schema-1" author="muybien3433">
-
-        <createTable tableName="user">
+        <createTable tableName="app_user">
             <column name="id" type="${uuidType}"><constraints primaryKey="true" nullable="false"/></column>
             <column name="keycloak_id" type="${uuidType}"><constraints nullable="false"/></column>
-            <column name="language" type="varchar(10)"><constraints nullable="true"/></column>
-            <column name="currency" type="varchar(10)"><constraints nullable="true"/></column>
+            <column name="created_by" type="varchar(20)"><constraints nullable="false"/></column>
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_by" type="varchar(20)"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add_user_config" author="muybien3433">
+        <createTable tableName="app_user_config">
+            <column name="id" type="${uuidType}"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="language" type="varchar(10)"/>
+            <column name="currency" type="varchar(10)"/>
+            <column name="app_user_id" type="${uuidType}"><constraints nullable="false"/></column>
             <column name="created_by" type="varchar(20)"><constraints nullable="false"/></column>
             <column name="created_date" type="timestamp"/>
             <column name="last_modified_by" type="varchar(20)"/>
             <column name="last_modified_date" type="timestamp"/>
         </createTable>
 
+        <addUniqueConstraint tableName="app_user_config"
+                             columnNames="app_user_id"
+                             constraintName="uk_user_config_app_user_id"/>
+
+        <addForeignKeyConstraint baseTableName="app_user_config"
+                                 baseColumnNames="app_user_id"
+                                 referencedTableName="app_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_user_config_user"/>
     </changeSet>
 </databaseChangeLog>

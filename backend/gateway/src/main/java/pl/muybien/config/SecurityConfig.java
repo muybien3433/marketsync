@@ -37,7 +37,8 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(authorize -> authorize
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .pathMatchers("/").permitAll()
+                        .pathMatchers("/api/v1/users/login").permitAll()
+                        .pathMatchers("/api/v1/users/register").permitAll()
                         .pathMatchers("/api/ws-wallet/**").permitAll()
                         .anyExchange().authenticated()
                 )

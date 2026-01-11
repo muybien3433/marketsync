@@ -18,7 +18,9 @@
     "change": "Change",
     "save": "Save",
     "unit": "Unit",
-    "remaining": "chars remaining"
+    "remaining": "chars remaining",
+    "no.results.found": "No results found",
+    "no.results.found.withFilters": "No results found for selected filters"
   },
 
   "navbar": {
@@ -31,6 +33,39 @@
     "language": {
       "polish": "Polish",
       "english": "English"
+    }
+  },
+
+  "auth": {
+    "title": {
+      "login": "Log in",
+      "register": "Sign up"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "language": "Language",
+      "currency": "Currency",
+      "placeholder": {
+        "enterLogin": "Enter your username",
+        "enterPassword": "Enter your password",
+        "enterEmail": "Enter your email",
+        "enterFirstName": "Enter your first name",
+        "enterLastName": "Enter your last name",
+        "enterPhoneNumber": "Enter your phone number",
+        "selectLanguage": "Select your language",
+        "selectCurrency": "Select your currency"
+      },
+      "button": {
+        "login": "Log in",
+        "register": "Sign up"
+      },
+      "forgot": {
+        "password": "Forgot password?",
+        "email": "Forgot email?"
+      }
     }
   },
 

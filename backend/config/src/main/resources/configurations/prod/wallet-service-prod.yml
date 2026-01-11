@@ -29,7 +29,7 @@ frontend-url: ${FRONTEND_URL}
 
 internal-jwt:
   issuer: marketsync-gateway
-  audience: wallet-service
+  audience: marketsync-internal
   public-key-pem: ${PUBLIC_KEY_PEM}
 
 management:

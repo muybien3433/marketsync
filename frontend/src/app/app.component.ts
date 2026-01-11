@@ -1,5 +1,6 @@
 import {Component, OnInit, inject} from '@angular/core';
 import {NavigationEnd, Router, RouterModule} from '@angular/router';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-root',
@@ -10,6 +11,11 @@ import {NavigationEnd, Router, RouterModule} from '@angular/router';
 export class AppComponent implements OnInit {
     private router = inject(Router);
     title = 'datta-able';
+
+    constructor(private translate: TranslateService) {
+        this.translate.setDefaultLang('pl');
+        this.translate.use('pl');
+    }
 
     ngOnInit() {
         this.router.events.subscribe((evt) => {

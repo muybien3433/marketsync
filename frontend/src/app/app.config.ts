@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
                 clientId: environment.keycloakClientId
             },
             initOptions: {
-                onLoad: 'login-required',
+                onLoad: 'check-sso',
                 checkLoginIframe: false,
                 flow: 'standard'
             }

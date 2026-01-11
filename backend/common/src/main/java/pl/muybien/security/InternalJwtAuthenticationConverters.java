@@ -9,7 +9,7 @@ public final class InternalJwtAuthenticationConverters {
     public static JwtAuthenticationConverter withUidPrincipalAndAuthorities() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setPrincipalClaimName("uid");
-        converter.setJwtGrantedAuthoritiesConverter(new pl.muybien.common.security.InternalJwtAuthoritiesConverter());
+        converter.setJwtGrantedAuthoritiesConverter(new InternalJwtAuthoritiesConverter());
         return converter;
     }
 }

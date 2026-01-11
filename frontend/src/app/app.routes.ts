@@ -1,60 +1,86 @@
 import { Routes } from '@angular/router';
-import { AdminComponent } from "./common/admin/admin.component";
+import { AdminComponent } from './common/admin/admin.component';
+import { authGuard } from './common/service/auth-guard';
+import WalletComponent from './pages/wallet/wallet.component';
+import WalletAddAssetComponent from './pages/wallet/wallet-add-asset/wallet-add-asset.component';
+import WalletEditAssetComponent from './pages/wallet/wallet-edit-asset/wallet-edit-asset.component';
+import WalletAssetHistoryComponent from './pages/wallet/wallet-asset-history/wallet-asset-history.component';
+import SubscriptionComponent from './pages/subscription/subscription.component';
+import SubscriptionAddComponent from './pages/subscription/subscription-add/subscription-add.component';
+import SettingsComponent from './pages/settings/settings.component';
+import {LoginComponent} from "./pages/auth/login/login.component";
+import {RegisterComponent} from "./pages/auth/register/register.component";
 
 export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'wallet/assets'
+        redirectTo: 'wallet/assets',
+    },
+    {
+        path: 'auth',
+        children: [
+            {
+                path: 'login',
+                component: LoginComponent,
+            },
+            {
+                path: 'register',
+                component: RegisterComponent
+            }
+        ],
     },
     {
         path: 'wallet',
+        canActivate: [authGuard],
         component: AdminComponent,
         children: [
             {
                 path: 'assets',
-                loadComponent: () => import('./pages/wallet/wallet.component')
+                component: WalletComponent,
             },
             {
                 path: 'asset/add',
-                loadComponent: () => import('./pages/wallet/wallet-add-asset/wallet-add-asset.component')
+                component: WalletAddAssetComponent,
             },
             {
                 path: 'asset/edit',
-                loadComponent: () => import('./pages/wallet/wallet-edit-asset/wallet-edit-asset.component')
+                component: WalletEditAssetComponent,
             },
             {
                 path: 'assets/history',
-                loadComponent: () => import('./pages/wallet/wallet-asset-history/wallet-asset-history.component')
+                component: WalletAssetHistoryComponent,
             },
-        ]
+        ],
     },
     {
         path: 'subscription',
+        canActivate: [authGuard],
         component: AdminComponent,
         children: [
             {
                 path: 'subscriptions',
-                loadComponent: () => import('./pages/subscription/subscription.component')
+                component: SubscriptionComponent,
             },
             {
                 path: 'add',
-                loadComponent:() => import('./pages/subscription/subscription-add/subscription-add.component')
-            }
-        ]
+                component: SubscriptionAddComponent,
+            },
+        ],
     },
     {
         path: 'settings',
+        canActivate: [authGuard],
         component: AdminComponent,
         children: [
             {
                 path: 'currency',
-                loadComponent:() => import('./pages/settings/settings.component')
-            }
-        ]
+                component: SettingsComponent,
+            },
+        ],
     },
     {
         path: '**',
-        redirectTo: 'wallet/assets'
-    }
+        redirectTo: 'wallet/assets',
+    },
 ];

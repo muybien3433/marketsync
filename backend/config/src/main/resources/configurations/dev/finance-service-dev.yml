@@ -7,7 +7,7 @@ spring:
 
 internal-jwt:
   issuer: marketsync-gateway
-  audience: finance-service
+  audience: marketsync-internal
   public-key-pem: |
     -----BEGIN PUBLIC KEY-----
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HglAoDsfRTORBkzAAQk
@@ -27,3 +27,34 @@ management:
   endpoint:
     health:
       show-details: always
+
+logging:
+  level:
+    root: INFO
+
+    # === SPRING SECURITY ===
+    org.springframework.security: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG
+    org.springframework.security.oauth2: DEBUG
+
+    # === WEB / MVC ===
+    org.springframework.web: INFO
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
+    org.springframework.web.servlet.handler.HandlerMappingIntrospector: WARN
+
+    # === SPRING BOOT ===
+    org.springframework.boot.autoconfigure: INFO
+
+    # === JACKSON / JSON ===
+    com.fasterxml.jackson.databind: INFO
+
+    # === HTTP CLIENT / FEIGN ===
+    feign: DEBUG
+    feign.Logger: DEBUG
+
+    # === TRANSACTIONS ===
+    org.springframework.transaction: INFO
+
+    # === HIBERNATE (if JPA) ===
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

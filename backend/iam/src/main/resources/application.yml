@@ -1,7 +1,7 @@
 settings:
   account:
     username:
-      mode: PROVIDED   # PROVIDED | GENERATED | EMAIL
+      mode: GENERATED   # PROVIDED | GENERATED | EMAIL
       normalize:
         lowercase: true
         remove-diacritics: true
