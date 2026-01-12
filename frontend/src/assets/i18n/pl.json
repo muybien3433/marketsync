@@ -164,6 +164,14 @@
     "asset.edit.fail": "Nie udało się edytować aktywa. Spróbuj ponownie",
     "subscription.add.fail": "Nie udało się dodać subskrybcji. Spróbuj ponownie",
     "subscription.value.must.be.above": "Wartość musi być powyżej aktualnej ceny",
-    "subscription.value.must.be.below": "Wartość musi być poniżej aktualnej ceny"
+    "subscription.value.must.be.below": "Wartość musi być poniżej aktualnej ceny",
+    "register": {
+      "summary": "Nie udało się zarejestrować",
+      "http": {
+        "409": "Podany adres email jest zajęty",
+        "400": "Brakuje danych w formularzu",
+        "other": "Spróbuj ponownie później"
+      }
+    }
   }
 }

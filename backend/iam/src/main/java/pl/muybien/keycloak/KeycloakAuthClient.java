@@ -61,6 +61,8 @@ public class KeycloakAuthClient {
                     )
                     .bodyToMono(KeycloakUserLoginResponse.class)
                     .block();
+        } catch (LoginException ex) {
+            throw ex;
         } catch (WebClientResponseException ex) {
             int status = ex.getStatusCode().value();
             throw new LoginException(

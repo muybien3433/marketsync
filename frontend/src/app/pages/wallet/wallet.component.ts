@@ -1,19 +1,18 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {AssetAggregate} from "../../common/model/asset-aggregate.model";
 import {HttpClient} from "@angular/common/http";
 import {CurrencyType} from "../../common/enum/currency-type";
 import {API_ENDPOINTS} from "../../common/service/api-endpoints";
-import {PreferenceService} from "../../common/service/preference-service";
 import {Router} from "@angular/router";
 import {ApexOptions, ChartComponent} from "ng-apexcharts";
 import {CardComponent} from "../../common/components/card/card.component";
 import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
-import {environment} from "../../../environments/environment";
 import {UnitTypeLabels} from "../../common/enum/unit-type";
 import {LoadingSpinnerComponent} from "../../common/components/loading/loading-spinner.component";
 import {WalletWebsocketService} from "../../common/service/wallet-web-socket.service";
+import {PreferenceService} from "../../common/service/preference.service";
 
 @Component({
     selector: 'app-wallet',
@@ -22,6 +21,12 @@ import {WalletWebsocketService} from "../../common/service/wallet-web-socket.ser
     styleUrls: ['./wallet.component.scss']
 })
 export default class WalletComponent implements OnInit {
+    private readonly preferenceService = inject(PreferenceService);
+    private readonly http = inject(HttpClient);
+    private readonly router = inject(Router);
+    private readonly translate = inject(TranslateService);
+    private readonly walletWs = inject(WalletWebsocketService);
+
     protected readonly Object = Object;
     protected _assets: AssetAggregate[] = [];
     groupedAssets: { [key: string]: AssetAggregate[] } = {};
@@ -37,13 +42,7 @@ export default class WalletComponent implements OnInit {
     private lastTotalValue: number | null = null;
     private totalValueDirection: 'up' | 'down' | null = null;
 
-    constructor(
-        private http: HttpClient,
-        private preferenceService: PreferenceService,
-        private router: Router,
-        private translate: TranslateService,
-        private walletWs: WalletWebsocketService
-    ) {
+    constructor() {
         this.donutChart = {
             chart: {
                 type: 'donut',
@@ -194,7 +193,7 @@ export default class WalletComponent implements OnInit {
 
     fetchWalletAssets() {
         this.isLoading = true;
-        this.http.get<AssetAggregate[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`)
+        this.http.get<AssetAggregate[]>(`${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`)
             .subscribe({
                 next: assets => {
                     this.handleAssetsUpdate(assets);

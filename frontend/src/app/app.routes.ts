@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { AdminComponent } from './common/admin/admin.component';
-import { authGuard } from './common/service/auth-guard';
+import { authGuard } from './common/security/auth-guard';
 import WalletComponent from './pages/wallet/wallet.component';
 import WalletAddAssetComponent from './pages/wallet/wallet-add-asset/wallet-add-asset.component';
 import WalletEditAssetComponent from './pages/wallet/wallet-edit-asset/wallet-edit-asset.component';

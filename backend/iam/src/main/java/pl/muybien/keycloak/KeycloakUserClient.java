@@ -60,6 +60,7 @@ public class KeycloakUserClient {
             if (status == 409) {
                 throw new UserCreationException(
                         status,
+                        "USER_ALREADY_EXISTS",
                         "User already exists in Keycloak"
                 );
             }

@@ -2,7 +2,7 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core'
 import {NgForOf} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CurrencyType} from "../../enum/currency-type";
-import {CurrencyService} from "../../service/currency-service";
+import {CurrencyService} from "../../service/currency.service";
 
 @Component({
   selector: 'app-currency-change-option',

@@ -27,6 +27,9 @@ public class KeycloakAuthController {
         return ResponseEntity.ok(loginHandler.handle(request));
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<>
+
     @PostMapping("/change-email")
     public ResponseEntity<KeycloakEmailChangedResponse> changeEmail(
             @Valid @RequestBody KeycloakUserChangeEmailRequest request) {

@@ -3,7 +3,6 @@ import {TranslatePipe} from "@ngx-translate/core";
 import {HttpClient} from '@angular/common/http';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {Router} from '@angular/router';
-import {environment} from '../../../../environments/environment';
 import {AssetHistory} from "../../../common/model/asset-history.model";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
@@ -48,7 +47,7 @@ export default class WalletAssetHistoryComponent implements OnInit {
   }
 
   fetchWalletAssetsHistory() {
-    this.http.get<AssetHistory[]>(`${environment.baseUrl}${API_ENDPOINTS.WALLET_HISTORY}`).subscribe({
+    this.http.get<AssetHistory[]>(`${API_ENDPOINTS.WALLET}/history`).subscribe({
       next: (assets) => {
         this._assets = Array.isArray(assets) ? assets : [];
         this.isLoading = false;
@@ -62,7 +61,7 @@ export default class WalletAssetHistoryComponent implements OnInit {
   }
 
   deleteAsset(assetId: number) {
-    this.http.delete(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${assetId}`).subscribe({
+    this.http.delete(`${API_ENDPOINTS.WALLET}/${assetId}`).subscribe({
       next: () => {
         this._assets = this._assets.filter(asset => asset.id !== assetId);
         this.showSuccessMessage = true;

@@ -1,7 +1,9 @@
+import {environment} from "../../../environments/environment";
+
 export const API_ENDPOINTS = {
-    WALLET: '/wallets/assets',
-    WALLET_HISTORY: '/wallets/assets/history',
-    FINANCE: '/finances',
-    SUBSCRIPTION: '/subscriptions',
-    IAM: '/iam'
+    WALLET: `${environment.baseUrl}/wallets/assets`,
+    FINANCE: `${environment.baseUrl}/finances`,
+    SUBSCRIPTION: `${environment.baseUrl}/subscriptions`,
+    IAM: `${environment.baseUrl}/iam`,
+    USER: `${environment.baseUrl}/users`
 }

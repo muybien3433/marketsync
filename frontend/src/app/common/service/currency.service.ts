@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
-import {PreferenceService} from "./preference-service";
 import {CurrencyType} from "../enum/currency-type";
+import {PreferenceService} from "./preference.service";
 
 @Injectable({
     providedIn: 'root'

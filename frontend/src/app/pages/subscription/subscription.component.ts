@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {TranslatePipe} from "@ngx-translate/core";
@@ -42,7 +41,7 @@ export default class SubscriptionComponent {
 
   fetchSubscriptions() {
     this.isLoading = true;
-    this.http.get<SubscriptionDetail[]>(`${environment.baseUrl}${API_ENDPOINTS.SUBSCRIPTION}`).subscribe({
+    this.http.get<SubscriptionDetail[]>(`${API_ENDPOINTS.SUBSCRIPTION}`).subscribe({
       next: (subscriptions) => {
         this._subscriptions = Array.isArray(subscriptions) ? subscriptions : [];
         this.isLoading = false;
@@ -56,7 +55,7 @@ export default class SubscriptionComponent {
   }
 
   deleteSubscription(uri: string, id: string) {
-    this.http.delete(`${environment.baseUrl}${API_ENDPOINTS.SUBSCRIPTION}/${uri}/${id}`).subscribe({
+    this.http.delete(`${API_ENDPOINTS.SUBSCRIPTION}/${uri}/${id}`).subscribe({
       next: () => {
         this._subscriptions = this._subscriptions.filter(subscription => subscription.id !== id);
       },

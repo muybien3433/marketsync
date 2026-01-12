@@ -1,20 +1,22 @@
-import { Injectable } from "@angular/core";
+import {inject, Injectable} from "@angular/core";
 import { BehaviorSubject, Observable, combineLatest, EMPTY } from "rxjs";
 import { AssetType } from "../enum/asset-type";
 import { AssetDetail } from "../model/asset-detail.model";
 import { CurrencyType } from "../enum/currency-type";
 import { HttpClient } from "@angular/common/http";
-import { environment } from "../../../environments/environment";
 import { API_ENDPOINTS } from "./api-endpoints";
 import { AssetBase } from "../model/asset-base.model";
-import { CurrencyService } from "./currency-service";
 import { catchError, filter, switchMap, tap } from "rxjs/operators";
 import { UnitType } from "../enum/unit-type";
+import {CurrencyService} from "./currency.service";
 
 @Injectable({
     providedIn: "root"
 })
 export class AssetService {
+    private readonly httpClient = inject(HttpClient);
+    private readonly currencyService = inject(CurrencyService);
+
     private selectedAssetType = new BehaviorSubject<AssetType>(AssetType.CRYPTO);
     selectedAssetType$ = this.selectedAssetType.asObservable();
 
@@ -23,10 +25,7 @@ export class AssetService {
     private selectedAsset = new BehaviorSubject<AssetDetail | null>(null);
     selectedAsset$ = this.selectedAsset.asObservable();
 
-    constructor(
-        protected httpClient: HttpClient,
-        private currencyService: CurrencyService
-    ) {
+    constructor() {
         combineLatest([
             this.selectedAssetRef,
             this.currencyService.selectedCurrencyType$
@@ -76,13 +75,13 @@ export class AssetService {
 
     getAssetsBaseByAssetType(assetType: AssetType): Observable<AssetBase[]> {
         return this.httpClient.get<AssetBase[]>(
-            `${environment.baseUrl}${API_ENDPOINTS.FINANCE}/base/${assetType}`
+            `${API_ENDPOINTS.FINANCE}/base/${assetType}`
         );
     }
 
     getAssetsByAssetType(assetType: AssetType): Observable<AssetDetail[]> {
         return this.httpClient.get<AssetDetail[]>(
-            `${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${assetType}`
+            `${API_ENDPOINTS.FINANCE}/${assetType}`
         );
     }
 
@@ -91,7 +90,7 @@ export class AssetService {
         currencyType: CurrencyType
     ): Observable<AssetDetail[]> {
         return this.httpClient.get<AssetDetail[]>(
-            `${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${assetType}/currencies/${currencyType}`
+            `${API_ENDPOINTS.FINANCE}/${assetType}/currencies/${currencyType}`
         );
     }
 
@@ -101,7 +100,7 @@ export class AssetService {
         currencyType: CurrencyType
     ): Observable<AssetDetail> {
         return this.httpClient.get<AssetDetail>(
-            `${environment.baseUrl}${API_ENDPOINTS.FINANCE}/${assetType}/${uri}/${currencyType}`
+            `${API_ENDPOINTS.FINANCE}/${assetType}/${uri}/${currencyType}`
         );
     }
 

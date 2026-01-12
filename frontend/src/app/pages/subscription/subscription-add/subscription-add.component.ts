@@ -1,9 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
-import {environment} from "../../../../environments/environment";
 import {NgIf} from "@angular/common";
 import {Subscription} from "rxjs";
 import {
@@ -16,11 +15,11 @@ import {
 import {AssetType} from "../../../common/enum/asset-type";
 import {AssetDetail} from "../../../common/model/asset-detail.model";
 import {CurrencyType} from "../../../common/enum/currency-type";
-import {AssetService} from "../../../common/service/asset-service";
-import {CurrencyService} from "../../../common/service/currency-service";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
-import {NumberInputDirective} from "../../../common/service/number-input.directive";
+import {NumberInputDirective} from "../../../common/directive/number-input.directive";
+import {AssetService} from "../../../common/service/asset.service";
+import {CurrencyService} from "../../../common/service/currency.service";
 
 @Component({
     selector: 'app-subscription-add',
@@ -39,6 +38,13 @@ import {NumberInputDirective} from "../../../common/service/number-input.directi
     styleUrls: ['./subscription-add.component.scss']
 })
 export default class SubscriptionAddComponent implements OnInit, OnDestroy {
+    private readonly fb = inject(FormBuilder);
+    private readonly http = inject(HttpClient);
+    private readonly router = inject(Router);
+    private readonly assetService = inject(AssetService);
+    private readonly currencyService = inject(CurrencyService);
+    private readonly translate = inject(TranslateService);
+
     addSubscriptionForm: FormGroup;
     isSubmitting = false;
     errorMessage: string = '';
@@ -54,19 +60,12 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
     private currencyTypeSubscription!: Subscription;
     currencyType!: CurrencyType;
 
-    constructor(
-        private fb: FormBuilder,
-        private http: HttpClient,
-        private router: Router,
-        private assetService: AssetService,
-        private currencyService: CurrencyService,
-        private translate: TranslateService
-    ) {
+    constructor() {
         this.addSubscriptionForm = this.fb.group({
             uri: ['', [Validators.required, Validators.minLength(1)]],
             assetType: ['', Validators.required],
             notificationType: ['EMAIL', Validators.required],
-            currencyType: [currencyService.getGlobalCurrencyType(), [Validators.required]],
+            currencyType: [this.currencyService.getGlobalCurrencyType(), [Validators.required]],
             condition: ['increase', Validators.required],
             value: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
         });
@@ -158,7 +157,7 @@ export default class SubscriptionAddComponent implements OnInit, OnDestroy {
         lowerBoundPrice: number | null;
     }) {
         return this.http.post(
-            `${environment.baseUrl}${API_ENDPOINTS.SUBSCRIPTION}`,
+            `${API_ENDPOINTS.SUBSCRIPTION}`,
             subscription);
     }
 

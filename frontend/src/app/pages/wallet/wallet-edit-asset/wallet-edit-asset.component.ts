@@ -4,12 +4,11 @@ import {NgForOf, NgIf} from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import {environment} from '../../../../environments/environment';
 import {CurrencyType} from "../../../common/enum/currency-type";
 import {AssetHistory} from "../../../common/model/asset-history.model";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
-import {NumberInputDirective} from "../../../common/service/number-input.directive";
+import {NumberInputDirective} from "../../../common/directive/number-input.directive";
 
 @Component({
   selector: 'app-wallet-edit-asset',
@@ -142,6 +141,6 @@ export default class WalletEditAssetComponent {
     if (this.assetId === null) {
       this.errorMessage = 'Invalid asset ID.';
     }
-    return this.http.patch(`${environment.baseUrl}${API_ENDPOINTS.WALLET}/${this.assetId}`, assetData);
+    return this.http.patch(`${API_ENDPOINTS.WALLET}/${this.assetId}`, assetData);
   }
 }

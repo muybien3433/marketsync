@@ -1,9 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {NgIf} from '@angular/common';
-import {environment} from '../../../../environments/environment';
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {
@@ -16,12 +15,12 @@ import {
 import {CurrencyType} from "../../../common/enum/currency-type";
 import {AssetType} from "../../../common/enum/asset-type";
 import {AssetDetail} from "../../../common/model/asset-detail.model";
-import {AssetService} from "../../../common/service/asset-service";
-import {CurrencyService} from "../../../common/service/currency-service";
 import {API_ENDPOINTS} from "../../../common/service/api-endpoints";
 import {CardComponent} from "../../../common/components/card/card.component";
-import {NumberInputDirective} from "../../../common/service/number-input.directive";
+import {NumberInputDirective} from "../../../common/directive/number-input.directive";
 import {UnitType, UnitTypeLabels} from "../../../common/enum/unit-type";
+import {AssetService} from "../../../common/service/asset.service";
+import {CurrencyService} from "../../../common/service/currency.service";
 
 @Component({
     selector: 'app-wallet-add-asset',
@@ -41,6 +40,13 @@ import {UnitType, UnitTypeLabels} from "../../../common/enum/unit-type";
     styleUrls: ['./wallet-add-asset.component.scss'],
 })
 export default class WalletAddAssetComponent implements OnInit, OnDestroy {
+    private readonly fb = inject(FormBuilder);
+    private readonly http = inject(HttpClient);
+    private readonly router = inject(Router);
+    private readonly assetService = inject(AssetService);
+    private readonly currencyService = inject(CurrencyService);
+    private readonly translate = inject(TranslateService);
+
     public addAssetForm: FormGroup;
     isSubmitting: boolean = false;
     errorMessage: string = '';
@@ -58,14 +64,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
     protected assetSubscription!: Subscription;
     asset: AssetDetail | null = null;
 
-    constructor(
-        private fb: FormBuilder,
-        private http: HttpClient,
-        private router: Router,
-        private assetService: AssetService,
-        private currencyService: CurrencyService,
-        private translate: TranslateService,
-    ) {
+    constructor() {
         this.addAssetForm = this.fb.group({
             assetType: ['', Validators.required],
             unitType: [UnitType.UNIT, Validators.maxLength(6)],
@@ -73,7 +72,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
             count: ['0.01', [Validators.required, Validators.min(0.0000000000001)]],
             purchasePrice: [ '0.01', [Validators.required, Validators.min(0.0000000000001)]],
             currentPrice: ['0.01', [Validators.min(0.0000000000001)]],
-            currencyType: [currencyService.getGlobalCurrencyType(), [Validators.required]],
+            currencyType: [this.currencyService.getGlobalCurrencyType(), [Validators.required]],
             comment: ['', [Validators.maxLength(this.maxCommentLength)]],
         });
     }
@@ -182,7 +181,7 @@ export default class WalletAddAssetComponent implements OnInit, OnDestroy {
         comment: string;
     }) {
         console.log(asset)
-        return this.http.post(`${environment.baseUrl}${API_ENDPOINTS.WALLET}`, asset);
+        return this.http.post(`${API_ENDPOINTS.WALLET}`, asset);
     }
 
     protected readonly UnitTypeLabels = UnitTypeLabels;

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output,} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output,} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslatePipe, TranslateService} from "@ngx-translate/core";
 import {Subscription} from "rxjs";
@@ -6,11 +6,11 @@ import {FilterByNamePipe} from "../../service/filter-by-name-pipe";
 import {AssetDetail} from "../../model/asset-detail.model";
 import {AssetType} from "../../enum/asset-type";
 import {CurrencyType} from "../../enum/currency-type";
-import {AssetService} from "../../service/asset-service";
-import {CurrencyService} from "../../service/currency-service";
 import { UnitType } from '../../enum/unit-type';
 import {AssetBase} from "../../model/asset-base.model";
 import {LoadingSpinnerComponent} from "../loading/loading-spinner.component";
+import {AssetService} from "../../service/asset.service";
+import {CurrencyService} from "../../service/currency.service";
 
 @Component({
     selector: 'app-asset-selection-list',
@@ -26,6 +26,10 @@ import {LoadingSpinnerComponent} from "../loading/loading-spinner.component";
     styleUrl: './asset-selection-list.component.scss'
 })
 export class AssetSelectionListComponent implements OnInit, OnDestroy {
+    private readonly assetService = inject(AssetService);
+    private readonly currencyService = inject(CurrencyService);
+    private readonly translate = inject(TranslateService);
+
     @Input() assetTypeOptions: AssetType[] = Object.values(AssetType).filter(type => type !== AssetType.CURRENCY);
     @Output() assetChanged: EventEmitter<AssetDetail> = new EventEmitter();
 
@@ -45,13 +49,6 @@ export class AssetSelectionListComponent implements OnInit, OnDestroy {
     currentCurrency!: CurrencyType;
 
     isLoading: boolean = false;
-
-    constructor(
-        private assetService: AssetService,
-        private currencyService: CurrencyService,
-        private translate: TranslateService
-    ) {
-    }
 
     ngOnInit(): void {
         this.currencySubscription = this.currencyService.selectedCurrencyType$
