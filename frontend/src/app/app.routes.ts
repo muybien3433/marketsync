@@ -1,86 +1,31 @@
-import { Routes } from '@angular/router';
-import { AdminComponent } from './common/admin/admin.component';
-import { authGuard } from './common/security/auth-guard';
-import WalletComponent from './pages/wallet/wallet.component';
-import WalletAddAssetComponent from './pages/wallet/wallet-add-asset/wallet-add-asset.component';
-import WalletEditAssetComponent from './pages/wallet/wallet-edit-asset/wallet-edit-asset.component';
-import WalletAssetHistoryComponent from './pages/wallet/wallet-asset-history/wallet-asset-history.component';
-import SubscriptionComponent from './pages/subscription/subscription.component';
-import SubscriptionAddComponent from './pages/subscription/subscription-add/subscription-add.component';
-import SettingsComponent from './pages/settings/settings.component';
-import {LoginComponent} from "./pages/auth/login/login.component";
-import {RegisterComponent} from "./pages/auth/register/register.component";
+import {Routes} from "@angular/router";
+import {authGuard} from "./core/guards/auth-guard";
 
 export const routes: Routes = [
     {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'wallet/assets',
+        path: 'auth',
+        loadChildren: () =>
+            import('./features/auth/routes').then(m => m.AUTH_ROUTES),
     },
     {
-        path: 'auth',
+        path: '',
+        canActivate: [authGuard],
+        loadComponent: () => import('./core/layout/admin/shell.component').then(m => m.ShellComponent),
         children: [
             {
-                path: 'login',
-                component: LoginComponent,
+                path: 'setting',
+                loadChildren: () => import('./features/setting/routes').then(m => m.SETTING_ROUTES),
             },
             {
-                path: 'register',
-                component: RegisterComponent
+                path: 'subscription',
+                loadChildren: () => import('./features/subscription/routes').then(m => m.SUBSCRIPTION_ROUTES),
+            },
+            {
+                path: 'wallet',
+                loadChildren: () => import('./features/wallet/routes').then(m => m.WALLET_ROUTES),
             }
         ],
     },
-    {
-        path: 'wallet',
-        canActivate: [authGuard],
-        component: AdminComponent,
-        children: [
-            {
-                path: 'assets',
-                component: WalletComponent,
-            },
-            {
-                path: 'asset/add',
-                component: WalletAddAssetComponent,
-            },
-            {
-                path: 'asset/edit',
-                component: WalletEditAssetComponent,
-            },
-            {
-                path: 'assets/history',
-                component: WalletAssetHistoryComponent,
-            },
-        ],
-    },
-    {
-        path: 'subscription',
-        canActivate: [authGuard],
-        component: AdminComponent,
-        children: [
-            {
-                path: 'subscriptions',
-                component: SubscriptionComponent,
-            },
-            {
-                path: 'add',
-                component: SubscriptionAddComponent,
-            },
-        ],
-    },
-    {
-        path: 'settings',
-        canActivate: [authGuard],
-        component: AdminComponent,
-        children: [
-            {
-                path: 'currency',
-                component: SettingsComponent,
-            },
-        ],
-    },
-    {
-        path: '**',
-        redirectTo: 'wallet/assets',
-    },
+
+    { path: '**', redirectTo: '' },
 ];

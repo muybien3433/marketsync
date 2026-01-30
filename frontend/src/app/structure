@@ -1,0 +1,99 @@
+app/
+  core/
+    bootstrap/
+      app.config.ts
+      provide-http.ts
+    layout/
+      shell/
+        shell.component.ts
+        shell.component.html
+        shell.component.scss
+      admin-shell/
+        shell.component.ts
+    http/
+      interceptors/
+        auth.interceptor.ts
+        error.interceptor.ts
+      tokens/
+        api-base-url.token.ts
+    routing/
+      routes.util.ts
+    services/
+      logger.service.ts
+    guards/
+      auth.guard.ts
+      role.guard.ts
+
+  shared/
+    ui/
+      card/
+      spinner/
+      full-screen/
+    form/
+      number-input/
+        number-input.directive.ts
+    pipes/
+      filter-by-name.pipe.ts
+    models/
+      money.model.ts
+      pagination.model.ts
+    utils/
+      date.util.ts
+      object.util.ts
+
+  features/
+    auth/
+      routes.ts
+      pages/
+        login/
+          login.page.ts
+          login.page.html
+          login.page.scss
+      data-access/
+        auth.api.ts
+        auth.facade.ts
+        auth.models.ts
+      guards/
+        logged-in.guard.ts
+
+    wallet/
+      routes.ts
+      pages/
+        wallet-dashboard/
+      components/
+        asset-selection-list/
+        asset-price-display/
+      data-access/
+        wallet.api.ts
+        asset.api.ts
+        wallet.facade.ts
+        wallet.models.ts
+      state/
+        wallet.store.ts (opcjonalnie)
+
+    subscription/
+      routes.ts
+      pages/
+      data-access/
+
+    settings/
+      routes.ts
+      pages/
+      data-access/
+
+    admin/
+      routes.ts
+      layout/
+        admin-shell/
+      pages/
+        users/
+        roles/
+        organizations/
+      data-access/
+        admin.api.ts
+      components/
+        nav-bar/
+        navigation/
+
+  app.routes.ts
+  app.component.ts

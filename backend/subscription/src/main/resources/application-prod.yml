@@ -1,6 +1,38 @@
+server:
+  port: 8900
+
+schedule:
+  time-ms: 30000 # 30s
+  fetch-page-size-per-round: 10
+
+kafka:
+  enabled: true
+
 spring:
+  mongodb:
+    host: mongodb-subscription
+    port: 27017
+    username: ${MONGO_SUBSCRIPTION_USER}
+    password: ${MONGO_SUBSCRIPTION_PASSWORD}
+    authentication-database: admin
+  kafka:
+    bootstrap-servers: ${BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+application:
   config:
-    import:
-      - configserver:http://config-server:7777
-  application:
-    name: subscription-service
+    finance-url: ${FINANCE_API_URL}
+
+send-notification-topic: send-notification-topic
+
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: marketsync-internal
+  public-key-pem: ${PUBLIC_KEY_PEM}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

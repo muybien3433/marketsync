@@ -13,25 +13,28 @@
     <version>0.0.1</version>
     <name>user</name>
     <description>user</description>
+
     <dependencies>
         <!--		Common		-->
         <dependency>
             <groupId>pl.muybien</groupId>
             <artifactId>common</artifactId>
         </dependency>
+        <!--		Contracts		-->
+        <dependency>
+            <groupId>io.platform</groupId>
+            <artifactId>iam-contract</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.platform</groupId>
+            <artifactId>feign-contract</artifactId>
+            <version>1.0</version>
+        </dependency>
         <!--		Web		-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <!--		Security		-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <!--		Actuator		-->
         <dependency>
@@ -65,15 +68,6 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-        </dependency>
-        <!--		Cloud		-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
         <!--		Lombok		-->
         <dependency>

@@ -1,0 +1,4 @@
+io.platform.autoconfig.FeignAuthForwardingAutoConfiguration
+io.platform.autoconfig.InternalJwtServiceAutoConfiguration
+io.platform.autoconfig.InternalJwtServletSecurityAutoConfiguration
+io.platform.autoconfig.CommonFeignErrorAutoConfiguration

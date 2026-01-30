@@ -1,6 +1,7 @@
 package pl.muybien.security;
 
 import feign.FeignException;
+import io.platform.exception.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,6 @@ import pl.muybien.enumeration.AssetType;
 import pl.muybien.enumeration.CurrencyType;
 import pl.muybien.enumeration.TeamType;
 import pl.muybien.exception.AssetNotFoundException;
-import pl.muybien.exception.ErrorResponse;
 import pl.muybien.exception.FinanceNotFoundException;
 import pl.muybien.exception.OwnershipException;
 import pl.muybien.feign.FinanceClient;

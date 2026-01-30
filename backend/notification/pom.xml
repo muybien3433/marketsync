@@ -20,6 +20,12 @@
             <groupId>pl.muybien</groupId>
             <artifactId>common</artifactId>
         </dependency>
+        <!--		Contracts		-->
+        <dependency>
+            <groupId>io.platform</groupId>
+            <artifactId>exception-contract</artifactId>
+            <version>1.0</version>
+        </dependency>
         <!--		Web			-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -46,15 +52,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <!--		Cloud		-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
         <dependency>
             <groupId>io.awspring.cloud</groupId>

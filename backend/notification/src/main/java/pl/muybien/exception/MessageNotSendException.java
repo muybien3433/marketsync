@@ -1,5 +1,7 @@
 package pl.muybien.exception;
 
+import io.platform.exception.ServiceException;
+
 public class MessageNotSendException extends ServiceException {
 
     public MessageNotSendException(String message) {

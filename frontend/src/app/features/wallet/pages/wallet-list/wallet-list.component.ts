@@ -1,0 +1,341 @@
+import {Component, inject, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {TranslatePipe, TranslateService} from "@ngx-translate/core";
+import {AssetAggregate} from "../../models/asset-aggregate.model";
+import {HttpClient} from "@angular/common/http";
+import {CurrencyType} from "../../../../shared/enum/currency-type";
+import {API_ENDPOINTS} from "../../../../core/http/api/api-endpoints";
+import {Router} from "@angular/router";
+import {ApexOptions, ChartComponent} from "ng-apexcharts";
+import {CardComponent} from "../../../../shared/ui/card/card.component";
+import {NgbProgressbar} from "@ng-bootstrap/ng-bootstrap";
+import {UnitTypeLabels} from "../../../../shared/enum/unit-type";
+import {LoadingSpinnerComponent} from "../../../../shared/ui/loading/loading-spinner.component";
+import {WalletWebsocketService} from "../../websocket/wallet-web-socket.service";
+import {PreferenceService} from "../../../../core/services/preference.service";
+
+@Component({
+    selector: 'app-wallet-list',
+    imports: [CommonModule, CardComponent, ChartComponent, TranslatePipe, NgbProgressbar, CardComponent, LoadingSpinnerComponent],
+    templateUrl: './wallet-list.component.html',
+    styleUrls: ['./wallet-list.component.scss']
+})
+export default class WalletListComponent implements OnInit {
+    private readonly preferenceService = inject(PreferenceService);
+    private readonly http = inject(HttpClient);
+    private readonly router = inject(Router);
+    private readonly translate = inject(TranslateService);
+    private readonly walletWs = inject(WalletWebsocketService);
+
+    protected readonly Object = Object;
+    protected _assets: AssetAggregate[] = [];
+    groupedAssets: { [key: string]: AssetAggregate[] } = {};
+    selectedCurrency: CurrencyType;
+    CurrencyType = CurrencyType;
+    donutChart: Partial<ApexOptions>;
+    profits: any[] = [];
+    isLoading: boolean = true;
+
+    private priceChangeMap: { [key: string]: 'up' | 'down' } = {};
+    private lastDonutLabels: string[] = [];
+    private lastDonutSeries: number[] = [];
+    private lastTotalValue: number | null = null;
+    private totalValueDirection: 'up' | 'down' | null = null;
+
+    constructor() {
+        this.donutChart = {
+            chart: {
+                type: 'donut',
+                width: '100%',
+                height: 297
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: (val: number) => {
+                    return val.toFixed(2) + '%';
+                }
+            },
+            plotOptions: {
+                pie: {
+                    customScale: 0.8,
+                    donut: {
+                        size: '50%'
+                    },
+                    offsetY: 20
+                }
+            },
+            colors: ['#775DD0', '#777777', '#008FFB', '#00E396', '#FEB019', '#F8666B'],
+            series: [],
+            labels: [],
+            legend: {
+                position: 'left',
+                offsetY: 80
+            },
+        };
+    }
+
+    ngOnInit() {
+        this.selectedCurrency = this.preferenceService.getPreferredCurrency();
+        this.fetchWalletAssets();
+        this.walletWs.connect(this.selectedCurrency);
+        this.walletWs.assets$.subscribe(assets => this.handleAssetsUpdate(assets));
+    }
+
+    private getAssetKey(asset: AssetAggregate): string {
+        return `${(asset as any).id ?? asset.name}_${asset.assetType}`;
+    }
+
+    getProfitChangeClass(asset: AssetAggregate): string {
+        const key = this.getAssetKey(asset);
+        const state = this.priceChangeMap[key];
+        if (state === 'up') {
+            return 'profit-flash-up';
+        }
+        if (state === 'down') {
+            return 'profit-flash-down';
+        }
+        return '';
+    }
+
+    private handleAssetsUpdate(assets: AssetAggregate[]): void {
+        const previousByKey: { [key: string]: AssetAggregate } = {};
+        this._assets.forEach(a => {
+            previousByKey[this.getAssetKey(a)] = a;
+        });
+
+        const updatedAssets: AssetAggregate[] = [];
+        const seenKeys = new Set<string>();
+        let hasValueOrCompositionChange = false;
+
+        if (Array.isArray(assets)) {
+            for (const asset of assets) {
+                const key = this.getAssetKey(asset);
+                seenKeys.add(key);
+
+                const count = this.toNumber((asset as any).count);
+                const numericCurrentPrice = this.toNumber((asset as any).currentPrice);
+                const averagePurchasePrice = this.toNumber((asset as any).averagePurchasePrice);
+
+                const value = count * numericCurrentPrice;
+                const totalInvested = averagePurchasePrice * count;
+                const profit = value - totalInvested;
+                const profitInPercentage = totalInvested > 0 ? (profit / totalInvested) * 100 : 0;
+
+                const previous = previousByKey[key];
+
+                if (previous) {
+                    const prevPrice = this.toNumber((previous as any).currentPrice);
+                    const prevCount = this.toNumber((previous as any).count);
+                    const prevValue = (previous as any).value;
+
+                    if (numericCurrentPrice > prevPrice) {
+                        this.priceChangeMap[key] = 'up';
+                    } else if (numericCurrentPrice < prevPrice) {
+                        this.priceChangeMap[key] = 'down';
+                    }
+
+                    if (
+                        numericCurrentPrice !== prevPrice ||
+                        count !== prevCount ||
+                        value !== prevValue ||
+                        asset.exchangeRateToDesired !== (previous as any).exchangeRateToDesired
+                    ) {
+                        hasValueOrCompositionChange = true;
+                    }
+                } else {
+                    hasValueOrCompositionChange = true;
+                }
+
+                const updated: any = {
+                    ...asset,
+                    count,
+                    currentPrice: numericCurrentPrice,
+                    averagePurchasePrice,
+                    value,
+                    profit,
+                    profitInPercentage
+                };
+
+                updatedAssets.push(updated as AssetAggregate);
+            }
+        }
+
+        const previousKeys = Object.keys(previousByKey);
+        if (
+            previousKeys.length !== seenKeys.size ||
+            previousKeys.some(k => !seenKeys.has(k))
+        ) {
+            hasValueOrCompositionChange = true;
+        }
+
+        this._assets = updatedAssets;
+
+        if (hasValueOrCompositionChange) {
+            this.groupAssetsByType();
+            this.updateProfitCharts();
+        }
+
+        setTimeout(() => {
+            this.priceChangeMap = {};
+        }, 600);
+    }
+
+    private toNumber(value: string | number | null | undefined): number {
+        if (typeof value === 'number') {
+            return value;
+        }
+        if (value == null) {
+            return 0;
+        }
+        const parsed = parseFloat(value as string);
+        return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    fetchWalletAssets() {
+        this.isLoading = true;
+        this.http.get<AssetAggregate[]>(`${API_ENDPOINTS.WALLET}/${this.selectedCurrency}`)
+            .subscribe({
+                next: assets => {
+                    this.handleAssetsUpdate(assets);
+                    this.isLoading = false;
+                },
+                error: err => {
+                    console.error(err);
+                    this._assets = [];
+                    this.isLoading = false;
+                }
+            });
+    }
+
+    groupAssetsByType() {
+        this.groupedAssets = {};
+        const totalValues: { [key: string]: number } = {};
+
+        this._assets.forEach(asset => {
+            const translatedType = this.translate.instant(`asset.type.${asset.assetType}`.toLowerCase());
+
+            if (!this.groupedAssets[translatedType]) {
+                this.groupedAssets[translatedType] = [];
+                totalValues[translatedType] = 0;
+            }
+            this.groupedAssets[translatedType].push(asset);
+            totalValues[translatedType] += asset.value;
+        });
+
+        this.updateAssetDivisionChart(totalValues);
+    }
+
+    trackProfit(index: number, profit: any): any {
+        return profit.title;
+    }
+
+    getTotalValue(): number {
+        return this._assets.reduce((total, asset) => {
+            const valueInSelectedCurrency = asset.value * asset.exchangeRateToDesired;
+            return total + valueInSelectedCurrency;
+        }, 0);
+    }
+
+    getTotalProfit(): number {
+        return this._assets.reduce((total, asset) => {
+            return total + (asset.profit * asset.exchangeRateToDesired);
+        }, 0);
+    }
+
+    getTotalProfitInPercentage(): number {
+        const totalInvestment = this.getTotalInvestment();
+        const totalProfit = this.getTotalProfit();
+
+        if (totalInvestment === 0) return 0;
+
+        const profitInPercentage = (totalProfit / totalInvestment) * 100;
+        return parseFloat(profitInPercentage.toFixed(2));
+    }
+
+    getTotalInvestment(): number {
+        return this._assets.reduce((total, asset) => {
+            return total + (asset.averagePurchasePrice * asset.count * asset.exchangeRateToDesired);
+        }, 0);
+    }
+
+    calculateWeight(asset: AssetAggregate): number {
+        const totalValue = this.getTotalValue();
+        if (totalValue === 0) return 0;
+
+        const valueInSelectedCurrency = asset.value * asset.exchangeRateToDesired;
+        const weight = (valueInSelectedCurrency / totalValue) * 100;
+
+        return parseFloat(weight.toFixed(2));
+    }
+
+    addAssetButton() {
+        this.router.navigate(['wallet/asset/add']);
+    }
+
+    private updateProfitCharts() {
+        const currentTotalValue = this.getTotalValue();
+
+        if (this.lastTotalValue !== null) {
+            if (currentTotalValue > this.lastTotalValue) {
+                this.totalValueDirection = 'up';
+            } else if (currentTotalValue < this.lastTotalValue) {
+                this.totalValueDirection = 'down';
+            }
+        }
+
+        this.lastTotalValue = currentTotalValue;
+
+        this.profits = [
+            {
+                title: this.translate.instant('common.total.value'),
+                icon: this.resolveProfitIcon(),
+                amount: currentTotalValue,
+                progress: 80,
+                design: 'col-md-6',
+                progress_bg: 'progress-c-theme'
+            },
+            {
+                title: this.translate.instant('asset.profit'),
+                icon: this.resolveProfitIcon(),
+                amount: this.getTotalProfit(),
+                progress: 60,
+                design: 'col-md-6',
+                progress_bg: 'progress-c-theme2'
+            },
+            {
+                title: this.translate.instant('asset.profit.in.percentage'),
+                icon: this.resolveProfitIcon(),
+                percent: this.getTotalProfitInPercentage() + '%',
+                progress: 40,
+                design: 'col-md-6',
+                progress_bg: 'progress-c-theme3'
+            }
+        ];
+    }
+
+    private resolveProfitIcon() {
+        if (this.totalValueDirection === 'up') {
+            return 'icon-arrow-up text-c-green';
+        }
+        if (this.totalValueDirection === 'down') {
+            return 'icon-arrow-down text-c-red';
+        }
+        return null;
+    }
+
+    private updateAssetDivisionChart(totalValues: { [key: string]: number }) {
+        const labels = Object.keys(this.groupedAssets);
+        const series = labels.map(label => totalValues[label] ?? 0);
+
+        this.lastDonutLabels = labels;
+        this.lastDonutSeries = series;
+
+        this.donutChart = {
+            ...this.donutChart,
+            labels,
+            series
+        };
+    }
+
+    protected readonly UnitTypeLabels = UnitTypeLabels;
+}

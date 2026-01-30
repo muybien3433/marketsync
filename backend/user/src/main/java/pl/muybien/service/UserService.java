@@ -1,8 +1,8 @@
 package pl.muybien.service;
 
-import pl.muybien.dto.iam.response.KeycloakUserLoginResponse;
-import pl.muybien.dto.user.request.UserLoginRequest;
-import pl.muybien.dto.user.request.UserRegisterRequest;
+import io.platform.dto.iam.response.KeycloakUserLoginResponse;
+import pl.muybien.dto.request.UserLoginRequest;
+import pl.muybien.dto.request.UserRegisterRequest;
 
 public interface UserService {
 

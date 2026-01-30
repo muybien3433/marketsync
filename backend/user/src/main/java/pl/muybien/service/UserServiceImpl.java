@@ -1,16 +1,16 @@
 package pl.muybien.service;
 
+import io.platform.dto.iam.request.KeycloakUserLoginRequest;
+import io.platform.dto.iam.response.KeycloakUserCreatedResponse;
+import io.platform.dto.iam.response.KeycloakUserLoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.muybien.dto.iam.request.KeycloakUserLoginRequest;
-import pl.muybien.dto.iam.response.KeycloakUserCreatedResponse;
-import pl.muybien.dto.iam.response.KeycloakUserLoginResponse;
-import pl.muybien.dto.user.request.UserLoginRequest;
-import pl.muybien.dto.user.request.UserRegisterRequest;
+import pl.muybien.dto.request.UserLoginRequest;
+import pl.muybien.dto.request.UserRegisterRequest;
 import pl.muybien.feign.IamClient;
-import pl.muybien.mapper.user.UserMapper;
+import pl.muybien.mapper.UserMapper;
 import pl.muybien.repository.UserRepository;
 
 @Service

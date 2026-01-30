@@ -1,5 +1,21 @@
+server:
+  port: 8800
+
 spring:
-  config:
-    import: configserver:http://config-server:7777
-  application:
-    name: finance-service
+  mongodb:
+    host: mongodb-finance
+    port: 27017
+    username: ${MONGO_FINANCE_USER}
+    password: ${MONGO_FINANCE_PASSWORD}
+    authentication-database: admin
+
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: marketsync-internal
+  public-key-pem: ${PUBLIC_KEY_PEM}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

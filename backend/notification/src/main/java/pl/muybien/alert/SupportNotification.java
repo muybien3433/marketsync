@@ -1,12 +1,12 @@
 package pl.muybien.alert;
 
+import io.platform.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import pl.muybien.enumeration.AlertType;
 import pl.muybien.enumeration.NotificationType;
 import pl.muybien.enumeration.TeamType;
-import pl.muybien.exception.ErrorResponse;
 import pl.muybien.exception.SupportDetailsNotFoundException;
 import pl.muybien.notification.NotificationServiceFactory;
 

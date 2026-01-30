@@ -12,17 +12,15 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
         <relativePath/>
     </parent>
 
     <modules>
+        <module>backend-platform</module>
         <module>backend/common</module>
-        <module>backend/config</module>
         <module>backend/data</module>
         <module>backend/finance</module>
-        <module>backend/gateway</module>
-        <module>backend/iam</module>
         <module>backend/notification</module>
         <module>backend/subscription</module>
         <module>backend/user</module>

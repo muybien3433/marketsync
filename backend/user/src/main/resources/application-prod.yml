@@ -1,5 +1,28 @@
+server:
+  port: 8000
+
 spring:
+  datasource:
+    username: ${POSTGRES_USER_USER}
+    password: ${POSTGRES_USER_PASSWORD}
+    url: jdbc:postgresql://postgres-user/${POSTGRES_USER_DB}?sslmode=disable
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+application:
   config:
-    import: configserver:http://config-server:7777
-  application:
-    name: user-service
+    iam-url: http://iam-service:8888/api/v1/iam
+
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: marketsync-internal
+  public-key-pem: ${PUBLIC_KEY_PEM}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

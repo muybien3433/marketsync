@@ -8,12 +8,12 @@ import { HttpClient, provideHttpClient, withFetch, withInterceptors } from '@ang
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
     provideKeycloak,
-    includeBearerTokenInterceptor,
     INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG
 } from 'keycloak-angular';
 import { environment } from '../environments/environment';
 import Aura from '@primeng/themes/aura';
 import { providePrimeNG } from 'primeng/config';
+import {tokenInterceptor} from "./core/http/interceptors/token-interceptor";
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
     new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -38,12 +38,12 @@ export const appConfig: ApplicationConfig = {
 
         {
             provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
-            useValue: [{ urlPattern: /\/api\/v1/i, bearerPrefix: 'Bearer' }]
+            useValue: [{ urlPattern: /\/api\/v1\//i, bearerPrefix: 'Bearer ' }]
         },
 
         provideHttpClient(
             withFetch(),
-            withInterceptors([includeBearerTokenInterceptor])
+            withInterceptors([tokenInterceptor])
         ),
 
         providePrimeNG({ theme: { preset: Aura } }),

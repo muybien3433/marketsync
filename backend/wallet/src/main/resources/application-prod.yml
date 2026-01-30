@@ -1,5 +1,39 @@
+server:
+  port: 8200
+
 spring:
+  datasource:
+    username: ${POSTGRES_WALLET_USER}
+    password: ${POSTGRES_WALLET_PASSWORD}
+    url: jdbc:postgresql://postgres-wallet/${POSTGRES_WALLET_DB}?sslmode=disable
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: ${BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+application:
   config:
-    import: configserver:http://config-server:7777
-  application:
-    name: wallet-service
+    finance-url: ${FINANCE_API_URL}
+
+wallet:
+  websocket:
+    refresh-interval-ms: 5000 # 5 second interval
+
+frontend-url: ${FRONTEND_URL}
+
+internal-jwt:
+  issuer: marketsync-gateway
+  audience: marketsync-internal
+  public-key-pem: ${PUBLIC_KEY_PEM}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

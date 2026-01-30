@@ -1,5 +1,6 @@
 package pl.muybien.controller;
 
+import io.platform.dto.iam.response.KeycloakUserLoginResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -7,9 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.muybien.dto.iam.response.KeycloakUserLoginResponse;
-import pl.muybien.dto.user.request.UserLoginRequest;
-import pl.muybien.dto.user.request.UserRegisterRequest;
+import pl.muybien.dto.request.UserLoginRequest;
+import pl.muybien.dto.request.UserRegisterRequest;
 import pl.muybien.service.UserService;
 
 import java.net.URI;
